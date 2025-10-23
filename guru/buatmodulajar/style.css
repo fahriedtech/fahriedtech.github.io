@@ -1,0 +1,156 @@
+/* style.css */
+
+/* --- Tampilan Dasar & Global --- */
+html {
+    /* Mencegah scrollbar horizontal yang tidak diinginkan */
+    overflow-x: hidden; 
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a; /* Warna gelap */
+    color: #e0e0e0; /* Warna teks terang */
+    margin: 0; /* Menghilangkan margin default browser */
+    padding: 0;
+    /* PENTING: Hapus properti flex dari body */
+}
+
+html, body {
+    height: 100%; /* Pastikan tinggi penuh untuk kontainer flex */
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Memastikan wrapper juga lebar penuh saat aktif */
+#app-wrapper {
+    width: 100%; 
+    /* Hapus min-height: 100vh; akan diatur khusus untuk login */
+}
+
+/* --- Anti-Flicker --- */
+.auth-initializing #app-wrapper {
+    visibility: hidden; 
+    opacity: 0;
+}
+
+
+/* ============================================================= */
+/* --- PERBAIKAN KRITIS: PEMUSATAN KHUSUS HALAMAN LOGIN --- */
+/* ============================================================= */
+
+/* 
+  Aturan ini akan diaktifkan HANYA jika #auth-container (kotak login) 
+  terlihat di dalam #app-wrapper. Ini akan menjadikan #app-wrapper 
+  sebagai kontainer flex yang memusatkan isinya.
+*/
+body:not(.auth-initializing) #app-wrapper:has(#auth-container:not(.hidden)) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Buat wrapper setinggi layar untuk pusat vertikal */
+}
+
+
+/* ------------------------------------------------ */
+/* --- STYLING BERBAGI (SHARED STYLES) --- */
+/* ------------------------------------------------ */
+
+/* Aturan yang berlaku untuk Login dan Dashboard (Default Sempit) */
+#auth-container, #content-container {
+    background: #2d2d2d; /* Warna gelap */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Bayangan lebih gelap */
+    width: 90%;
+    /* KRITIS: Batasan default yang sempit */
+    max-width: 500px; 
+    text-align: center;
+    box-sizing: border-box; /* Penting untuk perhitungan width */
+    margin: 0; /* Hapus margin yang mengganggu centering */
+}
+
+/* ------------------------------------------------ */
+/* --- STYLING HANYA DASHBOARD (OVERRIDE LEBAR) --- */
+/* ------------------------------------------------ */
+
+#content-container {
+    /* 
+      PERBAIKAN YANG BENAR: Timpa max-width dari aturan sebelumnya
+      agar dashboard dapat memanfaatkan lebar penuh layar.
+    */
+    max-width: none; /* <-- INI ADALAH PERUBAHAN YANG BENAR */
+
+    height: 98vh; /* Menggunakan tinggi penuh untuk frame aplikasi */
+    
+    /* Menyesuaikan kembali tampilan Flexbox untuk dashboard */
+    display: flex; 
+    flex-direction: column;
+    text-align: left; /* Teks konten di dashboard normal */
+    
+    /* Mengatasi bug centering body */
+    width: 100%; /* Meregangkan container di dalam batas body flex */
+    padding: 3px; /* Mengikuti style dashboard minimalis */
+}
+
+/* ------------------------------------------------ */
+/* --- STYLING ELEMEN FORM LOGIN --- */
+/* ------------------------------------------------ */
+h1 { font-size: 2rem; color: #64b5f6; margin-bottom: 20px; } /* Warna biru terang */
+.form-container h2 { font-size: 1.5rem; color: #e0e0e0; margin-top: 0; margin-bottom: 15px; }
+
+.form-container input {
+    width: 100%; /* Gunakan 100% dan box-sizing: border-box */
+    padding: 10px; 
+    margin-bottom: 15px;
+    border: 1px solid #555; /* Border lebih gelap */
+    border-radius: 4px; 
+    outline: none; 
+    box-shadow: none; 
+    box-sizing: border-box; 
+    font-size: 1rem;
+    background-color: #3a3a3a; /* Background input gelap */
+    color: #e0e0e0; /* Teks input terang */
+}
+
+.form-container button {
+    width: 100%; padding: 10px; background-color: #1976d2; color: white; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s;
+}
+.form-container button:hover { background-color: #1565c0; }
+
+.error-message { color: #ff6b6b; margin-top: 10px; font-size: 14px; } /* Warna error terang */
+
+
+/* ------------------------------------------------ */
+/* --- STYLING ELEMEN DASHBOARD --- */
+/* ------------------------------------------------ */
+
+#dashboard-header {
+    background: #2d2d2d; /* Background gelap */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 10px; 
+    border-bottom: 1px solid #444; /* Border lebih gelap */
+    flex-shrink: 0; 
+    height: auto; 
+}
+
+.welcome-text { font-size: 0.7rem; font-weight: 500; margin: 0; padding: 0; color: #b0b0b0; }
+.welcome-text .profile-link { font-size: 0.65rem; color: #64b5f6; text-decoration: none; font-weight: bold; }
+.welcome-text .profile-link:hover { text-decoration: underline; }
+
+.small-logout-btn {
+    width: auto; padding: 3px 7px; font-size: 0.75rem; background-color: #424242; color: white;
+    border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;
+}
+.small-logout-btn:hover { background-color: #616161; }
+
+#genaimod-iframe {
+    flex-grow: 1; /* Memastikan iframe mengambil sisa ruang vertikal */
+    width: 100%; /* Memastikan iframe mengambil lebar penuh dashboard */
+    border: none;
+    margin-top: 3px; 
+}

@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Generator Modul Ajar Kurikulum Merdeka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        .form-section {
+            background-color: #1f2937;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #374151;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #d1d5db;
+            font-size: 0.75rem !important;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background-color: #374151;
+            border: 1px solid #4b5563;
+            color: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-size: 0.75rem !important;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+        .form-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #d1d5db;
+            padding: 0.5rem !important;
+            background-color: #374151;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            min-height: 2.5rem !important;
+            font-size: 0.75rem !important;
+            width: 100%;
+        }
+        .form-checkbox-label:hover {
+            background-color: #4b5563;
+        }
+        .form-checkbox {
+            width: 1rem !important;
+            height: 1rem !important;
+            accent-color: #3b82f6;
+            flex-shrink: 0;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+            width: 100%;
+            font-size: 0.875rem !important;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+        .btn-primary:disabled {
+            background-color: #4b5563;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #4b5563;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            font-size: 0.875rem !important;
+        }
+        .btn-secondary:hover {
+            background-color: #6b7280;
+        }
+        .btn-gemini {
+            background-color: #10b981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+            font-size: 0.875rem !important;
+        }
+        .btn-gemini:hover:not(:disabled) {
+            background-color: #059669;
+        }
+        .btn-gemini:disabled {
+            background-color: #4b5563;
+            cursor: not-allowed;
+        }
+        
+        /* Perkecil placeholder */
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            font-size: 0.75rem !important;
+            color: #9ca3af;
+        }
+        
+        /* Perkecil judul section */
+        .form-section h2 {
+            font-size: 1.125rem !important;
+        }
+        
+        /* Perkecil header utama */
+        header h1 {
+            font-size: 1.75rem !important;
+        }
+        
+        header p {
+            font-size: 0.875rem !important;
+        }
+        
+        /* --- PERBAIKAN UKURAN FONT DAN OVERFLOW UNTUK MOBILE --- */
+        
+        /* Mengurangi ukuran font dasar di output-container (default untuk mobile) */
+        #output-container p, 
+        #output-container li, 
+        #output-container th, 
+        #output-container td,
+        #output-container strong {
+            font-size: 0.9375rem;
+            word-wrap: break-word; 
+            overflow-wrap: break-word;
+        }
+        #output-container h1 { 
+            font-size: 1.875rem; 
+            font-weight: 700; 
+            margin-top: 1.5rem; 
+            margin-bottom: 1rem; 
+            color: #ffffff; 
+            border-bottom: 1px solid #4b5563; 
+            padding-bottom: 0.5rem; 
+            text-align: center; 
+        }
+        #output-container h2 { 
+            font-size: 1.35rem;
+            font-weight: 600; 
+            margin-top: 1.5rem; 
+            margin-bottom: 0.75rem; 
+            color: #e5e7eb; 
+        }
+        #output-container h3 { 
+            font-size: 1.15rem;
+            font-weight: 600; 
+            margin-top: 1.25rem; 
+            margin-bottom: 0.5rem; 
+            color: #d1d5db; 
+        }
+        #output-container p { margin-bottom: 1rem; line-height: 1.6; }
+        #output-container ul, #output-container ol { margin-left: 1.5rem; margin-bottom: 1rem; list-style-position: outside; }
+        #output-container ul { list-style-type: disc; }
+        #output-container ol { list-style-type: decimal; }
+        #output-container li { margin-bottom: 0.5rem; }
+        #output-container strong { font-weight: 700; color: #ffffff; }
+        #output-container em { font-style: italic; color: #9ca3af; }
+        
+        /* Memastikan tabel dapat di-scroll secara horizontal jika terlalu lebar */
+        #output-container table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 1rem;
+            display: block;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        
+        #output-container table:last-of-type, #output-container table:last-of-type th, #output-container table:last-of-type td { 
+            border: none; 
+            padding: 0.75rem; 
+        }
+        #output-container th, #output-container td { 
+            border: 1px solid #4b5563; 
+            padding: 0.75rem; 
+            text-align: left; 
+        }
+        #output-container th { background-color: #374151; font-weight: 600; color: #e5e7eb;}
+        
+        /* Ensure specific alignment for signature block and override display: block */
+        #output-container table.signature-block {
+            display: table;
+            max-width: none;
+            overflow-x: hidden;
+            table-layout: fixed;
+        }
+        #output-container table.signature-block td {
+            text-align: center !important; 
+            vertical-align: top;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* --- PERBAIKAN OVERFLOW TEKS --- */
+        #output-container {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            max-width: 100%;
+        }
+        
+        #output-container table {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            word-wrap: break-word;
+        }
+        
+        #output-container th,
+        #output-container td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            max-width: 200px;
+        }
+        
+        /* Override untuk signature block */
+        #output-container table.signature-block {
+            table-layout: fixed;
+            width: 100% !important;
+        }
+        
+        #output-container table.signature-block td {
+            min-width: 0;
+        }
+        
+        /* Untuk layar sangat kecil */
+        @media (max-width: 480px) {
+            #output-container table {
+                font-size: 0.875rem;
+            }
+            
+            #output-container th,
+            #output-container td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+        
+        /* END PERBAIKAN MOBILE */
+        
+        .floating-box {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            max-height: 40vh;
+            overflow-y: auto;
+            position: absolute;
+            z-index: 10;
+            width: 100%;
+        }
+
+        .suggestion-item {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #374151;
+        }
+        .suggestion-item:not(:last-child) {
+            border-bottom: 1px solid #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white mb-2">AI Generator Modul Ajar</h1>
+            <p class="text-lg text-gray-400">Buat Modul Ajar Kurikulum Merdeka Berdasarkan CP Terbaru Pemendikdasmen No. 13 Tahun 2025</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="flex flex-col gap-6 lg:h-[calc(100vh-180px)] lg:overflow-y-auto">
+                <form id="generation-form" class="space-y-6">
+                    
+                    <div class="form-section">
+                        <h2 class="text-2xl font-semibold mb-4 text-white border-b border-gray-600 pb-2">1. Data Inti Pembelajaran</h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nama-guru" class="form-label text-sm">Nama Guru (Opsional)</label>
+                                <input type="text" id="nama-guru" class="form-input text-sm" placeholder="Contoh: Fahri, S.Pd.">
+                            </div>
+                            <div>
+                                <label for="nip-guru" class="form-label text-sm">NIP Guru (Opsional)</label>
+                                <input type="text" id="nip-guru" class="form-input text-sm" placeholder="Contoh: 123456789012345678">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label for="nama-kepsek" class="form-label text-sm">Nama Kepala Sekolah (Opsional)</label>
+                                <input type="text" id="nama-kepsek" class="form-input text-sm" placeholder="Contoh: Hamsiah, S.Pd.Mat.">
+                            </div>
+                            <div>
+                                <label for="nip-kepsek" class="form-label text-sm">NIP Kepala Sekolah (Opsional)</label>
+                                <input type="text" id="nip-kepsek" class="form-input text-sm" placeholder="Contoh: 123456789012345678">
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="nama-sekolah" class="form-label text-sm">Nama Sekolah (Opsional)</label>
+                            <input type="text" id="nama-sekolah" class="form-input text-sm" placeholder="Contoh: SMP Negeri 2 Manggar">
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label for="alamat-sekolah" class="form-label text-sm">Alamat Sekolah (Kota/Kabupaten) - Opsional</label>
+                            <input type="text" id="alamat-sekolah" class="form-input text-sm" placeholder="Contoh: Belitung Timur" value="Belitung Timur">
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="mapel" class="form-label text-sm">Mata Pelajaran</label>
+                            <select id="mapel" class="form-select text-sm" required>
+                                <option value="" disabled selected>Pilih Mata Pelajaran</option>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label for="cp" class="form-label text-sm">Capaian Pembelajaran (CP)</label>
+                            <select id="cp" class="form-select text-sm" disabled required>
+                                <option>Pilih Mata Pelajaran terlebih dahulu</option>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label for="materi" class="form-label text-sm">Materi Spesifik (Opsional)</label>
+                            <input type="text" id="materi" class="form-input text-sm" placeholder="Jika dikosongkan, AI yang menentukan materi">
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="alur-pembelajaran" class="form-label text-sm">Alur Pembelajaran (Opsional)</label>
+                            <textarea id="alur-pembelajaran" class="form-textarea text-sm" rows="4" placeholder="Contoh: Guru menayangkan video singkat tentang cara kerja mesin pencari. Siswa mengamati dan mencatat langkahnya. Guru memberi contoh pencarian efektif. Siswa berlatih menggunakan kata kunci yang tepat. Hasil pencarian didiskusikan bersama untuk menilai relevansi dan keakuratan informasi."></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="alokasi-waktu" class="form-label text-sm">Alokasi Waktu (JP)</label>
+                            <input type="number" id="alokasi-waktu" class="form-input text-sm" placeholder="Contoh: 2" required min="1" value="2">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="text-2xl font-semibold mb-4 text-white border-b border-gray-600 pb-2">2. Metodologi Pembelajaran</h2>
+                        <div>
+                            <label for="model-utama" class="form-label text-sm">Aktivitas Pembelajaran Utama</label>
+                            <select id="model-utama" class="form-select text-sm" required></select>
+                        </div>
+                        <div class="mt-4">
+                            <label class="form-label text-sm">Kombinasi (Maks. 1 Pilihan)</label>
+                            <div id="model-kombinasi" class="grid grid-cols-1 gap-3"></div>
+                        </div>
+                         <div class="mt-4">
+                            <label class="form-label text-sm">Profil Lulusan (Maks. 2 Pilihan)</label>
+                            <div id="profil-lulusan" class="grid grid-cols-1 gap-3"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                         <h2 class="text-2xl font-semibold mb-4 text-white border-b border-gray-600 pb-2">3. Komponen Output</h2>
+                         <div id="komponen-lampiran" class="grid grid-cols-1 gap-3"></div>
+                    </div>
+                    
+                    <div class="form-section hidden" id="api-key-section">
+                        <h2 class="text-2xl font-semibold mb-4 text-white border-b border-gray-600 pb-2">4. Konfigurasi Kunci API</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="api-key-select" class="form-label text-sm">Pilih Kunci API</label>
+                                <select id="api-key-select" class="form-select text-sm">
+                                    <option value="AIzaSyAM87oTXpnj01t839GhGIShUlSFCK0CbPI">Kunci API 1 (Default)</option>
+                                    <option value="AIzaSyCdHnZMK65iByypoeWfdsCbQsG7lYXi1LE">Kunci API 2</option>
+                                    <option value="custom">Gunakan Kunci Kustom...</option>
+                                </select>
+                            </div>
+                            <div id="custom-api-key-container" class="hidden">
+                                <label for="api-key-custom" class="form-label text-sm">Kunci API Kustom</label>
+                                <input type="password" id="api-key-custom" class="form-input text-sm" placeholder="Masukkan Kunci API kustom Anda">
+                                <p class="text-xs text-gray-400 mt-2">
+                                    Kunci API Anda akan disimpan di browser ini. 
+                                    <br>
+                                    **Cara Mendapatkan Kunci API:**
+                                    <br>
+                                    1. Buka <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-400 hover:underline">Google AI Studio</a>.
+                                    <br>
+                                    2. Di sana, klik tombol **"Create API Key in new project"** (atau "Buat kunci API").
+                                    <br>
+                                    3. Salin (Copy) kunci yang dihasilkan dan tempel (Paste) ke kolom di atas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button type="submit" id="generate-btn" class="btn-primary flex-grow">
+                            <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span id="btn-text">Generate Modul Ajar</span>
+                        </button>
+                        <button type="button" id="toggle-api-btn" class="btn-secondary flex-shrink-0 px-4" title="Tampilkan/Sembunyikan Konfigurasi Kunci API">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="m21.73 18.27-1.42 1.42-2.83-2.83-1.42 1.42a2 2 0 0 1-2.83 0L5.73 10.8a2 2 0 0 1 0-2.83l6.46-6.46a2 2 0 0 1 2.83 0l5.7 5.7a2 2 0 0 1 0 2.83Z"></path><path d="m14 11-1 1"></path></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex flex-col">
+                 <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 flex-grow h-[50vh] lg:h-[80vh] flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-semibold text-white">Hasil Modul Ajar & Analisis</h2>
+                        <div class="flex gap-2">
+                             <button id="clear-output-btn" class="btn-secondary">Hapus Output</button>
+                             <button id="export-btn" class="btn-secondary hidden">Download</button>
+                        </div>
+                    </div>
+                    <div id="output-container" class="prose prose-invert max-w-none bg-gray-900 rounded-md p-4 overflow-auto flex-grow text-gray-300">
+                        <div class="flex items-center justify-center h-full" id="initial-message">
+                            <p class="text-gray-500">Hasil Modul Ajar, Ide Materi, atau Saran Tujuan Pembelajaran akan ditampilkan di sini.</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // --- DATA KONFIGURASI ---
+        const data = {
+            mapelOrder: [
+                "Bahasa Indonesia",
+                "Matematika",
+                "IPA",
+                "IPS",
+                "PPKn",
+                "Pendidikan Agama Islam",
+                "Bahasa Inggris",
+                "Informatika",
+                "PJOK",
+                "Seni Budaya"
+            ],
+            mapel: {
+                "Seni Budaya": [
+                    "Memahami unsur rupa dan prinsip desain di lingkungan sekitar dan pada karya seni rupa",
+                    "Memahami gaya seni rupa yang digunakan pada sebuah karya",
+                    "Menyimpulkan pemahaman unsur rupa, prinsip desain, dan gaya seni rupa",
+                    "Mempresentasikan pemahaman dengan membandingkan beberapa unsur rupa dan prinsip desain menggunakan kosa kata seni rupa yang tepat",
+                    "Mengembangkan pengalaman, keterampilan, dan pengetahuan dari seni rupa atau mata pelajaran lain sebagai sumber gagasan berkarya",
+                    "Menerapkan variasi alat, bahan, dan teknik secara terampil untuk menciptakan karya",
+                    "Membuat karya rupa berdasarkan gagasan sendiri atau inspirasi dari luar diri",
+                    "Menggabungkan pengetahuan unsur rupa, prinsip desain, gaya, atau teknik dalam karyanya",
+                    "Menerapkan prinsip-prinsip desain dalam menyusun unsur rupa pada karya",
+                    "Memberikan respons terhadap kejadian sehari-hari, isu sosial, perasaan, minat, dan pengalaman melalui karya seni rupa yang berdampak positif bagi diri dan lingkungan"
+                ],
+                "PJOK": [
+                    "Menganalisis dan menghaluskan keterampilan gerak serta mentransfernya ke berbagai situasi gerak",
+                    "Menyusun dan memeragakan strategi gerak untuk meningkatkan capaian keterampilan gerak",
+                    "Memeragakan dan menjelaskan konsep gerak yang dapat meningkatkan capaian keterampilan gerak",
+                    "Mengemukakan dan membuktikan strategi gerak paling efektif dalam situasi gerak berbeda",
+                    "Menginvestigasi modifikasi peralatan, peraturan, dan sistem skoring untuk mendukung fair play dan partisipasi inklusif",
+                    "Menerapkan kepemimpinan, kolaborasi, dan pengambilan keputusan kelompok dalam aktivitas jasmani",
+                    "Berpartisipasi dalam aktivitas jasmani untuk menggambarkan reaksi tubuh terhadap berbagai tingkat intensitas",
+                    "Berpartisipasi dalam aktivitas jasmani menyehatkan di luar ruang atau lingkungan alam dan menggambarkan sumber daya yang dibutuhkan",
+                    "Menjelaskan dan mengusulkan strategi peningkatan aktivitas jasmani dan pencegahan perilaku sedenter",
+                    "Menganalisis risiko kesehatan akibat gaya hidup dan merancang tindakan pencegahan melalui aktivitas jasmani sesuai rekomendasi otoritas kesehatan",
+                    "Merancang pilihan makanan sehat berdasarkan kandungan gizi dan kebutuhan aktivitas jasmani",
+                    "Mempraktikkan prosedur menangani cedera berisiko terhadap kesehatan dan keselamatan berdasarkan prinsip pertolongan pertama"
+                ],
+                "IPS": [
+                    "Memahami keberagaman kondisi geografis Indonesia",
+                    "Memahami konektivitas antarruang untuk pemanfaatan dan pelestarian potensi sumber daya alam",
+                    "Memahami faktor aktivitas manusia terhadap perubahan iklim dan potensi bencana alam",
+                    "Memahami dampak perubahan iklim terhadap kehidupan ekonomi, sosial, dan budaya masyarakat",
+                    "Merefleksikan pola adaptasi terhadap perubahan iklim",
+                    "Merefleksikan upaya mitigasi bencana untuk mendukung SDGs di konteks lokal, regional, dan global",
+                    "Memahami upaya masyarakat memenuhi kebutuhan melalui kegiatan ekonomi, harga, pasar, lembaga keuangan, dan perdagangan internasional",
+                    "Memahami peran masyarakat dan negara dalam mendorong pertumbuhan ekonomi di era digital",
+                    "Memahami potensi Indonesia menjadi negara maju",
+                    "Memahami proses interaksi sosial, lembaga sosial, dan dinamika sosial",
+                    "Memahami perubahan sistem sosial budaya dalam masyarakat majemuk untuk mewujudkan integrasi bangsa dengan prinsip kebinekaan",
+                    "Mengenali konsep dasar ilmu sejarah: manusia, ruang, waktu, kronologi, dan perubahan",
+                    "Menganalisis keterhubungan masa lampau, kini, dan masa depan melalui sejarah lokal dan toponimi wilayah",
+                    "Mempelajari berbagai peristiwa penting di lingkup lokal, nasional, dan global terkait asal-usul nenek moyang bangsa Indonesia dan jalur rempah nusantara"
+                ],
+                "IPA": [
+                    "Memahami proses identifikasi makhluk hidup sesuai karakteristiknya",
+                    "Memahami sifat dan karakteristik zat",
+                    "Memahami perubahan fisika dan kimia",
+                    "Memahami pemisahan campuran sederhana",
+                    "Memahami sistem organisasi kehidupan, fungsi, dan kelainan atau gangguan pada sistem organ",
+                    "Memahami interaksi antar makhluk hidup dan lingkungannya",
+                    "Merancang upaya pencegahan dan penanganan perubahan iklim",
+                    "Memahami pewarisan sifat dan penerapan bioteknologi di lingkungan sekitar",
+                    "Melakukan pengukuran aspek fisis yang ditemui",
+                    "Memanfaatkan ragam gerak, gaya, tekanan, dan pesawat sederhana",
+                    "Memahami hubungan konsep usaha dan energi",
+                    "Memahami pengaruh kalor dan perpindahannya terhadap perubahan suhu",
+                    "Memahami gelombang dan pemanfaatannya dalam kehidupan sehari-hari",
+                    "Memahami gejala kemagnetan dan kelistrikan",
+                    "Menyelesaikan tantangan kehidupan sehari-hari dengan sumber energi listrik ramah lingkungan",
+                    "Mengelaborasikan posisi relatif bumi-bulan-matahari untuk menjelaskan fenema alam dan perubahan iklim",
+                    "Memahami sifat fisika dan kimia tanah",
+                    "Menganalisis hubungan tanah dengan organisme, perubahan iklim, dan pelestarian lingkungan",
+                    "Memiliki keteguhan mengambil keputusan untuk menghindari zat aditif dan adiktif berbahaya bagi diri dan lingkungan"
+                ],
+                "Pendidikan Agama Islam": [
+                    "Memahami ayat dan hadis tentang iman",
+                    "Memahami ayat dan hadis tentang takwa",
+                    "Memahami ayat dan hadis tentang toleransi",
+                    "Memahami ayat dan hadis tentang cinta tanah air",
+                    "Memahami ayat dan hadis tentang semangat keilmuan",
+                    "Memahami ayat dan hadis tentang kesabaran menghadapi musibah dan ujian",
+                    "Memahami rukun iman",
+                    "Memahami hal-hal yang meneguhkan iman",
+                    "Memahami nilai ikhlas",
+                    "Memahami bersyukur kepada Allah Swt.",
+                    "Memahami cinta Rasul",
+                    "Memahami husnuzan",
+                    "Memahami kasih sayang kepada sesama",
+                    "Memahami kasih sayang kepada lingkungan",
+                    "Memahami ketentuan sujud",
+                    "Memahami ketentuan salat",
+                    "Memahami kewajiban terhadap jenazah",
+                    "Memahami haji dan umrah",
+                    "Memahami penyembelihan hewan, kurban, dan akikah",
+                    "Memahami rukhsah dalam mazhab fikih",
+                    "Memahami peradaban Bani Umayyah",
+                    "Memahami peradaban Abbasiyyah",
+                    "Memahami peradaban Fatimiyah",
+                    "Memahami peradaban Turki Usmani",
+                    "Memahami peradaban Syafawi",
+                    "Memahami peradaban Mughal"
+                ],
+                "PPKn": [
+                    "Memahami sejarah kelahiran Pancasila.",
+                    "Memahami kedudukan Pancasila sebagai dasar negara, pandangan hidup bangsa, dan ideologi negara.",
+                    "Menerapkan nilai-nilai Pancasila dalam kehidupan sehari-hari.",
+                    "Mengidentifikasi hubungan Pancasila dengan UUD 1945, Bhinneka Tunggal Ika, dan NKRI.",
+                    "Menerapkan norma dan aturan dalam kehidupan bernegara.",
+                    "Menerapkan hak dan kewajiban sebagai warga negara.",
+                    "Memahami sejarah, fungsi, dan kedudukan UUD 1945 sebagai norma dan aturan bernegara.",
+                    "Memahami tata urutan peraturan perundang-undangan Indonesia.",
+                    "Mempraktikkan kemerdekaan berpendapat dalam era keterbukaan informasi.",
+                    "Mengidentifikasi keberagaman suku, agama, ras, dan antargolongan dalam bingkai Bhinneka Tunggal Ika.",
+                    "Menerima keberagaman dan perubahan budaya di tingkat lokal, nasional, dan global.",
+                    "Memahami pentingnya pelestarian tradisi, kearifan lokal, dan budaya untuk identitas pribadi, sosial, dan bangsa.",
+                    "Menunjukkan tanggung jawab dan berperan aktif melestarikan tradisi, kearifan lokal, dan budaya dalam masyarakat global.",
+                    "Mengidentifikasi wilayah NKRI dalam konteks wawasan Nusantara.",
+                    "Berpartisipasi aktif menjaga keutuhan wilayah NKRI."
+                ],
+                "Bahasa Inggris": [
+                    "Menggunakan bahasa Inggris untuk berinteraksi dan bertukar ide, pengalaman, minat, pendapat, dan pandangan dalam konteks formal dan informal yang familiar.",
+                    "Memahami ide utama dan detil relevan dari diskusi atau presentasi tentang topik yang dikenal melalui pengulangan dan penggantian kosakata.",
+                    "Terlibat aktif dalam diskusi dengan memberi pendapat, membuat perbandingan, dan menyatakan preferensi.",
+                    "Menjelaskan dan memperjelas jawaban menggunakan struktur kalimat sederhana dan bentuk kata kerja dasar.",
+                    "Membaca dan merespons teks familiar dan tidak familiar secara mandiri yang memiliki struktur dan kosakata yang telah dipelajari.",
+                    "Menemukan dan mengevaluasi ide utama serta informasi spesifik dari berbagai jenis teks cetak atau digital, termasuk visual, multimodal, dan interaktif.",
+                    "Mengidentifikasi tujuan teks dan mulai melakukan inferensi untuk memahami informasi tersirat.",
+                    "Mengomunikasikan ide dan pengalaman melalui paragraf sederhana dan terstruktur dengan penggunaan kosakata spesifik dan struktur kalimat sederhana.",
+                    "Merencanakan, menulis, dan menyajikan teks informasi, imajinasi, dan persuasi menggunakan kalimat sederhana dan majemuk.",
+                    "Menyusun argumen dan menjelaskan atau mempertahankan pendapat dengan informasi dan detil dasar.",
+                    "Menggunakan tense masa kini, masa depan, dan lampau, serta penanda waktu, keterangan frekuensi, dan konjungsi umum untuk menghubungkan ide.",
+                    "Menuliskan kata baru berdasarkan hubungan huruf-bunyi bahasa Inggris serta menggunakan tanda baca dan huruf kapital dengan konsisten."
+                ],
+                "Bahasa Indonesia": [
+                    "Menganalisis dan memaknai informasi dari berbagai tipe teks audio visual dan aural dalam bentuk monolog, dialog, dan gelar wicara.",
+                    "Mengeksplorasi dan mengevaluasi informasi dari topik aktual yang didengar.",
+                    "Memahami informasi dari teks visual dan audiovisual untuk menemukan makna tersurat dan tersirat.",
+                    "Menginterpretasikan informasi untuk mengungkapkan kepedulian atau pendapat pro dan kontra.",
+                    "Menggunakan sumber informasi lain untuk menilai akurasi dan kualitas data.",
+                    "Membandingkan informasi pada berbagai teks.",
+                    "Mengeksplorasi dan mengevaluasi berbagai topik aktual yang dibaca dan dipirsa.",
+                    "Menyampaikan gagasan secara lisan untuk mengajukan usul, memecahkan masalah, dan memberi solusi.",
+                    "Menggunakan kosakata denotatif, konnotatif, dan kiasan saat berbicara dan menyajikan gagasan.",
+                    "Menggunakan ungkapan sesuai norma kesopanan dalam komunikasi.",
+                    "Berdiskusi secara aktif, kontributif, efektif, dan santun.",
+                    "Menuturkan dan menyajikan ungkapan kepedulian dalam teks nonfiksi dan fiksi multimodal yang netral, ramah gender, dan ramah keberagaman.",
+                    "Mengungkapkan dan mempresentasikan berbagai topik aktual secara kritis.",
+                    "Menulis gagasan secara logis, kritis, dan kreatif untuk berbagai tujuan.",
+                    "Menuliskan hasil penelitian sederhana dengan kutipan sumber secara etis.",
+                    "Menyampaikan kepedulian dan pendapat pro atau kontra secara etis dalam teks multimodal.",
+                    "Menggunakan dan mengembangkan kosakata denotatif, konnotatif, dan kiasan untuk menulis.",
+                    "Menulis berdasarkan fakta, pengalaman, dan imajinasi dalam bentuk karya sastra dengan kosakata kreatif."
+                ],
+                "Informatika": [
+                    "Memahami konsep himpunan data terstruktur dalam kehidupan sehari-hari.",
+                    "Memahami konsep lembar kerja pengolah data.",
+                    "Menerapkan berpikir komputasional untuk menyelesaikan persoalan dengan data berstruktur sederhana dan volume kecil.",
+                    "Menunjukkan disposisi berpikir komputasional di berbagai bidang.",
+                    "Menuliskan instruksi dalam format pseudocode dengan kosakata atau simbol terbatas.",
+                    "Memahami cara kerja dan penggunaan mesin pencari internet.",
+                    "Menilai kredibilitas sumber informasi digital dan mengenal ekosistem media pers digital.",
+                    "Membedakan fakta dan opini.",
+                    "Memanfaatkan teknologi digital untuk membuat laporan, presentasi, analisis, dan interpretasi data.",
+                    "Mendeskripsikan komponen, fungsi, dan cara kerja komputer.",
+                    "Memahami konsep dan penerapan konektivitas jaringan lokal dan internet kabel maupun nirkabel.",
+                    "Mengetahui jenis ruang publik virtual.",
+                    "Memanfaatkan media digital untuk produksi dan diseminasi konten.",
+                    "Menjaga rekam jejak digital.",
+                    "Mengamalkan toleransi dan empati di dunia digital.",
+                    "Memahami dampak perundungan digital.",
+                    "Membuat kata sandi yang aman.",
+                    "Melindungi perangkat dari berbagai jenis malware.",
+                    "Memilah informasi privat dan publik.",
+                    "Melindungi data pribadi dan identitas digital.",
+                    "Menunjukkan kesadaran penuh saat beraktivitas di dunia digital."
+                ],
+                "Matematika": [
+                    "Membaca, menulis, dan membandingkan berbagai jenis bilangan.",
+                    "Melakukan operasi aritmetika pada bilangan real dan membuat estimasi untuk menyelesaikan masalah.",
+                    "Menggunakan faktorisasi prima dan konsep rasio untuk pemecahan masalah.",
+                    "Mengenali, memrediksi, dan menggeneralisasi pola pada susunan benda dan bilangan.",
+                    "Menyatakan situasi ke dalam bentuk aljabar.",
+                    "Menggunakan sifat operasi untuk menghasilkan bentuk aljabar ekuivalen.",
+                    "Memahami relasi dan fungsi serta menyajikannya dalam berbagai bentuk.",
+                    "Membedakan fungsi linear dan nonlinear secara grafik.",
+                    "Menyelesaikan persamaan dan pertidaksamaan linear satu variabel.",
+                    "Menyajikan dan menyelesaikan masalah dengan relasi, fungsi, dan persamaan linear.",
+                    "Menyelesaikan sistem persamaan linear dua variabel dengan beberapa metode.",
+                    "Menentukan luas lingkaran dan menyelesaikan masalah terkait.",
+                    "Menentukan luas permukaan dan volume prisma, tabung, bola, limas, dan kerucut.",
+                    "Menjelaskan pengaruh perubahan proporsional bangun terhadap panjang, sudut, luas, dan volume.",
+                    "Membuat jaring-jaring dan bangun ruang.",
+                    "Menggunakan hubungan antar sudut pada dua garis berpotongan dan sejajar untuk menyelesaikan masalah.",
+                    "Menjelaskan sifat kekongruenan dan kesebangunan pada segitiga dan segiempat untuk menyelesaikan masalah.",
+                    "Menunjukkan dan menggunakan Teorema Pythagoras, termasuk menghitung jarak pada bidang koordinat.",
+                    "Melakukan transformasi tunggal pada titik, garis, dan bangun datar di bidang koordinat.",
+                    "Merumuskan pertanyaan, mengumpulkan, menyajikan, dan menganalisis data.",
+                    "Menggunakan diagram batang dan lingkaran untuk interpretasi data.",
+                    "Mengambil sampel yang mewakili populasi.",
+                    "Menentukan dan menafsirkan mean, median, modus, dan range untuk membandingkan atau memprediksi.",
+                    "Menyelidiki perubahan ukuran pemusatan jika data berubah.",
+                    "Menjelaskan dan menggunakan peluang serta frekuensi relatif untuk menentukan frekuensi harapan pada percobaan sederhana."
+                ]
+            },
+            modelPembelajaran: [
+                "Pembelajaran Berbasis Masalah (Problem-Based Learning)",
+                "Pembelajaran Berbasis Projek (Project-Based Learning)",
+                "Pembelajaran Mendalam (Memahami, Mengaplikasi, Merefleksi)",
+                "Digitalisasi Pembelajaran",
+                "Adiwiyata (Pembelajaran Berwawasan Lingkungan)",
+                "Gamifikasi",
+            ],
+            profilLulusan: [
+                "Keimanan dan Ketakwaan",
+                "Kewargaan",
+                "Penalaran Kritis",
+                "Kreativitas",
+                "Kolaborasi",
+                "Kemandirian",
+                "Kesehatan (Fisik dan Mental)",
+                "Komunikasi"
+            ],
+            komponen: [
+                "Modul Ajar Inti (Informasi Umum, dan kegiatan inti)",
+                "Alur Presentasi (Slide per slide)",
+                "Lembar Kerja Peserta Didik (LKPD)",
+                "Instrumen Asesmen Lengkap (Rubrik & Kunci Jawaban)"
+            ]
+        };
+
+        // --- INISIALISASI UI ---
+        const mapelSelect = document.getElementById('mapel');
+        const cpSelect = document.getElementById('cp');
+        const materiInput = document.getElementById('materi');
+
+        const modelUtamaSelect = document.getElementById('model-utama');
+        const modelKombinasiContainer = document.getElementById('model-kombinasi');
+        const profilLulusanContainer = document.getElementById('profil-lulusan');
+        const komponenContainer = document.getElementById('komponen-lampiran');
+        const form = document.getElementById('generation-form');
+        const generateBtn = document.getElementById('generate-btn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('spinner');
+        const outputContainer = document.getElementById('output-container');
+        const exportBtn = document.getElementById('export-btn');
+        const clearOutputBtn = document.getElementById('clear-output-btn');
+        const toggleApiBtn = document.getElementById('toggle-api-btn');
+        const apiKeySection = document.getElementById('api-key-section');
+        const apiKeySelect = document.getElementById('api-key-select');
+        const customApiKeyContainer = document.getElementById('custom-api-key-container');
+        const customApiKeyInput = document.getElementById('api-key-custom');
+        const alamatSekolahInput = document.getElementById('alamat-sekolah'); 
+        const alurPembelajaranInput = document.getElementById('alur-pembelajaran');
+
+        const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent';
+        const JSON_SCHEMA = {
+            type: "ARRAY",
+            items: { type: "STRING" }
+        };
+
+        function populateDropdown(selectElement, options) {
+            options.forEach(optionText => {
+                const option = document.createElement('option');
+                option.value = optionText;
+                option.textContent = optionText;
+                selectElement.appendChild(option);
+            });
+        }
+        
+        function populateCheckboxes(container, options, name) {
+            options.forEach((optionText, index) => {
+                const id = `${name}-${index}`;
+                const label = document.createElement('label');
+                label.htmlFor = id;
+                label.className = 'form-checkbox-label text-sm';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = id;
+                checkbox.name = name;
+                checkbox.value = optionText;
+                checkbox.className = 'form-checkbox';
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(optionText));
+                container.appendChild(label);
+            });
+        }
+        
+        function limitCheckboxes(containerId, max) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.addEventListener('change', (event) => {
+                if (event.target.type === 'checkbox') {
+                    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+                    if (checkedBoxes.length > max) {
+                        event.target.checked = false;
+                        console.warn(`Hanya bisa memilih maksimal ${max} opsi untuk bagian ini.`);
+                    }
+                }
+            });
+        }
+
+        // Isi dropdown Mapel dengan urutan yang benar
+        populateDropdown(mapelSelect, data.mapelOrder);
+
+        // Isi dropdown Model Pembelajaran Utama & Kombinasi
+        populateDropdown(modelUtamaSelect, data.modelPembelajaran);
+        const modelKombinasiOptions = data.modelPembelajaran.slice();
+        populateCheckboxes(modelKombinasiContainer, modelKombinasiOptions, "model-kombinasi");
+        
+        // Isi checkbox Profil Lulusan
+        populateCheckboxes(profilLulusanContainer, data.profilLulusan, "profil");
+
+        // Isi checkbox Komponen Lampiran
+        populateCheckboxes(komponenContainer, data.komponen, "komponen");
+        
+        // Terapkan batasan pemilihan
+        limitCheckboxes('profil-lulusan', 2);
+        limitCheckboxes('model-kombinasi', 1);
+
+        // Sinkronisasi awal untuk menonaktifkan opsi kombinasi yang sama
+        syncKombinasiOptions();
+
+        // --- FUNGSI PENYIMPANAN LOCAL ---
+        const fieldsToSave = ['nama-guru', 'nip-guru', 'nama-kepsek', 'nip-kepsek', 'nama-sekolah', 'alamat-sekolah', 'api-key-select', 'api-key-custom', 'alur-pembelajaran'];
+        
+        function saveFormToLocalStorage() {
+            const formData = {};
+            fieldsToSave.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) formData[id] = element.value;
+            });
+            localStorage.setItem('modulAjarFormData', JSON.stringify(formData));
+        }
+
+        function loadFormFromLocalStorage() {
+            const savedDataJSON = localStorage.getItem('modulAjarFormData');
+            if (savedDataJSON) {
+                const savedData = JSON.parse(savedDataJSON);
+                fieldsToSave.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && savedData[id]) {
+                        element.value = savedData[id];
+                    }
+                });
+                if (apiKeySelect.value === 'custom') {
+                    customApiKeyContainer.classList.remove('hidden');
+                } else {
+                    customApiKeyContainer.classList.add('hidden');
+                }
+            } else {
+                apiKeySelect.value = 'AIzaSyAM87oTXpnj01t839GhGIShUlSFCK0CbPI';
+                if (alamatSekolahInput) {
+                    alamatSekolahInput.value = 'Belitung Timur';
+                }
+            }
+        }
+        
+        loadFormFromLocalStorage();
+        
+
+        // --- EVENT LISTENERS ---
+        apiKeySelect.addEventListener('change', () => {
+            if (apiKeySelect.value === 'custom') {
+                customApiKeyContainer.classList.remove('hidden');
+            } else {
+                customApiKeyContainer.classList.add('hidden');
+            }
+        });
+
+        toggleApiBtn.addEventListener('click', () => {
+            apiKeySection.classList.toggle('hidden');
+        });
+
+        fieldsToSave.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', saveFormToLocalStorage);
+            }
+        });
+
+        modelUtamaSelect.addEventListener('change', syncKombinasiOptions);
+
+        mapelSelect.addEventListener('change', () => {
+            const selectedMapel = mapelSelect.value;
+            cpSelect.innerHTML = '<option value="" disabled selected>Pilih Capaian Pembelajaran</option>';
+            if (selectedMapel && data.mapel[selectedMapel]) {
+                populateDropdown(cpSelect, data.mapel[selectedMapel]);
+                cpSelect.disabled = false;
+            } else {
+                cpSelect.disabled = true;
+            }
+        });
+        
+        clearOutputBtn.addEventListener('click', () => {
+             outputContainer.innerHTML = `<div class="flex items-center justify-center h-full" id="initial-message"><p class="text-gray-500">Hasil Modul Ajar, Ide Materi, atau Saran Tujuan Pembelajaran akan ditampilkan di sini.</p></div>`;
+             exportBtn.classList.add('hidden');
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            let apiKey = apiKeySelect.value;
+            if (apiKey === 'custom') {
+                apiKey = customApiKeyInput.value;
+            }
+
+            if (!apiKey) {
+                alert('Kunci API Gemini tidak boleh kosong. Harap isi di bagian Konfigurasi.');
+                return;
+            }
+            
+            const checkedProfil = getCheckedValues('input[name="profil"]:checked');
+            if (checkedProfil.length === 0) {
+                alert('Harap pilih minimal satu Profil Lulusan.');
+                return;
+            }
+            
+            const checkedKomponen = getCheckedValues('input[name="komponen"]:checked');
+            if (checkedKomponen.length === 0) {
+                alert('Harap pilih minimal satu Komponen Output.');
+                return;
+            }
+
+            setLoading(true);
+            outputContainer.innerHTML = `<div class="flex items-center justify-center h-full"><p class="text-gray-500">AI sedang merancang Modul Ajar, mohon tunggu...</p></div>`;
+            exportBtn.classList.add('hidden');
+
+            const prompt = constructPrompt();
+
+            try {
+                const result = await callGeminiAPI(prompt, apiKey, false);
+                outputContainer.innerHTML = result;
+                exportBtn.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                displayError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const htmlContent = outputContainer.innerHTML;
+            const blob = new Blob([`
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Modul Ajar</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 2em; color: #333; }
+                        h1, h2, h3 { color: #1f2937; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        ul, ol { padding-left: 20px; }
+                        strong { font-weight: 700; color: #111; }
+                        table.signature-block, table.signature-block td {
+                            border: none;
+                            padding: 0.25rem 0.5rem;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body>${htmlContent}</body>
+                </html>
+            `], { type: 'text/html' });
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const mapelValue = mapelSelect.value.toLowerCase().replace(/\s+/g, '-');
+            a.href = url;
+            a.download = `modul-ajar-${mapelValue}-${new Date().toISOString().substring(0, 10)}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        function getFormattedDate() {
+            const today = new Date();
+            const day = today.getDate();
+            const year = today.getFullYear();
+            const monthNames = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            const month = monthNames[today.getMonth()];
+            return `${day} ${month} ${year}`;
+        }
+
+        function syncKombinasiOptions() {
+            const selectedUtama = modelUtamaSelect.value;
+            const kombinasiCheckboxes = document.querySelectorAll('input[name="model-kombinasi"]');
+
+            kombinasiCheckboxes.forEach(checkbox => {
+                const label = checkbox.parentElement;
+                if (checkbox.value === selectedUtama) {
+                    checkbox.disabled = true;
+                    checkbox.checked = false;
+                    label.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    checkbox.disabled = false;
+                    label.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                generateBtn.disabled = true;
+                spinner.classList.remove('hidden');
+                btnText.textContent = 'Generating...';
+            } else {
+                generateBtn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Generate Modul Ajar';
+            }
+        }
+        
+        function getCheckedValues(selector) {
+            return Array.from(document.querySelectorAll(selector)).map(cb => cb.value);
+        }
+
+        function displayError(message) {
+             outputContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center p-4">
+                    <h3 class="font-semibold text-lg text-red-400">Terjadi Kesalahan</h3>
+                    <p class="text-sm text-gray-300 mt-2"><strong>Error:</strong> ${message}</p>
+                    <p class="text-xs text-gray-500 mt-4 text-left">
+                        <strong>Tips Troubleshooting:</strong><br>
+                        1. Pastikan Kunci API Gemini Anda valid dan memiliki kuota.<br>
+                        2. Coba lagi atau ubah sedikit input Anda.<br>
+                        3. Periksa koneksi internet Anda.
+                    </p>
+                </div>`;
+        }
+        
+        function constructPrompt() {
+            const mapel = mapelSelect.value;
+            const cp = cpSelect.value;
+            
+            const alurPembelajaran = alurPembelajaranInput.value.trim() || 'Akan dibuat otomatis oleh AI berdasarkan materi dan model pembelajaran yang dipilih.';
+            
+            let materi = document.getElementById('materi').value.trim();
+            if (materi === '') {
+                materi = 'Akan ditentukan oleh AI berdasarkan Capaian Pembelajaran yang dipilih';
+            }
+            
+            const alokasiWaktu = document.getElementById('alokasi-waktu').value;
+            const modelUtama = modelUtamaSelect.value;
+            const kombinasiModel = getCheckedValues('input[name="model-kombinasi"]:checked').join(', ') || 'Tidak ada';
+            const profil = getCheckedValues('input[name="profil"]:checked').join(', ');
+            
+            let komponen = getCheckedValues('input[name="komponen"]:checked');
+            
+            const CORE_MODULE_VALUE = "Modul Ajar Inti (Informasi Umum, dan kegiatan inti)";
+            const isCoreSelected = komponen.includes(CORE_MODULE_VALUE);
+            
+            const lampiranKomponen = komponen.filter(k => k !== CORE_MODULE_VALUE);
+            const lampiranPromptList = lampiranKomponen.map(k => `- ${k}`).join('\n');
+            
+            const isAnyLampiranSelected = lampiranKomponen.length > 0;
+
+            const namaGuru = document.getElementById('nama-guru').value.trim();
+            const nipGuru = document.getElementById('nip-guru').value.trim();
+            const namaKepsek = document.getElementById('nama-kepsek').value.trim();
+            const nipKepsek = document.getElementById('nip-kepsek').value.trim();
+            const namaSekolah = document.getElementById('nama-sekolah').value.trim();
+            const alamatSekolah = document.getElementById('alamat-sekolah').value.trim(); 
+
+            const todayDate = getFormattedDate();
+            
+            let infoUmumTambahan = '';
+            
+            const guruDisplay = namaGuru + (nipGuru ? ` / NIP: ${nipGuru}` : '');
+            infoUmumTambahan += `                   - Nama Guru & NIP: ${guruDisplay || '...................'}\n`;
+
+            const kepsekDisplay = namaKepsek + (nipKepsek ? ` / NIP: ${nipKepsek}` : '');
+            if (kepsekDisplay) infoUmumTambahan += `                   - Nama Kepala Sekolah & NIP: ${kepsekDisplay}\n`;
+            
+            infoUmumTambahan += `                   - Nama Sekolah: ${namaSekolah || '...................'}\n`;
+            
+            let coreModuleInstruction = '';
+            let signatureInstruction = '';
+
+            if (isCoreSelected) {
+                 const mapelUpperCase = mapel.toUpperCase();
+                 coreModuleInstruction = `**A. Modul Ajar Inti LENGKAP**
+- Judul H1: "MODUL AJAR ${mapelUpperCase} FASE D (SMP)". WAJIB ditengahkan.
+- H2 yang WAJIB ada (sesuai urutan): A. Identitas Modul; B. IDENTIFIKASI KESIAPAN PESERTA DIDIK; C. KARAKTERISTIK MATERI PELAJARAN; D. DIMENSI PROFIL LULUSAN PEMBELAJARAN.
+- Setelah H1 DESAIN PEMBELAJARAN, H2 yang WAJIB ada (sesuai urutan): A. CAPAIAN PEMBELAJRAN; B. LINTAS DISIPLIN ILMU; C. TUJUAN PEMBELAJARAN; D. TOPIK PEMBELAJARAN KONTEKSTUAL; E. PEMAHAMAN BERMAKNA; F. PERTANYAAN PEMANTIK; G. KERANGKA PEMBELAJARAN.
+- **H2 Kerangka Pembelajaran WAJIB memiliki empat sub-judul H3:** "Praktik Pedagogis", "Kemitraan Pembelajaran", "Lingkungan Pembelajaran", dan "Pemanfaatan Digital".
+- Judul H1: LANGKAH-LANGKAH PEMBELAJARAN (WAJIB ditengahkan).
+- **TABEL LANGKAH PEMBELAJARAN WAJIB:** Formatnya HANYA tabel HTML tunggal 3 kolom (Tahapan, Kegiatan Pembelajaran, Alokasi Waktu).
+- **KEGIATAN AWAL WAJIB:** Kegiatan Pendahuluan (Awal) WAJIB memiliki minimal satu aktivitas yang secara eksplisit mencerminkan dan diberi label **Mindful Learning**, satu **Meaningful Learning**, dan satu **Joyful Learning**.
+- **INTEGRASI KOMBINASI (PENTING):** Aktivitas Kombinasi ("${kombinasiModel}") harus diintegrasikan secara natural di salah satu sub-langkah Kegiatan Inti dan dijelaskan implementasinya (maks. 2 kalimat) di deskripsi kegiatan tersebut. JANGAN gunakan tag khusus seperti [INTEGRASI KOMBINASI] atau tag berulang.
+- Rancang Kegiatan Inti secara rinci sesuai sintaks/langkah-langkah dari Aktivitas Pembelajaran Utama (${modelUtama}). JANGAN sertakan asesmen di bagian ini.
+- Gunakan input Alur Pembelajaran JIKA ADA.
+`;
+                 const guruFinal = namaGuru || '...................';
+                 const nipGuruFinal = nipGuru || '...................';
+                 const kepsekFinal = namaKepsek || '...................';
+                 const nipKepsekFinal = nipKepsek || '...................';
+                 const kotaTandaTangan = alamatSekolah || '...................'; 
+
+                 signatureInstruction = `
+- Setelah Bagian Terakhir (Tabel Langkah-Langkah Pembelajaran), Anda HARUS menambahkan Bagian Tanda Tangan Pengesahan.
+- Struktur tabel HARUS 2 kolom. Kolom KIRI untuk Kepala Sekolah, Kolom KANAN untuk Guru Mata Pelajaran.
+- Baris 1: Kolom KIRI: "Mengetahui,". Kolom KANAN: "${kotaTandaTangan}, ${todayDate}". (Gunakan p tag, ratakan ke tengah)
+- Baris 2: Kolom KIRI: "Kepala Sekolah". Kolom KANAN: "Guru Mata Pelajaran".
+- Baris 3 & 4 (Baris tanda tangan kosong): Buat jarak sekitar 4 baris (br tag atau padding di CSS jika perlu, tapi lebih aman dengan baris kosong/p).
+- Baris 5: Kolom KIRI: "${kepsekFinal}". Kolom KANAN: "${guruFinal}". JANGAN gunakan label "Nama:".
+- Baris 6: Kolom KIRI: "NIP. ${nipKepsekFinal}". Kolom KANAN: "NIP. ${nipGuruFinal}". JANGAN gunakan label "NIP:", gunakan awalan "NIP." saja.
+- Semua teks dalam sel tabel HARUS diratakan ke TENGAH (align center) menggunakan atribut HTML atau styling.
+`;
+
+            } else if (isAnyLampiranSelected) {
+                 coreModuleInstruction = `
+**A. Modul Ajar Inti DILARANG DIBUAT (OUTPUT HANYA LAMPIRAN)**
+- JANGAN GENERATE Judul H1, Tabel Informasi Umum, atau PENGESAHAN.
+- HILANGKAN semua bagian Modul Ajar Inti (Pemahaman Bermakna, Pertanyaan Pemantik, Kegiatan Pembelajaran, dll.).
+- LANGSUNG mulai output dengan komponen Lampiran PERTAMA yang diminta (e.g., H2 Alur Presentasi).
+`;
+                 signatureInstruction = '';
+            } else {
+                 coreModuleInstruction = `**A. Modul Ajar Inti MINIMALIS PENGESAHAN ONLY (Wajib dibuat sebagai SHELL)**
+- Dimulai dengan Judul H1 dan tabel Informasi Umum.
+- HILANGKAN semua bagian konten kurikulum inti yang rinci.
+- Langsung ke Bagian Tanda Tangan setelah tabel Informasi Umum.
+`;
+            }
+
+            let komponenDetails = `Penjelasan Detail untuk Setiap Komponen yang Diminta (Wajib Dibuat Semua):\n`;
+            
+            komponenDetails += coreModuleInstruction;
+            komponenDetails += signatureInstruction;
+            
+            let counter = 66;
+            for (const lampiran of lampiranKomponen) {
+                 const partId = String.fromCharCode(counter++);
+                 
+                 if (lampiran.includes("Alur Presentasi")) {
+                     komponenDetails += `
+**${partId}. Alur Presentasi (Slide per slide) untuk Guru**
+- Buat bagian ini di bawah judul <h2>Alur Presentasi (Slide per slide)</h2>
+- Ini adalah kerangka urutan presentasi (Poin-poin slide) yang digunakan oleh **GURU** untuk menyampaikan materi.
+- Buat outline poin-poin presentasi dalam format daftar bernomor (ordered list), seolah-olah setiap poin adalah satu slide.
+`;
+                 } else if (lampiran.includes("Lembar Kerja Peserta Didik (LKPD)")) {
+                     komponenDetails += `
+**${partId}. Lembar Kerja Peserta Didik (LKPD)**
+- Buat bagian ini di bawah judul <h2>Lembar Kerja Peserta Didik (LKPD)</h2>
+- Buat lembar kerja siswa yang siap pakai, lengkap dengan instruksi, pertanyaan, atau aktivitas yang relevan dengan materi dan kegiatan pembelajaran.
+`;
+                 } else if (lampiran.includes("Instrumen Asesmen Lengkap")) {
+                      komponenDetails += `
+**${partId}. Instrumen Asesmen Lengkap (Rubrik & Kunci Jawaban)**
+- Buat bagian ini di bawah judul <h2>Instrumen Asesmen Lengkap</h2>
+- Harus mencakup rubrik penilaian (untuk sikap/keterampilan jika relevan), contoh soal (pilihan ganda/esai) beserta kunci jawabannya, DAN self-assessment (penilaian diri) siswa yang berfungsi untuk merefleksi kegiatan dan konten pembelajaran.
+`;
+                 }
+            }
+
+            return `
+                PERINTAH UTAMA:
+                Buatkan sebuah dokumen pendidikan lengkap untuk Kurikulum Merdeka berdasarkan detail di bawah ini. Patuhi semua instruksi dengan sangat ketat.
+
+                ATURAN WAJIB:
+                - Output HARUS merupakan dokumen HTML tunggal, menggunakan tag HTML yang diizinkan (h1, h2, h3, p, ul, ol, li, table, strong, em).
+                - JANGAN PERNAH MENGHENTIKAN GENERASI JIKA MASIH ADA KOMPONEN YANG DIMINTA.
+                - Modul Ajar Inti (Bagian A) HANYA dibuat jika dicentang oleh pengguna. Jika TIDAK dicentang, SEMUA komponen non-lampiran (H1, Tabel Info Umum, Pengesahan) harus DIHILANGKAN.
+                - Gunakan istilah "Profil Lulusan", JANGAN gunakan istilah "Profil Pelajar Pancasila".
+                
+                - URUTAN KONTEN: Selalu ikuti urutan Lampiran yang diminta, dan pastikan Modul Ajar Inti (jika dicentang) selalu di awal.
+
+                DETAIL KONTEN (digunakan untuk konteks Lampiran):
+
+                Bagian 1: Informasi Umum
+${infoUmumTambahan}                   - Jenjang: SMP
+                   - Fase: D
+                   - Mata Pelajaran: ${mapel}
+                   - Materi Pokok: ${materi}
+                   - Alokasi Waktu: ${alokasiWaktu} JP (dengan asumsi 1 JP = 40 menit)
+                   - Profil Lulusan yang dituju: ${profil}
+                   - Capaian Pembelajaran (CP) yang Dipilih: "${cp}"
+                   - Alur Pembelajaran (Input dari Pengguna): ${alurPembelajaran}
+
+                Bagian 2: Rincian Metodologi
+                   - Aktivitas Pembelajaran Utama: ${modelUtama}
+                   - Kombinasi yang Diintegrasikan: ${kombinasiModel}
+                   
+                Bagian 3: Komponen yang Harus Dibuat
+                   - Komponen Modul Inti (Shell/Lengkap/Dilarang) dan Lampiran:
+${coreModuleInstruction.split('\n').map(s => s.trim()).join(' ').replace(/  +/g, ' ')}
+                   - Lampiran yang Diminta (Harus dibuat setelah Modul Inti):
+${lampiranPromptList}
+
+                   ${komponenDetails}
+
+                MULAI GENERATE DOKUMEN SEKARANG.
+            `;
+        }
+
+        async function callGeminiAPI(prompt, apiKey, isJson, schema = null) {
+            const apiUrl = `${BASE_URL}?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    topK: 1,
+                    topP: 1,
+                    maxOutputTokens: 8192,
+                },
+            };
+            
+            if (isJson && schema) {
+                 payload.generationConfig.responseMimeType = "application/json";
+                 payload.generationConfig.responseSchema = schema;
+            }
+
+            const maxRetries = 3;
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        let errorMsg = `Error HTTP: ${response.status} ${response.statusText}`;
+                        try {
+                            const errorData = await response.json();
+                            if (errorData.error && errorData.error.message) {
+                                errorMsg = errorData.error.message;
+                                if (errorData.error.status === 'INVALID_ARGUMENT') {
+                                    errorMsg += ' (Pastikan Kunci API Anda valid dan aktif).';
+                                }
+                            }
+                        } catch (e) {
+                        }
+                        
+                        if (response.status === 429 && attempt < maxRetries - 1) {
+                            const delay = Math.pow(2, attempt) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            continue;
+                        }
+                        throw new Error(errorMsg);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content?.parts[0]?.text) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        let reason = "Respons dari API kosong atau tidak valid.";
+                        if (result.promptFeedback?.blockReason) {
+                            reason = `Konten diblokir oleh AI karena: ${result.promptFeedback.blockReason}. Coba ubah input Anda (misalnya Materi Spesifik) agar lebih netral.`;
+                        }
+                        throw new Error(reason);
+                    }
+                } catch (error) {
+                    if (attempt === maxRetries - 1) {
+                         throw error;
+                    }
+                    const delay = Math.pow(2, attempt) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+    </script>
+</body>
+</html>
