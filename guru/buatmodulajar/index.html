@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Login Aman - Modul Ajar</title>
+    
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body class="auth-initializing"> <div id="app-wrapper"> 
+
+        <div id="auth-container" class="center-content">
+            <h1>Autentikasi Modul Ajar</h1>
+            <div id="login-section" class="form-container">
+                <h2>Masuk</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Kata Sandi" required>
+                <button id="login-button">Login</button>
+                <p id="auth-error" class="error-message"></p>
+            </div>
+        </div>
+
+        <div id="content-container" class="hidden full-content">
+            
+            <header id="dashboard-header" class="dashboard-header"> 
+                <p class="welcome-text">
+                    Selamat Datang, <span id="user-email-display"></span> | 
+                    Web Aplikasi Generator Modul Ajar Buatan 
+                    <a href="https://pakfahri.github.io/profil" target="_blank" class="profile-link">
+                        Fahri. S.Pd. | Guru Informatika | SMP Negeri 2 Manggar
+                    </a>
+                </p>
+                <button id="logout-button" class="small-logout-btn">Logout</button>
+            </header>
+            
+            <iframe id="genaimod-iframe" src="genaimod.html" width="100%" height="90%" frameborder="0"></iframe>
+        </div>
+
+    </div> <script src="app.js" type="module"></script>
+</body>
+</html>
