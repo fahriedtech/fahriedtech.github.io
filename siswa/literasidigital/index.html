@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literasi Digital Fase D</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #000000, #0a0a2a, #8B0000, #1e3a8a);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .topic-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #000000, #1e3a8a, #8B0000);
+        }
+        
+        .topic-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1e3a8a;
+            line-height: 1.4;
+        }
+        
+        .topic-desc {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .read-more {
+            display: inline-block;
+            background: linear-gradient(90deg, #1e3a8a, #8B0000);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+        
+        .read-more:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #1e3a8a, #8B0000);
+            padding: 40px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .highlight h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .highlight p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .footer-link:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .click-animation {
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .highlight {
+                padding: 25px;
+            }
+            
+            .highlight h2 {
+                font-size: 2rem;
+            }
+            
+            .highlight p {
+                font-size: 1rem;
+            }
+            
+            .topic-card {
+                padding: 20px;
+            }
+            
+            .topic-title {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            header {
+                padding: 20px 10px;
+            }
+            
+            .highlight h2 {
+                font-size: 1.7rem;
+            }
+            
+            .topic-title {
+                font-size: 1.2rem;
+            }
+            
+            .footer-link {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Literasi Digital Fase D</h1>
+            <p class="subtitle">Tingkatkan pemahaman dan keterampilan digital Anda untuk menghadapi tantangan era digital dengan percaya diri</p>
+        </header>
+        
+        <div class="highlight">
+            <h2>Masa Depan Dimulai dari Sini</h2>
+            <p>Di era transformasi digital yang pesat, literasi digital bukan lagi pilihan, melainkan kebutuhan. Mari bersama-sama membangun kompetensi digital yang kuat untuk masa depan yang lebih baik.</p>
+        </div>
+        
+        <div class="topics-grid">
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Menjelajahi Dunia Digital</h3>
+                    <p class="topic-desc">Pelajari cara menggunakan berbagai platform digital dengan bijak dan aman.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Waspada Ancaman di Dunia Maya</h3>
+                    <p class="topic-desc">Kenali berbagai jenis malware dan cara melindungi perangkat digital Anda.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Apa itu Jejak Digital?</h3>
+                    <p class="topic-desc">Pahami jejak yang Anda tinggalkan di internet dan cara mengelolanya.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Cek Fakta Sebelum Berbagi</h3>
+                    <p class="topic-desc">Pelajari cara memverifikasi informasi untuk melawan berita palsu.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Mengenal Dunia Maya</h3>
+                    <p class="topic-desc">Jelajahi ekosistem digital dan pahami cara berinteraksi di dalamnya.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Rahasia Jaringan Komputer</h3>
+                    <p class="topic-desc">Temukan cara kerja jaringan komputer dan internet menghubungkan dunia.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Mengenal Bagian-Bagian Komputer</h3>
+                    <p class="topic-desc">Pelajari komponen-komponen komputer dan fungsinya dalam sistem digital.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Ruang Publik di Internet</h3>
+                    <p class="topic-desc">Pahami etika dan norma dalam berinteraksi di ruang digital publik.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Menyambut Revolusi Digital</h3>
+                    <p class="topic-desc">Persiapkan diri menghadapi perubahan dan inovasi di era digital.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Tingkatkan Keamanan Akunmu</h3>
+                    <p class="topic-desc">Tips membuat password yang kuat untuk melindungi akun digital Anda.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Stop Perundungan di Internet</h3>
+                    <p class="topic-desc">Kampanye untuk menghentikan cyberbullying dan ciptakan ruang digital yang positif.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Kembangkan Kreativitasmu</h3>
+                    <p class="topic-desc">Asah kreativitas dalam membuat konten digital yang menarik dan bermanfaat.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+            
+            <div class="topic-card">
+                <div>
+                    <h3 class="topic-title">Keseimbangan Digital dan Kesehatan Mental</h3>
+                    <p class="topic-desc">Temukan keseimbangan antara teknologi dan kesejahteraan mental di era AI.</p>
+                </div>
+                <a href="#" class="read-more">Pelajari</a>
+            </div>
+        </div>
+        
+        <footer>
+            <a href="https://pakfahri.github.io/profile/" target="_blank" class="footer-link" id="profile-link">
+                Fahri, S.Pd. | Guru Informatika | SMP N 2 Manggar
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // Menambahkan efek interaktif sederhana pada kartu
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.topic-card');
+            const profileLink = document.getElementById('profile-link');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Animasi saat link footer diklik
+            profileLink.addEventListener('click', function() {
+                this.classList.add('click-animation');
+                setTimeout(() => {
+                    this.classList.remove('click-animation');
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
