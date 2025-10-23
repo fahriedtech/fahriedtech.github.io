@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Sederhana: Landing Page dengan AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 35px;
+        }
+        
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 400;
+            color: #e2e8f0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .content-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-header {
+            padding: 24px 32px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .section-header:hover {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        }
+        
+        .section-header h2 {
+            color: #1e40af;
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .toggle-icon {
+            font-size: 1.3rem;
+            color: #6a11cb;
+            transition: transform 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .section-content {
+            padding: 0 32px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .section-content.expanded {
+            padding: 32px;
+            max-height: 5000px;
+        }
+        
+        h3 {
+            color: #3730a3;
+            margin: 28px 0 16px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+            color: #475569;
+        }
+        
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 24px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            color: #475569;
+        }
+        
+        .tip-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.05rem;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 30px;
+            align-items: flex-start;
+            gap: 18px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-content h4 {
+            color: #1e40af;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 10px;
+            padding: 24px;
+            margin: 20px 0;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        
+        .tool-card h4 {
+            color: #1e40af;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .tool-card p {
+            color: #64748b;
+            margin-bottom: 0;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #fefce8, #fef3c7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .example h4 {
+            color: #92400e;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid #334155;
+        }
+        
+        .action-section {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            padding: 32px;
+            border-radius: 12px;
+            margin: 35px 0;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .action-section h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .action-button {
+            display: inline-block;
+            background-color: white;
+            color: #ec4899;
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.95rem;
+            border-top: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+        
+        .profile-link {
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+        
+        .profile-link:hover {
+            color: #3730a3;
+            background-color: #f1f5f9;
+        }
+        
+        /* Animasi kelap-kelip */
+        @keyframes blink {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes rainbow {
+            0% { color: #4a6cf7; }
+            25% { color: #ec4899; }
+            50% { color: #f59e0b; }
+            75% { color: #10b981; }
+            100% { color: #4a6cf7; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { 
+                text-shadow: 0 0 5px rgba(74, 108, 247, 0.5);
+            }
+            50% { 
+                text-shadow: 0 0 15px rgba(74, 108, 247, 0.8), 0 0 20px rgba(74, 108, 247, 0.6);
+            }
+        }
+        
+        .blinking {
+            animation: blink 0.6s ease-in-out 3, rainbow 1.5s ease-in-out, glow 1s ease-in-out 3;
+        }
+        
+        /* Typography improvements */
+        strong {
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        em {
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        a {
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        a:hover {
+            color: #3730a3;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-header, .section-content.expanded {
+                padding: 20px;
+            }
+            
+            .section-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            p, li {
+                font-size: 1rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .step-number {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Membuat Landing Page dengan AI</h1>
+            <p class="subtitle">Panduan Sederhana untuk Pemula</p>
+        </header>
+        
+        <!-- Bagian Pengenalan -->
+        <div class="content-section" id="intro-section">
+            <div class="section-header" data-section="intro">
+                <h2>Pengenalan</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="intro-content">
+                <p>Buku elektronik ini akan membantu Anda membuat landing page yang menarik dengan bantuan kecerdasan buatan (AI). Panduan ini dirancang khusus untuk pemula yang ingin belajar membuat website tanpa pengalaman coding sebelumnya.</p>
+                
+                <h3>Apa yang akan Anda pelajari?</h3>
+                <ul>
+                    <li><strong>Memahami konsep landing page</strong> dan fungsinya</li>
+                    <li><strong>Mengenal berbagai alat AI</strong> untuk membuat website</li>
+                    <li><strong>Langkah-langkah praktis</strong> membuat landing page dengan AI</li>
+                    <li><strong>Cara menyimpan dan mempublikasikan</strong> website Anda</li>
+                    <li><strong>Tips dan trik</strong> untuk hasil yang maksimal</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <p><strong>Untuk Pemula:</strong> Jangan khawatir jika Anda tidak punya pengalaman coding. Dengan AI, semuanya menjadi lebih mudah dan menyenangkan!</p>
+                </div>
+                
+                <h3>Mengapa menggunakan AI?</h3>
+                <p>Kecerdasan buatan dapat membantu Anda dalam berbagai aspek pembuatan website:</p>
+                <ul>
+                    <li><strong>Desain yang menarik</strong> - AI dapat menghasilkan desain profesional</li>
+                    <li><strong>Teks yang persuasif</strong> - Menulis konten yang engaging</li>
+                    <li><strong>Kode yang bersih</strong> - Membuat kode HTML/CSS yang rapi</li>
+                    <li><strong>Optimasi performa</strong> - Meningkatkan kecepatan website</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Bagian Apa itu Landing Page -->
+        <div class="content-section" id="landing-page-section">
+            <div class="section-header" data-section="landing-page">
+                <h2>Apa itu Landing Page?</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="landing-page-content">
+                <p>Landing page adalah halaman website khusus yang dibuat untuk satu tujuan tertentu. Berbeda dengan website biasa yang memiliki banyak halaman, landing page fokus pada satu tujuan konversi.</p>
+                
+                <h3>Jenis-jenis Landing Page</h3>
+                <ul>
+                    <li><strong>Portofolio Pribadi</strong> - Memperkenalkan diri dan karya</li>
+                    <li><strong>Promosi Produk</strong> - Memperkenalkan produk atau layanan</li>
+                    <li><strong>Lead Generation</strong> - Mengumpulkan email pengunjung</li>
+                    <li><strong>Penjualan</strong> - Mendapatkan konversi penjualan</li>
+                </ul>
+                
+                <div class="example">
+                    <h4>Contoh Landing Page Sederhana:</h4>
+                    <p>Bayangkan sebuah halaman dengan elemen-elemen berikut:</p>
+                    <ul>
+                        <li>Judul utama: <em>"Jasa Desain Grafis Profesional"</em></li>
+                        <li>Gambar portfolio atau contoh karya</li>
+                        <li>Penjelasan singkat tentang keunggulan layanan</li>
+                        <li>Testimoni dari klien sebelumnya</li>
+                        <li>Tombol call-to-action: <strong>"Hubungi Saya"</strong></li>
+                    </ul>
+                </div>
+                
+                <h3>Bagian Penting Landing Page</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Headline yang Menarik</h4>
+                        <p>Judul utama yang jelas dan langsung menyampaikan nilai yang ditawarkan. Harus mampu menarik perhatian dalam 3 detik pertama.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Penjelasan yang Jelas</h4>
+                        <p>Deskripsi singkat yang menjelaskan apa yang Anda tawarkan dan manfaatnya bagi pengunjung.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Visual yang Mendukung</h4>
+                        <p>Gambar, ilustrasi, atau video yang relevan dan memperkuat pesan Anda.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Call-to-Action yang Menonjol</h4>
+                        <p>Tombol atau link yang mengajak pengunjung melakukan tindakan yang diinginkan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bagian Alat AI -->
+        <div class="content-section" id="ai-tools-section">
+            <div class="section-header" data-section="ai-tools">
+                <h2>Alat AI yang Berguna</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="ai-tools-content">
+                <p>Berikut beberapa alat berbasis AI yang dapat membantu Anda membuat landing page dengan mudah:</p>
+                
+                <div class="tool-card">
+                    <h4>🤖 ChatGPT</h4>
+                    <p>Untuk menulis teks, judul, deskripsi, dan konten persuasif yang menarik perhatian pengunjung.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>🎨 DALL-E / Midjourney</h4>
+                    <p>Untuk membuat gambar, ilustrasi, atau visual yang unik dan sesuai dengan tema landing page Anda.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>✏️ Canva AI</h4>
+                    <p>Untuk mendesain tampilan visual landing page dengan template yang profesional dan mudah disesuaikan.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <h4>💻 Builder.io / Vercel</h4>
+                    <p>Platform yang menggunakan AI untuk membantu membuat kode website dan deployment yang cepat.</p>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>Tips:</strong> Sebagian besar alat AI ini menyediakan versi gratis dengan fitur yang cukup untuk memulai. Gunakan secara bertahap dan eksplorasi fitur-fiturnya.</p>
+                </div>
+                
+                <h3>Cara Efektif Menggunakan AI</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Buat Akun dan Eksplorasi</h4>
+                        <p>Daftar untuk alat AI yang ingin Anda gunakan dan luangkan waktu untuk memahami antarmukanya.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Gunakan Prompt yang Spesifik</h4>
+                        <p>Berikan instruksi yang jelas dan detail untuk mendapatkan hasil yang optimal dari AI.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Edit dan Sesuaikan</h4>
+                        <p>Jangan langsung gunakan hasil AI. Selalu review, edit, dan sesuaikan dengan kebutuhan Anda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bagian Langkah Pembuatan -->
+        <div class="content-section" id="steps-section">
+            <div class="section-header" data-section="steps">
+                <h2>Langkah Membuat Landing Page dengan AI</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="steps-content">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Tentukan Tujuan dan Audiens</h4>
+                        <p>Apa yang ingin Anda capai dengan landing page ini? Siapa target audiens Anda?</p>
+                        <p><em>Contoh: "Saya ingin menunjukkan portofolio desain grafis untuk menarik klien freelance"</em></p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Buat Rencana Konten dengan AI</h4>
+                        <p>Gunakan ChatGPT untuk merencanakan struktur dan konten landing page:</p>
+                        <div class="example">
+                            <p><strong>Prompt untuk AI:</strong> "Bantu saya merencanakan landing page untuk portofolio desainer grafis. Bagaimana struktur yang efektif? Bagian apa saja yang harus ada?"</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Tulis Konten dengan Bantuan AI</h4>
+                        <p>Minta AI menulis teks yang menarik untuk setiap bagian landing page:</p>
+                        <div class="example">
+                            <p><strong>Prompt untuk AI:</strong> "Tuliskan headline, subheadline, dan deskripsi yang menarik untuk landing page desainer grafis freelance. Sertakan call-to-action yang persuasif."</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Buat Desain Visual</h4>
+                        <p>Gunakan Canva AI atau alat desain lainnya untuk membuat mockup dan visual yang menarik.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Generate Kode dengan AI</h4>
+                        <p>Gunakan AI untuk membuat kode HTML/CSS berdasarkan desain dan konten yang sudah disiapkan:</p>
+                        <div class="example">
+                            <p><strong>Prompt untuk AI:</strong> "Buatkan kode HTML dan CSS untuk landing page portofolio desainer dengan bagian header, about, portfolio gallery, services, dan contact form. Gunakan warna biru dan putih, dan pastikan responsive."</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>Testing dan Publikasi</h4>
+                        <p>Uji tampilan di berbagai perangkat, perbaiki jika diperlukan, lalu publikasikan website Anda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bagian Cara Mempublikasikan -->
+        <div class="content-section" id="publish-section">
+            <div class="section-header" data-section="publish">
+                <h2>Cara Menyimpan dan Mempublikasikan Website</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="publish-content">
+                <h3>1. Menyimpan File HTML</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Salin Kode HTML</h4>
+                        <p>Salin semua kode HTML yang telah Anda buat atau hasilkan dari AI assistant.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Buka Text Editor</h4>
+                        <p>Gunakan text editor seperti VS Code, Notepad++, atau bahkan Notepad biasa.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Tempel dan Simpan</h4>
+                        <p>Tempel kode HTML ke text editor dan simpan dengan ekstensi <strong>.html</strong></p>
+                        <div class="tip-box">
+                            <p><strong>Penting:</strong> Pastikan file disimpan sebagai <strong>"landing-page-saya.html"</strong> bukan <strong>"landing-page-saya.txt"</strong></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Buka di Browser</h4>
+                        <p>Klik dua kali file HTML yang telah disimpan untuk melihat hasilnya di browser web.</p>
+                    </div>
+                </div>
+                
+                <h3>2. Mempublikasikan Online dengan Netlify</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Buat Akun Gratis</h4>
+                        <p>Kunjungi <a href="https://www.netlify.com" target="_blank">netlify.com</a> dan daftar akun gratis.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Upload File</h4>
+                        <p>Drag and drop folder yang berisi file HTML Anda ke area deploy di dashboard Netlify.</p>
+                        <div class="example">
+                            <p><strong>Alternatif:</strong> Anda juga bisa upload melalui menu "Deploy manually" jika lebih nyaman.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Tunggu Deployment</h4>
+                        <p>Netlify akan secara otomatis mempublikasikan website dan memberikan URL gratis.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Custom Domain (Opsional)</h4>
+                        <p>Anda bisa mengganti domain default Netlify dengan nama custom yang lebih personal.</p>
+                        <div class="example">
+                            <p><strong>Contoh:</strong> dari <em>angry-mcclintock-123abc.netlify.app</em> menjadi <em>portofolio-saya.netlify.app</em></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Domain Premium (Opsional)</h4>
+                        <p>Untuk bisnis profesional, Anda bisa membeli domain seperti namasaya.com dan menghubungkannya ke Netlify.</p>
+                    </div>
+                </div>
+                
+                <div class="action-section">
+                    <h3>Sekarang Giliran Anda!</h3>
+                    <p>Jangan hanya membaca - praktikkan langsung! Buat landing page pertama Anda menggunakan panduan ini.</p>
+                    <a href="#" class="action-button" id="start-button">🚀 Mulai Sekarang</a>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>Keuntungan Netlify:</strong> Gratis, mudah digunakan, deploy otomatis, SSL gratis, dan integrasi yang smooth dengan berbagai tools development.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bagian Tips -->
+        <div class="content-section" id="tips-section">
+            <div class="section-header" data-section="tips">
+                <h2>Tips untuk Hasil yang Lebih Baik</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content" id="tips-content">
+                <div class="tip-box">
+                    <p><strong>🎯 Tip 1: Spesifik dengan Instruksi</strong> - Semakin detail prompt yang Anda berikan ke AI, semakin baik hasil yang akan didapat.</p>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>✏️ Tip 2: Edit dan Personalisasi</strong> - Jangan gunakan hasil AI mentah-mentah. Selalu sesuaikan dengan voice dan brand Anda.</p>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>🖼️ Tip 3: Gunakan Visual Berkualitas</strong> - Gambar yang bagus meningkatkan engagement hingga 80%.</p>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>⚡ Tip 4: Optimasi Kecepatan</strong> - Landing page yang cepat loading memiliki konversi lebih tinggi.</p>
+                </div>
+                
+                <div class="tip-box">
+                    <p><strong>📱 Tip 5: Mobile-First</strong> - Pastikan tampilan optimal di smartphone, karena 60% traffic berasal dari mobile.</p>
+                </div>
+                
+                <h3>Kesalahan Umum yang Harus Dihindari</h3>
+                <ul>
+                    <li><strong>Terlalu banyak teks</strong> - Buat konten yang scanable dan mudah dibaca</li>
+                    <li><strong>Call-to-action yang samar</strong> - Tombol harus jelas dan persuasif</li>
+                    <li><strong>Desain berantakan</strong> - Pertahankan konsistensi visual</li>
+                    <li><strong>Ignoring mobile users</strong> - Test di berbagai device</li>
+                    <li><strong>Loading lambat</strong> - Optimasi gambar dan kode</li>
+                </ul>
+                
+                <h3>Contoh Prompt Efektif untuk AI</h3>
+                <div class="example">
+                    <p>"Buatkan kode HTML dan CSS untuk landing page sederhana dengan kriteria:</p>
+                    <ul>
+                        <li>Header dengan judul utama dan subjudul</li>
+                        <li>Section 'Tentang Saya' dengan foto profil</li>
+                        <li>Galeri portofolio 4 gambar dengan grid responsive</li>
+                        <li>Form kontak sederhana dengan nama, email, pesan</li>
+                        <li>Warna tema: biru (#4a6cf7) dan putih</li>
+                        <li>Font: system fonts dengan fallback sans-serif</li>
+                        <li>Fully responsive untuk mobile dan desktop</li>
+                        <li>Include basic CSS animations untuk interaksi</li>
+                    </ul>
+                </div>
+                
+                <h3>Contoh Kode HTML Dasar</h3>
+                <div class="code-block">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="id"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Landing Page Saya&lt;/title&gt;
+    &lt;style&gt;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            background: #f8fafc;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .hero { 
+            text-align: center; 
+            padding: 80px 20px; 
+            background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+            color: white;
+        }
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #4a6cf7;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+        .btn:hover { transform: translateY(-2px); }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;section class="hero"&gt;
+        &lt;div class="container"&gt;
+            &lt;h1&gt;Selamat Datang di Website Saya&lt;/h1&gt;
+            &lt;p&gt;Ini adalah landing page pertama saya yang dibuat dengan bantuan AI&lt;/p&gt;
+            &lt;a href="#contact" class="btn"&gt;Hubungi Saya&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/section&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <a href="https://pakfahri.github.io/profil" class="profile-link" target="_blank" id="profile-link">
+                Fahri, S.Pd. | Guru Informatika | SMP Negeri 2 Manggar
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // Fungsi untuk expand/collapse sections
+        const sectionHeaders = document.querySelectorAll('.section-header');
+        
+        // Buka bagian pertama secara default
+        document.getElementById('intro-content').classList.add('expanded');
+        document.querySelector('[data-section="intro"] .toggle-icon').textContent = '▲';
+        
+        sectionHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                const content = document.getElementById(sectionId + '-content');
+                const icon = this.querySelector('.toggle-icon');
+                
+                // Toggle expanded class
+                content.classList.toggle('expanded');
+                
+                // Ubah ikon
+                if (content.classList.contains('expanded')) {
+                    icon.textContent = '▲';
+                } else {
+                    icon.textContent = '▼';
+                }
+            });
+        });
+        
+        // Tombol mulai sekarang
+        document.getElementById('start-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Tutup semua section terlebih dahulu
+            sectionHeaders.forEach(header => {
+                const sectionId = header.getAttribute('data-section');
+                const content = document.getElementById(sectionId + '-content');
+                const icon = header.querySelector('.toggle-icon');
+                
+                content.classList.remove('expanded');
+                icon.textContent = '▼';
+            });
+            
+            // Buka bagian langkah pembuatan
+            document.getElementById('steps-content').classList.add('expanded');
+            document.querySelector('[data-section="steps"] .toggle-icon').textContent = '▲';
+            
+            // Scroll ke bagian tersebut
+            document.getElementById('steps-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+        
+        // Animasi kelap-kelip untuk profile link
+        const profileLink = document.getElementById('profile-link');
+        
+        profileLink.addEventListener('click', function(e) {
+            // Tambahkan animasi kelap-kelip
+            this.classList.add('blinking');
+            
+            // Hapus animasi setelah selesai
+            setTimeout(() => {
+                this.classList.remove('blinking');
+            }, 2000); // Sesuai dengan durasi animasi
+            
+            // Biarkan link tetap bekerja normal
+            // Browser akan membuka link setelah animasi
+        });
+    </script>
+</body>
+</html>
