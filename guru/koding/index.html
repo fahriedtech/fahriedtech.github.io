@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modul Koding - SMP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mission-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+        }
+        
+        .mission-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mission-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.05"><polygon points="0,0 1000,50 1000,100 0,100"/></svg>');
+            background-size: cover;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape-1 {
+            width: 200px;
+            height: 200px;
+            top: -100px;
+            right: -50px;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            bottom: -75px;
+            left: 10%;
+            animation-delay: 2s;
+        }
+        
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+        
+        .footer-link {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .footer-link:hover {
+            transform: translateY(-2px);
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="hero-section text-white py-12 sm:py-16 relative">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl font-bold mb-4">Modul <span class="text-blue-300">Koding</span></h1>
+                <p class="text-xl opacity-90 mb-8">blocked programming intermediate level</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Bahan Ajar Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 section-title">Bahan Ajar</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- Bahan 1 -->
+                <div class="mission-card glass-card p-6" 
+                     style="--color-primary: #3b82f6; --color-secondary: #1d4ed8;"
+                     onclick="openModule('https://www.canva.com/design/DAG0H4AQNXI/M32jg2k5wEp0oep1BeKXmw/view?utm_content=DAG0H4AQNXI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc9e408ea1c')">
+                    <span class="category-badge">Materi Dasar</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Mapel Koding KA</h3>
+                    <p class="text-gray-600 text-sm mb-4">Pengenalan dasar pemrograman blok untuk tingkat SMP</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Bahan 1</span>
+                        <i class="fas fa-arrow-right text-blue-500"></i>
+                    </div>
+                </div>
+
+                <!-- Bahan 2 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #8b5cf6; --color-secondary: #7c3aed;"
+                     onclick="openModule('https://www.canva.com/design/DAG0KbpYiAM/KsMn9WIUuhg5YqliZNsMmw/view?utm_content=DAG0KbpYiAM&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h4a924f9f5e')">
+                    <span class="category-badge">Platform</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Scratch</h3>
+                    <p class="text-gray-600 text-sm mb-4">Panduan penggunaan Scratch untuk pemrograman visual</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Bahan 2</span>
+                        <i class="fas fa-arrow-right text-purple-500"></i>
+                    </div>
+                </div>
+
+                <!-- Bahan 3 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #10b981; --color-secondary: #059669;"
+                     onclick="openModule('https://docs.google.com/document/d/1_CMoguM0ctRflc0xK9N6peiReiy37WQ2Ae4w-jzGkNM/edit?usp=sharing')">
+                    <span class="category-badge">Referensi</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Daftar Fungsi Blok Scratch</h3>
+                    <p class="text-gray-600 text-sm mb-4">Katalog lengkap fungsi dan blok pemrograman Scratch</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Bahan 3</span>
+                        <i class="fas fa-arrow-right text-green-500"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Misi Pembelajaran Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 section-title">Misi Pembelajaran</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <!-- Misi 1 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #3b82f6; --color-secondary: #1d4ed8;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi1Motion.html')">
+                    <span class="category-badge">Fundamental</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Motion</h3>
+                    <p class="text-gray-600 text-sm mb-4">Mengontrol pergerakan objek dalam pemrograman</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 1</span>
+                        <i class="fas fa-arrow-right text-blue-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 2 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #8b5cf6; --color-secondary: #7c3aed;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi2Looks&Sound.html')">
+                    <span class="category-badge">Tampilan & Suara</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Looks & Sound</h3>
+                    <p class="text-gray-600 text-sm mb-4">Memanipulasi tampilan visual dan elemen audio</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 2</span>
+                        <i class="fas fa-arrow-right text-purple-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 3 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #10b981; --color-secondary: #059669;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi3Event.html')">
+                    <span class="category-badge">Interaksi</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Event</h3>
+                    <p class="text-gray-600 text-sm mb-4">Mengelola event dan trigger dalam program</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 3</span>
+                        <i class="fas fa-arrow-right text-green-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 4 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #ef4444; --color-secondary: #dc2626;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi4Control&Sensing.html')">
+                    <span class="category-badge">Kontrol</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Control & Sensing</h3>
+                    <p class="text-gray-600 text-sm mb-4">Struktur kontrol dan sensing input pengguna</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 4</span>
+                        <i class="fas fa-arrow-right text-red-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 5 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #f59e0b; --color-secondary: #d97706;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi5ControlSensingOperatorVariabel.html')">
+                    <span class="category-badge">Konsep Lanjutan</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Control, Sensing, Operator & Variabel</h3>
+                    <p class="text-gray-600 text-sm mb-4">Kombinasi konsep pemrograman tingkat menengah</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 5</span>
+                        <i class="fas fa-arrow-right text-yellow-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 6 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #06b6d4; --color-secondary: #0891b2;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi6koding.html')">
+                    <span class="category-badge">Konsep Lanjutan</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Control, Sensing, Operator & Variabel</h3>
+                    <p class="text-gray-600 text-sm mb-4">Penerapan lanjutan konsep pemrograman fundamental</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 6</span>
+                        <i class="fas fa-arrow-right text-cyan-500"></i>
+                    </div>
+                </div>
+
+                <!-- Misi 7 -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #d946ef; --color-secondary: #c026d3;"
+                     onclick="openModule('https://pakfahri.github.io/website/Misi7Variabel.html')">
+                    <span class="category-badge">Data</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-superscript"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Variabel</h3>
+                    <p class="text-gray-600 text-sm mb-4">Manajemen data dan penyimpanan nilai dalam program</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Misi 7</span>
+                        <i class="fas fa-arrow-right text-pink-500"></i>
+                    </div>
+                </div>
+
+                <!-- Extra -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #84cc16; --color-secondary: #65a30d;"
+                     onclick="openModule('https://docs.google.com/document/d/1dUC0UC-g4PcDm8F2QnHXZaSpGhzVDrYNMR7Pnaw6n84/edit?usp=sharing')">
+                    <span class="category-badge">Fitur Tambahan</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Broadcast, Video Sensing & Clone</h3>
+                    <p class="text-gray-600 text-sm mb-4">Fitur lanjutan Scratch untuk proyek kompleks</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Extra</span>
+                        <i class="fas fa-arrow-right text-lime-500"></i>
+                    </div>
+                </div>
+
+                <!-- Form Karya -->
+                <div class="mission-card glass-card p-6"
+                     style="--color-primary: #64748b; --color-secondary: #475569;"
+                     onclick="openModule('https://docs.google.com/forms/d/e/1FAIpQLScPunGfZTniJ3V9VITxHJKvK4uMtWTCu0rna7ifTw70awEYQQ/viewform?usp=header')">
+                    <span class="category-badge">Pengumpulan</span>
+                    <div class="mission-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Form Karya</h3>
+                    <p class="text-gray-600 text-sm mb-4">Silakan isi form untuk mengumpulkan karya Anda</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Form</span>
+                        <i class="fas fa-arrow-right text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <a href="https://pakfahri.github.io/profil" target="_blank" 
+               class="footer-link text-gray-300 hover:text-white text-lg font-medium">
+                Fahri, S.Pd. | Guru Informatika | SMP N 2 Manggar
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        function openModule(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+    </script>
+</body>
+</html>
