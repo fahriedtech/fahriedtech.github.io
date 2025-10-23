@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Spreadsheet - Panduan Lengkap</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4285f4;
+            font-size: 3rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.3rem;
+            margin: 1rem 0 0 0;
+            font-weight: 300;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem 0;
+            margin: 2rem 0;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 1rem 2rem;
+            margin: 0 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-button.active {
+            background: #4285f4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: rgba(66, 133, 244, 0.1);
+            color: #4285f4;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            margin: 2rem 0;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chapter-title {
+            color: #4285f4;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #4285f4;
+            padding-bottom: 0.5rem;
+        }
+
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            margin: 2rem 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .practice-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 5px solid #4285f4;
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+        }
+
+        .step-item {
+            counter-increment: step-counter;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            padding-left: 4rem;
+        }
+
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1rem;
+            top: 1.5rem;
+            background: #4285f4;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .formula-box {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: #4285f4;
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background: #f8f9fa;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            header {
+                padding: 1rem 0;
+                background: white;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin: 0;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                margin: 0.5rem 0 0 0;
+            }
+
+            .progress-bar {
+                margin: 1rem 0;
+                height: 4px;
+            }
+
+            .nav-tabs {
+                background: white;
+                padding: 0.5rem;
+                margin: 1rem 0;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .tab-button {
+                display: block;
+                width: 100%;
+                margin: 0.25rem 0;
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+                border-radius: 8px;
+                text-align: left;
+            }
+
+            .tab-content {
+                padding: 1rem;
+                margin: 1rem 0;
+                border-radius: 10px;
+                box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .chapter-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .intro-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem 1rem;
+                text-align: left;
+            }
+
+            .feature-card h3 {
+                font-size: 1.1rem;
+                margin: 0.5rem 0;
+            }
+
+            .feature-card p {
+                font-size: 0.9rem;
+                margin: 0;
+            }
+
+            .feature-icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+                float: left;
+                margin-right: 1rem;
+            }
+
+            .practice-section {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .practice-section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .step-item {
+                padding: 1rem;
+                padding-left: 3rem;
+                margin: 1rem 0;
+            }
+
+            .step-item::before {
+                width: 1.5rem;
+                height: 1.5rem;
+                font-size: 0.8rem;
+                left: 0.8rem;
+                top: 1rem;
+            }
+
+            .step-item h4 {
+                font-size: 1rem;
+                margin: 0 0 0.5rem 0;
+            }
+
+            .step-item p {
+                font-size: 0.9rem;
+                margin: 0.5rem 0;
+            }
+
+            .data-table {
+                font-size: 0.8rem;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.5rem;
+                min-width: 80px;
+            }
+
+            .formula-box {
+                font-size: 0.8rem;
+                padding: 0.8rem;
+                overflow-x: auto;
+            }
+
+            .video-container {
+                margin: 1rem 0;
+                border-radius: 8px;
+            }
+
+            /* Hide some decorative elements on mobile */
+            .feature-card:hover {
+                transform: none;
+            }
+
+            /* Simplify lists */
+            .practice-section ul {
+                padding-left: 1rem;
+            }
+
+            .practice-section li {
+                margin: 0.5rem 0;
+                font-size: 0.9rem;
+            }
+
+            /* Compact spacing */
+            .highlight {
+                padding: 0.1rem 0.3rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📊 Google Spreadsheet</h1>
+            <p class="subtitle">Panduan Aplikasi Pengolah Data untuk Pemula</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 33%"></div>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab-button active" onclick="showTab('bab1')">Bab 1: Pengenalan</button>
+            <button class="tab-button" onclick="showTab('bab2')">Bab 2: Praktik Dasar</button>
+            <button class="tab-button" onclick="showTab('bab3')">Bab 3: Praktik Lanjutan</button>
+        </nav>
+
+        <!-- BAB 1: PENGENALAN -->
+        <div id="bab1" class="tab-content active">
+            <h2 class="chapter-title">Bab 1: Pengenalan Google Spreadsheet</h2>
+            
+            <div class="intro-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Analisis Data</h3>
+                    <p>Kelola dan analisis data dengan mudah menggunakan formula dan fungsi yang powerful</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">☁️</div>
+                    <h3>Cloud-Based</h3>
+                    <p>Akses data Anda dari mana saja, kapan saja dengan sinkronisasi otomatis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Kolaborasi</h3>
+                    <p>Bekerja bersama tim secara real-time dengan fitur sharing yang aman</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Otomatisasi</h3>
+                    <p>Otomatisasi tugas repetitif dengan script dan add-ons yang tersedia</p>
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <h3>🎯 Apa yang Akan Anda Pelajari?</h3>
+                <ul style="font-size: 1.1rem; line-height: 2;">
+                    <li><strong>Dasar-dasar navigasi</strong> Google Sheets interface</li>
+                    <li><strong>Input dan format data</strong> dengan berbagai tipe</li>
+                    <li><strong>Formula dan fungsi</strong> untuk perhitungan otomatis</li>
+                    <li><strong>Visualisasi data</strong> dengan chart dan grafik</li>
+                    <li><strong>Analisis lanjutan</strong> dengan Pivot Table</li>
+                    <li><strong>Tips dan trik</strong> untuk produktivitas maksimal</li>
+                </ul>
+            </div>
+
+            <div class="practice-section">
+                <h3>🚀 Mengapa Google Spreadsheet?</h3>
+                <p style="font-size: 1.1rem;">Google Spreadsheet adalah solusi pengolah data yang <span class="highlight">gratis, powerful, dan mudah digunakan</span>. Dengan fitur kolaborasi real-time dan integrasi dengan ekosistem Google Workspace, Anda dapat mengelola data bisnis, personal, atau akademik dengan efisien.</p>
+            </div>
+        </div>
+
+        <!-- BAB 2: PRAKTIK DASAR -->
+        <div id="bab2" class="tab-content">
+            <h2 class="chapter-title">Bab 2: Praktik Pengolah Data Dasar</h2>
+            
+            <div class="practice-section">
+                <h3>🎥 Video Tutorial Praktik Dasar</h3>
+                <p>Tonton video tutorial berikut untuk memahami dasar-dasar penggunaan Google Spreadsheet:</p>
+                
+                <div class="video-container">
+                    <iframe 
+                        src="https://www.youtube.com/embed/UvsBkOUUISg" 
+                        title="Tutorial Google Spreadsheet Dasar"
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <h3>📝 Rangkuman Materi Video</h3>
+                <div class="step-list">
+                    <div class="step-item">
+                        <h4>Membuat Spreadsheet Baru</h4>
+                        <p>Akses Google Drive → Klik "New" → Pilih "Google Sheets" untuk membuat lembar kerja baru</p>
+                    </div>
+                    <div class="step-item">
+                        <h4>Input Data Dasar</h4>
+                        <p>Pelajari cara memasukkan teks, angka, tanggal, dan format data lainnya ke dalam sel</p>
+                    </div>
+                    <div class="step-item">
+                        <h4>Format Sel dan Data</h4>
+                        <p>Mengatur format angka, mata uang, persentase, dan styling visual untuk data</p>
+                    </div>
+                    <div class="step-item">
+                        <h4>Formula Sederhana</h4>
+                        <p>Gunakan formula dasar seperti SUM, AVERAGE, COUNT untuk perhitungan otomatis</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <h3>💡 Latihan Praktik</h3>
+                <p><strong>Tugas:</strong> Setelah menonton video, coba buat spreadsheet sederhana untuk mencatat pengeluaran harian Anda dengan kolom: Tanggal, Kategori, Deskripsi, dan Jumlah. Gunakan formula SUM untuk menghitung total pengeluaran.</p>
+            </div>
+        </div>
+
+        <!-- BAB 3: PRAKTIK LANJUTAN -->
+        <div id="bab3" class="tab-content">
+            <h2 class="chapter-title">Bab 3: Praktik Pengolah Data Lanjutan</h2>
+            
+            <div class="practice-section">
+                <h3>🎯 Panduan Praktik Rinci: Pengolah Data Lanjutan</h3>
+                
+                <h4>📊 Bagian 1: Persiapan Data Awal</h4>
+                <div class="step-list">
+                    <div class="step-item">
+                        <h4>Buka Google Sheets</h4>
+                        <p>Buka browser Anda dan buat Lembar Kerja baru di Google Sheets</p>
+                    </div>
+                    <div class="step-item">
+                        <h4>Input Data Awal</h4>
+                        <p>Ketik judul kolom dan 10 baris data penjualan berikut ke dalam <strong>Sheet 1</strong>, dimulai dari sel <strong>A1</strong>:</p>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <th>Kategori</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah Terjual</th>
+                                    <th>Diskon? (Y/T)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Robot A</td><td>Elektronik</td><td>150000</td><td>5</td><td>Y</td></tr>
+                                <tr><td>Boneka B</td><td>Boneka</td><td>50000</td><td>12</td><td>T</td></tr>
+                                <tr><td>Mobil C</td><td>Kendaraan</td><td>80000</td><td>8</td><td>T</td></tr>
+                                <tr><td>Puzzle D</td><td>Edukasi</td><td>45000</td><td>20</td><td>Y</td></tr>
+                                <tr><td>Robot E</td><td>Elektronik</td><td>200000</td><td>3</td><td>T</td></tr>
+                                <tr><td>Boneka F</td><td>Boneka</td><td>65000</td><td>15</td><td>Y</td></tr>
+                                <tr><td>Mobil G</td><td>Kendaraan</td><td>120000</td><td>6</td><td>T</td></tr>
+                                <tr><td>Puzzle H</td><td>Edukasi</td><td>30000</td><td>25</td><td>Y</td></tr>
+                                <tr><td>Robot I</td><td>Elektronik</td><td>180000</td><td>4</td><td>T</td></tr>
+                                <tr><td>Boneka J</td><td>Boneka</td><td>40000</td><td>18</td><td>Y</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h4>🧮 Bagian 2: Penggunaan Formula Dasar dan Fungsi Logika IF</h4>
+                <p>Kita akan mengisi kolom <strong>F, G, dan H</strong> dengan rumus.</p>
+
+                <div class="step-list">
+                    <div class="step-item">
+                        <h4>Menghitung Total Penjualan</h4>
+                        <p><strong>Judul Kolom:</strong> Di sel <strong>F1</strong>, ketik: <strong>Total Jual</strong></p>
+                        <p><strong>Formula:</strong> Di sel <strong>F2</strong>, tulis rumus:</p>
+                        <div class="formula-box">=C2*D2</div>
+                        <p><strong>Salin Rumus:</strong> Klik sel F2, lalu tarik kotak kecil di sudut kanan bawah sel ke bawah hingga sel <strong>F11</strong></p>
+                    </div>
+
+                    <div class="step-item">
+                        <h4>Menghitung Nilai Diskon (Fungsi IF)</h4>
+                        <p>Kolom ini menentukan diskon 10% jika di kolom E tertulis "Y"</p>
+                        <p><strong>Judul Kolom:</strong> Di sel <strong>G1</strong>, ketik: <strong>Nilai Diskon</strong></p>
+                        <p><strong>Formula IF:</strong> Di sel <strong>G2</strong>, tulis rumus:</p>
+                        <div class="formula-box">=IF(E2="Y",F2*10%,0)</div>
+                        <p><em>Penjelasan:</em> Jika E2 sama dengan "Y", hitung 10% dari F2. Jika tidak, nilainya 0.</p>
+                    </div>
+
+                    <div class="step-item">
+                        <h4>Menentukan Status Penjualan (Fungsi IF)</h4>
+                        <p>Kolom ini memberi label "LARIS" jika Jumlah Terjual di atas 10</p>
+                        <p><strong>Judul Kolom:</strong> Di sel <strong>H1</strong>, ketik: <strong>Status Laris</strong></p>
+                        <p><strong>Formula IF:</strong> Di sel <strong>H2</strong>, tulis rumus:</p>
+                        <div class="formula-box">=IF(D2>10,"LARIS","BIASA")</div>
+                    </div>
+                </div>
+
+                <h4>📈 Bagian 3: Alat Analisis Cepat (Pivot Table)</h4>
+                <div class="step-list">
+                    <div class="step-item">
+                        <h4>Membuat Tabel Pivot</h4>
+                        <p><strong>Blok Data:</strong> Sorot seluruh data dari sel <strong>A1</strong> hingga sel terakhir yang terisi (<strong>H11</strong>)</p>
+                        <p><strong>Sisipkan Pivot:</strong> Pilih menu <strong>Data</strong> → Klik <strong>Tabel Pivot (Pivot Table)</strong></p>
+                        <p><strong>Lokasi:</strong> Pilih opsi <strong>Lembar Baru (New Sheet)</strong>. Klik <strong>Buat (Create)</strong></p>
+                    </div>
+
+                    <div class="step-item">
+                        <h4>Menganalisis Total Penjualan per Kategori</h4>
+                        <p><strong>Atur Baris (Rows):</strong> Di editor Pivot Table, cari bagian <strong>Baris (Rows)</strong>. Klik <strong>Tambahkan</strong>. Pilih <strong>Kategori</strong></p>
+                        <p><strong>Atur Nilai (Values):</strong> Cari bagian <strong>Nilai (Values)</strong>. Klik <strong>Tambahkan</strong>. Pilih <strong>Total Jual</strong></p>
+                        <p><strong>Cek Fungsi:</strong> Pastikan fungsi yang digunakan adalah <strong>SUM</strong> (Jumlah)</p>
+                    </div>
+
+                    <div class="step-item">
+                        <h4>Membuat Grafik dari Hasil Pivot</h4>
+                        <p><strong>Blok Hasil Pivot:</strong> Sorot hasil ringkasan di Sheet 2</p>
+                        <p><strong>Insert Chart:</strong> Pilih menu <strong>Insert</strong> → <strong>Chart</strong></p>
+                        <p><strong>Pilih Tipe:</strong> Pilih grafik <strong>Column Chart</strong> atau <strong>Pie Chart</strong> sesuai preferensi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <h3>🎯 Latihan Mandiri</h3>
+                <p><strong>Tantangan:</strong> Setelah menyelesaikan tutorial di atas, coba buat analisis tambahan:</p>
+                <ul>
+                    <li>Hitung rata-rata harga per kategori menggunakan AVERAGEIF</li>
+                    <li>Buat grafik perbandingan penjualan dengan dan tanpa diskon</li>
+                    <li>Gunakan conditional formatting untuk highlight produk dengan status "LARIS"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer style="padding: 1rem 0; text-align: center; margin-top: 1.5rem;">
+        <div class="container">
+            <a href="https://pakfahri.github.io/profil/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                Fahri, S.Pd. | Guru Informatika | SMP N 2 Manggar
+            </a>
+        </div>
+    </footer>
+
+    <style>
+        .footer-link {
+            text-decoration: none;
+            color: #4285f4;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .footer-link:hover {
+            color: #667eea;
+            transform: translateY(-3px);
+            text-shadow: 0 2px 10px rgba(66, 133, 244, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @media (max-width: 768px) {
+            .footer-link {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+        }
+    </style>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Update progress bar
+            const progressBar = document.getElementById('progressBar');
+            if (tabId === 'bab1') {
+                progressBar.style.width = '33%';
+            } else if (tabId === 'bab2') {
+                progressBar.style.width = '66%';
+            } else if (tabId === 'bab3') {
+                progressBar.style.width = '100%';
+            }
+        }
+
+        // Add smooth scrolling for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e619a6e29d8740',t:'MTc2MDQzNDY2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
