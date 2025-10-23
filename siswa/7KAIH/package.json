@@ -1,0 +1,13 @@
+{
+  "name": "jurnal-siswa",
+  "version": "1.0.0",
+  "description": "Aplikasi Jurnal Harian Siswa dengan Firebase",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build process needed for static site'",
+    "dev": "echo 'Open index.html in browser'"
+  },
+  "keywords": ["jurnal", "siswa", "firebase", "education"],
+  "author": "Your Name",
+  "license": "MIT"
+}
