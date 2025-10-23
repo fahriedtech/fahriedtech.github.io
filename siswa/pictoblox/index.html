@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hukum Dasar Dunia Game</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d2d5f 100%);
+            color: white;
+            min-height: 100%;
+        }
+
+        .poster {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #1e1e3f 0%, #2a2a5a 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+            border: 3px solid #00ffff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff0080, #00ffff, #ff8000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 0, 128, 0.5);
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #00ffff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .block {
+            background: linear-gradient(135deg, #2a2a5a 0%, #3d3d7a 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .block:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .block1 {
+            border-color: #ff0080;
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.3);
+        }
+
+        .block2 {
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .block3 {
+            border-color: #ff8000;
+            box-shadow: 0 0 20px rgba(255, 128, 0, 0.3);
+        }
+
+        .block-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .block1 .block-title {
+            color: #ff0080;
+            text-shadow: 0 0 10px rgba(255, 0, 128, 0.7);
+        }
+
+        .block2 .block-title {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .block3 .block-title {
+            color: #ff8000;
+            text-shadow: 0 0 10px rgba(255, 128, 0, 0.7);
+        }
+
+        .block-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #e0e0e0;
+        }
+
+        .visual-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .visual-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .icon {
+            font-size: 2rem;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: #00ffff;
+            margin: 0 10px;
+        }
+
+        .visual-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .visual-main {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .visual-sub {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .footer {
+            text-align: center;
+            background: linear-gradient(45deg, #ff0080, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 900;
+            padding: 30px;
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .poster {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .main-title {
+                font-size: 2rem;
+                letter-spacing: 1px;
+                line-height: 1.2;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+            
+            .block {
+                padding: 20px;
+            }
+            
+            .block-title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+            
+            .block-text {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                margin-bottom: 20px;
+            }
+            
+            .visual-item {
+                flex-direction: row;
+                gap: 15px;
+                padding: 15px;
+                text-align: left;
+                align-items: center;
+            }
+            
+            .visual-label {
+                flex: 1;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            .visual-main {
+                font-size: 1rem;
+            }
+            
+            .visual-sub {
+                font-size: 0.85rem;
+            }
+            
+            .icon {
+                font-size: 2.5rem;
+                flex-shrink: 0;
+            }
+            
+            .arrow {
+                font-size: 1.5rem;
+                margin: 0 5px;
+                flex-shrink: 0;
+            }
+            
+            .footer {
+                font-size: 1.1rem;
+                padding: 20px 15px;
+                line-height: 1.5;
+            }
+            
+            .header {
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .block-title {
+                font-size: 1rem;
+            }
+            
+            .block-text {
+                font-size: 0.85rem;
+            }
+            
+            .footer {
+                font-size: 1rem;
+            }
+        }
+
+        .glow-effect {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="poster">
+        <div class="header">
+            <h1 class="main-title">HUKUM DASAR DUNIA GAME</h1>
+            <p class="subtitle">3 Hal yang Harus Diketahui Developer Tentang Game dan Spesifikasi Perangkat</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="block block1">
+                <div class="glow-effect"></div>
+                <h2 class="block-title">KUALITAS → UKURAN FILE</h2>
+                <p class="block-text">Semakin bagus (detail dan realistis) game yang dibuat, semakin besar ukuran file yang dibutuhkan.</p>
+                <div class="visual-section">
+                    <div class="visual-item">
+                        <span class="icon">🎮</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #00ff00;">MB (MegaByte)</span>
+                            <span class="visual-sub">Game Sederhana & Ringan</span>
+                        </div>
+                    </div>
+                    <div class="visual-item">
+                        <span class="icon">🎯</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #ff0080;">GB (GigaByte)</span>
+                            <span class="visual-sub">Game Keren & Detail</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block block2">
+                <div class="glow-effect"></div>
+                <h2 class="block-title">KUALITAS → KEBUTUHAN PERANGKAT</h2>
+                <p class="block-text">Game yang berat dan besar filenya menuntut perangkat keras (device) yang lebih canggih.</p>
+                <div class="visual-section">
+                    <div class="visual-item">
+                        <span class="icon">🖥️</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #00ffff;">PC Gaming</span>
+                            <span class="visual-sub">Spesifikasi Tinggi</span>
+                        </div>
+                    </div>
+                    <div class="visual-item">
+                        <span class="icon">📱</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #ffff00;">Smartphone</span>
+                            <span class="visual-sub">Spesifikasi Standar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block block3">
+                <div class="glow-effect"></div>
+                <h2 class="block-title">BATASAN SMARTPHONE</h2>
+                <p class="block-text">Jika kamu hanya memiliki Smartphone, maka game yang kamu buat harus disederhanakan.</p>
+                <div class="visual-section">
+                    <div class="visual-item">
+                        <span class="icon">📱✅</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #00ff00;">BISA</span>
+                            <span class="visual-sub">Game Sederhana & Ringan</span>
+                        </div>
+                    </div>
+                    <div class="visual-item">
+                        <span class="icon">📱❌</span>
+                        <span class="arrow">→</span>
+                        <div class="visual-label">
+                            <span class="visual-main" style="color: #ff4444;">TIDAK BISA</span>
+                            <span class="visual-sub">Game Berat/GB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            "Game hebat menuntut spesifikasi hebat.<br>
+            Jangan paksakan game GigaByte ke perangkat yang hanya mampu MegaByte!"
+        </div>
+
+   <div class="cta-section">
+    <button class="cta-button" onclick="window.location.href='https://pakfahri.github.io/pictoblox/dasar.html'">
+        <span class="button-icon">🎮</span>
+        <span class="button-text">MULAI BELAJAR BUAT GAME</span>
+    </button>
+</div>
+    </div>
+
+    <script>
+        function startLearning() {
+            // Create a custom notification instead of alert
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">🚀</span>
+                    <div class="notification-text">
+                        <strong>Siap memulai perjalanan game development!</strong><br>
+                        Ingat: Mulai dari yang sederhana dulu, lalu tingkatkan secara bertahap.
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+    </script>
+
+    <style>
+        .cta-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff0080, #ff8000, #00ffff);
+            border: none;
+            border-radius: 50px;
+            padding: 20px 40px;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6);
+            background: linear-gradient(45deg, #ff0080, #00ffff, #ff8000);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px);
+        }
+
+        .button-icon {
+            font-size: 1.5rem;
+        }
+
+        .button-text {
+            flex: 1;
+        }
+
+        .button-arrow {
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover .button-arrow {
+            transform: translateX(5px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1e1e3f 0%, #2a2a5a 100%);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            color: white;
+        }
+
+        .notification-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #00ffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .notification-close:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 1rem;
+                gap: 10px;
+            }
+            
+            .button-icon {
+                font-size: 1.3rem;
+            }
+            
+            .button-arrow {
+                font-size: 1.1rem;
+            }
+            
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cta-button {
+                padding: 12px 25px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e751974698b5b8',t:'MTc2MDQ0NzQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
