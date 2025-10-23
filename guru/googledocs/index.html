@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Docs: Panduan Praktis & Cepat</title>
+    <style>
+        /* --- PERBAIKAN: Global Box-Sizing & Anti-Overflow --- */
+        /* Ini adalah praktik terbaik untuk memastikan layout yang konsisten dan mencegah overflow horizontal. */
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body, html {
+            /* Mencegah scroll horizontal di level tertinggi */
+            overflow-x: hidden;
+        }
+        
+        /* CSS untuk Tampilan Profesional */
+        
+        /* --- PEMBARUAN IMPORT FONT --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto+Slab:wght@500;600&family=Roboto:wght@400;500&family=Inter:wght@400;600&display=swap');
+        
+        :root {
+            /* --- Variabel Warna (Tidak Berubah) --- */
+            --primary-color: #4285F4;
+            --primary-hover: #1967d2;
+            --secondary-color: #34A853;
+            --secondary-bg: #e6f4ea;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #fff;
+            --border-color: #e8eaed;
+
+            /* --- PEMBARUAN VARIABEL FONT --- */
+            --font-title: 'Poppins', sans-serif;      /* Untuk Judul Utama & Sub Judul */
+            --font-section: 'Roboto Slab', serif;     /* Untuk Judul Bagian */
+            --font-chapter: 'Roboto', sans-serif;     /* Untuk Judul Bab */
+            --font-content: 'Inter', sans-serif;      /* Untuk Isi Konten (paragraf & sub-judul item) */
+        }
+
+        body {
+            /* Menggunakan font konten sebagai default untuk seluruh body */
+            font-family: var(--font-content);
+            line-height: 1.7;
+            margin: 0;
+            padding: 10px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Indikator Progress Baca --- */
+        #progressBar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            width: 100%;
+            height: 4px;
+            background-color: var(--border-color);
+        }
+        #progressBar .progress {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            transition: width 0.2s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            flex: 1;
+            margin-top: 8px;
+            /* PERBAIKAN: Pastikan container tidak pernah lebih lebar dari layar */
+            width: 100%;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        header .main-title {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 600;
+            font-family: var(--font-title);
+        }
+        header .sub-title {
+            color: var(--text-primary);
+            margin: 8px 0 15px;
+            font-size: 2.2em;
+            font-weight: 700;
+            font-family: var(--font-title);
+        }
+        .part {
+            margin-bottom: 24px;
+        }
+        .part-title {
+            background-color: #e8f0fe;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: 500;
+            color: var(--primary-hover);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            min-height: 50px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-family: var(--font-section);
+        }
+        .part-title:hover {
+            background-color: #d2e3fc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .part-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+            padding-left: 5px;
+        }
+        .part-content.active {
+            max-height: 5000px;
+            opacity: 1;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .chapter {
+            margin-top: 18px;
+        }
+        .chapter-title {
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding: 14px;
+            background-color: #f1f3f4;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 45px;
+            transition: background-color 0.2s;
+            font-family: var(--font-chapter);
+        }
+        .chapter-title:hover {
+            background-color: #e8eaed;
+        }
+        .chapter-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+            padding-left: 10px;
+        }
+        .chapter-content.active {
+            max-height: 3000px;
+            opacity: 1;
+        }
+        .content-item {
+            margin-top: 15px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            transition: box-shadow 0.2s;
+        }
+        .content-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .content-item h4 {
+            margin-top: 0;
+            color: var(--text-primary);
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: var(--font-content);
+        }
+        .content-item p {
+            margin-bottom: 0;
+            font-size: 0.95em;
+            font-weight: 400;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-family: var(--font-content);
+            /* PERBAIKAN: Memastikan teks panjang dapat pecah barisnya */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        .content-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .icon {
+            font-size: 1em;
+            transition: transform 0.3s;
+            min-width: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .icon.rotate {
+            transform: rotate(90deg);
+        }
+
+        /* --- Warna Aksen Sekunder (Pro Tip) --- */
+        .pro-tip {
+            margin-top: 15px;
+            padding: 16px;
+            border-left: 4px solid var(--secondary-color);
+            background-color: var(--secondary-bg);
+            border-radius: 0 8px 8px 0;
+            /* PERBAIKAN: Memastikan konten tidak terpotong */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+        .pro-tip h4 {
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-content);
+            /* PERBAIKAN: Memastikan judul tidak terpotong */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .pro-tip h4::before {
+            content: "💡";
+            font-size: 1.2em;
+            flex-shrink: 0; /* Mencegah ikon menyusut */
+        }
+        .pro-tip p {
+            /* PERBAIKAN: Memastikan paragraf tidak terpotong */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+        .pro-tip img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            display: block;
+        }
+        
+        /* --- Footer Styles yang Diperbarui --- */
+        footer {
+            text-align: center;
+            padding: 24px 0;
+            margin-top: 24px;
+        }
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85em;
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+            font-family: var(--font-content);
+        }
+        footer a:hover {
+            transform: translateY(-3px);
+            color: var(--primary-color);
+            text-shadow: 0 2px 5px rgba(66, 133, 244, 0.2);
+        }
+        
+        /* --- Tombol Scroll to Top --- */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 18px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s, background-color 0.2s;
+        }
+        #scrollToTopBtn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+        }
+        #scrollToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* --- Gaya Tambahan untuk Elemen Semantik Baru --- */
+        q {
+            font-style: italic;
+            color: var(--primary-hover);
+        }
+
+        kbd {
+            background-color: #f1f3f4;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            /* PERBAIKAN: Beri sedikit ruang agar tidak menempel dan memecah dengan lebih baik */
+            margin: 0 2px;
+            display: inline-block; /* Membantu kontrol margin dan wrapping */
+        }
+
+        .menu-path {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* --- PERBAIKAN: Gaya untuk Feedback Sentuh --- */
+        .part-title.is-touched {
+            background-color: #d2e3fc;
+        }
+        .chapter-title.is-touched {
+            background-color: #e0e0e0;
+        }
+        
+        /* --- Media Queries untuk Responsivitas --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            .container {
+                padding: 16px;
+            }
+            header .main-title {
+                font-size: 1.5em;
+            }
+            header .sub-title {
+                font-size: 1.8em;
+            }
+            .part-title {
+                font-size: 1.2em;
+                padding: 14px;
+            }
+            .chapter-title {
+                font-size: 1em;
+                padding: 12px;
+            }
+            .content-item {
+                padding: 14px;
+            }
+            .content-item h4 {
+                font-size: 1.05em;
+            }
+            .content-item p {
+                font-size: 0.9em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header .main-title {
+                font-size: 1.3em;
+            }
+            header .sub-title {
+                font-size: 1.6em;
+            }
+            .part-title {
+                font-size: 1.1em;
+                padding: 12px;
+            }
+            .chapter-title {
+                font-size: 0.95em;
+                padding: 10px;
+            }
+            .content-item {
+                padding: 12px;
+            }
+            .content-item h4 {
+                font-size: 1em;
+            }
+            .content-item p {
+                font-size: 0.85em;
+            }
+            .icon {
+                font-size: 0.9em;
+            }
+            footer {
+                padding: 20px 0;
+            }
+            #scrollToTopBtn {
+                right: 15px;
+                width: 44px;
+                height: 44px;
+            }
+            /* PERBAIKAN: Keterbacaan elemen kecil di layar sangat kecil */
+            kbd {
+                font-size: 1em;
+                padding: 3px 7px;
+            }
+            
+            /* PERBAIKAN: Memastikan Pro Tip tidak terpotong di mobile */
+            .pro-tip {
+                margin-top: 20px;
+                padding: 14px;
+                border-radius: 0 6px 6px 0;
+                overflow: hidden;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .pro-tip h4 {
+                font-size: 0.95em;
+                line-height: 1.4;
+                margin-bottom: 8px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                flex-wrap: wrap;
+            }
+            .pro-tip p {
+                font-size: 0.85em;
+                line-height: 1.5;
+                margin-bottom: 8px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .pro-tip img {
+                margin-top: 8px;
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Indikator Progress Baca -->
+    <div id="progressBar">
+        <div class="progress"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 class="main-title">Google Docs</h1>
+            <h2 class="sub-title">Panduan Praktis & Cepat</h2>
+        </header>
+
+        <main>
+            <!-- BAGIAN 1 -->
+            <div class="part" id="bagian-1">
+                <div class="part-title" onclick="toggleContent(this)">
+                    <span>Bagian 1: Memulai Cepat dan Dasar-dasar</span>
+                    <span class="icon">▶</span>
+                </div>
+                <div class="part-content">
+                    <p>Bagian ini mencakup akses, antarmuka, dan pemformatan paling dasar yang dibutuhkan setiap hari.</p>
+                    
+                    <!-- BAB 1 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 1: Akses dan Antarmuka</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>1.1 Lupakan "Save": Penyimpanan Otomatis</h4>
+                                <p>Google Docs menyimpan setiap perubahan Anda secara otomatis ke cloud. Anda tidak perlu lagi menekan tombol <q>Save</q>. Pekerjaan Anda aman dan dapat diakses dari mana saja.</p>
+                                <img src="cloudstorage.png" alt="Konsep Cloud Storage">
+                            </div>
+                            <div class="content-item">
+                                <h4>1.2 Cara Memulai: Akses dengan Akun Google</h4>
+                                <p>Langkah pertama adalah masuk ke akun Google Anda. Kemudian, kunjungi docs.google.com dan klik <q>+ Blank</q> untuk membuat dokumen baru dari awal.</p>
+                                <img src="blank.png" alt="Halaman Utama Google Docs">
+                            </div>
+                            <div class="content-item">
+                                <h4>1.3 Mengenal Tampilan: Menu Format, Insert, Share</h4>
+                                <p>Antarmuka Google Docs dirancang intuitif. Menu utama seperti File, Edit, View, Insert, Format, dll. berada di bagian atas. Tombol <q>Share</q> yang penting berada di kanan atas.</p>
+                                <img src="menu.png" alt="Menu Antarmuka Google Docs">
+                            </div>
+                            <div class="content-item">
+                                <h4>1.4 Bekerja Tanpa Internet (Mode Offline)</h4>
+                                <p>Anda dapat mengatur Google Docs untuk bekerja offline. Buka menu <span class="menu-path">File > Settings > Offline</span>, lalu aktifkan <q>Offline</q>. Ini akan menyinkronkan pekerjaan Anda saat Anda kembali online.</p>
+                                <img src="offline.gif" alt="Pengaturan Mode Offline">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BAB 2 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 2: Format Teks dan Struktur Dokumen</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>2.1 Pemformatan Esensial: Tebal, Miring, Font</h4>
+                                <p>Gunakan toolbar di bagian atas untuk memformat teks. Pilih teks, lalu klik ikon <strong>B</strong> (Tebal), <em>I</em> (Miring), atau U (Garis Bawah). Anda juga bisa mengubah jenis font dan ukurannya.</p>
+                                <img src="bold.gif" alt="Toolbar Pemformatan Teks">
+                            </div>
+                            <div class="content-item">
+                                <h4>2.2 Membuat Struktur: Gaya Judul (Heading)</h4>
+                                <p>Gunakan gaya Heading 1, Heading 2, dst. dari dropdown toolbar untuk membuat struktur dokumen yang jelas. Ini penting untuk navigasi dan membuat daftar isi otomatis.</p>
+                                <img src="header.gif" alt="Dropdown Gaya Heading">
+                            </div>
+                            <div class="content-item">
+                                <h4>2.3 Elemen Cepat: Gambar dan Tautan (Link)</h4>
+                                <p>Klik menu <strong>Insert</strong> untuk menambahkan gambar dari komputer atau internet. Untuk membuat tautan, pilih teks, lalu tekan <kbd>Ctrl</kbd> + <kbd>K</kbd> (atau <kbd>Cmd</kbd> + <kbd>K</kbd> di Mac) dan masukkan URL.</p>
+                                <img src="sisipgambar.gif" alt="Menu Insert">
+                            </div>
+                            <div class="content-item">
+                                <h4>2.4 Daftar Isi Otomatis (Menggunakan Heading)</h4>
+                                <p>Jika Anda sudah menggunakan Heading Styles, buat daftar isi dengan mudah. Pergi ke <span class="menu-path">Insert > Table of contents</span> dan pilih gaya yang Anda inginkan.</p>
+                                <img src="daftarisi.gif" alt="Contoh Daftar Isi Otomatis">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 2 -->
+            <div class="part" id="bagian-2">
+                <div class="part-title" onclick="toggleContent(this)">
+                    <span>Bagian 2: Kekuatan Utama: Kolaborasi Real-time</span>
+                    <span class="icon">▶</span>
+                </div>
+                <div class="part-content">
+                    <p>Ini adalah inti buku, fokus pada fitur yang membuat Google Docs jauh lebih unggul dari aplikasi desktop tradisional.</p>
+                    
+                    <!-- BAB 3 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 3: Berbagi dan Kontrol Akses</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>3.1 Mengganti "Kirim File" dengan "Berbagi Akses"</h4>
+                                <p>Alih-alih mengirim file bolak-balik, Anda cukup berbagi akses ke dokumen. Klik tombol <strong>Share</strong> di kanan atas dan masukkan email orang yang ingin Anda ajak berkolaborasi.</p>
+                                <img src="bagikan.gif" alt="Tombol Share">
+                            </div>
+                            <div class="content-item">
+                                <h4>3.2 Tiga Peran Kunci: Editor, Komentator, Pelihat</h4>
+                                <p>Saat berbagi, Anda bisa menentukan peran: <strong>Editor</strong> (bisa mengubah langsung), <strong>Komentator</strong> (hanya bisa memberi komentar), dan <strong>Pelihat</strong> (hanya bisa melihat).</p>
+                                <img src="peran.gif" alt="Dialog Peran Akses">
+                            </div>
+                            <div class="content-item">
+                                <h4>3.3 Bekerja Bersamaan: Kursor Kolaborator</h4>
+                                <p>Fitur ajaib Google Docs! Anda bisa melihat kursor setiap orang yang sedang mengedit dokumen, masing-masing dengan warna berbeda, beserta namanya.</p>
+                                <img src="kolaborasi.gif" alt="Kursor Kolaborator">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BAB 4 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 4: Review dan Umpan Balik Tim</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>4.1 Memberi Catatan: Komentar dan @nama</h4>
+                                <p>Block teks yang ingin Anda komentari, lalu klik ikon komentar atau tekan <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>M</kbd>. Anda bisa menandai orang dengan mengetik <kbd>@</kbd> diikuti nama email mereka.</p>
+                                <img src="komentar.gif" alt="Fitur Komentar">
+                            </div>
+                            <div class="pro-tip">
+                                <h4>Pro Tip: Mode Saran</h4>
+                                <p>Ubah mode editing dari <q>Editing</q> menjadi <strong>Suggesting</strong>. Setiap perubahan yang Anda buat akan menjadi saran yang bisa diterima atau ditolak oleh pemilik dokumen. Ini sangat berguna untuk kolaborasi profesional.</p>
+                                <img src="saranedit.gif" alt="Mode Saran">
+                            </div>
+                            <div class="content-item">
+                                <h4>4.3 Menjaga Dokumen Aman: Riwayat Versi</h4>
+                                <p>Google Docs menyimpan semua versi dokumen. Pergi ke <span class="menu-path">File > Version history > See version history</span> untuk melihat perubahan dan memulihkan dokumen ke versi sebelumnya.</p>
+                                <img src="history.gif" alt="Riwayat Versi">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 3 -->
+            <div class="part" id="bagian-3">
+                <div class="part-title" onclick="toggleContent(this)">
+                    <span>Bagian 3: Penyelesaian dan Produktivitas</span>
+                    <span class="icon">▶</span>
+                </div>
+                <div class="part-content">
+                    <p>Bagian ini membahas langkah akhir dan fitur cerdas untuk mempercepat pekerjaan.</p>
+                    
+                    <!-- BAB 5 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 5: Sentuhan Akhir dan Ekspor</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>5.1 Pengganti "Save As": Ekspor PDF atau .docx</h4>
+                                <p>Setelah selesai, Anda bisa mengunduh dokumen dalam berbagai format. Pergi ke <span class="menu-path">File > Download</span> dan pilih <strong>PDF Document (.pdf)</strong> atau <strong>Microsoft Word (.docx)</strong>.</p>
+                                <img src="simpansebagai.gif" alt="Menu Unduh/Ekspor">
+                            </div>
+                            <div class="content-item">
+                                <h4>5.2 Pengaturan Akhir: Mencetak Dokumen</h4>
+                                <p>Pergi ke <span class="menu-path">File > Print</span> atau tekan <kbd>Ctrl</kbd> + <kbd>P</kbd> (atau <kbd>Cmd</kbd> + <kbd>P</kbd>). Anda akan melihat pratinjau dan dapat mengatur pengaturan pencetakan seperti ukuran kertas dan margin.</p>
+                                <img src="print.gif" alt="Dialog Print">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BAB 6 -->
+                    <div class="chapter">
+                        <div class="chapter-title" onclick="toggleContent(this)">
+                            <span>Bab 6: Fitur Tambahan Cerdas</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-content">
+                            <div class="content-item">
+                                <h4>6.1 Mengetik Lebih Cepat: Voice Typing</h4>
+                                <p>Aktifkan fitur ini melalui menu <span class="menu-path">Tools > Voice typing</span>. Klik ikon mikrofon dan mulailah berbicara. Google Docs akan mengetikkan apa yang Anda ucapkan.</p>
+                                <img src="voicetyping.gif" alt="Fitur Voice Typing">
+         
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer yang Diperbarui -->
+    <footer>
+        <a href="https://pakfahri.github.io/profil" target="_blank">
+            Fahri, S.Pd. | Guru Informatika | SMP N 2 Manggar
+        </a>
+    </footer>
+
+    <!-- Tombol Scroll to Top -->
+    <button id="scrollToTopBtn" title="Kembali ke atas">↑</button>
+
+    <script>
+        // --- JavaScript untuk Scroll to Top dan Progress Bar ---
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        const progressBar = document.querySelector("#progressBar .progress");
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollToTopBtn.classList.add("show");
+            } else {
+                scrollToTopBtn.classList.remove("show");
+            }
+
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + "%";
+        };
+
+        scrollToTopBtn.addEventListener("click", function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // --- JavaScript untuk fungsi Expand/Collapse ---
+        function toggleContent(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.icon');
+            
+            const isActive = content.classList.contains('active');
+            
+            if (isActive) {
+                content.classList.remove('active');
+            } else {
+                content.classList.add('active');
+            }
+            
+            icon.classList.toggle('rotate');
+        }
+        
+        // --- JavaScript untuk Event Listener Sentuhan ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const partTitles = document.querySelectorAll('.part-title');
+            const chapterTitles = document.querySelectorAll('.chapter-title');
+            
+            partTitles.forEach(title => {
+                title.addEventListener('touchstart', function() {
+                    this.classList.add('is-touched');
+                }, { passive: true });
+                
+                title.addEventListener('touchend', function() {
+                    this.classList.remove('is-touched');
+                }, { passive: true });
+            });
+            
+            chapterTitles.forEach(title => {
+                title.addEventListener('touchstart', function() {
+                    this.classList.add('is-touched');
+                }, { passive: true });
+                
+                title.addEventListener('touchend', function() {
+                    this.classList.remove('is-touched');
+                }, { passive: true });
+            });
+        });
+    </script>
+
+</body>
+</html>
