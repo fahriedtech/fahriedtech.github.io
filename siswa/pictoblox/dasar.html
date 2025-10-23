@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membuat Game Dino Jump (PictoBlox)</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .game-concept {
+            background: linear-gradient(135deg, #FFE082 0%, #FFB74D 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-concept h2 {
+            margin: 0 0 15px 0;
+            color: #E65100;
+            font-size: 1.8em;
+        }
+
+        .game-concept p {
+            margin: 0;
+            font-size: 1.1em;
+            color: #BF360C;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 20px 25px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
+
+        .section-header .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .section-content.hidden {
+            display: none;
+        }
+
+        .code-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .code-table th {
+            background: linear-gradient(135deg, #37474F 0%, #263238 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .code-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        .code-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .code-block {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 2px 0;
+            display: inline-block;
+            min-width: 200px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Event blocks - Yellow */
+        .code-block.event {
+            background: linear-gradient(135deg, #FFD600 0%, #FFC107 100%);
+            color: #333;
+        }
+
+        /* Motion blocks - Blue */
+        .code-block.motion {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
+
+        /* Control blocks - Orange */
+        .code-block.control {
+            background: linear-gradient(135deg, #F57C00 0%, #E65100 100%);
+        }
+
+        /* Sensing blocks - Light Blue */
+        .code-block.sensing {
+            background: linear-gradient(135deg, #0288D1 0%, #0277BD 100%);
+        }
+
+        /* Looks blocks - Purple */
+        .code-block.looks {
+            background: linear-gradient(135deg, #7B1FA2 0%, #6A1B9A 100%);
+        }
+
+        /* Sound/Events blocks - Green */
+        .code-block.sound {
+            background: linear-gradient(135deg, #388E3C 0%, #2E7D32 100%);
+        }
+
+        /* Operators blocks - Green */
+        .code-block.operators {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+        }
+
+        .code-block-id {
+            background: #E3F2FD;
+            color: #1976D2;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 2px 0;
+            display: inline-block;
+            min-width: 200px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .description {
+            color: #666;
+            font-style: italic;
+        }
+
+        .dino-demo {
+            background: linear-gradient(135deg, #81C784 0%, #66BB6A 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .dino-character {
+            font-size: 4em;
+            margin: 20px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .tree-character {
+            font-size: 3em;
+            margin: 20px;
+            display: inline-block;
+            animation: moveLeft 3s linear infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        @keyframes moveLeft {
+            0% { transform: translateX(100px); }
+            100% { transform: translateX(-100px); }
+        }
+
+        .tips-box {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .tips-box h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .tips-list li:before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+
+        .interactive-demo {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .demo-button {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .demo-button:active {
+            transform: translateY(0);
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                line-height: 1.2;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .game-concept {
+                padding: 20px 15px;
+            }
+            
+            .game-concept h2 {
+                font-size: 1.5em;
+            }
+            
+            .section-content {
+                padding: 15px;
+            }
+            
+            .code-table {
+                font-size: 0.8em;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .code-table th,
+            .code-table td {
+                padding: 10px 8px;
+                min-width: 120px;
+            }
+            
+            .code-block, .code-block-id {
+                min-width: 100px;
+                font-size: 0.7em;
+                padding: 6px 8px;
+                display: block;
+                margin: 4px 0;
+                white-space: normal;
+                word-break: break-word;
+            }
+            
+            .dino-character, .tree-character {
+                font-size: 2.5em;
+                margin: 10px;
+            }
+            
+            .interactive-demo {
+                padding: 20px 15px;
+            }
+            
+            .demo-button {
+                padding: 12px 20px;
+                font-size: 1em;
+                margin: 8px 4px;
+            }
+            
+            .tips-box {
+                padding: 15px;
+            }
+            
+            .tips-box iframe {
+                height: 200px;
+            }
+            
+            .section-header {
+                padding: 15px 20px;
+                font-size: 1.2em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .code-table {
+                font-size: 0.7em;
+            }
+            
+            .code-block, .code-block-id {
+                font-size: 0.65em;
+                padding: 5px 6px;
+            }
+            
+            .dino-character, .tree-character {
+                font-size: 2em;
+            }
+            
+            .tips-box iframe {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦖 Membuat Game Dino Jump (Dasar)</h1>
+            <p>Belajar Pemrograman Visual dengan PictoBlox</p>
+        </div>
+
+        <div class="content">
+            <div class="game-concept">
+                <h2>🎮 Konsep Game</h2>
+                <p>Karakter Dino melompat menghindari rintangan (Pohon) yang bergerak dari kanan ke kiri</p>
+                <div class="dino-demo">
+                    <span class="dino-character">🦖</span>
+                    <span class="tree-character">🌳</span>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Section 1: Karakter Dino -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>1. 🦖 Kode Karakter Dino (Pemain)</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <p><strong>Fungsi:</strong> Mengatur pergerakan dan lompatan karakter Dino</p>
+                    
+                    <table class="code-table">
+                        <thead>
+                            <tr>
+                                <th>Kode Blok (Bahasa Indonesia)</th>
+                                <th>Code Block (English)</th>
+                                <th>Keterangan/Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="code-block-id">Ketika bendera hijau diklik</div></td>
+                                <td><div class="code-block event">when green flag clicked</div></td>
+                                <td class="description">Awal game/Game start</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">pergi ke x: (-150) y: (-80)</div></td>
+                                <td><div class="code-block motion">go to x: (-150) y: (-80)</div></td>
+                                <td class="description">Atur posisi awal/Set starting position</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">Ketika tombol panah atas ditekan</div></td>
+                                <td><div class="code-block event">when up arrow key pressed</div></td>
+                                <td class="description">Memicu lompatan/Triggers the jump</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ulangi (13) kali</div></td>
+                                <td><div class="code-block control">repeat (13) times</div></td>
+                                <td class="description">Melompat naik/Jump up</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ubah y sebesar (10)</div></td>
+                                <td><div class="code-block motion">change y by (10)</div></td>
+                                <td class="description">Gerak naik 10 pixel</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ulangi (13) kali</div></td>
+                                <td><div class="code-block control">repeat (13) times</div></td>
+                                <td class="description">Melompat turun/Jump down</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ubah y sebesar (-10)</div></td>
+                                <td><div class="code-block motion">change y by (-10)</div></td>
+                                <td class="description">Gerak turun 10 pixel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="interactive-demo">
+                        <h3>🎯 Demo Interaktif</h3>
+                        <p>Klik tombol untuk melihat simulasi lompatan Dino!</p>
+                        <button class="demo-button" onclick="simulateJump()">Tekan Panah Atas ⬆️</button>
+                        <div id="dinoDemo" style="font-size: 3em; margin: 20px;">🦖</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Rintangan -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>2. 🌳 Kode Rintangan (Pohon/Trees)</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <p><strong>Fungsi:</strong> Membuat rintangan yang bergerak dari kanan ke kiri secara otomatis</p>
+                    <p><strong>Catatan:</strong> Ubah size sprite ini menjadi 30</p>
+                    
+                    <table class="code-table">
+                        <thead>
+                            <tr>
+                                <th>Kode Blok (Bahasa Indonesia)</th>
+                                <th>Code Block (English)</th>
+                                <th>Keterangan/Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="code-block-id">Ketika bendera hijau diklik</div></td>
+                                <td><div class="code-block event">when green flag clicked</div></td>
+                                <td class="description">Awal game/Game start</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">sembunyikan</div></td>
+                                <td><div class="code-block looks">hide</div></td>
+                                <td class="description">Sembunyikan Sprite asli/Hide the original Sprite</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">selamanya</div></td>
+                                <td><div class="code-block control">forever</div></td>
+                                <td class="description">Loop tanpa henti/Endless loop</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">tunggu (acak antara 1 sampai 2) detik</div></td>
+                                <td><div class="code-block control">wait (<span style="color: #4CAF50; font-weight: bold;">pick random 1 to 2</span>) seconds</div></td>
+                                <td class="description">Jeda sebelum rintangan baru muncul/Delay before new obstacle appears</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">buat clone dari diriku</div></td>
+                                <td><div class="code-block control">create clone of myself</div></td>
+                                <td class="description">Buat rintangan baru/Create a new obstacle</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">Ketika aku mulai sebagai clone</div></td>
+                                <td><div class="code-block event">when I start as a clone</div></td>
+                                <td class="description">Kode untuk setiap clone/Code for each clone</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">pergi ke x: (240) y: (-80)</div></td>
+                                <td><div class="code-block motion">go to x: (240) y: (-80)</div></td>
+                                <td class="description">Muncul di kanan Stage/Appears on the right of the Stage</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">tampilkan</div></td>
+                                <td><div class="code-block looks">show</div></td>
+                                <td class="description">Tampilkan clone/Show the clone</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ulangi sampai (posisi x) < (-240)</div></td>
+                                <td><div class="code-block sensing">repeat until (x position) < (-240)</div></td>
+                                <td class="description">Bergerak sampai keluar layar kiri/Moves until it's off the left screen</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">ubah x sebesar (-10)</div></td>
+                                <td><div class="code-block motion">change x by (-10)</div></td>
+                                <td class="description">Gerakkan ke kiri/Move left</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">hapus clone ini</div></td>
+                                <td><div class="code-block control">delete this clone</div></td>
+                                <td class="description">Hapus clone yang sudah lewat/Delete the clone that passed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="interactive-demo">
+                        <h3>🎯 Demo Pergerakan Rintangan</h3>
+                        <p>Lihat bagaimana rintangan bergerak dari kanan ke kiri!</p>
+                        <button class="demo-button" onclick="startObstacleDemo()">Mulai Demo Rintangan 🌳</button>
+                        <div id="obstacleDemo" style="height: 60px; position: relative; border: 2px solid #ccc; border-radius: 10px; margin: 20px 0; overflow: hidden;">
+                            <div id="movingTree" style="position: absolute; top: 10px; right: -50px; font-size: 2em; transition: right 3s linear;">🌳</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Game Over -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span>3. 💥 Kode Game Over (Deteksi Tabrakan)</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <p><strong>Fungsi:</strong> Mendeteksi tabrakan antara Dino dan rintangan, lalu menghentikan game</p>
+                    <p><em>Tambahkan kode ini pada Sprite Dino.</em></p>
+                    
+                    <table class="code-table">
+                        <thead>
+                            <tr>
+                                <th>Kode Blok (Bahasa Indonesia)</th>
+                                <th>Code Block (English)</th>
+                                <th>Keterangan/Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="code-block-id">Ketika bendera hijau diklik</div></td>
+                                <td><div class="code-block event">when green flag clicked</div></td>
+                                <td class="description">Awal game/Game start</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">selamanya</div></td>
+                                <td><div class="code-block control">forever</div></td>
+                                <td class="description">Loop tanpa henti/Endless loop</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">jika (menyentuh (trees) ?)</div></td>
+                                <td><div class="code-block sensing">if (touching (trees) ?)</div></td>
+                                <td class="description">Jika Dino menabrak Pohon/If Dino collides with the Trees</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">kirim pesan (Game Over)</div></td>
+                                <td><div class="code-block event">broadcast (Game Over)</div></td>
+                                <td class="description">Kirim pesan untuk menghentikan semuanya/Send message to stop everything</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">Ketika aku menerima (Game Over)</div></td>
+                                <td><div class="code-block event">when I receive (Game Over)</div></td>
+                                <td class="description">Dijalankan saat Game Over/Executed when Game Over</td>
+                            </tr>
+                            <tr>
+                                <td><div class="code-block-id">berhenti (semua)</div></td>
+                                <td><div class="code-block control">stop (all)</div></td>
+                                <td class="description">Menghentikan semua skrip/Stops all scripts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="interactive-demo">
+                        <h3>🎯 Demo Deteksi Tabrakan</h3>
+                        <p>Simulasi apa yang terjadi ketika Dino menabrak rintangan!</p>
+                        <button class="demo-button" onclick="simulateCollision()">Simulasi Tabrakan 💥</button>
+                        <div id="collisionDemo" style="display: flex; justify-content: center; align-items: center; height: 80px; margin: 20px 0;">
+                            <span id="demoDino" style="font-size: 2.5em; margin: 0 20px;">🦖</span>
+                            <span id="demoTree" style="font-size: 2.5em; margin: 0 20px;">🌳</span>
+                        </div>
+                        <div id="gameOverMessage" style="display: none; color: red; font-size: 1.5em; font-weight: bold; text-align: center;">GAME OVER! 💥</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Source Code Section 1 -->
+            <div class="tips-box">
+                <h3>💡 Script Code Dino</h3>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="gambar1.jpg" alt="Source Code 1" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+                </div>
+            </div>
+
+            <!-- Source Code Section 2 -->
+            <div class="tips-box">
+                <h3>💡 Script Code Trees</h3>
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="gambar2.jpg" alt="Source Code 2" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin: 15px 0; padding: 10px;">
+        <a href="https://pakfahri.github.io/profile" target="_blank" rel="noopener noreferrer" 
+           style="text-decoration: none; color: white; font-size: 0.9em; font-weight: normal; 
+                  transition: all 0.3s ease; animation: pulse 2s infinite;" 
+           onmouseover="this.style.color='#f0f0f0'"
+           onmouseout="this.style.color='white'">
+            Fahri, S.Pd | Guru Informatika | SMP N 2 Manggar
+        </a>
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <script>
+        let currentProgress = 0;
+        const totalSections = 3;
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                header.classList.remove('collapsed');
+                icon.textContent = '▼';
+                updateProgress(1);
+            } else {
+                content.classList.add('hidden');
+                header.classList.add('collapsed');
+                icon.textContent = '▶';
+                updateProgress(-1);
+            }
+        }
+
+        function updateProgress(change) {
+            currentProgress = Math.max(0, Math.min(totalSections, currentProgress + change));
+            const percentage = (currentProgress / totalSections) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function simulateJump() {
+            const dino = document.getElementById('dinoDemo');
+            dino.style.transform = 'translateY(-30px)';
+            dino.style.transition = 'transform 0.3s ease';
+            
+            setTimeout(() => {
+                dino.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        function startObstacleDemo() {
+            const tree = document.getElementById('movingTree');
+            tree.style.right = '-50px';
+            tree.style.transition = 'none';
+            
+            setTimeout(() => {
+                tree.style.transition = 'right 3s linear';
+                tree.style.right = '100%';
+            }, 100);
+            
+            setTimeout(() => {
+                tree.style.right = '-50px';
+                tree.style.transition = 'none';
+            }, 3200);
+        }
+
+        function simulateCollision() {
+            const dino = document.getElementById('demoDino');
+            const tree = document.getElementById('demoTree');
+            const message = document.getElementById('gameOverMessage');
+            
+            // Reset positions
+            dino.style.transform = 'translateX(0)';
+            tree.style.transform = 'translateX(0)';
+            message.style.display = 'none';
+            
+            // Animate collision
+            setTimeout(() => {
+                dino.style.transform = 'translateX(10px)';
+                tree.style.transform = 'translateX(-10px)';
+                dino.style.transition = 'transform 0.5s ease';
+                tree.style.transition = 'transform 0.5s ease';
+            }, 100);
+            
+            // Show game over
+            setTimeout(() => {
+                message.style.display = 'block';
+                dino.style.filter = 'grayscale(100%)';
+                tree.style.filter = 'grayscale(100%)';
+            }, 600);
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                dino.style.transform = 'translateX(0)';
+                tree.style.transform = 'translateX(0)';
+                dino.style.filter = 'none';
+                tree.style.filter = 'none';
+                message.style.display = 'none';
+            }, 2600);
+        }
+
+        function resetProgress() {
+            currentProgress = 0;
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Collapse all sections
+            const sections = document.querySelectorAll('.section-content');
+            const headers = document.querySelectorAll('.section-header');
+            
+            sections.forEach(section => section.classList.add('hidden'));
+            headers.forEach(header => {
+                header.classList.add('collapsed');
+                header.querySelector('.toggle-icon').textContent = '▶';
+            });
+        }
+
+        // Initialize with all sections collapsed
+        window.addEventListener('load', () => {
+            resetProgress();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e7472724e0b5b8',t:'MTc2MDQ0NzAxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
