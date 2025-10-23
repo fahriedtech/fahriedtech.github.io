@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Pembelajaran Berpikir Komputasional</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px 15px 0 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            min-width: 150px;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-bottom-color: #ffd700;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .class-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .class-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .class-icon {
+            font-size: 2.5rem;
+        }
+
+        .description {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .drive-embed {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .games-section {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .games-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .game-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .game-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-text {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .footer-link:hover .footer-text {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 10px;
+                margin-bottom: 15px;
+                background: transparent;
+                backdrop-filter: none;
+                box-shadow: none;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                line-height: 1.2;
+                margin-bottom: 5px;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+                display: none;
+            }
+            
+            .tabs {
+                flex-direction: row;
+                border-radius: 8px 8px 0 0;
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .tab-button {
+                min-width: auto;
+                padding: 8px 5px;
+                font-size: 0.75rem;
+                text-align: center;
+                border-radius: 0;
+            }
+            
+            .tab-button:hover {
+                transform: none;
+            }
+            
+            .content-area {
+                border-radius: 0 0 8px 8px;
+                min-height: auto;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .tab-content {
+                padding: 10px;
+            }
+            
+            .class-section {
+                padding: 5px;
+            }
+            
+            .class-section h2 {
+                font-size: 1.2rem;
+                flex-direction: row;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .class-icon {
+                font-size: 1.5rem;
+            }
+            
+            .description {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+                line-height: 1.4;
+                color: #777;
+            }
+            
+            .drive-embed {
+                height: calc(100vh - 200px);
+                min-height: 400px;
+                max-height: 600px;
+                margin-top: 10px;
+                border-radius: 5px;
+            }
+            
+            .games-section {
+                padding: 5px;
+            }
+            
+            .game-link {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                margin: 10px 0;
+                display: block;
+                width: 100%;
+                max-width: none;
+                margin-left: auto;
+                margin-right: auto;
+                border-radius: 8px;
+            }
+            
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-top: 15px;
+            }
+            
+            .feature-card {
+                padding: 10px;
+                margin: 0;
+                border-radius: 5px;
+                border-left: 2px solid #667eea;
+            }
+            
+            .feature-card h3 {
+                font-size: 0.9rem;
+                margin-bottom: 5px;
+            }
+            
+            .feature-card p {
+                font-size: 0.75rem;
+                line-height: 1.3;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .tab-button {
+                padding: 6px 3px;
+                font-size: 0.7rem;
+            }
+            
+            .class-section h2 {
+                font-size: 1.1rem;
+            }
+            
+            .drive-embed {
+                height: calc(100vh - 150px);
+                min-height: 350px;
+                max-height: 500px;
+            }
+            
+            .game-link {
+                font-size: 0.85rem;
+                padding: 8px 12px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .feature-card {
+                padding: 8px;
+            }
+            
+            .feature-card h3 {
+                font-size: 0.85rem;
+            }
+            
+            .feature-card p {
+                font-size: 0.7rem;
+            }
+            
+            .footer {
+                margin-top: 10px;
+                padding: 10px 5px;
+            }
+            
+            .footer-text {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧩 Panduan Pembelajaran Berpikir Komputasional</h1>
+            <p>Mengembangkan kemampuan berpikir logis dan sistematis untuk memecahkan masalah</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('kelas7')">
+                📚 Kelas VII
+            </button>
+            <button class="tab-button" onclick="showTab('kelas8')">
+                📖 Kelas VIII
+            </button>
+            <button class="tab-button" onclick="showTab('kelas9')">
+                📝 Kelas IX
+            </button>
+            <button class="tab-button" onclick="showTab('games')">
+                🎮 Games Blockly
+            </button>
+        </div>
+
+        <div class="content-area">
+            <div id="kelas7" class="tab-content active">
+                <div class="class-section">
+                    <h2>
+                        <span class="class-icon">📚</span>
+                        Kelas VII - Berpikir Komputasional
+                    </h2>
+                    <div class="description">
+                        Materi berpikir komputasional untuk siswa kelas 7. Mempelajari konsep-konsep algoritma, optimasi penjadwalan, struktur data dan representasi data 
+                    </div>
+                    
+                    <iframe 
+                        src="https://drive.google.com/file/d/1MGI60cbaxRjA3bjD2pD_S33OR5BbMufZ/preview" 
+                        class="drive-embed"
+                        allow="autoplay">
+                    </iframe>
+                    
+
+                </div>
+            </div>
+
+            <div id="kelas8" class="tab-content">
+                <div class="class-section">
+                    <h2>
+                        <span class="class-icon">📖</span>
+                        Kelas VIII - Berpikir Komputasional
+                    </h2>
+                    <div class="description">
+                        Materi untuk kelas 8 yang fokus pada struktur data, ekspresi dan operasi logika, dan algoritma
+                    </div>
+                    
+                    <iframe 
+                        src="https://drive.google.com/file/d/1rF9QCUjVLBkVu7qbBXJqe8BdDN5NRrYi/preview" 
+                        class="drive-embed"
+                        allow="autoplay">
+                    </iframe>
+                    
+
+                </div>
+            </div>
+
+            <div id="kelas9" class="tab-content">
+                <div class="class-section">
+                    <h2>
+                        <span class="class-icon">📝</span>
+                        Kelas IX - Berpikir Komputasional
+                    </h2>
+                    <div class="description">
+                        Materi lanjutan untuk kelas 9 berupa fungsi, himpunan dan sistem bilangan, algoritma dan struktur data
+                    </div>
+                    
+                    <iframe 
+                        src="https://drive.google.com/file/d/12HysJyEUAEctXWHAxNRi6UgFmZ_Nonjw/preview" 
+                        class="drive-embed"
+                        allow="autoplay">
+                    </iframe>
+                    
+
+                </div>
+            </div>
+
+            <div id="games" class="tab-content">
+                <div class="games-section">
+                    <h2>
+                        <span class="class-icon">🎮</span>
+                        Games Blockly - Belajar Sambil Bermain
+                    </h2>
+                    <div class="description">
+                        Platform interaktif untuk belajar pemrograman dan berpikir komputasional melalui permainan yang menyenangkan dengan blok visual.
+                    </div>
+                    
+                    <a href="https://blockly.games/?lang=id" target="_blank" rel="noopener noreferrer" class="game-link">
+                        🎯 Mulai Bermain Blockly Games
+                    </a>
+                    
+                    <div class="features">
+                        <div class="feature-card">
+                            <h3>🧩 Puzzle</h3>
+                            <p>Memecahkan teka-teki logika dengan menyusun blok kode</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🐢 Turtle</h3>
+                            <p>Menggambar dengan mengontrol pergerakan kura-kura virtual</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🎬 Movie</h3>
+                            <p>Membuat animasi sederhana dengan pemrograman visual</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🎵 Music</h3>
+                            <p>Menciptakan melodi dengan algoritma dan pola</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🌊 Pond Tutor</h3>
+                            <p>Belajar konsep pemrograman melalui simulasi kolam</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>🦆 Pond Duck</h3>
+                            <p>Tantangan pemrograman tingkat lanjut dengan bebek virtual</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <a href="https://pakfahri.github.io/profil/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                <span class="footer-text">Fahri, S.Pd. | Guru Informatika | SMP N 2 Manggar</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Sembunyikan semua konten tab
+            const allTabs = document.querySelectorAll('.tab-content');
+            allTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Hapus kelas active dari semua tombol tab
+            const allButtons = document.querySelectorAll('.tab-button');
+            allButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Tampilkan tab yang dipilih
+            document.getElementById(tabName).classList.add('active');
+            
+            // Tambahkan kelas active ke tombol yang diklik
+            event.target.classList.add('active');
+        }
+        
+        // Animasi loading untuk iframe
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('.drive-embed');
+            iframes.forEach(iframe => {
+                iframe.addEventListener('load', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98e61ba845c48740',t:'MTc2MDQzNDc1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
