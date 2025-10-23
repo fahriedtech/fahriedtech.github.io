@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lembar Misi - Si Kucing Penjelajah</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+        }
+        
+        .mission-sheet {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '🌟';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            top: -20px;
+            right: -20px;
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .mission-title {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .mission-title {
+                font-size: 1.8em;
+            }
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 15px;
+            }
+        }
+        
+        .greeting {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+        }
+        
+        .blocks-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #00b894;
+        }
+        
+        @media (max-width: 768px) {
+            .blocks-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+        }
+        
+        .block-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .block-item:hover {
+            transform: translateX(10px);
+        }
+        
+        .block-code {
+            background: #6c5ce7;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin-right: 15px;
+            min-width: 200px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .block-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px;
+            }
+            
+            .block-code {
+                margin-right: 0;
+                margin-bottom: 8px;
+                min-width: auto;
+                width: 100%;
+                text-align: center;
+                font-size: 0.9em;
+            }
+            
+            .block-item:hover {
+                transform: none;
+            }
+        }
+        
+        .challenge-box {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(232, 67, 147, 0.3);
+        }
+        
+        .target-box {
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .exploration-box {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .challenge-box, .exploration-box {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .target-box {
+                padding: 15px;
+                margin: 15px 0;
+                font-size: 1.1em;
+            }
+        }
+        
+        .motion-blocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .motion-block {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .motion-block:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .block-visual {
+            margin-bottom: 10px;
+        }
+        
+        .motion-block p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .tips-box {
+            background: linear-gradient(45deg, #fdcb6e, #e17055);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #d63031;
+        }
+        
+        .cat-animation {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .cat {
+            font-size: 4em;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        .progress-tracker {
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            background: #e8f4fd;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.5);
+            accent-color: #00b894;
+        }
+        
+        .completion-message {
+            background: linear-gradient(45deg, #00b894, #55a3ff);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+            animation: celebration 0.8s ease-out;
+        }
+        
+        @keyframes celebration {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+        
+        .objectives-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .objectives-list {
+            margin-top: 15px;
+        }
+        
+        .objective-item {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 768px) {
+            .objectives-section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .tips-box {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .progress-tracker {
+                padding: 15px;
+                margin-top: 15px;
+            }
+            
+            .greeting {
+                padding: 15px;
+                margin-bottom: 15px;
+                font-size: 1em;
+            }
+            
+            .cat {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mission-sheet">
+        <div class="header">
+            <h1 class="mission-title">✨ Misi 1: Si Kucing Penjelajah! ✨</h1>
+        </div>
+        
+        <div class="content">
+            <div class="objectives-section">
+                <h3 style="color: white; margin-top: 0; text-align: center;">🎯 Tujuan Misi</h3>
+                <div class="objectives-list">
+                    <div class="objective-item">
+                        • Memulai program dengan blok "when green flag clicked"
+                    </div>
+                    <div class="objective-item">
+                        • Menggunakan blok gerakan dasar dalam Scratch
+                    </div>
+                    <div class="objective-item">
+                        • Mengatur sprite agar bergerak di panggung
+                    </div>
+                    <div class="objective-item">
+                        • Mencoba kombinasi blok untuk hasil menarik
+                    </div>
+                </div>
+            </div>
+            
+            <div class="greeting">
+                <strong>Halo, Guru Koder! 🎉</strong><br>
+                Hari ini kamu akan belajar cara menggerakkan Sprite Kucing dengan blok <strong>Gerakan (Motion)</strong>. Yuk, kenalan dengan beberapa blok penting dulu:
+            </div>
+            
+            <div class="cat-animation">
+                <div class="cat">🐱</div>
+            </div>
+            
+            <div class="blocks-section">
+                <h3 style="color: #2d3436; margin-top: 0;">🔧 Blok-blok yang Mungkin Kamu Butuhkan:</h3>
+                
+                <div class="block-item">
+                    <div class="block-code">move (10) steps</div>
+                    <div>→ Membuat kucing berjalan maju.</div>
+                </div>
+                
+                <div class="block-item">
+                    <div class="block-code">turn right (15) degrees</div>
+                    <div>→ Memutar kucing ke kanan.</div>
+                </div>
+                
+                <div class="block-item">
+                    <div class="block-code">turn left (15) degrees</div>
+                    <div>→ Memutar kucing ke kiri.</div>
+                </div>
+                
+                <div class="block-item">
+                    <div class="block-code">go to x: (0) y: (0)</div>
+                    <div>→ Membawa kucing langsung ke titik tertentu di panggung.</div>
+                </div>
+                
+                <div class="block-item">
+                    <div class="block-code">if on edge, bounce</div>
+                    <div>→ Supaya kucing tidak kabur keluar layar.</div>
+                </div>
+            </div>
+            
+            <div class="exploration-box">
+                <h4 style="margin-top: 0; color: white;">🎨 Eksplorasi blok motion lain seperti:</h4>
+                
+
+                
+
+                
+                <div class="block-item" style="background: rgba(255, 255, 255, 0.1); margin: 15px 0;">
+                    <div class="block-code">set rotation style [all around]</div>
+                    <div style="color: white;">→ Mengatur cara sprite berputar saat bergerak.</div>
+                </div>
+                
+
+            </div>
+            
+            <div class="challenge-box">
+                <h3 style="margin-top: 0;">🚀 Tantanganmu:</h3>
+                <p>Buatlah program yang dimulai dengan blok <strong><code>when green flag clicked</code></strong>. Atur agar Sprite Kucingmu berjalan di panggung, dan jika sampai tepi, dia akan memantul kembali.</p>
+            </div>
+            
+            <div class="target-box">
+                🎯 <strong>Tantangan Bonus:</strong> Bagaimana cara membuat sprite Kucing bergerak tanpa henti hanya dengan sekali klik bendera hijau?
+            </div>
+
+            <div class="tips-box">
+                <h4 style="margin-top: 0;">💡 Tips:</h4>
+                <p>• Coba ganti angka di blok <strong><code>move (10)</code></strong> menjadi lebih kecil atau lebih besar. Apakah kucingmu jadi jalan pelan atau lari kencang? 🐾</p>
+                <p>• Untuk mengubah sudut putaran, ganti angka di blok <strong><code>turn right (15) degrees</code></strong> atau <strong><code>turn left (15) degrees</code></strong>. Angka yang lebih besar membuat kucing berputar lebih tajam!</p>
+                <p>• Gunakan blok <strong><code>set rotation style</code></strong> untuk mengatur cara kucing berputar: pilih "all around" agar kucing bisa berputar bebas, atau "left-right" agar kucing hanya menghadap kiri-kanan.</p>
+            </div>
+            
+            <div class="progress-tracker">
+                <h3 style="color: #2d3436; margin-top: 0;">📋 Checklist Misi:</h3>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step1">
+                    <label for="step1">Membuka Scratch dan memilih Sprite Kucing</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step2">
+                    <label for="step2">Menambahkan blok "when green flag clicked"</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step3">
+                    <label for="step3">Menambahkan blok "move (10) steps"</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step4">
+                    <label for="step4">Menambahkan blok "if on edge, bounce"</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step5">
+                    <label for="step5">Menguji program dengan menekan bendera hijau</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step6">
+                    <label for="step6">Bereksperimen dengan angka yang berbeda</label>
+                </div>
+                
+                <div class="checkbox-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" id="step7">
+                    <label for="step7">Bereksperimen dengan menambahkan perubahan sudut</label>
+                </div>
+                
+                <div class="completion-message" id="completionMessage">
+                    <h3>🎉 Selamat! Kamu telah menyelesaikan Misi 1! 🎉</h3>
+                    <p>Kucingmu sekarang sudah bisa menjelajah panggung dengan sempurna! <span class="emoji">🐱</span><span class="emoji">✨</span></p>
+                    <p><strong>Siap untuk misi berikutnya?</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCheck(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            
+            // Add visual feedback
+            if (checkbox.checked) {
+                element.style.background = '#d1f2eb';
+                element.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 200);
+            } else {
+                element.style.background = 'white';
+            }
+            
+            checkCompletion();
+        }
+        
+        function checkCompletion() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const completedTasks = Array.from(checkboxes).filter(cb => cb.checked).length;
+            
+            if (completedTasks === checkboxes.length) {
+                document.getElementById('completionMessage').style.display = 'block';
+                
+                // Add celebration effect
+                setTimeout(() => {
+                    createConfetti();
+                }, 500);
+            } else {
+                document.getElementById('completionMessage').style.display = 'none';
+            }
+        }
+        
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.animation = 'fall 3s linear forwards';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        }
+        
+        // Add CSS for confetti animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986203b8606d6d06',t:'MTc1OTA0OTY1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

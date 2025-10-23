@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi 4: Ikan Berenang dan Hati-Hati dengan Ubur-Ubur!</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                border-radius: 10px;
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: "🐠";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            animation: swim 3s ease-in-out infinite;
+        }
+
+        .header::after {
+            content: "🪼";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header::before,
+            .header::after {
+                font-size: 2rem;
+            }
+            
+            .header::before {
+                left: 15px;
+            }
+            
+            .header::after {
+                right: 15px;
+            }
+        }
+
+        @keyframes swim {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(-50%) rotate(0deg); }
+            50% { transform: translateY(-60%) rotate(5deg); }
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6rem;
+                padding: 0 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
+                padding: 0 35px;
+            }
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #4ECDC4;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                margin-bottom: 20px;
+                padding: 15px;
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 12px;
+            }
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .objectives {
+            background: linear-gradient(135deg, #FFE5B4, #FFCC70);
+        }
+
+        .story {
+            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+        }
+
+        .blocks {
+            background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+        }
+
+        .challenges {
+            background: linear-gradient(135deg, #FFE5E5, #FFCCCB);
+        }
+
+        .block-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .code-block {
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            min-width: 200px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .block-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .code-block {
+                min-width: auto;
+                padding: 12px 15px;
+                font-size: 0.85rem;
+            }
+        }
+
+        .code-block.control {
+            background: #FF9500;
+        }
+
+        .code-block.motion {
+            background: #4A90E2;
+        }
+
+        .code-block.sensing {
+            background: #5CB3CC;
+        }
+
+        .code-block.looks {
+            background: #9966FF;
+        }
+
+        .code-block.sound {
+            background: #CF63CF;
+        }
+
+        .description {
+            flex: 1;
+            color: #2c3e50;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95rem;
+            background: #f8f9fa;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .description {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+        }
+
+        .palette-section {
+            background: white;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .palette-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .palette-content {
+            padding: 20px;
+        }
+
+        .palette {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .control { background: #FF9500; color: white; }
+        .motion { background: #4A90E2; color: white; }
+        .sensing { background: #5CB3CC; color: white; }
+        .looks { background: #9966FF; color: white; }
+        .sound { background: #CF63CF; color: white; }
+
+        .checklist {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .checklist {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            .checklist-item {
+                margin: 12px 0;
+                padding: 12px;
+            }
+        }
+
+        .checklist-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .checklist-item.completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            text-decoration: line-through;
+        }
+
+        .checklist-item.bonus {
+            border: 2px dashed #ffc107;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        }
+
+        .checklist-item.bonus.completed {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+        }
+
+        .checkbox {
+            width: 25px;
+            height: 25px;
+            border: 3px solid #4ECDC4;
+            border-radius: 5px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox.checked {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .tips {
+            background: linear-gradient(135deg, #FFF9C4, #F7DC6F);
+            border-left-color: #F39C12;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ECDC4, #45B7D1);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            border-left: 4px solid #4ECDC4;
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .emoji {
+                font-size: 1.3rem;
+                margin-right: 8px;
+            }
+            
+            .section h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section p, .section li {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .emoji {
+                font-size: 1.2rem;
+            }
+            
+            .section h2 {
+                font-size: 1.2rem;
+            }
+            
+            .section p, .section li {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Misi 4: Ikan Berenang dan Hati-Hati dengan Ubur-Ubur!</h1>
+        </div>
+
+        <div class="content">
+            <div class="section objectives">
+                <h2><span class="emoji">🎯</span>Tujuan Misi</h2>
+                <ul>
+                    <li>Menerapkan blok perulangan tak terbatas (forever) dari palet Control untuk membuat aksi yang berjalan terus-menerus.</li>
+                    <li>Menerapkan logika kondisional (if... then) dari palet Control untuk membuat sebuah aksi terjadi jika syarat tertentu terpenuhi.</li>
+                    <li>Menggunakan blok dari palet Sensing (touching...?) untuk mendeteksi kontak fisik antara dua sprite.</li>
+                </ul>
+            </div>
+
+            <div class="section story">
+                <h2><span class="emoji">📖</span>Cerita Singkat / Pembuka</h2>
+                <p>Ikan berenang di laut yang indah, tapi ada ubur-ubur berbahaya. Ikan harus berenang dengan lincah, dan jika menyentuh ubur-ubur, ia akan berkata <strong>"Aduh!"</strong> sebagai tanda terkena.</p>
+            </div>
+
+            <div class="section blocks">
+                <h2><span class="emoji">🧩</span>Blok Kode yang Mungkin Kamu Butuhkan</h2>
+                
+                <div class="palette-section">
+                    <div class="palette-header">
+                        <span class="palette control">Palet Kontrol (Control)</span>
+                    </div>
+                    <div class="palette-content">
+                        <div class="block-container">
+                            <div class="code-block control">when green flag clicked</div>
+                            <div class="description">Memulai skrip saat bendera hijau diklik</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block control">forever</div>
+                            <div class="description">Membuat aksi berjalan terus-menerus tanpa berhenti</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block control">if…then</div>
+                            <div class="description">Mengecek kondisi tertentu dan menjalankan perintah jika benar</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block control">wait (2) seconds</div>
+                            <div class="description">Memberi jeda waktu agar aksi terlihat cukup lama</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palette-section">
+                    <div class="palette-header">
+                        <span class="palette motion">Palet Gerak (Motion)</span>
+                    </div>
+                    <div class="palette-content">
+                        <div class="block-container">
+                            <div class="code-block motion">move ( ) steps</div>
+                            <div class="description">Membuat ikan berenang</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block motion">turn ( ) degrees</div>
+                            <div class="description">Memberi efek ikan berputar</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block motion">if on edge, bounce</div>
+                            <div class="description">Ikan memantul saat menyentuh tepi panggung</div>
+                        </div>
+                        <div class="block-container">
+                            <div class="code-block motion">glide ( ) secs to random position</div>
+                            <div class="description">Ikan meluncur ke posisi acak</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palette-section">
+                    <div class="palette-header">
+                        <span class="palette sensing">Palet Sensor (Sensing)</span>
+                    </div>
+                    <div class="palette-content">
+                        <div class="block-container">
+                            <div class="code-block sensing">&lt;touching [Ubur-Ubur]?&gt;</div>
+                            <div class="description">Mengecek apakah sprite sedang menyentuh ubur-ubur</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palette-section">
+                    <div class="palette-header">
+                        <span class="palette looks">Palet Tampilan (Looks)</span>
+                    </div>
+                    <div class="palette-content">
+                        <div class="block-container">
+                            <div class="code-block looks">say [Aduh!] for (2) seconds</div>
+                            <div class="description">Menampilkan teks "Aduh!" di atas sprite selama 2 detik</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palette-section">
+                    <div class="palette-header">
+                        <span class="palette sound">Palet Suara (Sound) – opsional</span>
+                    </div>
+                    <div class="palette-content">
+                        <div class="block-container">
+                            <div class="code-block sound">play sound [Splash]</div>
+                            <div class="description">Memutar efek suara saat sprite menyentuh ubur-ubur</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section challenges">
+                <h2><span class="emoji">🎮</span>Tantangan</h2>
+                <ol style="list-style: decimal; padding-left: 20px;">
+                    <li style="border-left: none; background: transparent; padding: 5px 0;">Tambahkan sprite <strong>ikan</strong> dan <strong>ubur-ubur</strong> ke panggung.</li>
+                    <li style="border-left: none; background: transparent; padding: 5px 0;">Gunakan blok <code>forever</code> untuk membuat ikan selalu berenang.</li>
+                    <li style="border-left: none; background: transparent; padding: 5px 0;">Tambahkan blok <code>if touching [Jellyfish]? then</code> untuk mendeteksi tabrakan.</li>
+                    <li style="border-left: none; background: transparent; padding: 5px 0;">Saat ikan menyentuh ubur-ubur:
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li style="border-left: none; background: transparent; padding: 2px 0;">Tunggu 2 detik (<code>wait 2 seconds</code>)</li>
+                            <li style="border-left: none; background: transparent; padding: 2px 0;">Katakan <strong>"Aduh!"</strong> selama 2 detik</li>
+                            <li style="border-left: none; background: transparent; padding: 2px 0;">Pindah ke posisi lain dengan <code>glide 3 secs to random position</code></li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section" style="background: linear-gradient(135deg, #E8F8F5, #D5F4E6);">
+                <h2><span class="emoji">🎯</span>Target</h2>
+                <ul>
+                    <li>Ikan berenang bebas di laut.</li>
+                    <li>Saat menyentuh ubur-ubur, ikan berhenti sebentar, berkata <strong>"Aduh!"</strong>, lalu berpindah ke tempat lain.</li>
+                </ul>
+            </div>
+
+            <div class="section" style="background: linear-gradient(135deg, #E8F4FD, #B3D9FF); border-left-color: #007BFF;">
+                <h2><span class="emoji">⭐</span>Tantangan Bonus</h2>
+                <ul>
+                    <li><strong>Ubur-ubur melayang:</strong> Buat ubur-ubur seakan akan melayang dengan lambat di dalam laut.</li>
+                    <li><strong>Efek suara:</strong> Gunakan blok <code>play sound [Splash]</code> dari palet Sound saat ikan menyentuh ubur-ubur untuk membuat pengalaman lebih menarik.</li>
+                </ul>
+            </div>
+
+            <div class="section tips">
+                <h2><span class="emoji">💡</span>Tips</h2>
+                <ul>
+                    <li>Atur <strong>kecepatan berenang</strong> dengan mengubah nilai di <code>move (2) steps</code>.</li>
+                    <li>Semakin kecil <code>turn (0.01)</code> → ikan berenang lebih lurus.</li>
+                    <li>Jangan lupa gunakan <strong><code>set rotation style left-right</code></strong> supaya ikan tidak terbalik aneh saat berputar.</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h2><span class="emoji">✅</span>Ceklist Misi</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Progress: 0/5 (0%)</div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"></div>
+                    <span>Sprite ikan bergerak terus menerus</span>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"></div>
+                    <span>Sprite ikan memantul di tepi layar</span>
+                </div>
+                
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"></div>
+                    <span>Sprite ikan menampilkan <strong>"Aduh!"</strong> selama 2 detik saat menyentuh ubur-ubur</span>
+                </div>
+                
+                <div class="checklist-item bonus" onclick="toggleCheck(this)">
+                    <div class="checkbox"></div>
+                    <span><strong>Bonus:</strong> Ubur-ubur bergerak seakan melayang</span>
+                </div>
+                
+                <div class="checklist-item bonus" onclick="toggleCheck(this)">
+                    <div class="checkbox"></div>
+                    <span><strong>Bonus:</strong> Efek suara dimainkan saat menyentuh ubur-ubur</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCheck(item) {
+            const checkbox = item.querySelector('.checkbox');
+            const isChecked = checkbox.classList.contains('checked');
+            
+            if (isChecked) {
+                checkbox.classList.remove('checked');
+                checkbox.innerHTML = '';
+                item.classList.remove('completed');
+            } else {
+                checkbox.classList.add('checked');
+                checkbox.innerHTML = '✓';
+                item.classList.add('completed');
+            }
+            
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const totalItems = document.querySelectorAll('.checklist-item').length;
+            const completedItems = document.querySelectorAll('.checklist-item.completed').length;
+            const percentage = Math.round((completedItems / totalItems) * 100);
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `Progress: ${completedItems}/${totalItems} (${percentage}%)`;
+            
+            if (completedItems === totalItems) {
+                setTimeout(() => {
+                    alert('🎉 Selamat! Kamu telah menyelesaikan semua misi! Ikan sudah bisa berenang dengan aman di laut! 🐠🌊');
+                }, 500);
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986aa77ee02bea83',t:'MTc1OTE0MDI0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

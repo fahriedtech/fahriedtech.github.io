@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪼 Misi 2: Konser Interaktif - Lembar Kerja</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .worksheet {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .mission-box {
+            background: linear-gradient(135deg, #a8e6cf, #7fcdcd);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 6px solid #00b894;
+        }
+
+        .mission-box h2 {
+            margin-top: 0;
+            color: #2d3436;
+            font-size: 1.5em;
+        }
+
+        .blocks-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .blocks-section h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+
+        .block-item {
+            background: white;
+            border-radius: 25px;
+            padding: 12px 20px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .block-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .block-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .block-item:hover::before {
+            left: 100%;
+        }
+
+        .block-looks { 
+            background: #9966ff; 
+            color: white; 
+            border-color: #7a52cc;
+            box-shadow: 0 0 15px rgba(153, 102, 255, 0.3);
+        }
+
+        .block-looks:hover {
+            box-shadow: 0 8px 25px rgba(153, 102, 255, 0.4), 0 0 20px rgba(153, 102, 255, 0.5);
+        }
+
+        .block-sound { 
+            background: #cf63cf; 
+            color: white; 
+            border-color: #a64fa6;
+            box-shadow: 0 0 15px rgba(207, 99, 207, 0.3);
+        }
+
+        .block-sound:hover {
+            box-shadow: 0 8px 25px rgba(207, 99, 207, 0.4), 0 0 20px rgba(207, 99, 207, 0.5);
+        }
+
+        .block-events { 
+            background: #ffbf00; 
+            color: #333; 
+            border-color: #cc9900;
+            box-shadow: 0 0 15px rgba(255, 191, 0, 0.3);
+        }
+
+        .block-events:hover {
+            box-shadow: 0 8px 25px rgba(255, 191, 0, 0.4), 0 0 20px rgba(255, 191, 0, 0.5);
+        }
+
+        .exercise {
+            background: white;
+            border: 2px solid #74b9ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .exercise h3 {
+            color: #0984e3;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .step {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .step-number {
+            background: #2196f3;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .answer-box {
+            border: 2px dashed #74b9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 100px;
+            background: #f8f9ff;
+        }
+
+        .answer-box h4 {
+            margin-top: 0;
+            color: #0984e3;
+        }
+
+        .bonus-section {
+            background: linear-gradient(135deg, #ff6b9d, #e84393);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .bonus-section h3 {
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+
+        .inspiration-box {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 6px solid #0066cc;
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        .inspiration-box p {
+            margin: 0;
+        }
+
+        .tips-box {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border: 2px solid #e17055;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .tips-box h3 {
+            color: #2d3436;
+            margin-top: 0;
+        }
+
+        .reflection-section {
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .reflection-section h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            line-height: 1.3;
+        }
+
+        .checklist li:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+        }
+
+        .checklist-checkbox {
+            font-size: 1.2em;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .checklist li.completed .checklist-checkbox {
+            color: #28a745;
+        }
+
+        .checklist li.completed {
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                line-height: 1.2;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .mission-box, .blocks-section, .exercise, .bonus-section, .inspiration-box, .tips-box, .reflection-section {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            
+            .block-item {
+                display: block;
+                margin-right: 0;
+                margin-bottom: 8px;
+                font-size: 0.9em;
+                padding: 10px 15px;
+            }
+            
+            .step {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .step-number {
+                width: 22px;
+                height: 22px;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+            
+            .checklist li {
+                padding: 6px 0;
+                font-size: 0.95em;
+            }
+            
+            .checklist-checkbox {
+                font-size: 1.1em;
+                margin-right: 8px;
+            }
+            
+            .inspiration-box {
+                font-size: 1em;
+                line-height: 1.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="worksheet">
+        <div class="header">
+            <h1>🪼 Misi 2: Konser Interaktif</h1>
+        </div>
+
+        <div class="content">
+            <div class="mission-box">
+                <h2>🎯 Tujuan Misi</h2>
+                <ul>
+                    <li>Menggunakan blok <strong>Events</strong> untuk memicu aksi</li>
+                    <li>Membuat sprite berbicara dengan blok <strong>Looks</strong></li>
+                    <li>Memainkan suara dengan blok <strong>Sound</strong></li>
+                    <li>Mengganti kostum sprite secara dinamis</li>
+                    <li>Mengurutkan perintah untuk membuat pertunjukan interaktif</li>
+                </ul>
+            </div>
+
+            <div class="inspiration-box">
+                <p>Lampu sorot menyala ✨, tirai terbuka 🚪, dan penonton menunggu dengan penuh semangat. Kini kamu bukan hanya seorang koder, tapi juga <strong>sutradara panggung digital</strong>! Saatnya memberi peran pada Sprite-mu untuk tampil memukau di atas panggung Scratch.</p>
+            </div>
+
+            <div class="blocks-section">
+                <h3>📦 Blok kode yang mungkin kamu butuhkan</h3>
+                
+                <h4>🎯 Events (Pemicu)</h4>
+                <div class="block-item block-events">when this sprite clicked</div>
+                
+                <h4>👁️ Looks (Tampilan)</h4>
+                <div class="block-item block-looks">say (Hello!) for (2) seconds</div>
+                <div class="block-item block-looks">say (Hello!)</div>
+                <div class="block-item block-looks">switch costume to (costume2)</div>
+                <div class="block-item block-looks">next costume</div>
+                <div class="block-item block-looks">switch backdrop to (backdrop2)</div>
+                
+                <h4>🔊 Sound (Suara)</h4>
+                <div class="block-item block-sound">start sound (Bubbles)</div>
+                <div class="block-item block-sound">play sound (Bubbles) until done</div>
+            </div>
+
+            <div class="exercise">
+                <h3>🎬 Latihan 1: Membuat Script Dasar</h3>
+                <p>Buatlah script yang akan dijalankan ketika sprite diklik. Script harus melakukan hal-hal berikut secara berurutan:</p>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    Mulai dengan sprite <span class="highlight">Jellyfish</span> (kostum: jellyfish-a) pada latar 1.
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    Selanjutnya, sprite mengatakan <span class="highlight">"Hello!"</span> dan memainkan suara secara bersamaan.
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">3</span>
+                    Terakhir, ganti kostum sprite bersamaan dengan mengubah latar panggung menjadi <span class="highlight">underwater 1</span>.
+                </div>
+
+
+            </div>
+
+            <div class="exercise">
+                <h3>🎵 Latihan 2: Eksperimen Suara</h3>
+                <p>Coba buat dua versi script yang berbeda:</p>
+                
+                <div class="step">
+                    <span class="step-number">A</span>
+                    Script menggunakan <code class="block-item block-sound">start sound (Bubbles)</code>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">B</span>
+                    Script menggunakan <code class="block-item block-sound">play sound (Bubbles) until done</code>
+                </div>
+
+
+            </div>
+
+            <div class="bonus-section">
+                <h3>🌟 Tantangan Bonus</h3>
+                <p>Saat ini jellyfish hanya diam. Coba buat ia bergerak seolah-olah sedang berenang.</p>
+            </div>
+
+            <div class="reflection-section" style="background: #d1f2eb; border: 2px solid #00b894;">
+                <h3 style="color: #00b894;">🎯 Target</h3>
+                <p>Aksi dimulai dengan sprite Jellyfish yang tampil menggunakan kostum jellyfish-a pada panggung latar 1. Selanjutnya, sprite tersebut akan mengatakan "Hello!" sambil mengeluarkan suara. Sebagai penutup, kostumnya akan berganti serentak dengan latar panggung yang juga berubah menjadi underwater 1.</p>
+            </div>
+
+            <div class="tips-box">
+                <h3>💡 Tips</h3>
+                <ul>
+                    <li><strong>Urutan Penting:</strong> Script dijalankan dari atas ke bawah, pastikan urutannya benar!</li>
+                    <li><strong>Pemicu Event:</strong> Jangan lupa mulai dengan blok "when this sprite clicked"</li>
+                    <li><strong>Timing:</strong> Perhatikan perbedaan antara "start sound" dan "play sound until done"</li>
+                    <li><strong>Kostum:</strong> Pastikan sprite memiliki lebih dari satu kostum untuk bisa berganti</li>
+                </ul>
+            </div>
+
+
+
+            <div class="reflection-section">
+                <h3>🎯 Checklist Penyelesaian</h3>
+                <ul class="checklist">
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        menggunakan blok "when this sprite clicked"
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        memulai dengan sprite Jellyfish (kostum: jellyfish-a) pada latar 1
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        sprite mengatakan "Hello!" dan memainkan suara bersamaan
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        mengganti kostum sprite bersamaan dengan latar panggung
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        mengubah latar panggung menjadi underwater 1
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        memahami perbedaan "start sound" dan "play sound until done"
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        berhasil membuat script sesuai target yang ditentukan
+                    </li>
+                    <li onclick="toggleCheck(this)">
+                        <span class="checklist-checkbox">☐</span>
+                        memahami urutan eksekusi dan sinkronisasi aksi
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCheck(item) {
+            const checkbox = item.querySelector('.checklist-checkbox');
+            
+            if (item.classList.contains('completed')) {
+                // Uncheck
+                item.classList.remove('completed');
+                checkbox.textContent = '☐';
+            } else {
+                // Check
+                item.classList.add('completed');
+                checkbox.textContent = '✅';
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9861dbb20232a19c',t:'MTc1OTA0ODAxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
