@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Digital - Fahri, S.Pd | Guru Informatika SMP Negeri 2 Manggar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+
+        /* Fixed Mobile Menu Styles */
+#mobile-menu {
+    max-height: calc(100vh - 64px); /* Tinggi viewport minus header */
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Smooth animation for mobile menu */
+#mobile-menu:not(.hidden) {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Backdrop effect for mobile menu */
+.mobile-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+}
+
+/* 1. ANIMASI KERLIPAN (TWINKLE) */
+@keyframes twinkle {
+    0%, 20%, 50%, 80%, 100% { 
+        opacity: 1; /* Teks terlihat jelas */
+    }
+    40%, 60% { 
+        opacity: 0.3; /* Teks meredup (kerlipan) */
+    }
+}
+
+/* 2. ANIMASI PANTULAN HALUS (SOFT-BOUNCE) */
+@keyframes soft-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* 3. TERAPKAN KEDUA ANIMASI */
+.attention-grabber {
+    display: inline-block;
+    font-weight: bold;
+    color: #FFD700; /* Warna Emas untuk efek bintang */
+    
+    /* Gabungkan 2 Animasi: Gerak dan Kerlipan */
+    animation: 
+        soft-bounce 1.5s ease-in-out infinite, /* Animasi Gerak Melayang */
+        twinkle 3s ease-out infinite;          /* Animasi Kerlipan Bintang */
+}
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes shuffle {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .bounce-icon {
+            animation: bounce 2s infinite;
+        }
+        
+        .shuffle-animation {
+            animation: shuffle 0.5s ease-in-out;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .card-hover:hover .card-icon {
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        .btn-primary {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .seat-grid {
+            display: grid;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .seat {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 1.2;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes flyToSeat {
+            0% {
+                opacity: 1;
+                transform: translateX(0) translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateX(var(--fly-x)) translateY(var(--fly-y)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(var(--fly-x)) translateY(var(--fly-y)) scale(1);
+            }
+        }
+        
+        @keyframes seatPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .page-transition-enter {
+            animation: slideInFromRight 0.6s ease-out forwards;
+        }
+        
+        .page-transition-exit {
+            animation: slideInFromLeft 0.4s ease-in forwards;
+        }
+        
+        .counter-animation {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .icon-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .icon-hover:hover {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .result-appear {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .classroom-seat {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.1;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            color: #6b7280;
+            position: relative;
+            overflow: hidden;
+            padding: 1px;
+        }
+        
+        @media (min-width: 480px) {
+            .classroom-seat {
+                width: 50px;
+                height: 50px;
+                font-size: 8px;
+                padding: 2px;
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .classroom-seat {
+                width: 60px;
+                height: 60px;
+                font-size: 9px;
+                line-height: 1.2;
+                border-radius: 8px;
+                padding: 3px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .classroom-seat {
+                width: 70px;
+                height: 70px;
+                font-size: 10px;
+                padding: 4px;
+            }
+        }
+        
+        .classroom-seat.filled {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-color: #93c5fd;
+            color: #1e40af;
+        }
+        
+        .classroom-seat.empty {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            color: #9ca3af;
+        }
+        
+        /* Mobile overflow fix */
+        @media (max-width: 767px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .max-w-7xl, .max-w-6xl, .max-w-4xl {
+                max-width: 100vw;
+                margin-left: auto;
+                margin-right: auto;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .px-4, .px-6, .px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .sm\:px-6, .sm\:px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            #classroom-grid {
+                max-width: calc(100vw - 2rem);
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            /* Fix for specific generator pages */
+            #tempat-duduk-page .bg-white,
+            #kelompok-page .bg-white,
+            #urutan-tampil-page .bg-white {
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100vw;
+                border-radius: 1rem;
+            }
+            
+            /* Fix grid layouts on mobile */
+            .grid {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* Fix flex layouts */
+            .flex {
+                flex-wrap: wrap;
+                max-width: 100%;
+            }
+            
+            /* Prevent text overflow */
+            .text-2xl, .text-3xl {
+                word-break: break-word;
+                hyphens: auto;
+            }
+        }
+        
+        .flying-name {
+            position: fixed;
+            z-index: 1000;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .seat-pop {
+            animation: seatPop 0.6s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .card-hover:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-1px) scale(1.01);
+            }
+        }
+
+        /* Enhanced mobile navigation */
+        @media (max-width: 768px) {
+            .nav-mobile {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #e5e7eb;
+                padding: 8px;
+                z-index: 50;
+            }
+        }
+
+        /* Alert animations */
+        .alert-slide-in {
+            animation: slideInAlert 0.3s ease-out;
+        }
+
+        @keyframes slideInAlert {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Progress bar animation */
+        .progress-animate {
+            transition: width 0.3s ease-out;
+        }
+
+        /* Games Section Collapse Styles */
+#games-container {
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.games-hidden {
+    display: none !important;
+}
+
+.games-visible {
+    display: block !important;
+}
+
+.arrow-rotated {
+    transform: rotate(180deg);
+}
+        
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation Header -->
+   <!-- Navigation Header -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <span class="text-xl sm:text-2xl font-bold text-indigo-600 font-display">Portal Digital Guru</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="#" onclick="showHome()" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Beranda</a>
+                    <a href="https://pakfahri.github.io/profil/" onclick="toggleMobileMenu()" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium attention-grabber">Profil Saya</a>  
+                    <a href="https://pakfahri.github.io/website/buku.html" target="_blank" rel="noopener noreferrer" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Guru Koder</a>
+                    <a href="#" onclick="showContactModal()" class="nav-link text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Kontak</a>
+                </div>
+            </div>
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+                <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-indigo-600 p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile menu - POSITION FIXED -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 fixed top-16 left-0 right-0 z-50 shadow-lg">
+        <div class="px-2 pt-2 pb-3 space-y-1 bg-white">
+            <a href="#" onclick="showHome(); toggleMobileMenu()" class="block px-3 py-2 text-gray-700 hover:text-indigo-600 font-medium">Beranda</a>
+            <a href="https://pakfahri.github.io/profil/" onclick="toggleMobileMenu()" class="block px-3 py-2 text-gray-700 hover:text-indigo-600 font-medium attention-grabber">Profil Saya</a>
+            <a href="https://pakfahri.github.io/website/buku.html" onclick="toggleMobileMenu()" target="_blank" rel="noopener noreferrer" class="block px-3 py-2 text-gray-700 hover:text-indigo-600 font-medium">Guru Koder</a>
+            <a href="#" onclick="showContactModal(); toggleMobileMenu()" class="block px-3 py-2 text-gray-700 hover:text-indigo-600 font-medium">Kontak</a>
+        </div>
+    </div>
+</nav>
+
+    <!-- Home Page -->
+    <div id="home-page">
+        <!-- Header Section -->
+        <div class="gradient-bg py-12 sm:py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center fade-in-up">
+                    <!-- Profile Photo -->
+                    <div class="mb-6">
+                    </div>
+                    <!-- Identity -->
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 font-display">
+                        Fahri, S.Pd
+                    </h1>
+                    <p class="text-lg sm:text-xl text-indigo-100 mb-1">
+                        Guru Informatika
+                    </p>
+                    <p class="text-base sm:text-lg text-indigo-200 mb-6">
+                        SMP Negeri 2 Manggar
+                    </p>
+                    <div class="w-24 h-1 bg-white mx-auto rounded-full opacity-80"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="py-12 sm:py-16 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 fade-in-up font-display">
+                    Selamat Datang di Portal Digital Saya
+                </h2>
+                <p class="text-base sm:text-lg text-gray-600 leading-relaxed fade-in-up">
+                    Media ini saya dedikasikan untuk mendukung proses belajar-mengajar yang lebih efektif, interaktif, dan menyenangkan bagi siswa-siswi SMP Negeri 2 Manggar. Silakan manfaatkan fasilitas yang tersedia untuk membantu aktivitas pembelajaran Anda.
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Feature Cards -->
+        <div class="py-12 sm:py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-900 mb-8 sm:mb-12 font-display">Fitur Utama Portal</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                    <!-- Kokurikuler Card -->
+                    <div class="card-hover bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl cursor-pointer" onclick="navigateToPage('kokurikuler')">
+                        <div class="text-center">
+                            <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-3xl sm:text-4xl">🏆</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Kelas Pak Fahri</h3>
+                            <p class="text-purple-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                                Kegiatan Pembelajaran di Kelas Pak Farhi
+                            </p>
+                            <button class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                                Lihat Selengkapnya
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Acak Tempat Duduk Card -->
+                    <div class="card-hover bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl cursor-pointer" onclick="navigateToPage('tempat-duduk')">
+                        <div class="text-center">
+                            <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-3xl sm:text-4xl">🪑</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Generator Denah Kelas</h3>
+                            <p class="text-blue-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                                Ciptakan suasana belajar yang baru dan adil. Acak posisi tempat duduk siswa secara otomatis di sini.
+                            </p>
+                            <button class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                                Mulai Acak
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Acak Kelompok Card -->
+                    <div class="card-hover bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl cursor-pointer" onclick="navigateToPage('kelompok')">
+                        <div class="text-center">
+                            <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-3xl sm:text-4xl">🧩</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Pembagi Kelompok Cerdas</h3>
+                            <p class="text-green-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                                Butuh membagi kelompok untuk tugas atau diskusi? Gunakan alat ini untuk pembagian yang cepat dan adil.
+                            </p>
+                            <button class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                                Buat Kelompok
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Acak Urutan Tampil Card -->
+                    <div class="card-hover bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl cursor-pointer" onclick="navigateToPage('urutan-tampil')">
+                        <div class="text-center">
+                            <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-3xl sm:text-4xl">🎯</span>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Pengacak Urutan Tampil</h3>
+                            <p class="text-orange-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                                Tentukan urutan siswa maju ke depan secara acak dan adil untuk presentasi atau tugas.
+                            </p>
+                            <button class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                                Acak Urutan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section -->
+<div class="py-1 sm:py-1 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h3 class="text-xl sm:text-2xl font-bold text-center text-gray-900 mb-8 sm:mb-12 font-display cursor-pointer hover:text-indigo-600" 
+            onclick="toggleGames()">
+            Games Scratch 
+            <span id="games-arrow">▼</span>
+        </h3>
+
+        <div id="games-content" class="hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <!-- Platformer Game Card -->
+                <div class="card-hover bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🎮</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Platformer Adventure</h3>
+                        <p class="text-indigo-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Petualangan seru melompati rintangan dan mengumpulkan koin.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1221224407" target="_blank" rel="noopener noreferrer" class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm inline-block">
+                            Main Game
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Maze Runner Game Card -->
+                <div class="card-hover bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🌀</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Maze Runner</h3>
+                        <p class="text-pink-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Temukan jalan keluar dari labirin.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1221266249" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Mulai Maze
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Fruit Catcher Game Card -->
+                <div class="card-hover bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🍎</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Fruit Catcher</h3>
+                        <p class="text-emerald-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Tangkap buah-buahan yang jatuh untuk mendapatkan skor tertinggi.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1214125971" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Mulai Tangkap
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Scratch Quiz Game Card -->
+                <div class="card-hover bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🧠</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Scratch Quiz</h3>
+                        <p class="text-orange-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Kuis perkalian 1 digit.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1221369784" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Mulai Kuis
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Pilah Sampah Game Card -->
+                <div class="card-hover bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🚮</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Pilah Sampah</h3>
+                        <p class="text-violet-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Game edukasi pilah sampah organik dan anorganik.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1091742791" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Mulai Memilah
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Program Rumus Game Card -->
+                <div class="card-hover bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🧮</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Program Rumus</h3>
+                        <p class="text-cyan-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Program untuk menghitung luas, panjang atau lebar dari persegi panjang.
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1221654660" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Mulai Program
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Flappy Bird Game Card -->
+                <div class="card-hover bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🐦</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Flappy Bird</h3>
+                        <p class="text-yellow-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Terbangkan burung melewati ranting-ranting pohon. Game yang menantang dengan kontrol sederhana!
+                        </p>
+                        <a href="https://scratch.mit.edu/projects/1221559382" target="_blank" rel="noopener noreferrer" class="btn-secondary inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Main Flappy
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Rotasi & Revolusi Bumi Game Card -->
+                <div class="card-hover bg-gradient-to-br from-slate-600 to-gray-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl cursor-pointer" onclick="window.open('https://scratch.mit.edu/projects/1221713152', '_blank')">
+                    <div class="text-center">
+                        <div class="card-icon w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <span class="text-3xl sm:text-4xl">🌍</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-display">Rotasi & Revolusi Bumi</h3>
+                        <p class="text-slate-100 mb-4 sm:mb-6 text-sm leading-relaxed">
+                            Simulasi interaktif pergerakan Bumi yang berputar pada porosnya dan mengelilingi Matahari.
+                        </p>
+                        <button class="btn-secondary bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm">
+                            Lihat Simulasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    </div>
+          
+
+    <!-- Kokurikuler Page -->
+    <div id="kokurikuler-page" class="hidden min-h-screen bg-gradient-to-br from-purple-400 to-pink-500">
+        <div class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <button onclick="showHome()" class="btn-secondary mb-6 sm:mb-8 bg-white bg-opacity-20 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-opacity-30 flex items-center text-sm sm:text-base">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Kembali ke Beranda
+                </button>
+                
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">🏆</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4 font-display">computer science</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Pengelolaan kegiatan Kelas Pak Fahri</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="bg-gradient-to-r from-pink-400 to-red-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">🎓 Kokurikuler</h3>
+                            <p class="mb-4 text-sm sm:text-base">Acuan rancangan kegiatan kokurikuler 2025</p>
+                            <button onclick="window.open('https://pakfahri.github.io/website/formkokurikuler.html', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Rancangan
+                            </button>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-orange-400 to-pink-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">🧩 Berpikir Komputasi</h3>
+                            <p class="mb-4 text-sm sm:text-base">Belajar problem solver serta Bermain Blockly Games</p>
+                            <button onclick="window.open('https://pakfahri.github.io/bk/', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-emerald-400 to-cyan-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">🤖 Pemrograman</h3>
+                            <p class="mb-4 text-sm sm:text-base">Membuat animasi atau game menggunakan Pictoblox</p>
+                            <button onclick="window.open('https://pakfahri.github.io/pictoblox  ', '_blank')"  class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-indigo-400 to-purple-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">📝 Aplikasi Pengolah Kata</h3>
+                            <p class="mb-4 text-sm sm:text-base">Mengolah Kata menggunakan Google Docs</p>
+                            <button onclick="window.open('https://pakfahri.github.io/googledocs/', '_blank')"  class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">📊 Aplikasi Pengolah Data</h3>
+                            <p class="mb-4 text-sm sm:text-base">Mengolah Data menggunakan Google Spreadsheets</p>
+                            <button onclick="window.open('https://pakfahri.github.io/googlesheets/', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-cyan-400 to-blue-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">🖌️ Aplikasi Visual</h3>
+                            <p class="mb-4 text-sm sm:text-base">Membuat presentasi / poster menggunakan Canva</p>
+                            <button onclick="window.open('https://pakfahri.github.io/canva/', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-indigo-400 to-purple-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">📱 Literasi Digital</h3>
+                            <p class="mb-4 text-sm sm:text-base">Informasi umum terkait teknologi dan dunia digital</p>
+                            <button onclick="window.open('https://pakfahri.github.io/literasidigital/', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-400 to-indigo-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">⚖️ Etika dan Keamanan Digital</h3>
+                            <p class="mb-4 text-sm sm:text-base">Tindakan penting diri dalam dunia digital</p>
+                            <button class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-r from-cyan-400 to-blue-400 p-4 sm:p-6 rounded-xl text-white card-hover">
+                            <h3 class="text-lg sm:text-xl font-bold mb-3">📔 Jurnal 7 KAIH</h3>
+                            <p class="mb-4 text-sm sm:text-base">Jurnal Harianku</p>
+                            <button onclick="window.open('https://pakfahri.github.io/7kaih25/', '_blank')" class="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm hover:bg-opacity-30 transition-all">
+                                Buka
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section kokurikuler -->
+       
+                        </div>
+            
+
+    <!-- Tempat Duduk Page -->
+    <div id="tempat-duduk-page" class="hidden min-h-screen bg-gradient-to-br from-blue-400 to-cyan-500">
+        <div class="py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <button onclick="showHome()" class="btn-secondary mb-4 sm:mb-8 bg-white bg-opacity-20 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-opacity-30 flex items-center text-sm sm:text-base">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Kembali ke Beranda
+                </button>
+                
+                <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-xl">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">🪑</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Generator Denah Kelas</h2>
+                        <p class="text-sm sm:text-base text-gray-600 px-2">Atur tempat duduk siswa secara acak untuk menciptakan dinamika kelas yang baru</p>
+                    </div>
+                    
+                    <div class="flex flex-col xl:flex-row gap-6 xl:gap-8">
+                        <!-- Input Section -->
+                        <div class="xl:w-1/2 space-y-4 sm:space-y-6">
+                            <div>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1">
+                                    <label class="block text-gray-700 dark:text-gray-300 font-bold text-sm sm:text-base">Daftar Nama Siswa:</label>
+                                    <div class="flex items-center gap-2">
+                                        <span id="student-counter" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-semibold">0 siswa</span>
+                                        <div id="validation-indicator" class="hidden">
+                                            <span class="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300">⚠️ Perlu perbaikan</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea id="student-list" rows="6" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-blue-500 focus:outline-none resize-none text-sm sm:text-base transition-all" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad Rizki&#10;Siti Nurhaliza&#10;Budi Santoso&#10;Rina Melati&#10;Doni Pratama&#10;Lina Sari&#10;Eko Wijaya&#10;Maya Putri&#10;Andi Kurniawan&#10;Dewi Lestari" oninput="validateAndUpdateCounter()"></textarea>
+                                <div id="input-error" class="hidden mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                <div>
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Baris:</label>
+                                    <input type="number" id="rows" value="5" min="3" max="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-blue-500 focus:outline-none text-sm sm:text-base transition-all" onchange="updateSeatingCapacity()">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Kolom:</label>
+                                    <input type="number" id="cols" value="6" min="4" max="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-blue-500 focus:outline-none text-sm sm:text-base transition-all" onchange="updateSeatingCapacity()">
+                                </div>
+                            </div>
+                            
+                            <div id="capacity-info" class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <span class="text-blue-700 font-semibold text-sm sm:text-base">Kapasitas: 30 tempat duduk</span>
+                            </div>
+                            
+                            <!-- Enhanced Loading State -->
+                            <div id="seating-loading" class="hidden text-center py-6">
+                                <div class="relative">
+                                    <div class="loading-spinner mx-auto mb-4"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span class="text-2xl animate-bounce">🪑</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 font-medium">Mengacak tempat duduk...</p>
+                                <div class="mt-2 bg-blue-50 rounded-lg p-2">
+                                    <div class="h-2 bg-blue-200 rounded-full overflow-hidden">
+                                        <div id="progress-bar" class="h-full bg-blue-500 rounded-full progress-animate" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-600 mt-1" id="progress-text">Mempersiapkan...</p>
+                                </div>
+                            </div>
+                            
+                            <div id="seating-controls" class="text-center space-y-3">
+                                <button id="shuffle-btn" onclick="animateSeatingArrangement()" class="btn-primary bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center mx-auto w-full transition-all">
+                                    <span class="text-xl sm:text-2xl mr-2">🎲</span>
+                                    <span id="shuffle-btn-text">ACAK TEMPAT DUDUK</span>
+                                </button>
+                                <button onclick="resetSeatingChart()" class="btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm w-full sm:w-auto transition-all">
+                                    🔄 Reset Denah
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Seating Chart Section -->
+                        <div class="xl:w-1/2 bg-gray-50 rounded-xl p-3 sm:p-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Denah Kelas:</h3>
+                                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                    <button id="save-btn" onclick="downloadSeatingChart()" class="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all opacity-50 cursor-not-allowed" disabled>
+                                        💾 Simpan Gambar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Teacher's Desk -->
+                            <div class="mb-4 sm:mb-6">
+                                <div class="bg-amber-100 border-2 border-amber-300 rounded-lg p-2 sm:p-4 text-center">
+                                    <div class="text-amber-800 font-bold text-xs sm:text-lg">👨‍🏫 MEJA GURU</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Seating Grid -->
+                            <div class="overflow-x-auto pb-2">
+                                <div id="classroom-grid" class="grid gap-1 sm:gap-2 justify-center mb-4 min-w-max mx-auto" style="grid-template-columns: repeat(6, 1fr);">
+                                    <!-- Seats will be generated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="flex justify-center space-x-3 sm:space-x-6 text-xs sm:text-sm">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 sm:w-4 sm:h-4 bg-blue-200 border border-blue-300 rounded mr-1 sm:mr-2"></div>
+                                    <span class="text-gray-600">Terisi</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 sm:w-4 sm:h-4 bg-gray-100 border border-gray-300 rounded mr-1 sm:mr-2"></div>
+                                    <span class="text-gray-600">Kosong</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section Denah-->
+       
+                        </div>
+       
+    <!-- Urutan Tampil Page -->
+    <div id="urutan-tampil-page" class="hidden min-h-screen bg-gradient-to-br from-orange-400 to-red-500">
+        <div class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <button onclick="showHome()" class="btn-secondary mb-6 sm:mb-8 bg-white bg-opacity-20 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-opacity-30 flex items-center text-sm sm:text-base">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Kembali ke Beranda
+                </button>
+                
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">🎯</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Pengacak Urutan Tampil</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Tentukan urutan siswa maju ke depan secara acak dan adil untuk presentasi atau tugas</p>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6 sm:gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-4 sm:space-y-6">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-gray-700 font-bold text-sm sm:text-base">Daftar Nama Siswa:</label>
+                                    <span id="presentation-counter" class="text-xs sm:text-sm text-orange-600 font-semibold">0 siswa</span>
+                                </div>
+                                <textarea id="presentation-student-list" rows="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-orange-500 focus:outline-none resize-none text-sm sm:text-base" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad Rizki&#10;Siti Nurhaliza&#10;Budi Santoso&#10;Rina Melati&#10;Doni Pratama&#10;Lina Sari&#10;Eko Wijaya&#10;Maya Putri&#10;Andi Kurniawan&#10;Dewi Lestari" oninput="updatePresentationCounter()"></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Mode Pengacakan:</label>
+                                    <select id="presentation-mode" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-orange-500 focus:outline-none text-sm sm:text-base transition-colors duration-300" onchange="togglePresentationMode()">
+                                        <option value="all">Semua Siswa Sekaligus</option>
+                                        <option value="one-by-one">Satu per Satu</option>
+                                    </select>
+                                </div>
+                                <div id="batch-size-input" class="hidden">
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah per Batch:</label>
+                                    <input type="number" id="batch-size" value="5" min="1" max="10" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-orange-500 focus:outline-none text-sm sm:text-base">
+                                </div>
+                            </div>
+                            
+                            <div class="text-center space-y-3">
+                                <button id="start-presentation-btn" onclick="startPresentationOrder()" class="btn-primary bg-orange-500 hover:bg-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center mx-auto w-full">
+                                    <span class="text-xl sm:text-2xl mr-2">🎯</span>
+                                    MULAI PENGACAKAN
+                                </button>
+                                <button id="next-student-btn" onclick="getNextStudent()" class="hidden btn-secondary bg-red-500 hover:bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold w-full sm:w-auto">
+                                    👆 Siswa Selanjutnya
+                                </button>
+                                <button onclick="resetPresentationOrder()" class="btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm w-full sm:w-auto">
+                                    🔄 Reset Urutan
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Result Section -->
+                        <div class="bg-gray-50 rounded-xl p-4 sm:p-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Urutan Tampil:</h3>
+                                <button id="copy-order-btn" onclick="copyPresentationOrder()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all opacity-50 cursor-not-allowed w-full sm:w-auto" disabled>
+                                    📋 Salin Urutan
+                                </button>
+                            </div>
+                            
+                            <!-- Current Student Display -->
+                            <div id="current-student-display" class="hidden mb-6">
+                                <div class="bg-gradient-to-r from-orange-400 to-red-400 text-white p-4 sm:p-6 rounded-xl text-center">
+                                    <div class="text-xs sm:text-sm font-semibold mb-2">GILIRAN SEKARANG:</div>
+                                    <div id="current-student-name" class="text-xl sm:text-2xl font-bold mb-2"></div>
+                                    <div id="current-student-number" class="text-xs sm:text-sm opacity-90"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order List -->
+                            <div id="presentation-loading" class="hidden text-center py-8">
+                                <div class="loading-spinner mx-auto mb-4"></div>
+                                <p class="text-gray-600 text-sm sm:text-base">Mengacak urutan...</p>
+                            </div>
+                            
+                            <div id="presentation-result" class="hidden">
+                                <div id="order-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                            </div>
+                            
+                            <!-- Statistics -->
+                            <div id="presentation-stats" class="hidden mt-6 p-3 sm:p-4 bg-orange-50 rounded-lg">
+                                <div class="text-center text-xs sm:text-sm text-orange-700">
+                                    <div id="remaining-count" class="font-semibold"></div>
+                                    <div id="completed-count" class="text-xs mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section urutan tampil-->
+      
+                        </div>
+      
+    <!-- Kelompok Page -->
+    <div id="kelompok-page" class="hidden min-h-screen bg-gradient-to-br from-green-400 to-teal-500">
+        <div class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <button onclick="showHome()" class="btn-secondary mb-6 sm:mb-8 bg-white bg-opacity-20 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-opacity-30 flex items-center text-sm sm:text-base">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Kembali ke Beranda
+                </button>
+                
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">🧩</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Pembagi Kelompok Cerdas</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Buat kelompok belajar secara acak untuk meningkatkan kerja sama antar siswa</p>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6 sm:gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-4 sm:space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Daftar Nama Siswa:</label>
+                                <textarea id="group-student-list" rows="6" class="w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-green-500 focus:outline-none text-sm sm:text-base" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad&#10;Siti&#10;Budi&#10;Rina&#10;..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Metode Pembagian:</label>
+                                <select id="division-method" class="w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base" onchange="toggleDivisionInput()">
+                                    <option value="by-groups">Berdasarkan Jumlah Kelompok</option>
+                                    <option value="by-members">Berdasarkan Jumlah Anggota per Kelompok</option>
+                                </select>
+                            </div>
+                            
+                            <div id="group-count-input">
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Kelompok:</label>
+                                <input type="number" id="group-count" value="4" min="2" max="10" class="w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base">
+                            </div>
+                            
+                            <div id="members-count-input" class="hidden">
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Anggota per Kelompok:</label>
+                                <input type="number" id="members-count" value="4" min="2" max="8" class="w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base">
+                            </div>
+                            
+                            <div class="text-center">
+                                <button onclick="randomizeGroups()" class="bg-green-500 hover:bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-all transform hover:scale-105 flex items-center justify-center mx-auto w-full">
+                                    <span class="text-xl sm:text-2xl mr-2">👥</span>
+                                    BAGI KELOMPOK!
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Result Section -->
+                        <div>
+                            <div id="group-loading" class="hidden text-center py-8">
+                                <div class="loading-spinner mx-auto mb-4"></div>
+                                <p class="text-gray-600 text-sm sm:text-base">Membagi kelompok...</p>
+                            </div>
+                            
+                            <div id="group-result" class="hidden">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-800">Hasil Pembagian Kelompok:</h3>
+                                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                        <button onclick="randomizeGroups()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                            🔄 Acak Ulang
+                                        </button>
+                                        <button onclick="copyGroupResult()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                            📋 Salin Hasil
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="groups-container" class="space-y-4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Games Section pembagi kelompok -->
+       
+                        </div>
+       
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all scale-95 opacity-0" id="contact-modal-content">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-2xl sm:text-3xl">📱</span>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Hubungi Saya</h3>
+                <p class="text-gray-600 text-xs sm:text-sm">Kirim pesan langsung ke WhatsApp saya</p>
+            </div>
+            
+            <form id="contact-form" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2 text-xs sm:text-sm">Nama Anda:</label>
+                    <input type="text" id="contact-name" class="w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-green-500 focus:outline-none transition-all text-sm sm:text-base" placeholder="Masukkan nama Anda" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2 text-xs sm:text-sm">Pesan:</label>
+                    <textarea id="contact-message" rows="4" class="w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-green-500 focus:outline-none resize-none transition-all text-sm sm:text-base" placeholder="Tulis pesan Anda di sini..." required></textarea>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
+                    <button type="button" onclick="closeContactModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 sm:py-3 px-4 rounded-lg font-semibold transition-all text-sm sm:text-base">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 sm:py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center text-sm sm:text-base">
+                        <span class="text-base sm:text-lg mr-2">📱</span>
+                        Kirim ke WhatsApp
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <script>
+
+        // Fungsi toggle untuk Games Section
+function toggleGames() {
+    const gamesContent = document.getElementById('games-content');
+    const gamesArrow = document.getElementById('games-arrow');
+    
+    // Toggle show/hide
+    gamesContent.classList.toggle('hidden');
+    
+    // Toggle arrow
+    if (gamesContent.classList.contains('hidden')) {
+        gamesArrow.textContent = '▼';
+    } else {
+        gamesArrow.textContent = '▲';
+    }
+}
+      // Mobile menu toggle - FIXED VERSION
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const body = document.body;
+    
+    mobileMenu.classList.toggle('hidden');
+    
+    // Prevent body scroll when menu is open
+    if (!mobileMenu.classList.contains('hidden')) {
+        body.style.overflow = 'hidden';
+    } else {
+        body.style.overflow = '';
+    }
+}
+
+
+        // Navigation functions
+        function navigateToPage(page) {
+            const homePage = document.getElementById('home-page');
+            const targetPage = document.getElementById(page + '-page');
+            
+            // Add exit animation to home page
+            homePage.style.transition = 'all 0.4s ease-in';
+            homePage.style.opacity = '0';
+            homePage.style.transform = 'translateX(-50px)';
+            
+            setTimeout(() => {
+                homePage.style.display = 'none';
+                document.querySelectorAll('[id$="-page"]').forEach(p => {
+                    if (p.id !== 'home-page') p.classList.add('hidden');
+                });
+                
+                // Show target page with enter animation
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('page-transition-enter');
+                
+                // Reset any previous transforms
+                targetPage.style.opacity = '1';
+                targetPage.style.transform = 'translateX(0)';
+                
+                // Scroll to top smoothly
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }, 400);
+        }
+
+        function showHome() {
+            const currentPage = document.querySelector('[id$="-page"]:not(.hidden):not(#home-page)');
+            const homePage = document.getElementById('home-page');
+            
+            if (currentPage) {
+                // Add exit animation to current page
+                currentPage.style.transition = 'all 0.4s ease-in';
+                currentPage.style.opacity = '0';
+                currentPage.style.transform = 'translateX(50px)';
+                
+                setTimeout(() => {
+                    document.querySelectorAll('[id$="-page"]').forEach(p => {
+                        if (p.id !== 'home-page') p.classList.add('hidden');
+                    });
+                    
+                    // Show home page with enter animation
+                    homePage.style.display = 'block';
+                    homePage.style.opacity = '0';
+                    homePage.style.transform = 'translateX(-50px)';
+                    
+                    // Scroll to top smoothly
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    setTimeout(() => {
+                        homePage.style.transition = 'all 0.5s ease-out';
+                        homePage.style.opacity = '1';
+                        homePage.style.transform = 'translateX(0)';
+                    }, 50);
+                }, 400);
+            } else {
+                // Direct show if no current page
+                homePage.style.display = 'block';
+                homePage.style.opacity = '1';
+                homePage.style.transform = 'translateX(0)';
+                
+                // Scroll to top smoothly
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Enhanced validation and counter functions
+        function validateAndUpdateCounter() {
+            const studentListText = document.getElementById('student-list').value.trim();
+            const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
+            const counter = document.getElementById('student-counter');
+            const errorDiv = document.getElementById('input-error');
+            const validationIndicator = document.getElementById('validation-indicator');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            
+            let hasError = false;
+            let errorMessage = '';
+            
+            // Check for empty input
+            if (students.length === 0 && studentListText.length > 0) {
+                hasError = true;
+                errorMessage = 'Daftar siswa tidak boleh kosong atau hanya berisi spasi.';
+            }
+            
+            // Check for duplicate names
+            const duplicates = students.filter((name, index) => students.indexOf(name) !== index);
+            if (duplicates.length > 0) {
+                hasError = true;
+                errorMessage = `Nama duplikat ditemukan: ${[...new Set(duplicates)].join(', ')}`;
+            }
+            
+            // Check for very short names
+            const shortNames = students.filter(name => name.length < 2);
+            if (shortNames.length > 0) {
+                hasError = true;
+                errorMessage = 'Beberapa nama terlalu pendek (minimal 2 karakter).';
+            }
+            
+            // Check capacity
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const capacity = rows * cols;
+            
+            if (students.length > capacity) {
+                hasError = true;
+                errorMessage = `Jumlah siswa (${students.length}) melebihi kapasitas tempat duduk (${capacity}).`;
+            }
+            
+            // Update UI based on validation
+            if (hasError) {
+                counter.className = 'text-xs sm:text-sm text-red-600 font-semibold';
+                counter.textContent = `${students.length} siswa`;
+                errorDiv.textContent = errorMessage;
+                errorDiv.classList.remove('hidden');
+                validationIndicator.classList.remove('hidden');
+                shuffleBtn.disabled = true;
+                shuffleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                counter.className = 'text-xs sm:text-sm text-blue-600 font-semibold';
+                counter.textContent = `${students.length} siswa`;
+                errorDiv.classList.add('hidden');
+                validationIndicator.classList.add('hidden');
+                shuffleBtn.disabled = students.length === 0;
+                if (students.length > 0) {
+                    shuffleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+        
+        // Legacy function for compatibility
+        function updateStudentCounter() {
+            validateAndUpdateCounter();
+        }
+
+        function updateSeatingCapacity() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const capacity = rows * cols;
+            
+            document.getElementById('capacity-info').innerHTML = 
+                `<span class="text-blue-700 dark:text-blue-300 font-semibold text-sm sm:text-base">Kapasitas: ${capacity} tempat duduk</span>`;
+            
+            generateEmptySeats();
+            validateAndUpdateCounter();
+        }
+
+        function generateEmptySeats() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const grid = document.getElementById('classroom-grid');
+            
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            for (let i = 0; i < rows * cols; i++) {
+                const seat = document.createElement('div');
+                seat.className = 'classroom-seat empty';
+                seat.textContent = 'Kosong';
+                seat.id = `seat-${i}`;
+                grid.appendChild(seat);
+            }
+        }
+
+        function animateSeatingArrangement() {
+            const studentListText = document.getElementById('student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const totalSeats = rows * cols;
+
+            // Validate before proceeding
+            if (students.length === 0) {
+                showAlert('Daftar siswa tidak boleh kosong!', 'error');
+                return;
+            }
+
+            if (students.length > totalSeats) {
+                showAlert(`Jumlah siswa (${students.length}) melebihi kapasitas tempat duduk (${totalSeats}). Silakan kurangi jumlah siswa atau tambah tempat duduk.`, 'error');
+                return;
+            }
+
+            // Show enhanced loading state
+            showLoadingState();
+            
+            // Hide controls and show loading
+            document.getElementById('seating-controls').classList.add('hidden');
+            document.getElementById('seating-loading').classList.remove('hidden');
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                updateProgress(progress, 'Mengacak posisi siswa...');
+            }, 100);
+
+            // Shuffle students
+            const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+            
+            setTimeout(() => {
+                clearInterval(progressInterval);
+                updateProgress(100, 'Menyelesaikan...');
+                
+                // Create flying animations
+                shuffledStudents.forEach((student, index) => {
+                    setTimeout(() => {
+                        createFlyingName(student, index);
+                    }, index * 150);
+                });
+
+                // Complete the process
+                setTimeout(() => {
+                    hideLoadingState();
+                    
+                    // Enable save button
+                    const saveBtn = document.getElementById('save-btn');
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    showAlert('Tempat duduk berhasil diacak! 🎉', 'success');
+                }, shuffledStudents.length * 150 + 500);
+            }, 1000);
+        }
+
+        function showLoadingState() {
+            const button = document.getElementById('shuffle-btn');
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function hideLoadingState() {
+            document.getElementById('seating-loading').classList.add('hidden');
+            document.getElementById('seating-controls').classList.remove('hidden');
+            
+            const button = document.getElementById('shuffle-btn');
+            button.disabled = false;
+            button.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function updateProgress(percentage, text) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressText) progressText.textContent = text;
+        }
+
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alert = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+            
+            alert.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 max-w-sm`;
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                    <span class="text-xs sm:text-sm font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Show alert
+            setTimeout(() => {
+                alert.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Hide alert after 4 seconds
+            setTimeout(() => {
+                alert.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        function createFlyingName(studentName, seatIndex) {
+            const textarea = document.getElementById('student-list');
+            const targetSeat = document.getElementById(`seat-${seatIndex}`);
+            
+            if (!targetSeat) return;
+
+            // Create flying element
+            const flyingName = document.createElement('div');
+            flyingName.className = 'flying-name';
+            flyingName.textContent = studentName;
+            
+            // Position at textarea
+            const textareaRect = textarea.getBoundingClientRect();
+            flyingName.style.left = textareaRect.left + 'px';
+            flyingName.style.top = textareaRect.top + textareaRect.height / 2 + 'px';
+            
+            document.body.appendChild(flyingName);
+
+            // Calculate target position
+            const seatRect = targetSeat.getBoundingClientRect();
+            const deltaX = seatRect.left + seatRect.width / 2 - textareaRect.left;
+            const deltaY = seatRect.top + seatRect.height / 2 - (textareaRect.top + textareaRect.height / 2);
+
+            // Animate to seat
+            setTimeout(() => {
+                flyingName.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                flyingName.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.8)`;
+                flyingName.style.opacity = '0';
+            }, 100);
+
+            // Update seat and remove flying element
+            setTimeout(() => {
+                targetSeat.textContent = studentName;
+                targetSeat.className = 'classroom-seat filled seat-pop';
+                document.body.removeChild(flyingName);
+            }, 900);
+        }
+
+        function resetSeatingChart() {
+            generateEmptySeats();
+            
+            // Disable save button
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function downloadSeatingChart() {
+            // Create canvas for download
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            
+            // Responsive canvas sizing
+            const isMobile = window.innerWidth < 640;
+            const seatSize = isMobile ? 60 : 80;
+            const gap = isMobile ? 10 : 20;
+            
+            canvas.width = cols * (seatSize + gap) + gap;
+            canvas.height = rows * (seatSize + gap) + 150;
+            
+            // Background
+            ctx.fillStyle = '#f9fafb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Title
+            ctx.fillStyle = '#1f2937';
+            ctx.font = isMobile ? 'bold 16px Arial' : 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('DENAH TEMPAT DUDUK KELAS', canvas.width / 2, 30);
+            
+            // Teacher's desk
+            ctx.fillStyle = '#fef3c7';
+            const deskHeight = isMobile ? 30 : 40;
+            ctx.fillRect(gap, 50, canvas.width - (gap * 2), deskHeight);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(gap, 50, canvas.width - (gap * 2), deskHeight);
+            
+            ctx.fillStyle = '#92400e';
+            ctx.font = isMobile ? '12px Arial' : '16px Arial';
+            ctx.fillText('MEJA GURU', canvas.width / 2, 70);
+            
+            // Seats
+            const seats = document.querySelectorAll('.classroom-seat');
+            seats.forEach((seat, index) => {
+                const row = Math.floor(index / cols);
+                const col = index % cols;
+                const x = col * (seatSize + gap) + gap;
+                const y = row * (seatSize + gap) + 110;
+                
+                // Seat background
+                if (seat.classList.contains('filled')) {
+                    ctx.fillStyle = '#dbeafe';
+                    ctx.strokeStyle = '#3b82f6';
+                } else {
+                    ctx.fillStyle = '#f3f4f6';
+                    ctx.strokeStyle = '#d1d5db';
+                }
+                
+                ctx.fillRect(x, y, seatSize, seatSize);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, seatSize, seatSize);
+                
+                // Seat text
+                ctx.fillStyle = seat.classList.contains('filled') ? '#1e40af' : '#9ca3af';
+                ctx.font = isMobile ? '9px Arial' : '11px Arial';
+                ctx.textAlign = 'center';
+                
+                const text = seat.textContent;
+                const words = text.split(' ');
+                const centerX = x + seatSize / 2;
+                const centerY = y + seatSize / 2;
+                
+                if (words.length > 1 && text.length > 10) {
+                    ctx.fillText(words[0], centerX, centerY - 5);
+                    ctx.fillText(words.slice(1).join(' '), centerX, centerY + 8);
+                } else {
+                    ctx.fillText(text, centerX, centerY + 3);
+                }
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = 'denah-tempat-duduk.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Presentation order variables
+        let presentationStudents = [];
+        let currentStudentIndex = 0;
+        let presentationMode = 'all';
+
+        // Presentation order functions
+        function updatePresentationCounter() {
+            const studentListText = document.getElementById('presentation-student-list').value.trim();
+            const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
+            const counter = document.getElementById('presentation-counter');
+            counter.textContent = `${students.length} siswa`;
+        }
+
+        function togglePresentationMode() {
+            const mode = document.getElementById('presentation-mode').value;
+            const batchSizeInput = document.getElementById('batch-size-input');
+            
+            if (mode === 'batch') {
+                batchSizeInput.classList.remove('hidden');
+            } else {
+                batchSizeInput.classList.add('hidden');
+            }
+            
+            presentationMode = mode;
+        }
+
+        function startPresentationOrder() {
+            const studentListText = document.getElementById('presentation-student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            if (students.length === 0) {
+                showAlert('Daftar siswa tidak boleh kosong!', 'error');
+                return;
+            }
+
+            // Shuffle students
+            presentationStudents = [...students].sort(() => Math.random() - 0.5);
+            currentStudentIndex = 0;
+
+            const mode = document.getElementById('presentation-mode').value;
+
+            // Show loading
+            document.getElementById('presentation-result').classList.add('hidden');
+            document.getElementById('current-student-display').classList.add('hidden');
+            document.getElementById('presentation-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('presentation-loading').classList.add('hidden');
+                
+                if (mode === 'all') {
+                    displayAllPresentationOrder();
+                } else {
+                    setupOneByOneMode();
+                }
+                
+                // Enable copy button
+                const copyBtn = document.getElementById('copy-order-btn');
+                copyBtn.disabled = false;
+                copyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }, 1000);
+        }
+
+        function displayAllPresentationOrder() {
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = '';
+            
+            presentationStudents.forEach((student, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'flex items-center p-3 bg-white rounded-lg border-2 border-orange-200 transform transition-all hover:scale-102';
+                orderItem.innerHTML = `
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold mr-3 sm:mr-4 text-xs sm:text-base">
+                        ${index + 1}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm sm:text-base">${student}</div>
+                        <div class="text-xs sm:text-sm text-gray-500">Urutan ke-${index + 1}</div>
+                    </div>
+                    <div class="text-orange-500 font-bold text-base sm:text-lg">
+                        ${index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : '📝'}
+                    </div>
+                `;
+                
+                // Add animation delay
+                orderItem.style.opacity = '0';
+                orderItem.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    orderItem.style.transition = 'all 0.5s ease-out';
+                    orderItem.style.opacity = '1';
+                    orderItem.style.transform = 'translateY(0)';
+                }, index * 100);
+                
+                orderList.appendChild(orderItem);
+            });
+            
+            document.getElementById('presentation-result').classList.remove('hidden');
+            document.getElementById('presentation-result').classList.add('result-appear');
+        }
+
+        function setupOneByOneMode() {
+            document.getElementById('start-presentation-btn').classList.add('hidden');
+            document.getElementById('next-student-btn').classList.remove('hidden');
+            document.getElementById('current-student-display').classList.remove('hidden');
+            document.getElementById('presentation-stats').classList.remove('hidden');
+            
+            showCurrentStudent();
+            updatePresentationStats();
+        }
+
+        function getNextStudent() {
+            if (currentStudentIndex < presentationStudents.length) {
+                // Mark current student as completed in the list
+                markStudentCompleted(currentStudentIndex);
+                currentStudentIndex++;
+                
+                if (currentStudentIndex < presentationStudents.length) {
+                    showCurrentStudent();
+                } else {
+                    // All students completed
+                    document.getElementById('current-student-display').innerHTML = `
+                        <div class="bg-gradient-to-r from-green-400 to-blue-400 text-white p-4 sm:p-6 rounded-xl text-center">
+                            <div class="text-xl sm:text-2xl mb-2">🎉</div>
+                            <div class="text-lg sm:text-xl font-bold">Semua Siswa Sudah Tampil!</div>
+                            <div class="text-xs sm:text-sm mt-2 opacity-90">Presentasi selesai</div>
+                        </div>
+                    `;
+                    document.getElementById('next-student-btn').classList.add('hidden');
+                }
+                
+                updatePresentationStats();
+            }
+        }
+
+        function showCurrentStudent() {
+            const currentStudent = presentationStudents[currentStudentIndex];
+            document.getElementById('current-student-name').textContent = currentStudent;
+            document.getElementById('current-student-number').textContent = `Urutan ke-${currentStudentIndex + 1} dari ${presentationStudents.length}`;
+            
+            // Update or create the order list for one-by-one mode
+            updateOneByOneOrderList();
+        }
+
+        function updateOneByOneOrderList() {
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = '';
+            
+            presentationStudents.forEach((student, index) => {
+                const orderItem = document.createElement('div');
+                let statusClass = '';
+                let statusIcon = '';
+                let statusText = '';
+                
+                if (index < currentStudentIndex) {
+                    statusClass = 'bg-green-50 border-green-200';
+                    statusIcon = '✅';
+                    statusText = 'Sudah tampil';
+                } else if (index === currentStudentIndex) {
+                    statusClass = 'bg-orange-50 border-orange-300 ring-2 ring-orange-400';
+                    statusIcon = '👆';
+                    statusText = 'Sedang tampil';
+                } else {
+                    statusClass = 'bg-gray-50 border-gray-200';
+                    statusIcon = '⏳';
+                    statusText = 'Menunggu';
+                }
+                
+                orderItem.className = `flex items-center p-3 rounded-lg border-2 ${statusClass} transition-all`;
+                orderItem.innerHTML = `
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold mr-3 sm:mr-4 text-xs sm:text-base">
+                        ${index + 1}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm sm:text-base">${student}</div>
+                        <div class="text-xs sm:text-sm text-gray-500">${statusText}</div>
+                    </div>
+                    <div class="text-base sm:text-lg">
+                        ${statusIcon}
+                    </div>
+                `;
+                
+                orderList.appendChild(orderItem);
+            });
+            
+            document.getElementById('presentation-result').classList.remove('hidden');
+        }
+
+        function markStudentCompleted(index) {
+            // This function is called when moving to next student
+            // The visual update is handled in updateOneByOneOrderList()
+        }
+
+        function updatePresentationStats() {
+            const remaining = presentationStudents.length - currentStudentIndex;
+            const completed = currentStudentIndex;
+            
+            document.getElementById('remaining-count').textContent = `${remaining} siswa tersisa`;
+            document.getElementById('completed-count').textContent = `${completed} siswa sudah tampil`;
+        }
+
+        function resetPresentationOrder() {
+            presentationStudents = [];
+            currentStudentIndex = 0;
+            
+            document.getElementById('presentation-result').classList.add('hidden');
+            document.getElementById('current-student-display').classList.add('hidden');
+            document.getElementById('presentation-stats').classList.add('hidden');
+            document.getElementById('start-presentation-btn').classList.remove('hidden');
+            document.getElementById('next-student-btn').classList.add('hidden');
+            
+            // Disable copy button
+            const copyBtn = document.getElementById('copy-order-btn');
+            copyBtn.disabled = true;
+            copyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function copyPresentationOrder() {
+            if (presentationStudents.length === 0) {
+                showAlert('Belum ada urutan yang dibuat!', 'warning');
+                return;
+            }
+            
+            let result = 'URUTAN TAMPIL SISWA\n';
+            result += '='.repeat(25) + '\n\n';
+            
+            presentationStudents.forEach((student, index) => {
+                const status = index < currentStudentIndex ? ' ✅' : index === currentStudentIndex ? ' 👆' : '';
+                result += `${index + 1}. ${student}${status}\n`;
+            });
+            
+            if (presentationMode === 'one-by-one') {
+                result += `\nStatus: ${currentStudentIndex} dari ${presentationStudents.length} sudah tampil`;
+            }
+            
+            navigator.clipboard.writeText(result).then(() => {
+                showAlert('Urutan tampil berhasil disalin ke clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Gagal menyalin ke clipboard. Silakan salin secara manual.', 'error');
+            });
+        }
+
+        // Group functions
+        function toggleDivisionInput() {
+            const method = document.getElementById('division-method').value;
+            const groupCountInput = document.getElementById('group-count-input');
+            const membersCountInput = document.getElementById('members-count-input');
+            
+            if (method === 'by-groups') {
+                groupCountInput.classList.remove('hidden');
+                membersCountInput.classList.add('hidden');
+            } else {
+                groupCountInput.classList.add('hidden');
+                membersCountInput.classList.remove('hidden');
+            }
+        }
+
+        function randomizeGroups() {
+            const studentListText = document.getElementById('group-student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            const method = document.getElementById('division-method').value;
+            
+            let groups = [];
+            
+            if (method === 'by-groups') {
+                const groupCount = parseInt(document.getElementById('group-count').value);
+                groups = Array.from({length: groupCount}, () => []);
+                
+                const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+                shuffledStudents.forEach((student, index) => {
+                    groups[index % groupCount].push(student);
+                });
+            } else {
+                const membersPerGroup = parseInt(document.getElementById('members-count').value);
+                const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+                
+                for (let i = 0; i < shuffledStudents.length; i += membersPerGroup) {
+                    groups.push(shuffledStudents.slice(i, i + membersPerGroup));
+                }
+            }
+
+            // Show loading
+            document.getElementById('group-result').classList.add('hidden');
+            document.getElementById('group-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                displayGroups(groups);
+                document.getElementById('group-loading').classList.add('hidden');
+                const result = document.getElementById('group-result');
+                result.classList.remove('hidden');
+                result.classList.add('result-appear');
+            }, 1000);
+        }
+
+        function displayGroups(groups) {
+            const container = document.getElementById('groups-container');
+            container.innerHTML = '';
+            
+            groups.forEach((group, index) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'bg-green-50 p-4 sm:p-6 rounded-xl border-2 border-green-200 transform transition-all hover:scale-102';
+                groupDiv.innerHTML = `
+                    <h4 class="font-bold text-green-800 mb-3 sm:mb-4 text-base sm:text-lg flex items-center">
+                        <span class="text-xl sm:text-2xl mr-2">👥</span>
+                        Kelompok ${index + 1} (${group.length} orang)
+                    </h4>
+                    <ul class="space-y-2">
+                        ${group.map((student, idx) => `
+                            <li class="text-gray-700 flex items-center text-sm sm:text-base">
+                                <span class="w-5 h-5 sm:w-6 sm:h-6 bg-green-200 text-green-800 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3">${idx + 1}</span>
+                                ${student}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function copyGroupResult() {
+            const groups = Array.from(document.querySelectorAll('#groups-container > div'));
+            let result = 'HASIL PEMBAGIAN KELOMPOK\n';
+            result += '='.repeat(30) + '\n\n';
+            
+            groups.forEach((groupDiv, index) => {
+                const groupTitle = groupDiv.querySelector('h4').textContent;
+                const members = Array.from(groupDiv.querySelectorAll('li')).map(li => li.textContent.trim());
+                
+                result += `${groupTitle}\n`;
+                members.forEach(member => {
+                    result += `• ${member}\n`;
+                });
+                result += '\n';
+            });
+            
+            navigator.clipboard.writeText(result).then(() => {
+                showAlert('Hasil pembagian kelompok berhasil disalin ke clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Gagal menyalin ke clipboard. Silakan salin secara manual.', 'error');
+            });
+        }
+
+        // Contact Modal Functions
+        function showContactModal() {
+            const modal = document.getElementById('contact-modal');
+            const modalContent = document.getElementById('contact-modal-content');
+            
+            modal.classList.remove('hidden');
+            
+            // Animate modal appearance
+            setTimeout(() => {
+                modalContent.style.transform = 'scale(1)';
+                modalContent.style.opacity = '1';
+            }, 10);
+            
+            // Focus on name input
+            setTimeout(() => {
+                document.getElementById('contact-name').focus();
+            }, 300);
+        }
+
+        function closeContactModal() {
+            const modal = document.getElementById('contact-modal');
+            const modalContent = document.getElementById('contact-modal-content');
+            
+            // Animate modal disappearance
+            modalContent.style.transform = 'scale(0.95)';
+            modalContent.style.opacity = '0';
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Reset form
+                document.getElementById('contact-form').reset();
+            }, 200);
+        }
+
+        // Handle contact form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            
+            if (!name || !message) {
+                showAlert('Mohon lengkapi nama dan pesan Anda!', 'warning');
+                return;
+            }
+            
+            // Format WhatsApp message
+            const whatsappMessage = `Halo Pak Fahri! 👋\n\nNama: ${name}\n\nPesan:\n${message}\n\n_Pesan ini dikirim melalui Portal Digital Guru_`;
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            
+            // WhatsApp URL
+            const whatsappURL = `https://wa.me/6281929200509?text=${encodedMessage}`;
+            
+            // Open WhatsApp in new tab
+            window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+            
+            // Close modal after sending
+            closeContactModal();
+            
+            // Show success message
+            setTimeout(() => {
+                showAlert('Pesan Anda akan dibuka di WhatsApp. Terima kasih telah menghubungi saya! 😊', 'success');
+            }, 500);
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('contact-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeContactModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('contact-modal');
+                if (!modal.classList.contains('hidden')) {
+                    closeContactModal();
+                }
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateEmptySeats();
+            validateAndUpdateCounter();
+            
+            // Initialize animations
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 + (index * 150));
+            });
+        });
+
+        // Games Section Toggle Function
+let isGamesVisible = true;
+
+function toggleGamesSection() {
+    const gamesContainer = document.getElementById('games-container');
+    const gamesArrow = document.getElementById('games-arrow');
+    
+    if (isGamesVisible) {
+        // Hide games
+        gamesContainer.classList.remove('games-visible');
+        gamesContainer.classList.add('games-hidden');
+        gamesArrow.classList.add('arrow-rotated');
+    } else {
+        // Show games
+        gamesContainer.classList.remove('games-hidden');
+        gamesContainer.classList.add('games-visible');
+        gamesArrow.classList.remove('arrow-rotated');
+    }
+    
+    isGamesVisible = !isGamesVisible;
+}
+
+// Initialize games section
+document.addEventListener('DOMContentLoaded', function() {
+    const gamesContainer = document.getElementById('games-container');
+    gamesContainer.classList.add('games-visible');
+});
+
+        // Auto close mobile menu on scroll
+let scrollTimer;
+
+function handleScroll() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (!mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = ''; // Reset body overflow
+    }
+    
+    // Clear previous timer
+    clearTimeout(scrollTimer);
+    
+    // Set timer to prevent multiple triggers during continuous scrolling
+    scrollTimer = setTimeout(() => {
+        // Optional: Add any post-scroll logic here
+    }, 100);
+}
+
+// Add scroll event listener
+window.addEventListener('scroll', handleScroll, { passive: true });
+
+// Also close menu when clicking outside (optional enhancement)
+document.addEventListener('click', function(e) {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuButton = document.querySelector('.md\\:hidden button'); // Mobile menu button
+    
+    if (!mobileMenu.classList.contains('hidden') && 
+        !mobileMenu.contains(e.target) && 
+        !menuButton.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+});
+        
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9848d07a452734c9',t:'MTc1ODc4NTQwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
