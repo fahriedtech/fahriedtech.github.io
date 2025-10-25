@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Ide Aktivitas Koding KA Jenjang SD</title>
+    <!-- Memuat Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter dan memastikan latar belakang cerah */
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        
+        /* Styling radio button mode */
+        input[type="radio"]:checked + label {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            border-color: #1d4ed8; /* blue-700 */
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.5), 0 2px 4px -2px rgba(37, 99, 235, 0.5);
+        }
+        
+        /* Styling untuk list ide */
+        #idea-output li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.6rem; /* Lebih ringkas */
+            line-height: 1.6;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.95rem; /* Lebih kecil */
+        }
+        #idea-output li:hover {
+            background-color: #f7fafc;
+        }
+        #idea-output li::before {
+            content: "✦";
+            color: #1d4ed8; /* blue-700 */
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            position: absolute;
+            left: 0;
+            font-size: 1.1rem;
+        }
+        .copy-icon {
+            width: 1rem; /* Lebih kecil */
+            height: 1rem;
+        }
+        
+        /* Custom modal backdrop for API Key (Z-index 50) */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Custom ad modal backdrop (Z-index 60) */
+        .ad-modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 sm:p-8 border border-gray-100">
+        
+        <!-- Header Utama (Warna Biru) --><div class="flex justify-center items-center relative mb-2">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-blue-600">
+                Generator Ide Aktivitas Koding KA Jenjang SD
+            </h1>
+        </div>
+        
+        <p class="text-center text-gray-500 mb-6 text-sm sm:text-base">Hasilkan ide aktivitas unik (Plugged/Unplugged) berdasarkan Capaian Pembelajaran Terbaru Permendikdasmen No. 13 Tahun 2025.</p>
+
+        <!-- Bagian Input --><div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6">
+            
+            <!-- Kolom 1: Capaian Pembelajaran (1) dan Materi Spesifik (2) --><div class="space-y-4">
+                <div class="p-4 bg-gray-50 rounded-lg shadow-inner border border-gray-100">
+                    <label for="material-select" class="block text-base font-semibold text-gray-700 mb-2">
+                        1. Capaian Pembelajaran
+                    </label>
+                    <select id="material-select" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 shadow-sm text-sm text-gray-800">
+                        <!-- Opsi akan diisi oleh JavaScript --></select>
+                </div>
+
+                <!-- Materi Spesifik Tambahan (2) --><div class="p-4 bg-gray-50 rounded-lg shadow-inner border border-gray-100">
+                    <label for="specific-material" class="block text-base font-semibold text-gray-700 mb-2">
+                        2. Materi Spesifik (Opsional)
+                    </label>
+                    <input type="text" id="specific-material" placeholder="Contoh: Pengamanan Sandi Unik" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 shadow-sm text-sm text-gray-800">
+                </div>
+            </div>
+
+            <!-- Kolom 2: Pilihan Mode (3) --><div class="p-4 bg-gray-50 rounded-lg shadow-inner border border-gray-100 flex flex-col justify-start">
+                <label class="block text-base font-semibold text-gray-700 mb-3">
+                    3. Pilih Mode Aktivitas
+                </label>
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 flex-grow">
+                    <div class="flex-1">
+                        <input type="radio" id="plugged" name="mode" value="plugged" class="hidden" checked>
+                        <label for="plugged" class="w-full block text-center p-3 border-2 border-blue-400 rounded-lg cursor-pointer transition duration-200 hover:bg-blue-50 text-blue-700 text-sm font-medium shadow-sm">
+                            Plugged (Komputer)
+                        </label>
+                    </div>
+                    <div class="flex-1">
+                        <input type="radio" id="unplugged" name="mode" value="unplugged" class="hidden">
+                        <!-- Perubahan di sini: border dan text-color menjadi biru --><label for="unplugged" class="w-full block text-center p-3 border-2 border-blue-400 rounded-lg cursor-pointer transition duration-200 hover:bg-blue-50 text-blue-700 text-sm font-medium shadow-sm">
+                            Unplugged (Non-Komputer)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Generate dan Ikon Kunci Baru (Diposisikan berdampingan) --><div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-4">
+                
+                <!-- Tombol Generate Utama (Warna Biru) --><button id="generate-button" onclick="generateIdea()" class="w-full sm:w-auto px-12 py-3 bg-blue-600 text-white text-lg font-bold rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300">
+                    <span id="button-text">Generate Ide Aktivitas Baru</span>
+                    <span id="loading-spinner" class="hidden animate-spin h-5 w-5 border-4 border-t-transparent border-white rounded-full ml-2"></span>
+                </button>
+
+                <!-- Ikon Kunci untuk Toggle API Key Input --><button id="api-key-toggle" onclick="toggleApiKeyModal(true)" class="p-3 bg-gray-200 rounded-lg shadow-md hover:bg-gray-300 transition duration-150 transform hover:scale-105" title="API Key Kustom">
+                    <!-- Ikon default (Terkunci) --><svg id="lock-icon-button" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 transition-colors duration-200">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bagian Output Ide --><div id="result-container" class="mt-8 pt-4 border-t-2 border-gray-200 hidden">
+            
+            <!-- Metadata & Copy Button (Compact Layout) --><div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-3">
+                <!-- Metadata Detail (Compact) --><div class="flex-grow space-y-2 order-2 sm:order-1 w-full sm:w-3/4">
+                    <div class="bg-indigo-50 p-2 rounded-md shadow-sm border border-indigo-200">
+                        <p class="text-xs font-semibold text-indigo-700 mb-1">Bab/Seksi Capaian Pembelajaran:</p>
+                        <h3 id="selected-bab-display" class="text-base font-extrabold text-indigo-900"></h3>
+                    </div>
+                    <div class="bg-gray-100 p-2 rounded-md shadow-sm border border-gray-200">
+                        <p class="text-xs font-semibold text-gray-700 mb-1">Materi Esensial Dasar:</p>
+                        <p id="selected-material-display" class="text-sm font-medium text-gray-800"></p>
+                    </div>
+                    <div class="bg-yellow-50 p-2 rounded-md shadow-sm border border-yellow-200">
+                        <p class="text-xs font-semibold text-yellow-700 mb-1">Materi Spesifik Tambahan:</p>
+                        <p id="selected-specific-material-display" class="text-sm font-medium text-yellow-800 italic">N/A</p>
+                    </div>
+                </div>
+
+                <!-- Copy Button --><button id="copy-button" onclick="copyActivity()" class="order-1 sm:order-2 w-full sm:w-auto px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex items-center justify-center transform hover:scale-105 h-10">
+                    <svg class="copy-icon mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+                    Salin Semua Hasil
+                </button>
+            </div>
+            
+            <!-- Penjelasan Edukatif (Rationale) (Warna Biru) --><div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500 mb-4 shadow-sm">
+                <h2 class="text-base font-bold text-blue-800 mb-1 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-blue-600"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                    Penjelasan Edukatif (Rationale)
+                </h2>
+                <p id="rationale-output" class="text-gray-700 italic text-sm">Memuat...</p>
+            </div>
+
+            <!-- Daftar Aktivitas Siswa --><h2 class="text-xl font-bold text-gray-800 mb-3 border-b pb-1">
+                4 Ide Aktivitas Siswa Baru
+            </h2>
+            <div id="idea-output" class="text-gray-700 space-y-2 p-4 rounded-xl border border-gray-200 bg-white shadow-md">
+                <p class="text-center text-gray-500 text-sm">Tekan tombol Generate untuk mendapatkan ide baru.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal API Key (Popup) - Z-index 50 --><div id="api-key-modal-backdrop" class="fixed inset-0 z-50 hidden modal-backdrop items-center justify-center p-4 transition-opacity duration-300" onclick="if(event.target.id === 'api-key-modal-backdrop') toggleApiKeyModal(false)">
+        <div id="api-key-modal" class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95 opacity-0">
+            <div class="p-6">
+                <!-- Header Modal --><div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h3 class="text-xl font-bold text-red-800 flex items-center">
+                        <svg id="unlock-icon-modal" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-red-500">
+                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 9.9-1.3"></path>
+                        </svg>
+                        Pengaturan API Key Kustom
+                    </h3>
+                    <button onclick="toggleApiKeyModal(false)" class="text-gray-400 hover:text-gray-600 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Konten Input Key Baru --><div class="p-4 bg-red-50 border border-red-300 rounded-lg">
+                    <h4 class="block text-sm font-semibold text-red-800 mb-2">
+                        Pilih Sumber API Key:
+                    </h4>
+                    <div class="space-y-3">
+                        <!-- Opsi 1: Token 1 (Default) --><div class="flex items-center">
+                            <input type="radio" id="token1" name="api_source" value="token1" checked class="form-radio h-4 w-4 text-blue-600 border-gray-300" onchange="updateApiKeyMode('token1')">
+                            <label for="token1" class="ml-2 text-sm font-medium text-gray-700">
+                                Token 1
+                            </label>
+                        </div>
+
+                        <!-- Opsi 2: Custom Key --><div class="flex items-start flex-col">
+                            <div class="flex items-center mb-1">
+                                <input type="radio" id="customKeyRadio" name="api_source" value="custom" class="form-radio h-4 w-4 text-blue-600 border-gray-300" onchange="updateApiKeyMode('custom')">
+                                <label for="customKeyRadio" class="ml-2 text-sm font-medium text-gray-700">
+                                    API Key Kustom
+                                </label>
+                            </div>
+                            
+                            <!-- Input Field for Custom Key (Disabled by default) --><input type="password" id="custom-api-key" placeholder="Masukkan Key Kustom Anda di sini" class="w-full p-2 border border-red-400 rounded-md focus:ring-red-500 focus:border-red-500 transition duration-150 shadow-sm text-sm text-gray-800 disabled:bg-gray-100 disabled:cursor-not-allowed" oninput="saveCustomApiKey()">
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-red-600 mt-3">
+                        *API Key Kustom yang dimasukkan akan menjadi key utama yang digunakan.
+                    </p>
+                </div>
+
+                <!-- Footer Modal (Warna Biru) --><div class="flex justify-end pt-4">
+                    <button onclick="toggleApiKeyModal(false)" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow-md">
+                        Simpan dan Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Akhir Modal API Key --><!-- Modal Iklan (Ad Modal) - Z-index 60 --><div id="ad-modal-backdrop" class="fixed inset-0 z-60 ad-modal-backdrop flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-xl shadow-3xl w-full max-w-lg transform transition-all duration-300">
+            
+            <!-- Iklan Image/Content Area --><div class="text-center">
+                <!-- Placeholder Image color updated to blue --><img src="https://placehold.co/600x400/2563eb/ffffff?text=Iklan+Pelatihan+Guru+Koding+KA" 
+                     alt="Iklan Pelatihan Baru" class="w-full h-auto rounded-xl object-cover">
+            </div>
+
+            <!-- Tombol Tutup di Pojok Kanan Atas --><button id="ad-close-button" onclick="closeAdModal()" 
+                    class="absolute top-4 right-4 p-1.5 rounded-full text-white bg-black bg-opacity-70 transition duration-300 shadow-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed" 
+                    disabled title="Menunggu 5 detik...">
+                <span id="ad-close-text" class="text-xs font-semibold px-2 py-0.5">Menunggu (5s)...</span>
+                <svg id="ad-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+        </div>
+    </div>
+    <!-- Akhir Modal Iklan --><script>
+        // Data 16 Materi Inti
+        const IDEAS_METADATA = [
+            { id: 1, bab: "1. Berpikir Komputasional", material: "Memahami permasalahan sederhana dalam kehidupan sehari-hari." },
+            { id: 2, bab: "1. Berpikir Komputasional", material: "Menerapkan pemecahan masalah secara sistematis." },
+            { id: 3, bab: "1. Berpikir Komputasional", material: "Menuliskan instruksi logis dan terstruktur menggunakan sekumpulan kosakata atau simbol." },
+            { id: 4, bab: "2. Literasi Digital", material: "Memahami konsep dasar, manfaat, dan dampak teknologi digital." },
+            { id: 5, bab: "2. Literasi Digital", material: "Memahami sistem komputer tingkat pradasar." },
+            { id: 6, bab: "2. Literasi Digital", material: "Menerapkan pengamanan informasi pribadi dalam komunikasi daring." },
+            { id: 7, bab: "2. Literasi Digital", material: "Memanfaatkan internet." },
+            { id: 8, bab: "2. Literasi Digital", material: "Memproduksi serta mendiseminasi konten digital dalam bentuk teks dan gambar." },
+            { id: 9, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Memahami konsep KA sederhana." },
+            { id: 10, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Memahami manfaat dan dampak KA pada kehidupan sehari-hari." },
+            { id: 11, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Prinsip bahwa KA dikembangkan untuk meningkatkan kesejahteraan manusia dan tidak boleh merugikan manusia." },
+            { id: 12, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Mengetahui perbedaan manusia dan komputer dalam melakukan penginderaan." },
+            { id: 13, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Mengetahui perbedaan antara mesin cerdas dan mesin non-cerdas." },
+            { id: 14, bab: "3. Literasi dan Etika Kecerdasan Artifisial", material: "Memahami etika dasar penggunaan KA seperti empati dan tidak menyakiti orang lain." },
+            { id: 15, bab: "4. Pemanfaatan dan Pengembangan Kecerdasan Artifisial", material: "Menyimulasikan secara sederhana kerja KA saat mengenali pola, mengklasifikasi benda konkret berdasarkan sifatnya." },
+            { id: 16, bab: "4. Pemanfaatan dan Pengembangan Kecerdasan Artifisial", material: "Mengetahui bagaimana prediksi sistem KA dipengaruhi input benda konkret." },
+        ];
+        
+        // --- API Key Constants and Logic ---
+        const DEFAULT_API_KEY = "AIzaSyAPedPdcIK3mDXUDNjAm6vZaWfS1x0SotY"; 
+        const KEY_STORAGE_MODE = 'geminiApiKeyMode'; 
+        const KEY_STORAGE_CUSTOM = 'geminiApiKeyCustom'; 
+
+        function updateApiKeyMode(mode) {
+            // Simpan mode yang dipilih ke Local Storage
+            localStorage.setItem(KEY_STORAGE_MODE, mode);
+            const input = document.getElementById('custom-api-key');
+            
+            // Atur status input field berdasarkan mode
+            if (mode === 'custom') {
+                input.disabled = false;
+                // Jika berpindah ke mode custom, pastikan custom key radio button terpilih
+                document.getElementById('customKeyRadio').checked = true;
+            } else {
+                input.disabled = true;
+                // Jika berpindah ke Token 1, pastikan token1 radio button terpilih
+                document.getElementById('token1').checked = true;
+            }
+        }
+        
+        function saveCustomApiKey() {
+            const input = document.getElementById('custom-api-key');
+            // Simpan custom key ke Local Storage
+            localStorage.setItem(KEY_STORAGE_CUSTOM, input.value.trim());
+            // Otomatis pindah ke mode 'custom' saat pengguna mengetik
+            document.getElementById('customKeyRadio').checked = true;
+            updateApiKeyMode('custom');
+        }
+
+        function getApiKey() {
+            // Tentukan mode yang sedang aktif (default: token1)
+            const mode = localStorage.getItem(KEY_STORAGE_MODE) || 'token1';
+            
+            if (mode === 'token1') {
+                return DEFAULT_API_KEY;
+            } else {
+                // Jika mode 'custom', ambil custom key. Jika kosong, fallback ke default.
+                const customKey = localStorage.getItem(KEY_STORAGE_CUSTOM) || "";
+                return customKey || DEFAULT_API_KEY; 
+            }
+        }
+
+        function toggleApiKeyModal(show) {
+            const backdrop = document.getElementById('api-key-modal-backdrop');
+            const modal = document.getElementById('api-key-modal');
+            
+            const isShowing = backdrop.classList.contains('flex');
+
+            if (show === undefined) {
+                show = !isShowing;
+            }
+
+            if (show) {
+                // Tampilkan Modal
+                backdrop.classList.remove('hidden');
+                backdrop.classList.add('flex');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0', 'scale-95');
+                    modal.classList.add('opacity-100', 'scale-100');
+                }, 10);
+                
+            } else {
+                // Sembunyikan Modal
+                modal.classList.remove('opacity-100', 'scale-100');
+                modal.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    backdrop.classList.remove('flex');
+                    backdrop.classList.add('hidden');
+                }, 300); 
+            }
+        }
+
+        // --- Fungsi Ad Modal (Tidak Berubah) ---
+
+        function showAdModal() {
+            const modal = document.getElementById('ad-modal-backdrop');
+            const closeButton = document.getElementById('ad-close-button');
+            const closeText = document.getElementById('ad-close-text');
+            const closeIcon = document.getElementById('ad-close-icon');
+
+            if (modal) {
+                modal.classList.remove('hidden');
+                
+                // 1. Initial state (Disabled with countdown text)
+                closeButton.disabled = true;
+                closeButton.classList.add('opacity-50', 'cursor-not-allowed');
+                closeButton.title = 'Menunggu 5 detik...';
+                
+                closeText.classList.remove('hidden'); // Show text
+                closeIcon.classList.add('hidden'); // Hide icon
+                closeButton.style.padding = '0.5rem 1rem'; // Larger padding for text
+
+                // 2. Countdown logic
+                let remainingTime = 5;
+                const countdown = setInterval(() => {
+                    remainingTime--;
+                    if (remainingTime > 0) {
+                        closeText.textContent = `Menunggu (${remainingTime}s)...`;
+                    } else {
+                        clearInterval(countdown);
+                        
+                        // 3. Final state (Enabled with 'X' icon)
+                        closeButton.disabled = false;
+                        closeButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                        closeButton.title = 'Tutup Iklan';
+                        closeButton.style.padding = '0.375rem'; // Revert padding for icon
+                        
+                        closeText.classList.add('hidden'); // Hide text
+                        closeIcon.classList.remove('hidden'); // Show icon
+                    }
+                }, 1000);
+            }
+        }
+
+        function closeAdModal() {
+            const modal = document.getElementById('ad-modal-backdrop');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('material-select');
+            const apiKeyInput = document.getElementById('custom-api-key');
+            const token1Radio = document.getElementById('token1');
+            const customRadio = document.getElementById('customKeyRadio');
+            
+            // Mengisi dropdown
+            IDEAS_METADATA.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.id}. ${item.material}`;
+                select.appendChild(option);
+            });
+
+            // --- Load API Key State on Load ---
+            const storedMode = localStorage.getItem(KEY_STORAGE_MODE) || 'token1';
+            const storedCustomKey = localStorage.getItem(KEY_STORAGE_CUSTOM) || "";
+            
+            apiKeyInput.value = storedCustomKey;
+            
+            if (storedMode === 'custom') {
+                customRadio.checked = true;
+                apiKeyInput.disabled = false;
+            } else {
+                token1Radio.checked = true;
+                apiKeyInput.disabled = true;
+            }
+
+            // Tampilkan Ad Modal saat dokumen siap
+            showAdModal(); 
+        });
+
+        // --- Fungsi Salin dan Generate ---
+
+        function copyActivity() {
+            const bab = document.getElementById('selected-bab-display').textContent;
+            const material = document.getElementById('selected-material-display').textContent;
+            const specificMaterial = document.getElementById('selected-specific-material-display').textContent;
+            const mode = document.querySelector('input[name="mode"]:checked').value === 'plugged' ? 'Plugged (Dengan Komputer)' : 'Unplugged (Tanpa Komputer)';
+            const rationale = document.getElementById('rationale-output').textContent;
+            const ideasHtml = document.getElementById('idea-output').innerHTML;
+
+            const ideasList = ideasHtml.match(/<li>(.*?)<\/li>/g)?.map((li, index) => 
+                `${index + 1}. ` + li.replace(/<\/?li>/g, '').trim()
+            ).join('\n') || 'Tidak ada ide yang dihasilkan.';
+
+            const fullText = `
+**IDE AKTIVITAS PEMBELAJARAN (KODING KA JENJANG SD)**
+--------------------------------------------------
+**1. Bab/Seksi Capaian Pembelajaran:** ${bab}
+**2. Materi Esensial Dasar:** ${material}
+**3. Materi Spesifik Tambahan:** ${specificMaterial}
+**4. Mode Aktivitas:** ${mode}
+
+**Penjelasan Edukatif (Rationale):**
+${rationale}
+
+**4 Ide Aktivitas Siswa:**
+${ideasList}
+--------------------------------------------------
+            `;
+
+            document.execCommand('copy'); 
+            navigator.clipboard.writeText(fullText.trim())
+                .then(() => {
+                    const button = document.getElementById('copy-button');
+                    const originalContent = button.innerHTML;
+                    
+                    // Flash message color changed to blue
+                    button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    button.innerHTML = '<svg class="copy-icon mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M9 11l3 3L22 4"></path></svg> Berhasil Disalin!';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalContent;
+                        button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                        button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }, 2000); 
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin:', err);
+                    const messageBox = document.createElement('div');
+                    messageBox.className = "fixed bottom-4 right-4 bg-red-600 text-white p-3 rounded-lg shadow-xl text-sm transition duration-300 transform scale-100";
+                    messageBox.textContent = "Gagal menyalin. Coba salin teks secara manual.";
+                    document.body.appendChild(messageBox);
+                    setTimeout(() => messageBox.remove(), 3000);
+                });
+        }
+
+
+        // Helper function for exponential backoff retry
+        const exponentialBackoffFetch = async (url, options, maxRetries = 5) => {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status !== 429 && response.status < 500) {
+                        return response;
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                }
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+            throw new Error('API request failed after multiple retries.');
+        };
+
+
+        // Fungsi utama untuk menghasilkan ide secara dinamis
+        async function generateIdea() {
+            const select = document.getElementById('material-select');
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const materialId = parseInt(select.value);
+            
+            // Dapatkan Materi Spesifik
+            const specificMaterialInput = document.getElementById('specific-material').value.trim();
+
+            // Elemen UI
+            const button = document.getElementById('generate-button');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('loading-spinner');
+            const resultContainer = document.getElementById('result-container');
+            const ideaOutput = document.getElementById('idea-output');
+            const rationaleOutput = document.getElementById('rationale-output');
+            
+            const selectedMaterialData = IDEAS_METADATA.find(item => item.id === materialId);
+            if (!selectedMaterialData) return;
+
+            // Set Loading State
+            buttonText.textContent = 'Memproses Ide Baru...';
+            spinner.classList.remove('hidden');
+            button.disabled = true;
+            resultContainer.classList.add('hidden');
+            ideaOutput.innerHTML = '<p class="text-center text-gray-500 text-sm">Sedang menghubungi AI untuk ide segar...</p>';
+            rationaleOutput.textContent = 'Sedang menganalisis konteks pedagogis...';
+
+            // --- Constructing the Dynamic Prompt ---
+            let materialPrompt = `Capaian Pembelajaran: "${selectedMaterialData.material}".`;
+            if (specificMaterialInput) {
+                materialPrompt += ` Dan lebih spesifik pada subtopik: "${specificMaterialInput}".`;
+            }
+
+            const userQuery = `Buatkan 4 ide aktivitas pembelajaran koding dan kecerdasan artifisial (KA) untuk siswa SD/MI (Kelas 5-6) berdasarkan Capaian Pembelajaran Terbaru Permendikdasmen No. 13 Tahun 2025. ${materialPrompt} Mode aktivitas harus ${mode === 'plugged' ? 'menggunakan komputer (plugged)' : 'tanpa komputer (unplugged)'}. Fokus pada kreativitas, relevansi, dan pastikan aktivitas tersebut memiliki unsur game/fun. Sertakan juga sebuah paragraf singkat (Rationale) yang menjelaskan hubungan aktivitas ini dengan pilar Berpikir Komputasional (BK) atau Kecerdasan Artifisial (KA).`;
+            // --- End of Prompt Construction ---
+
+
+            // Menggunakan API Key kustom atau default
+            const apiKey = getApiKey(); 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            // Define JSON Schema for Structured Output
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    ideaA: { type: "STRING", description: "Ide aktivitas pertama untuk siswa SD." },
+                    ideaB: { type: "STRING", description: "Ide aktivitas kedua untuk siswa SD." },
+                    ideaC: { type: "STRING", description: "Ide aktivitas ketiga untuk siswa SD." },
+                    ideaD: { type: "STRING", description: "Ide aktivitas keempat untuk siswa SD." },
+                    rationale: { type: "STRING", description: "Penjelasan pedagogis singkat (Rationale) tentang hubungan aktivitas dengan BK/KA." }
+                },
+                required: ["ideaA", "ideaB", "ideaC", "ideaD", "rationale"]
+            };
+
+            const systemPrompt = "Anda adalah desainer kurikulum ahli yang berfokus pada Informatika, Koding, dan Kecerdasan Artifisial untuk jenjang Sekolah Dasar. Semua output harus relevan, kreatif, praktis, dan menggunakan bahasa Indonesia yang ramah anak dan edukatif.";
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                },
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                const candidate = result.candidates?.[0];
+                const jsonText = candidate?.content?.parts?.[0]?.text;
+                
+                if (!jsonText) throw new Error("Gagal mendapatkan respons JSON dari API.");
+
+                const parsedData = JSON.parse(jsonText);
+
+                // Update Display
+                document.getElementById('selected-bab-display').textContent = selectedMaterialData.bab;
+                document.getElementById('selected-material-display').textContent = selectedMaterialData.material;
+                document.getElementById('selected-specific-material-display').textContent = specificMaterialInput || 'N/A';
+                rationaleOutput.textContent = parsedData.rationale || 'Rationale tidak tersedia.';
+                
+                ideaOutput.innerHTML = `
+                    <ol class="list-decimal space-y-3 pl-6">
+                        <li>${parsedData.ideaA || 'Ide A gagal dimuat.'}</li>
+                        <li>${parsedData.ideaB || 'Ide B gagal dimuat.'}</li>
+                        <li>${parsedData.ideaC || 'Ide C gagal dimuat.'}</li>
+                        <li>${parsedData.ideaD || 'Ide D gagal dimuat.'}</li>
+                    </ol>
+                `;
+
+                resultContainer.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Kesalahan API atau Parsing:", error);
+                ideaOutput.innerHTML = '<p class="text-red-600 text-center font-semibold text-sm">Gagal memuat ide. Silakan coba lagi. (Kesalahan koneksi atau format data).</p>';
+                resultContainer.classList.remove('hidden');
+            } finally {
+                // Reset Button State
+                buttonText.textContent = 'Generate Ide Aktivitas Baru';
+                spinner.classList.add('hidden');
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
