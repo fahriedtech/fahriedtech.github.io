@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Alur Kerja Kokurikuler (Versi Rinci)</title>
+    <style>
+        /* --- General Styling --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            overflow-x: auto; /* Allows horizontal scroll for desktop version on small screens */
+        }
+
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #b3d1ff;
+            margin-bottom: 60px;
+            font-size: 1.1em;
+        }
+
+        /* --- Marquee Header --- */
+        .marquee-header {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            padding: 8px 0;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .marquee-header span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 45s linear infinite;
+        }
+
+        @keyframes marquee {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(-3000px, 0); }
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container {
+            position: fixed;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #FFD700;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 5px #FFD700;
+        }
+
+        /* --- Pop-up Ad --- */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .popup-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .popup-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .popup-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .popup-close-btn:hover {
+            background-color: rgba(255, 0, 0, 0.7);
+        }
+
+        .popup-close-btn.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- View Containers --- */
+        .view-container {
+            transition: opacity 0.4s ease-in-out;
+        }
+        .view-container.hidden {
+            display: none;
+        }
+
+        /* --- Timeline Styling --- */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 6px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateX(-50%);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            padding: 20px 50px;
+            position: relative;
+            width: 50%;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s ease-in-out;
+        }
+
+        .timeline-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item.left {
+            left: 0;
+            text-align: right;
+            padding-right: 70px;
+        }
+
+        .timeline-item.right {
+            left: 50%;
+            text-align: left;
+            padding-left: 70px;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border: 5px solid #FFD700;
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .timeline-item.left::after {
+            right: -12px;
+        }
+
+        .timeline-item.right::after {
+            left: -12px;
+        }
+
+        .timeline-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.04);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+        
+        .timeline-content h3 {
+            margin-top: 0;
+            color: #1e3c72;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eef2ff;
+            padding-bottom: 10px;
+        }
+
+        .timeline-content p, .timeline-content li {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .timeline-content ul {
+            list-style: none;
+            padding-left: 0;
+            text-align: left;
+        }
+
+        .timeline-item.left .timeline-content ul {
+            text-align: left;
+        }
+
+        .timeline-content ul li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .timeline-content ul li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: #2a5298;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .timeline-content strong {
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .phase-separator {
+            text-align: center;
+            margin: 60px 0;
+            position: relative;
+            clear: both;
+        }
+        .phase-separator h2 {
+            display: inline-block;
+            background: #ffffff;
+            color: #1e3c72;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-size: 1.8em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 2;
+            position: relative;
+            font-weight: 600;
+        }
+        .phase-separator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.4);
+            z-index: 1;
+        }
+
+        /* --- Attachments Section Styling --- */
+        .attachment-tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 0;
+            background: #ffffff;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        }
+
+        .attachment-tabs li {
+            flex-grow: 1;
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            background: #eef2ff;
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 0.9em;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap; /* Prevents text from wrapping in tabs */
+        }
+
+        .attachment-tabs li:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .attachment-tabs li.active {
+            background: #ffffff;
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .attachment-content-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            min-height: 400px;
+        }
+
+        .attachment-content {
+            display: none;
+        }
+
+        .attachment-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .attachment-content h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eef2ff;
+            padding-bottom: 10px;
+        }
+        
+        .attachment-content h4 {
+            color: #2a5298;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .attachment-content p, .attachment-content li {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #444;
+            text-align: justify;
+        }
+        
+        .attachment-content ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .attachment-content ul li {
+            margin-bottom: 10px;
+        }
+
+        /* --- Table Styling --- */
+        .attachment-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .attachment-content th, .attachment-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .attachment-content th {
+            background-color: #1e3c72;
+            color: white;
+            font-weight: 600;
+        }
+
+        .attachment-content tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .attachment-content tr:hover {
+            background-color: #eef2ff;
+        }
+
+        /* --- Button Styling --- */
+        .action-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #FFD700;
+            color: #1e3c72;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .action-button:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* ================================= */
+        /* === MOBILE RESPONSIVE STYLES === */
+        /* ================================= */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+            }
+
+            .container {
+                width: 95%; /* Fluid width */
+                padding: 20px 10px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 40px;
+            }
+
+            .marquee-header {
+                font-size: 0.8em;
+            }
+
+            /* --- Mobile Timeline --- */
+            .timeline::before {
+                left: 30px; /* Move the line to the left */
+            }
+
+            .timeline-item {
+                width: 100%; /* Full width */
+                left: 0 !important; /* Override left/right positioning */
+                padding-left: 70px; /* Make space for the dot */
+                padding-right: 25px;
+                text-align: left; /* All text to the left */
+                margin-bottom: 30px;
+            }
+
+            .timeline-item::after {
+                left: 20px !important; /* Position all dots on the left */
+                right: auto !important;
+            }
+
+            .timeline-content {
+                padding: 20px;
+            }
+            
+            .timeline-content h3 {
+                font-size: 1.2em;
+            }
+
+            .phase-separator h2 {
+                font-size: 1.5em;
+                padding: 10px 20px;
+            }
+
+            /* --- Mobile Attachments --- */
+            .attachment-tabs {
+                overflow-x: auto; /* Allow tabs to scroll horizontally */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+            }
+
+            .attachment-tabs li {
+                flex-shrink: 0; /* Prevents tabs from shrinking */
+                min-width: 150px; /* Ensure tabs have a minimum width */
+            }
+
+            .attachment-content-container {
+                padding: 20px;
+            }
+
+            .attachment-content h3 {
+                font-size: 1.3em;
+            }
+
+            .attachment-content h4 {
+                font-size: 1.1em;
+            }
+            
+            .attachment-content p, .attachment-content li {
+                font-size: 0.95em;
+            }
+
+            /* --- Mobile Tables --- */
+            .attachment-content table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Marquee Header -->
+    <div class="marquee-header">
+        <span>Informasi ini disadur oleh Fahri,S.Pd. Guru Informatika SMP Negeri 2 Manggar berdasarkan Panduan Kokurikuler tahun 2025 yang diterbitkan oleh Badan Standar, Kurikulum, dan Asesmen Pendidikan Kementerian Pendidikan Dasar dan Menengah Republik Indonesia.</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Pop-up Ad -->
+    <div id="popup-ad" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <span id="popup-close-btn" class="popup-close-btn disabled">&times;</span>
+            <img src="https://picsum.photos/seed/kokurikuler2025/600/400.jpg" alt="Iklan Kokurikuler">
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT VIEW: The Map -->
+    <div id="main-content-view" class="view-container">
+        <div class="container">
+            <h1>Peta Alur Kerja Kokurikuler</h1>
+            <p class="subtitle">Panduan Rinci dari Perencanaan hingga Tindak Lanjut</p>
+
+            <div class="timeline">
+                
+                <!-- === TAHAP 1: PERENCANAAN === -->
+                <div class="phase-separator"><h2>Tahap 1: Perencanaan</h2></div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>1. Pembentukan Tim Kerja</h3>
+                        <p>Kepala Satuan Pendidikan membentuk tim kerja kokurikuler pada awal tahun ajaran. Tim ini bertugas sebagai perancang, pengelola, dan pendamping murid.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>2. Komponen & Peran Tim</h3>
+                        <ul>
+                            <li><strong>Kepala SP:</strong> Memimpin penyusunan regulasi, analisis kebutuhan, dan jejaring.</li>
+                            <li><strong>Koordinator:</strong> Mengembangkan kepemimpinan, mengelola sistem, dan memastikan kolaborasi.</li>
+                            <li><strong>Guru (Fasilitator):</strong> Menyusun rencana, menjadi aktivator murid, dan melakukan asesmen.</li>
+                            <li><strong>Tenaga Kependidikan:</strong> Menyiapkan sarana dan prasarana pendukung.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>3. Analisis Satuan Pendidikan</h3>
+                        <p>Analisis lanjutan untuk memetakan tujuan kokurikuler agar berbasis kebutuhan satuan pendidikan dan murid secara spesifik.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>4. Aspek Analisis Kebutuhan</h3>
+                        <ul>
+                            <li>Identifikasi kebutuhan belajar & dimensi profil lulusan yang perlu dikuatkan.</li>
+                            <li>Kesesuaian dengan kurikulum satuan pendidikan.</li>
+                            <li>Minat, bakat, dan capaian pembelajaran intrakurikuler yang belum optimal.</li>
+                            <li>Sumber daya yang dimiliki (fisik, manusia, finansial, lingkungan).</li>
+                            <li>Kondisi kontekstual dan karakteristik sosial murid.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>5. Menentukan Dimensi Profil Lulusan</h3>
+                        <p>Berdasarkan hasil analisis, tim menentukan dimensi profil lulusan (dari delapan dimensi) yang akan dijadikan sasaran utama kegiatan.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>6. Memilih Tema & Bentuk Kegiatan</h3>
+                        <p>Menentukan tema yang kontekstual dengan sosial budaya murid, lalu memilih bentuk kegiatan:</p>
+                        <ul>
+                            <li>Pembelajaran Kolaboratif Lintas Disiplin Ilmu.</li>
+                            <li>Gerakan Tujuh Kebiasaan Anak Indonesia Hebat (G7KAIH).</li>
+                            <li>Cara Lainnya (ciri khas satuan pendidikan).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>7. Merancang Tujuan & Alokasi Waktu</h3>
+                        <p>Merumuskan tujuan pembelajaran yang menggabungkan kompetensi dan konten, serta merancang alokasi waktu berdasarkan jumlah jam kokurikuler per tahun.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>8. Merancang Aktivitas & Asesmen</h3>
+                        <p><strong>Aktivitas:</strong> Dirancang beralur (memahami, mengaplikasi, merefleksi).<br><br>
+                        <strong>Asesmen:</strong> Dirancang untuk menilai pencapaian profil lulusan dengan teknik formatif (jurnal, observasi) dan sumatif (penilaian kinerja, produk).</p>
+                    </div>
+                </div>
+
+                <!-- === TAHAP 2: PELAKSANAAN & ASESMEN === -->
+                <div class="phase-separator"><h2>Tahap 2: Pelaksanaan & Asesmen</h2></div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>9. Pelaksanaan Kegiatan</h3>
+                        <p>Pendidik melaksanakan kegiatan sesuai rencana, sambil <strong>mengamati dinamika pembelajaran</strong> dan menciptakan ruang belajar yang menantang serta mendorong eksplorasi aktif murid.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>10. Penyesuaian Strategi</h3>
+                        <p>Pendidik secara aktif menyesuaikan strategi pembelajaran agar lebih <strong>kontekstual, kolaboratif, dan mendorong eksplorasi serta refleksi</strong> di tengah proses berlangsung.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>11. Asesmen Formatif Berkelanjutan</h3>
+                        <p>Menggunakan asesmen formatif untuk memantau efektivitas strategi dan memberikan umpan balik yang membangun. Untuk G7KAIH, asesmen ini dilakukan dalam kurun waktu panjang untuk melihat hasil pembiasaan.</p>
+                    </div>
+                </div>
+
+                <!-- === TAHAP 3: PELAPORAN === -->
+                <div class="phase-separator"><h2>Tahap 3: Pelaporan</h2></div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>12. Penyusunan Deskripsi Rapor</h3>
+                        <p>Hasil kegiatan dilaporkan dalam <strong>kolom tersendiri pada rapor</strong>. Berisi deskripsi kegiatan yang dilakukan murid beserta pencapaian dimensi profil lulusan.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>13. Ketentuan Penulisan Deskripsi</h3>
+                        <ul>
+                            <li>Berdasarkan pada hasil asesmen formatif dan sumatif.</li>
+                            <li>Menggunakan bahasa yang positif dan edukatif.</li>
+                            <li>Menggambarkan pencapaian dimensi profil lulusan secara ringkas.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>14. Integrasi Laporan</h3>
+                        <p>Jika ada dua atau lebih kegiatan kokurikuler, pelaporannya cukup satu yang mencakup semua dimensi profil lulusan yang telah ditentukan pada semester tersebut.</p>
+                    </div>
+                </div>
+
+                <!-- === TAHAP 4: EVALUASI & TINDAK LANJUT === -->
+                <div class="phase-separator"><h2>Tahap 4: Evaluasi & Tindak Lanjut</h2></div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>15. Evaluasi Kegiatan</h3>
+                        <p>Mengevaluasi efektivitas dan relevansi kegiatan untuk mengetahui apakah sasaran tercapai, memastikan keterkaitan dengan intrakurikuler, dan memberikan umpan balik.</p>
+                    </div>
+                </div>
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>16. Model & Analisis Evaluasi</h3>
+                        <p><strong>Model:</strong> Menggunakan kerangka <strong>Input, Process, Output, Outcome (IPOO)</strong>.<br><br>
+                        <strong>Analisis:</strong> Menganalisis data partisipasi murid, manfaat kegiatan, kendala, dan dukungan satuan pendidikan.</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>17. Tindak Lanjut</h3>
+                        <p>Langkah konkret diambil berdasarkan hasil evaluasi untuk perbaikan. <strong>Apabila terdapat dimensi profil lulusan yang belum tercapai, dimensi tersebut dilanjutkan kembali pada kegiatan kokurikuler tahun berikutnya.</strong></p>
+                    </div>
+                </div>
+
+                <!-- === ITEM TERAKHIR: TOMBOL LAMPIRAN === -->
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>18. Akses Lampiran & Dokumen Pendukung</h3>
+                        <p>Klik tombol di bawah untuk mengakses lampiran terkait, seperti contoh format penilaian, panduan kegiatan, dan dokumen pendukung lainnya.</p>
+                        <button id="show-attachments-btn" class="action-button">Buka Lampiran</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ATTACHMENTS VIEW: The Tabs -->
+    <div id="attachments-view" class="view-container hidden">
+        <div class="container">
+            <h1>Lampiran Kokurikuler</h1>
+            
+            <ul class="attachment-tabs">
+                <li class="tab-button active" data-target="attachment-1">Pembelajaran Kolaboratif Lintas Disiplin</li>
+                <li class="tab-button" data-target="attachment-2">Gerakan 7 Kebiasaan (G7KAIH)</li>
+                <li class="tab-button" data-target="attachment-3">Cara Lainnya</li>
+            </ul>
+            
+            <div class="attachment-content-container">
+                <!-- Tab 1 Content -->
+                <div id="attachment-1" class="attachment-content active">
+                    <h3>1. Pembelajaran Kolaboratif Lintas Disiplin Ilmu</h3>
+                    <p><strong>Deskripsi</strong><br>
+                    Bentuk ini merupakan kegiatan kokurikuler yang <strong>mengintegrasikan dua atau lebih mata pelajaran/muatan pembelajaran dalam satu tema</strong> yang relevan dengan kehidupan nyata murid. Tujuannya adalah membantu murid melihat <strong>keterkaitan antarilmu</strong> sebagai upaya mengembangkan delapan dimensi profil lulusan serta <strong>memperdalam pemahaman melalui pengalaman kontekstual</strong>. Kegiatan ini berisi aktivitas eksperiensial, langsung, berorientasi pada tindakan, dan berdasarkan keterampilan.</p>
+                    
+                    <h4>Contoh-Contoh Kegiatan dan Aktivitas</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jenjang/Tema</th>
+                                <th>Fokus Dimensi Profil Lulusan</th>
+                                <th>Deskripsi Aktivitas Utama</th>
+                                <th>Mata Pelajaran Terkait</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SD (Tema: Lingkunganku Sehat, Aku Kuat)</strong></td>
+                                <td>Kesehatan, Penalaran Kritis, Kolaborasi</td>
+                                <td>Murid mengamati kondisi lingkungan (identifikasi sampah), mengolah data (Matematika), menyusun laporan/narasi (Bahasa Indonesia), dan mendesain poster/brosur (Seni dan Budaya) sebagai kampanye kebersihan.</td>
+                                <td>IPAS, Matematika, Bahasa Indonesia, Seni dan Budaya</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PAUD (Tema: Aku Sayang Diriku dan Teman-teman)</strong></td>
+                                <td>Keimanan & Ketakwaan, Kewargaan</td>
+                                <td>Murid mengeksplorasi berbagai aktivitas bermain, bermain peran, berdiskusi dengan orang tua/guru, mengunjungi tempat umum, menyimak video, dan <strong>membuat buku tentang identitas</strong>.</td>
+                                <td>Menghargai diri sendiri dan sesama manusia, mengenali identitas diri, dan lainnya</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SMP (Tema: Peduli Lingkungan)</strong></td>
+                                <td>Kreativitas, Kewargaan, Kemandirian</td>
+                                <td><strong>Penelusuran isu lingkungan lokal, penulisan naskah, pembuatan vlog, dan presentasi publik</strong>.</td>
+                                <td>Bahasa Indonesia, IPA, IPS, Informatika, Seni dan Budaya</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SMA (Tema: Generasi Bijak Digital)</strong></td>
+                                <td>Penalaran Kritis, Kolaborasi, Kewargaan</td>
+                                <td>Studi kasus, debat, penyusunan strategi kampanye, dan <strong>penyebaran konten melalui media sosial</strong>.</td>
+                                <td>Sosiologi, Informatika, Bahasa Indonesia</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SMK (Tema: Wirausaha Lokal Berbasis Budaya)</strong></td>
+                                <td>Komunikasi, Kreativitas, Kemandirian</td>
+                                <td>Riset pasar lokal, wawancara pelaku usaha, <strong>perancangan produk, simulasi promosi dan penjualan</strong>.</td>
+                                <td>Produk Kreatif dan Kewirausahaan, Bahasa, Seni Budaya, Informatika</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Tab 2 Content -->
+                <div id="attachment-2" class="attachment-content">
+                    <h3>2. Gerakan 7 Kebiasaan Anak Indonesia Hebat (G7KAIH)</h3>
+                    <p><strong>Deskripsi</strong><br>
+                    Gerakan ini <strong>berbasis kebiasaan dan pembelajaran mendalam</strong> yang fokus pada <strong>pembentukan karakter murid melalui pembangunan pembiasaan positif</strong> yang dilakukan secara rutin, konsisten, dan terencana. G7KAIH mengedepankan pembelajaran berkesadaran (*mindful*), bermakna (*meaningful*), dan menggembirakan (*joyful*). Pelaksanaan G7KAIH memerlukan ekosistem pendukung yang melibatkan Catur Pusat Pendidikan (satuan pendidikan, keluarga, masyarakat, dan media).</p>
+                    
+                    <h4>Tujuh Kebiasaan dalam G7KAIH</h4>
+                    <ol>
+                        <li><strong>Bangun pagi</strong>.</li>
+                        <li><strong>Beribadah</strong>.</li>
+                        <li><strong>Berolahraga</strong>.</li>
+                        <li><strong>Makan sehat dan bergizi</strong>.</li>
+                        <li><strong>Gemar belajar</strong>.</li>
+                        <li><strong>Bermasyarakat</strong>.</li>
+                        <li><strong>Tidur Cepat</strong>.</li>
+                    </ol>
+
+                    <h4>Contoh-Contoh Kegiatan dan Aktivitas</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kebiasaan yang Difokuskan</th>
+                                <th>Fokus Dimensi Profil Lulusan</th>
+                                <th>Contoh Kegiatan/Aktivitas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Berolahraga (Senam Anak Indonesia Hebat/SAIH)</strong></td>
+                                <td>Kesehatan, Kemandirian</td>
+                                <td>Melaksanakan Senam Anak Indonesia Hebat (SAIH) secara rutin. Aktivitas lain meliputi: diskusi tentang pentingnya berolahraga, <strong>kunjungan ke pusat kebugaran</strong>, dan <strong>pembuatan buku jurnal kesehatan</strong>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bangun Pagi dan Tidur Cepat</strong></td>
+                                <td>Kesehatan, Penalaran Kritis</td>
+                                <td>Murid mendiskusikan kebiasaan jam tidurnya, <strong>melakukan pengumpulan data dan referensi terkait manfaat tidur cukup</strong>, <strong>pembuatan catatan harian atau jurnal</strong>, dan presentasi proses pengalaman (refleksi).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Beribadah</strong></td>
+                                <td>Keimanan dan Ketaqwaan</td>
+                                <td>Kegiatan keagamaan, jurnal ibadah, catatan syukur.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bermasyarakat</strong></td>
+                                <td>Kewargaan, Kolaborasi</td>
+                                <td>Diskusi toleransi, simulasi pemilu mini, kegiatan gotong royong, proyek kelompok, *games* kerja sama, forum diskusi.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gemar Belajar</strong></td>
+                                <td>Penalaran Kritis, Kreativitas, Komunikasi</td>
+                                <td>Proyek mini riset, analisis berita, eksperimen sederhana, karya seni, pameran ide, karya tulis kreatif, desain poster, debat kelompok, kegiatan presentasi.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Makan Sehat dan Bergizi</strong></td>
+                                <td>Kesehatan</td>
+                                <td>Jadwal olahraga bersama, pojok sehat, kampanye gizi. Contoh SMP: <strong>Proyek kantin sehat</strong> dan <strong>Market Day</strong>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Tab 3 Content -->
+                <div id="attachment-3" class="attachment-content">
+                    <h3>3. Cara Lainnya</h3>
+                    <p><strong>Deskripsi</strong><br>
+                    Bentuk ini mengakui bahwa setiap satuan pendidikan memiliki identitas, konteks, dan kekuatan unik. Satuan pendidikan diberikan <strong>kebebasan untuk mengembangkan kegiatan kokurikuler lain</strong> yang sesuai dengan <strong>nilai-nilai satuan pendidikan, potensi satuan pendidikan, kebutuhan murid, dan konteks lokal</strong>.</p>
+                    <p>Bentuk "Cara Lainnya" diklasifikasikan menjadi tiga jenis kegiatan khusus:</p>
+
+                    <h4>A. Kegiatan Kokurikuler Ciri Khas Satuan Pendidikan Berbasis Konteks Lokal</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jenis Konteks</th>
+                                <th>Deskripsi Kegiatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Daerah Pengrajin Batik</strong></td>
+                                <td>Mengalokasikan jam pelajaran untuk <strong>kelas membatik</strong> yang meliputi pengenalan batik, motif, dan proses. Kegiatan ini difokuskan pada <strong>praktik membatik</strong> untuk keterampilan.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Daerah Pariwisata</strong></td>
+                                <td>Mengalokasikan jam pelajaran kokurikuler dengan materi pembelajaran pariwisata yang mencakup pengenalan industri, pengelolaan, dan inovasi pariwisata.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kearifan Lokal Budaya Sunda (Contoh SMA)</strong></td>
+                                <td>Melakukan <strong>observasi lapangan</strong> ke tempat budaya lokal (kampung adat, museum), <strong>wawancara narasumber budaya</strong>, dan menyelenggarakan <strong>Gelar Karya Budaya Sunda</strong> (sebagai penampilan karya seni).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>B. Kegiatan-Kegiatan Berbasis Nilai-Nilai Satuan Pendidikan</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jenis Nilai/Keunggulan</th>
+                                <th>Deskripsi Kegiatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Keunggulan Kepemimpinan</strong></td>
+                                <td>Membuat kegiatan kokurikuler berupa <strong>latihan kepemimpinan</strong>. Materi yang diajarkan diimplementasikan oleh murid secara terus menerus dan dilakukan monitoring serta asesmen.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Berbasis Keagamaan</strong></td>
+                                <td>Satuan pendidikan berbasis keagamaan (misalnya PAUD, SD, SMP, SMA Islam) dapat membuat kegiatan berupa <strong>mengaji yang dilakukan secara rutin</strong> setiap satu minggu sekali.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kebersihan (Contoh PAUD Gigiku Bersih)</strong></td>
+                                <td>Kolaborasi dengan dokter gigi/Puskesmas, murid mengamati gigi, dokter gigi menjelaskan cara sikat gigi yang benar, praktik sikat gigi, dan <strong>membuat poster/buku cara merawat gigi</strong> sebagai unjuk kerja.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>C. Kegiatan Satu Disiplin Ilmu dengan Kolaborasi Keahlian</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jenis Kegiatan Monodisiplin</th>
+                                <th>Deskripsi Kegiatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Pentas Seni atau Pagelaran Seni</strong></td>
+                                <td>Kegiatan untuk memperkuat mata pelajaran Seni Budaya. Kegiatan ini menjadi wadah praktik bagi murid menerapkan teori dan menunjukkan keahlian, sekaligus terjadi <strong>kolaborasi berbagai keilmuan dan keahlian pendukung lainnya</strong>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="back-button-container">
+                <button id="back-to-map-btn" class="action-button">Kembali ke Peta Alur</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Pop-up Ad Logic ---
+        const popupAd = document.getElementById('popup-ad');
+        const popupCloseBtn = document.getElementById('popup-close-btn');
+        let autoCloseTimeout;
+        let enableCloseTimeout;
+
+        function showPopup() {
+            popupAd.style.display = 'flex';
+            popupCloseBtn.classList.add('disabled');
+
+            autoCloseTimeout = setTimeout(() => {
+                closePopup();
+            }, 5000);
+
+            enableCloseTimeout = setTimeout(() => {
+                popupCloseBtn.classList.remove('disabled');
+            }, 5000);
+        }
+
+        function closePopup() {
+            if (popupCloseBtn.classList.contains('disabled')) {
+                return;
+            }
+            popupAd.style.display = 'none';
+            clearTimeout(autoCloseTimeout);
+            clearTimeout(enableCloseTimeout);
+        }
+
+        window.addEventListener('load', showPopup);
+        popupCloseBtn.addEventListener('click', closePopup);
+
+        // --- Scroll Progress Bar ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        // --- Fade-in Animation on Scroll ---
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -100px 0px' };
+        const observerCallback = (entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        timelineItems.forEach(item => observer.observe(item));
+
+        // --- View and Tab Switching Logic ---
+        const mainContentView = document.getElementById('main-content-view');
+        const attachmentsView = document.getElementById('attachments-view');
+        const showAttachmentsBtn = document.getElementById('show-attachments-btn');
+        const backToMapBtn = document.getElementById('back-to-map-btn');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const attachmentContents = document.querySelectorAll('.attachment-content');
+
+        function showView(viewToShow) {
+            mainContentView.classList.add('hidden');
+            attachmentsView.classList.add('hidden');
+            viewToShow.classList.remove('hidden');
+        }
+
+        showAttachmentsBtn.addEventListener('click', () => showView(attachmentsView));
+        backToMapBtn.addEventListener('click', () => showView(mainContentView));
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                attachmentContents.forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
