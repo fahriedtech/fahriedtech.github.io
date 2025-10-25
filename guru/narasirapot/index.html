@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Narasi Rapor AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background-image: linear-gradient(to right, #4F46E5, #6366F1);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #4338CA, #4F46E5);
+            box-shadow: 0 4px 6px -1px rgba(63, 131, 248, 0.5);
+        }
+        textarea {
+            min-height: 280px;
+        }
+        .checkbox-group {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for the Ad Modal */
+        #adModal {
+            z-index: 1000;
+        }
+        #adCloseBtn.counting {
+            padding: 0.5rem 1rem; /* Adjust padding for countdown text */
+            font-weight: bold;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto relative">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-6">
+            Generator Narasi Rapor Siswa (Gemini AI)
+        </h1>
+        
+        <p class="text-center text-gray-500 mb-8">
+            AI akan menyusun narasi yang unik dan profesional berdasarkan input data Anda.
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Kolom Input -->
+            <div class="lg:col-span-1 card p-6">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-600 border-b pb-2">Data Siswa & Penilaian</h2>
+
+                <div class="space-y-4">
+                    <!-- Nama Siswa -->
+                    <div>
+                        <label for="namaSiswa" class="block text-sm font-medium text-gray-700">Nama Siswa</label>
+                        <input type="text" id="namaSiswa" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="Masukkan nama lengkap" required>
+                    </div>
+
+                    <!-- Jenis Kelamin -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                        <div class="mt-1 flex space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="jenisKelamin" value="Laki-laki" class="form-radio text-indigo-600" checked>
+                                <span class="ml-2 text-gray-700">Laki-laki</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="jenisKelamin" value="Perempuan" class="form-radio text-indigo-600">
+                                <span class="ml-2 text-gray-700">Perempuan</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Level Akademik -->
+                    <div>
+                        <label for="levelAkademik" class="block text-sm font-medium text-gray-700">1. Level Akademik (Nilai Rata-rata)</label>
+                        <select id="levelAkademik" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="A - Mahir (Sangat Baik)">A - Mahir (Sangat Baik)</option>
+                            <option value="B - Cakap (Baik)" selected>B - Cakap (Baik)</option>
+                            <option value="C - Perlu Bimbingan (Cukup)">C - Perlu Bimbingan (Cukup)</option>
+                            <option value="D - Perlu Perhatian Khusus (Kurang)">D - Perlu Perhatian Khusus (Kurang)</option>
+                        </select>
+                    </div>
+
+                    <!-- Kehadiran -->
+                    <div>
+                        <label for="kehadiran" class="block text-sm font-medium text-gray-700">2. Kehadiran & Disiplin</label>
+                        <select id="kehadiran" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option value="Sangat Konsisten (>95% Hadir)">Sangat Konsisten (>95% Hadir)</option>
+                            <option value="Konsisten (85%-95% Hadir)" selected>Konsisten (85%-95% Hadir)</option>
+                            <option value="Kurang Konsisten (<85% Hadir)">Kurang Konsisten (<85% Hadir)</option>
+                        </select>
+                    </div>
+
+                    <!-- Karakter Subjektif Checkbox -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">3. Karakter Utama (Pilih 1+)</label>
+                        <div id="karakterCheckboxes" class="checkbox-group space-y-2">
+                            <p class="text-xs font-semibold text-gray-500 uppercase mt-2">Keunggulan:</p>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Inisiatif Tinggi / Rasa Ingin Tahu Kuat" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Inisiatif Tinggi / Rasa Ingin Tahu Kuat</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Kolaboratif / Empati Tinggi" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Kolaboratif / Empati Tinggi</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Sangat Bertanggung Jawab / Mandiri" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Sangat Bertanggung Jawab / Mandiri</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Analitis dan Solutif / Pemecah Masalah" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Analitis dan Solutif / Pemecah Masalah</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Perfeksionis Positif / Kualitas Kerja Tinggi" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Perfeksionis Positif / Kualitas Kerja Tinggi</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Mandiri namun Fleksibel / Adaptif" data-type="positive" class="form-checkbox text-green-500 rounded mr-2"> Mandiri namun Fleksibel / Adaptif</label>
+                            
+                            <p class="text-xs font-semibold text-gray-500 uppercase pt-4 border-t mt-4">Area Peningkatan:</p>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Perlu Fokus / Mudah Terdistraksi" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Perlu Fokus / Mudah Terdistraksi</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Kurang Motivasi Diri (Malas)" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Kurang Motivasi Diri (Malas)</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Sering Terdistraksi (Suka Bermain)" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Sering Terdistraksi (Suka Bermain)</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Perlu Pengembangan Regulasi Diri (Sulit Diatur)" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Perlu Pengembangan Regulasi Diri (Sulit Diatur)</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Perlu Peningkatan Perencanaan / Kurang Terstruktur" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Perlu Peningkatan Perencanaan / Kurang Terstruktur</label>
+                            <label class="flex items-center text-sm text-gray-700"><input type="checkbox" name="karakter" value="Cenderung Pasif / Perlu Dorongan" data-type="improvement" class="form-checkbox text-red-500 rounded mr-2"> Cenderung Pasif / Perlu Dorongan</label>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Generate dan Tombol Kunci API (Bersampingan) -->
+                    <div class="flex space-x-3 mt-6">
+                        <button id="generateBtn" onclick="generateNarasi()" class="btn-primary flex-grow py-3 text-white font-semibold rounded-xl hover:opacity-90 transition duration-300 flex items-center justify-center">
+                            <span id="btnText">Generate Narasi Rapor</span>
+                            <div id="spinner" class="spinner ml-2 hidden"></div>
+                        </button>
+                        <!-- Tombol Kunci API -->
+                        <button onclick="openApiKeyModal()" class="flex-shrink-0 p-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition duration-150 shadow-md flex items-center justify-center" title="Pengaturan Kunci API">
+                            <!-- SVG Key Icon -->
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2v4a2 2 0 01-2 2h-2m-4-7v7m4-7h-4a2 2 0 00-2 2v4a2 2 0 002 2h4a2 2 0 002-2v-4a2 2 0 00-2-2zM4 16v-7a2 2 0 012-2h4M4 16h8"></path></svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Kolom Output Narasi -->
+            <div class="lg:col-span-2 card p-6">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-600 border-b pb-2 flex justify-between items-center">
+                    Hasil Narasi Rapor
+                    <button id="copyBtn" onclick="copyNarasi()" class="text-sm text-gray-500 hover:text-indigo-600 transition duration-150 flex items-center disabled:opacity-50" disabled>
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5h10a2 2 0 012 2v3m-2 7H8m8 0v2"></path></svg>
+                        Salin
+                    </button>
+                </h2>
+                <textarea id="outputNarasi" readonly class="mt-1 block w-full rounded-lg border-2 border-dashed border-gray-300 shadow-inner p-4 focus:outline-none text-gray-800 bg-gray-50"></textarea>
+                <p id="messageBox" class="text-sm text-red-500 mt-2 hidden"></p>
+                <p id="successMessage" class="text-sm text-green-600 mt-2 hidden">Narasi berhasil disalin ke clipboard!</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Modal Pengaturan Kunci API -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="card p-6 w-11/12 md:w-1/3">
+            <h3 class="text-xl font-semibold mb-4 text-indigo-600">Pengaturan Kunci API Gemini</h3>
+            <p class="text-sm text-gray-600 mb-4">Pilih sumber Kunci API yang akan digunakan untuk memproses permintaan.</p>
+
+            <div class="space-y-4">
+                <h4 class="font-medium text-gray-700">Pilih Sumber Kunci API:</h4>
+                
+                <div class="flex flex-col space-y-2">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="apiKeySource" id="sourceToken1" value="token1" class="form-radio text-indigo-600">
+                        <span class="ml-2 text-gray-700 font-medium">1. Token 1 (Publik/Default)</span>
+                    </label>
+                    
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="apiKeySource" id="sourceCustom" value="custom" class="form-radio text-indigo-600">
+                        <span class="ml-2 text-gray-700 font-medium">2. Kunci API Kustom</span>
+                    </label>
+                </div>
+
+                <div id="customKeyContainer" class="mt-4 p-4 border rounded-lg bg-gray-50 hidden">
+                    <label for="customApiKeyInput" class="block text-sm font-medium text-gray-700 mb-2">Masukkan Kunci API Kustom Anda:</label>
+                    <input type="password" id="customApiKeyInput" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" placeholder="Kunci API Kustom Anda">
+                    <p class="text-xs text-gray-500 mt-2">Kunci kustom ini akan disimpan di browser Anda.</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="closeApiKeyModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition">Batal</button>
+                <button onclick="saveApiKey()" class="px-4 py-2 btn-primary text-white rounded-lg">Simpan Kunci</button>
+            </div>
+            <p id="apiKeyStatus" class="text-xs mt-2 text-center"></p>
+        </div>
+    </div>
+
+    <!-- Ad Modal (Pop-up Iklan) - HANYA GAMBAR & TOMBOL POJOK KANAN -->
+    <div id="adModal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center hidden">
+        <div class="card p-0 w-11/12 md:w-1/2 lg:w-1/3 relative overflow-hidden">
+            <!-- Close Button (Top Right) -->
+            <button id="adCloseBtn" onclick="closeAdModal()" 
+                    class="absolute top-3 right-3 z-10 p-2 text-white rounded-full transition duration-300 shadow-lg 
+                           bg-red-600 counting opacity-50 cursor-not-allowed" 
+                    disabled title="Tunggu 5 detik">
+                <!-- A simple placeholder text for countdown -->
+                5s 
+            </button>
+            
+            <!-- Image Content -->
+            <!-- Ganti URL ini dengan link gambar GitHub Anda -->
+            <img id="adImage" src="https://placehold.co/600x400/01796F/ffffff?text=PROMOSI+EBOOK+RAPOR+TERBARU" 
+                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/CCCCCC/333333?text=Gambar+Iklan+Gagal+Dimuat';" 
+                 class="w-full h-auto rounded-lg" alt="Iklan Promosi">
+        </div>
+    </div>
+
+
+    <script>
+        const maxRetries = 5;
+        // Kunci API publik yang Anda sediakan
+        const FIXED_API_KEY = "AIzaSyAPedPdcIK3mDXUDNjAm6vZaWfS1x0SotY";
+
+        // --- API Key Logic ---
+        function getApiKey() {
+            const preference = localStorage.getItem('apiUsePreference');
+            const customKey = localStorage.getItem('customGeminiApiKey');
+
+            // Prioritas: 1. Kustom (jika dipilih dan ada), 2. Token 1
+            if (preference === 'custom' && customKey) {
+                return customKey;
+            }
+            // Jika preferensi 'token1' atau jika 'custom' tapi kunci kosong
+            return FIXED_API_KEY;
+        }
+
+        function openApiKeyModal() {
+            const modal = document.getElementById('apiKeyModal');
+            const input = document.getElementById('customApiKeyInput');
+            const customContainer = document.getElementById('customKeyContainer');
+            
+            // Tentukan preferensi default: 'token1' jika belum ada yang tersimpan
+            let preference = localStorage.getItem('apiUsePreference') || 'token1';
+            const savedCustomKey = localStorage.getItem('customGeminiApiKey');
+
+            // Jika preferensi 'custom' tetapi kuncinya tidak ada, paksa kembali ke 'token1'
+            if (preference === 'custom' && !savedCustomKey) {
+                preference = 'token1';
+            }
+
+            // Load custom key into input field
+            input.value = savedCustomKey || '';
+
+            // Set radio button and container visibility
+            const selectedRadio = document.getElementById(`source${preference.charAt(0).toUpperCase() + preference.slice(1)}`);
+            if (selectedRadio) {
+                selectedRadio.checked = true;
+            } else {
+                // Fallback to Token 1 if preference is invalid
+                document.getElementById('sourceToken1').checked = true;
+                preference = 'token1';
+            }
+            
+            if (preference === 'custom') {
+                customContainer.classList.remove('hidden');
+            } else {
+                customContainer.classList.add('hidden');
+            }
+            
+            // Add event listener to radio buttons to toggle visibility
+            document.querySelectorAll('input[name="apiKeySource"]').forEach(radio => {
+                radio.onchange = function() {
+                    if (this.value === 'custom') {
+                        customContainer.classList.remove('hidden');
+                    } else {
+                        customContainer.classList.add('hidden');
+                    }
+                };
+            });
+
+            document.getElementById('apiKeyStatus').textContent = '';
+            modal.classList.remove('hidden');
+        }
+
+        function closeApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const input = document.getElementById('customApiKeyInput');
+            const status = document.getElementById('apiKeyStatus');
+            const selectedSource = document.querySelector('input[name="apiKeySource"]:checked').value;
+            const customKey = input.value.trim();
+            const customContainer = document.getElementById('customKeyContainer');
+
+
+            // 1. Save Preference
+            localStorage.setItem('apiUsePreference', selectedSource);
+
+            // 2. Handle Custom Key saving/removal
+            if (selectedSource === 'custom') {
+                if (customKey) {
+                    localStorage.setItem('customGeminiApiKey', customKey);
+                    status.textContent = 'Kunci API Kustom berhasil disimpan dan diaktifkan!';
+                    status.className = 'text-xs mt-2 text-green-600 text-center';
+                } else {
+                    // User selected 'custom' but left the field empty. Revert to 'token1'
+                    localStorage.removeItem('customGeminiApiKey');
+                    localStorage.setItem('apiUsePreference', 'token1');
+                    document.getElementById('sourceToken1').checked = true; // Update UI
+                    customContainer.classList.add('hidden'); // Hide input
+                    status.textContent = 'Kunci kustom kosong. Menggunakan Token 1.';
+                    status.className = 'text-xs mt-2 text-red-600 text-center';
+                }
+            } else { // selectedSource === 'token1'
+                status.textContent = 'Menggunakan Token 1.';
+                status.className = 'text-xs mt-2 text-green-600 text-center';
+            }
+            
+            setTimeout(() => {
+                closeApiKeyModal();
+            }, 1500);
+        }
+
+        // --- Ad Modal Logic (5-second mandatory delay) ---
+
+        function openAdModal() {
+            const modal = document.getElementById('adModal');
+            const closeBtn = document.getElementById('adCloseBtn');
+            const closeBtnIconHtml = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            
+            // Disable close button initially (mandatory 5s delay)
+            closeBtn.disabled = true;
+            closeBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-red-600', 'counting');
+            closeBtn.classList.remove('hover:bg-gray-600', 'bg-gray-800');
+            closeBtn.innerHTML = `5s`; // Start with the countdown time
+            closeBtn.title = 'Tunggu 5 detik';
+            
+            let countdown = 5;
+            
+            // Start countdown display
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    closeBtn.innerHTML = `${countdown}s`;
+                } else {
+                    clearInterval(timer);
+                    enableCloseButton(closeBtnIconHtml);
+                }
+            }, 1000); 
+        }
+
+        function enableCloseButton(iconHtml) {
+            const closeBtn = document.getElementById('adCloseBtn');
+            closeBtn.disabled = false;
+            closeBtn.innerHTML = iconHtml; // Set to X icon
+            closeBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-red-600', 'counting');
+            closeBtn.classList.add('bg-gray-800', 'hover:bg-gray-600'); // Change color for active state
+            closeBtn.title = 'Tutup';
+        }
+
+        function closeAdModal() {
+            const closeBtn = document.getElementById('adCloseBtn');
+            // Hanya izinkan menutup jika tombol sudah aktif
+            if (!closeBtn.disabled) {
+                document.getElementById('adModal').classList.add('hidden');
+            }
+        }
+        
+        // Membuka modal iklan saat halaman dimuat
+        window.onload = function() {
+            openAdModal();
+        };
+
+
+        // --- Core Generator Logic ---
+        function getSelectedRadioValue(name) {
+            const radio = document.querySelector(`input[name="${name}"]:checked`);
+            return radio ? radio.value : null;
+        }
+
+        async function generateNarasi() {
+            const namaSiswa = document.getElementById('namaSiswa').value.trim();
+            const jenisKelamin = getSelectedRadioValue('jenisKelamin');
+            const levelAkademik = document.getElementById('levelAkademik').value;
+            const kehadiran = document.getElementById('kehadiran').value;
+            const outputTextarea = document.getElementById('outputNarasi');
+            const messageBox = document.getElementById('messageBox');
+            const copyBtn = document.getElementById('copyBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+
+            // 1. Validasi Input
+            messageBox.classList.add('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
+            copyBtn.disabled = true;
+
+            if (!namaSiswa) {
+                messageBox.textContent = "Mohon masukkan Nama Siswa.";
+                messageBox.classList.remove('hidden');
+                return;
+            }
+
+            const selectedKarakterElements = document.querySelectorAll('input[name="karakter"]:checked');
+            if (selectedKarakterElements.length === 0) {
+                messageBox.textContent = "Mohon pilih minimal satu Karakter Utama (Poin 3).";
+                messageBox.classList.remove('hidden');
+                return;
+            }
+
+            const karakterList = Array.from(selectedKarakterElements).map(el => el.value);
+            const keunggulan = karakterList.filter(k => k.includes('Inisiatif Tinggi') || k.includes('Kolaboratif') || k.includes('Bertanggung Jawab') || k.includes('Analitis') || k.includes('Perfeksionis') || k.includes('Mandiri'));
+            const peningkatan = karakterList.filter(k => k.includes('Perlu Fokus') || k.includes('Kurang Motivasi') || k.includes('Sering Terdistraksi') || k.includes('Regulasi Diri') || k.includes('Perencanaan') || k.includes('Pasif'));
+
+            // 2. Set Loading State
+            outputTextarea.value = "Sedang menghasilkan narasi menggunakan Gemini AI...";
+            generateBtn.disabled = true;
+            btnText.textContent = "Memproses...";
+            spinner.classList.remove('hidden');
+            copyBtn.disabled = true;
+
+            // Dapatkan Kunci API saat ini berdasarkan preferensi
+            const currentApiKey = getApiKey(); 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${currentApiKey}`;
+            
+            // 3. Susun Prompt untuk AI
+            const systemPrompt = "Anda adalah seorang asisten AI yang bertindak sebagai Guru Kelas yang membuat laporan perkembangan siswa. Tugas Anda adalah menyusun narasi rapor yang profesional, suportif, lugas, sederhana, mudah dipahami, dan menghindari jargon atau kalimat yang terlalu panjang. Fokus pada fakta capaian dan langkah-langkah selanjutnya. Pastikan nada bahasa selalu santun dan menggunakan Bahasa Indonesia. Output harus mencakup dua bagian utama, dipisahkan oleh dua baris baru (\\n\\n). Jangan sertakan judul, perkenalan, atau kesimpulan di luar konten narasi itu sendiri.";
+            
+            const userQuery = `Buatkan narasi rapor untuk siswa bernama **${namaSiswa}** (${jenisKelamin}) dengan panjang narasi siswa sekitar 120-150 kata.
+
+            **Data Penilaian Siswa:**
+            - Level Akademik (Nilai Rata-rata): ${levelAkademik}
+            - Disiplin/Kehadiran: ${kehadiran}
+            - Keunggulan Karakter: ${keunggulan.join(', ') || 'Tidak ada keunggulan spesifik yang dicatat'}
+            - Area Peningkatan Karakter: ${peningkatan.join(', ') || 'Tidak ada area peningkatan spesifik yang dicatat'}
+
+            **Instruksi Output:**
+            1. Tuliskan **NARASI SISWA** dalam dua paragraf (Pembuka-Inti-Penutup).
+            2. Tuliskan **REKOMENDASI UNTUK ORANG TUA** dalam satu paragraf, memberikan saran aksi nyata yang sederhana dan spesifik untuk mendukung siswa di rumah.
+            3. Pisahkan kedua bagian tersebut dengan penanda **\\n\\n**.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            let response;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        break; // Sukses, keluar dari loop retry
+                    } else if (response.status === 429) {
+                        // Too Many Requests - Implement exponential backoff
+                        if (i < maxRetries - 1) {
+                            const delay = Math.pow(2, i) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                        } else {
+                            throw new Error('API request failed after multiple retries.');
+                        }
+                    } else {
+                        // Jika ada kesalahan 400-an (e.g., kunci API salah), hentikan retry
+                        if (response.status >= 400 && response.status < 500) {
+                            const errorBody = await response.json();
+                            const errorMessage = errorBody.error?.message || `API returned status ${response.status}`;
+                            throw new Error(`API Error: ${errorMessage}`);
+                        }
+                        throw new Error(`API returned status ${response.status}`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error;
+                    }
+                }
+            }
+
+
+            // 4. Proses Respon AI
+            try {
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (text) {
+                    // Gemini sering menggunakan Markdown, jadi kita ubah sedikit formatnya
+                    const formattedText = text
+                        .replace(/\*\*(NARASI SISWA)\*\*/g, 'NARASI SISWA\n')
+                        .replace(/\*\*(REKOMENDASI UNTUK ORANG TUA)\*\*/g, '\n\nREKOMENDASI UNTUK ORANG TUA\n');
+                        
+                    outputTextarea.value = formattedText;
+                    copyBtn.disabled = false;
+                } else {
+                    outputTextarea.value = "Gagal menghasilkan narasi. Respon AI tidak valid atau kosong.";
+                    messageBox.textContent = "Error: Respon AI tidak valid. Coba ulangi.";
+                    messageBox.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                outputTextarea.value = "Terjadi kesalahan saat memproses data AI.";
+                // Tampilkan pesan kesalahan API yang lebih spesifik
+                const displayError = error.message.includes("API Error:") ? error.message : `Error: ${error.message}. Mohon cek koneksi atau Kunci API Anda.`;
+                messageBox.textContent = displayError;
+                messageBox.classList.remove('hidden');
+            } finally {
+                // 5. Reset State
+                generateBtn.disabled = false;
+                btnText.textContent = "Generate Narasi Rapor";
+                spinner.classList.add('hidden');
+            }
+        }
+
+        // Fungsi Salin
+        function copyNarasi() {
+            const outputTextarea = document.getElementById('outputNarasi');
+            const successMessage = document.getElementById('successMessage');
+
+            if (outputTextarea.value) {
+                const el = document.createElement('textarea');
+                el.value = outputTextarea.value;
+                document.body.appendChild(el);
+                el.select();
+                try {
+                    document.execCommand('copy');
+                    successMessage.classList.remove('hidden');
+                    setTimeout(() => successMessage.classList.add('hidden'), 3000);
+                } catch (err) {
+                    console.error('Gagal menyalin:', err);
+                } finally {
+                    document.body.removeChild(el);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
