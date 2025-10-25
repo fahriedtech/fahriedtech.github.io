@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Komunikasi Guru Terpadu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PERBAIKAN 1: Menghapus impor Firebase dari bagian <head>. Impor sekarang hanya di dalam script module di bawah. -->
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+        /* Custom scrollbar for output */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #a0aec0;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+        .html-output-container {
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        /* Modal styles (Shared by API Key and Ad Modals) */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            /* Padding default dihilangkan untuk modal iklan */
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 400px; /* Lebar default untuk modal API Key */
+            position: relative;
+        }
+        /* Khusus untuk modal API Key agar ada padding default */
+        #apiKeyModal .modal-content {
+            padding: 24px;
+            width: 400px;
+        }
+        /* Khusus untuk modal Iklan agar tidak ada padding */
+        #adModal .modal-content {
+            padding: 0;
+            max-width: 500px; /* Ukuran yang lebih besar untuk gambar */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: none;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden relative">
+        <header class="p-6 bg-blue-600 text-white relative">
+            <h1 class="text-3xl font-bold">Generator Komunikasi Guru Terpadu</h1>
+            <p class="text-sm opacity-90 mt-1">Otomatisasi draf balasan dan pengumuman dengan AI.</p>
+        </header>
+
+        
+        <div class="flex border-b border-gray-200">
+            <!-- Fungsi showTab() diperbaiki agar dapat mengambil elemen saat dipanggil -->
+            <button id="tab-reply-btn" onclick="showTab('reply')" class="flex-1 py-3 text-center text-sm md:text-base font-semibold transition-colors duration-200 border-b-4 border-blue-600 text-blue-600 hover:bg-blue-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H2a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2zM7 8H5v2h2V8zm5 0h-2v2h2V8z" clip-rule="evenodd" />
+                </svg>
+                Balas Pesan Orang Tua (Individual)
+            </button>
+            <button id="tab-announce-btn" onclick="showTab('announcement')" class="flex-1 py-3 text-center text-sm md:text-base font-semibold text-gray-500 hover:bg-blue-50 transition-colors duration-200 border-b-4 border-transparent hover:border-blue-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 1 0 004 14h12a1 1 1 0 00.707-1.707l-.707-.707V8a6 6 0 00-6-6zM3.051 16.29A.5.5 0 013 16H17a.5.5 0 01-.051.29l-1.401 2.336A.5.5 0 0115.01 19H4.99a.5.5 0 01-.54-.374l-1.4-2.336z" />
+                </svg>
+                Buat Pengumuman Sekolah (Massal)
+            </button>
+        </div>
+
+        <div class="p-6 md:p-8">
+            
+            <div id="reply-tab" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Balas Pesan Orang Tua</h2>
+                <div class="space-y-4">
+                    
+                    <div>
+                        <label for="parentMessage" class="block text-sm font-medium text-gray-700">Pesan Asli Orang Tua <span class="text-red-500">*</span></label>
+                        <textarea id="parentMessage" rows="4" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Salin/ketik pesan yang ingin Anda balas.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div>
+                            <label for="replyType" class="block text-sm font-medium text-gray-700">Jenis Balasan</label>
+                            <select id="replyType" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                                <option value="Menjawab pertanyaan">Menjawab pertanyaan</option>
+                                <option value="Menolak permintaan">Menolak permintaan (secara halus)</option>
+                                <option value="Memberi klarifikasi">Memberi klarifikasi</option>
+                                <option value="Menyampaikan kekhawatiran">Menyampaikan kekhawatiran</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="studentName" class="block text-sm font-medium text-gray-700">Nama Siswa Terkait</label>
+                            <input type="text" id="studentName" placeholder="Contoh: Budi Santoso" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    
+                    <div>
+                        <label for="keyInfo" class="block text-sm font-medium text-gray-700">Informasi Kunci (Fakta) <span class="text-red-500">*</span></label>
+                        <textarea id="keyInfo" rows="3" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500"></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Detail spesifik yang harus ada di balasan (misalnya, tanggal, jadwal, nama tugas).</p>
+                    </div>
+
+                    
+                    <div>
+                        <label for="languageStyle" class="block text-sm font-medium text-gray-700">Gaya Bahasa Output</label>
+                        <select id="languageStyle" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Sangat Formal">Sangat Formal (Bahasa Baku)</option>
+                            <option value="Profesional Ramah" selected>Profesional Ramah (Standar)</option>
+                            <option value="Suportif Kasual">Suportif Kasual (Lebih santai)</option>
+                        </select>
+                    </div>
+                    
+                    
+                    <div>
+                        <label for="replyOptionalNotes" class="block text-sm font-medium text-gray-700">Catatan Opsional (Instruksi Tambahan)</label>
+                        <textarea id="replyOptionalNotes" rows="2" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Buat balasan jangan terlalu panjang (maks. 3 kalimat). Gunakan istilah pendidikan modern."></textarea>
+                    </div>
+
+                    <!-- PENGATURAN TOMBOL KUNCI BARU DI TAB BALAS -->
+                    <div class="flex space-x-4">
+                        <button onclick="generateReply()" class="flex-1 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md flex items-center justify-center space-x-2 disabled:bg-blue-400" id="generateReplyBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                            <span>Generate Balasan</span>
+                        </button>
+                         <!-- Ikon Kunci Disini -->
+                        <button onclick="openApiKeyModal()" class="px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400" title="Atur API Key Kustom">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                                <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="announcement-tab" class="tab-content hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Buat Pengumuman Sekolah</h2>
+                <div class="space-y-4">
+                    
+                    <div>
+                        <label for="announcementPurpose" class="block text-sm font-medium text-gray-700">Tujuan Pengumuman <span class="text-red-500">*</span></label>
+                        <input type="text" id="announcementPurpose" placeholder="Contoh: Karyawisata Kelas 5" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div>
+                            <label for="announcementTarget" class="block text-sm font-medium text-gray-700">Target Penerima</label>
+                            <select id="announcementTarget" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                                <option value="Semua Orang Tua">Semua Orang Tua</option>
+                                <option value="Siswa Kelas 1-3">Siswa Kelas 1-3 dan Orang Tua</option>
+                                <option value="Siswa Kelas 4-6">Siswa Kelas 4-6 dan Orang Tua</option>
+                                <option value="Staf Sekolah">Staf Sekolah</option>
+                                <option value="Komite Sekolah">Komite Sekolah</option>
+                            </select>
+                        </div>
+                         
+                        <div>
+                            <label for="announcementTone" class="block text-sm font-medium text-gray-700">Nada Resmi</label>
+                            <select id="announcementTone" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                                <option value="Sangat Formal & Resmi">Sangat Formal & Resmi</option>
+                                <option value="Informatif & Jelas" selected>Informatif & Jelas (Standar)</option>
+                                <option value="Ramah & Mengajak">Ramah & Mengajak</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                    <div>
+                        <label for="announcementFormat" class="block text-sm font-medium text-gray-700">Pilihan Format Output <span class="text-red-500">*</span></label>
+                        <select id="announcementFormat" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="text_nonformal">Teks Siap Kirim (Non-Formal/WA/Email)</option>
+                            <option value="html_formal">HTML Formal (untuk Google Docs/Website)</option>
+                        </select>
+                    </div>
+
+                    
+                    <div>
+                        <label for="announcementDetails" class="block text-sm font-medium text-gray-700">Detail Kunci 5W+1H (Apa, Kapan, Di mana, Mengapa, Bagaimana)</label>
+                        <textarea id="announcementDetails" rows="4" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Kapan: 15 Desember 2025. Di mana: Taman Safari. Pakaian: Seragam olahraga. Perlengkapan: Topi dan bekal makan siang."></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Pastikan mencakup Tanggal, Waktu, Lokasi, Pakaian/Perlengkapan, Biaya (jika ada).</p>
+                    </div>
+
+                    
+                    <div>
+                        <label for="announcementAction" class="block text-sm font-medium text-gray-700">Tindakan yang Diharapkan (Call to Action) <span class="text-red-500">*</span></label>
+                        <textarea id="announcementAction" rows="3" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Konfirmasi kehadiran melalui tautan Google Form: [link] dan Pembayaran paling lambat 10 Desember 2025 ke Wali Kelas."></textarea>
+                    </div>
+                    
+                    
+                    <div>
+                        <label for="announcementOptionalNotes" class="block text-sm font-medium text-gray-700">Catatan Opsional (Instruksi Tambahan)</label>
+                        <textarea id="announcementOptionalNotes" rows="2" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Pastikan tanggal acara disorot tebal. Buat nadanya sedikit mendesak."></textarea>
+                    </div>
+
+                    <!-- PENGATURAN TOMBOL KUNCI BARU DI TAB PENGUMUMAN -->
+                    <div class="flex space-x-4">
+                        <button onclick="generateAnnouncement()" class="flex-1 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md flex items-center justify-center space-x-2 disabled:bg-blue-400" id="generateAnnouncementBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-.17C7.67 10.686 8 10.32 8 10c0-.528.167-.834.42-1.037.199-.168.307-.26.35-.395.053-.162.038-.328-.11-.476a1.996 1.996 0 00-1.082-.416A1 1 0 007 7h1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Generate Pengumuman</span>
+                        </button>
+                        <!-- Ikon Kunci Disini -->
+                        <button onclick="openApiKeyModal()" class="px-4 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400" title="Atur API Key Kustom">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                                <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Hasil Generator AI</h2>
+                <div id="outputContainer" class="p-4 bg-gray-50 border border-gray-200 rounded-lg min-h-[150px] relative">
+                    <div id="loadingIndicator" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center hidden">
+                        <div class="flex flex-col items-center">
+                            <svg class="animate-spin h-8 w-8 text-blue-600 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="text-blue-600 font-medium">AI sedang menyusun draf...</span>
+                        </div>
+                    </div>
+
+                    <div id="outputText" class="whitespace-pre-wrap text-gray-800 custom-scrollbar max-h-96 overflow-y-auto">
+                        Hasil draf komunikasi akan muncul di sini. Silakan masukkan detail Anda dan klik 'Generate'.
+                    </div>
+                </div>
+
+                
+                <div class="mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+                    <button onclick="copyOutput()" id="copyButton" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 shadow-md flex items-center space-x-2 disabled:bg-green-300" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                        </svg>
+                        <span>Salin Teks</span>
+                    </button>
+                    <span id="copyStatus" class="text-sm text-gray-600"></span>
+                </div>
+            </div>
+
+            <!-- STATUS APLIKASI TELAH DIHAPUS DARI TAMPILAN -->
+        </div>
+    </div>
+
+    
+    <div id="apiKeyModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeApiKeyModal()">&times;</span>
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Masukkan Gemini API Key Kustom</h3>
+            <p class="text-sm text-gray-600 mb-4">API Key ini akan digunakan untuk menghasilkan respons AI. Ini akan disimpan di *browser* Anda.</p>
+            <input type="text" id="customApiKeyInput" class="block w-full rounded-lg border border-gray-300 shadow-sm p-3 mb-4 focus:border-blue-500 focus:ring-blue-500" placeholder="Paste Gemini API Key Anda di sini">
+            <button onclick="saveApiKey()" class="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md">
+                Simpan API Key
+            </button>
+            <p id="apiKeyStatus" class="mt-3 text-sm text-center text-gray-600"></p>
+        </div>
+    </div>
+    
+    <!-- ADVERTISEMENT MODAL -->
+    <div id="adModal" class="modal hidden">
+        <!-- class p-0, max-w-lg untuk frame gambar yang bersih -->
+        <div class="modal-content max-w-sm md:max-w-lg p-0 overflow-hidden relative border-none shadow-2xl">
+            <!-- Tombol Tutup yang dinonaktifkan secara default -->
+            <!-- Ditempatkan di pojok kanan atas gambar -->
+            <button id="adCloseButton" onclick="closeAdModal()" class="bg-red-600 text-white hover:bg-red-700 disabled:bg-red-400 p-2 rounded-bl-lg transition duration-300 absolute top-0 right-0 z-10 font-bold text-lg" disabled title="Tutup setelah 5 detik">
+                &times; <span id="adTimer">5</span>
+            </button>
+
+            <!-- Kontainer Gambar - MENGGUNAKAN RAW URL GITHUB -->
+            <img id="adImage" 
+                 src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/cd17839d941c9cb0525e9ec75302e17f92598d34/galeriimage6.jpg" 
+                 onerror="this.onerror=null;this.src='https://placehold.co/800x600/9ca3af/ffffff?text=Gambar+Gagal+Dimuat';" 
+                 alt="Iklan Sekolah" class="w-full h-auto object-cover block rounded-lg">
+        </div>
+    </div>
+
+
+    <script type="module">
+        // --- GLOBAL SETUP & FIREBASE INIT (MANDATORY) ---
+        // Menggunakan impor global untuk kompatibilitas yang lebih baik di lingkungan ini
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // PERBAIKAN: Impor Firestore hanya sekali dan menghapus duplikat 'addDoc'
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        let API_KEY = ""; // Akan diisi dari Canvas atau localStorage
+
+        let db, auth;
+        let userId = 'anon-user';
+        // Variabel ini akan diisi di window.onload dari variabel global (dengan fallback)
+        let appId = 'default-app-id'; 
+
+
+        // PERBAIKAN 5: Penanganan error dan parsing konfigurasi Firebase yang lebih baik
+        async function initFirebase() {
+            try {
+                // Mendefinisikan variabel lokal menggunakan nilai global yang telah diamankan (atau fallbacks)
+                const globalAppId = window.__app_id;
+                const globalFirebaseConfig = window.__firebase_config;
+                const initialAuthToken = window.__initial_auth_token;
+
+                // Memperbarui variabel appId scope module
+                appId = globalAppId;
+
+                let firebaseConfig;
+                try {
+                    firebaseConfig = JSON.parse(globalFirebaseConfig);
+                } catch (e) {
+                    console.error("[Firebase Init] Gagal mem-parse Firebase config. Menggunakan config kosong.", e);
+                    firebaseConfig = {};
+                }
+
+                if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    setLogLevel('debug'); // Aktifkan logging debug untuk Firestore
+
+                    console.log(`[Firebase Init] App ID: ${appId}`);
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            console.log(`[Firebase Auth] User ID ditetapkan: ${userId}`);
+                        } else {
+                            console.log('[Firebase Auth] Pengguna tidak masuk. Mencoba masuk anonim.');
+                        }
+                    });
+
+                    // Autentikasi menggunakan custom token atau anonim
+                    if (initialAuthToken) {
+                        try {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } catch (error) {
+                            console.error("[Firebase Auth] Gagal masuk dengan custom token. Mencoba masuk anonim.", error);
+                            await signInAnonymously(auth);
+                        }
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    console.warn("[Firebase Init] Konfigurasi Firebase hilang atau kosong. Berjalan tanpa Firestore.");
+                }
+            } catch (error) {
+                console.error("[Firebase Init] Inisialisasi Firebase gagal:", error);
+            }
+        }
+
+        // --- PERUBAHAN LOGIKA API KEY DI SINI ---
+        // Fungsi untuk memuat API Key dari Canvas (Token 1/Prioritas 1) atau localStorage (Custom Key/Prioritas 2)
+        function loadApiKey() {
+            const storedKey = localStorage.getItem('geminiApiKey');
+            const canvasKey = window.__api_key; 
+            
+            // Prioritas BARU: 1. Canvas global variable (__api_key), 2. localStorage, 3. Empty string
+            API_KEY = canvasKey || storedKey || "";
+            
+            if (canvasKey) {
+                console.log("API Key dimuat dari lingkungan Canvas (Token 1).");
+            } else if (storedKey) {
+                console.log("API Key dimuat dari localStorage (Custom Key).");
+            } else {
+                console.warn("API Key tidak ditemukan. Mohon masukkan melalui ikon kunci.");
+            }
+        }
+        // --- AKHIR PERUBAHAN LOGIKA API KEY ---
+
+        // PERBAIKAN 2 & 3: Menambahkan fallback variabel global dan memastikan DOM siap sebelum menampilkan tab
+        window.onload = async function() {
+            // PERBAIKAN 2: Tambahkan fallback untuk variabel global yang mungkin tidak terdefinisi
+            if (typeof window.__app_id === 'undefined') window.__app_id = 'default-app-id';
+            if (typeof window.__firebase_config === 'undefined') window.__firebase_config = '{}';
+            if (typeof window.__initial_auth_token === 'undefined') window.__initial_auth_token = null;
+            // PERBAIKAN API KEY: Menambahkan default API Key yang diminta
+            if (typeof window.__api_key === 'undefined') window.__api_key = 'AIzaSyAPedPdcIK3mDXUDNjAm6vZaWfS1x0SotY';
+
+            loadApiKey(); // Muat API Key terlebih dahulu
+            await initFirebase(); // Kemudian inisialisasi Firebase
+            
+            // Buka pop-up iklan setelah semua inisialisasi dengan sedikit penundaan (100ms)
+            setTimeout(() => {
+                openAdModal();
+            }, 100); 
+            
+            // Pastikan tab default (Reply) ditampilkan
+            showTab('reply');
+        };
+
+        // --- UI & TAB LOGIC ---
+        
+        // PERBAIKAN 3: Fungsi showTab yang lebih robust dengan pengecekan DOM
+        window.showTab = function(tabId) {
+            // Cek kesiapan DOM
+            if (document.readyState !== 'complete') {
+                setTimeout(() => showTab(tabId), 50);
+                return;
+            }
+            
+            const replyTab = document.getElementById('reply-tab');
+            const announcementTab = document.getElementById('announcement-tab');
+            const tabReplyBtn = document.getElementById('tab-reply-btn');
+            const tabAnnounceBtn = document.getElementById('tab-announce-btn');
+
+            if (!replyTab || !announcementTab || !tabReplyBtn || !tabAnnounceBtn) {
+                console.error("Gagal menemukan elemen tab. Mencoba lagi dalam 100ms.");
+                setTimeout(() => showTab(tabId), 100);
+                return;
+            }
+
+            // Sembunyikan semua tab
+            replyTab.classList.add('hidden');
+            announcementTab.classList.add('hidden');
+            
+            // Reset gaya tombol
+            tabReplyBtn.classList.remove('border-blue-600', 'text-blue-600');
+            tabReplyBtn.classList.add('border-transparent', 'text-gray-500');
+            tabAnnounceBtn.classList.remove('border-blue-600', 'text-blue-600');
+            tabAnnounceBtn.classList.add('border-transparent', 'text-gray-500');
+
+            // Tampilkan tab yang dipilih dan beri gaya tombol
+            if (tabId === 'reply') {
+                replyTab.classList.remove('hidden');
+                tabReplyBtn.classList.add('border-blue-600', 'text-blue-600');
+                tabReplyBtn.classList.remove('border-transparent', 'text-gray-500');
+            } else if (tabId === 'announcement') {
+                announcementTab.classList.remove('hidden');
+                tabAnnounceBtn.classList.add('border-blue-600', 'text-blue-600');
+                tabAnnounceBtn.classList.remove('border-transparent', 'text-gray-500');
+            }
+            
+            // Bersihkan pesan status
+            document.getElementById('copyStatus').textContent = '';
+        };
+
+        // --- API KEY MODAL LOGIC ---
+        let canCloseAd = false; 
+
+        window.openApiKeyModal = function() {
+            const apiKeyModal = document.getElementById('apiKeyModal');
+            const customApiKeyInput = document.getElementById('customApiKeyInput');
+            const apiKeyStatus = document.getElementById('apiKeyStatus');
+
+            if (!apiKeyModal || !customApiKeyInput || !apiKeyStatus) return; // Safety check
+
+            // Tampilkan API Key yang sedang digunakan di input
+            // Kita menampilkan storedKey di input, karena ini adalah input untuk kustomisasi (Priority 2)
+            customApiKeyInput.value = localStorage.getItem('geminiApiKey') || ''; // Default ke kosong
+            apiKeyStatus.textContent = '';
+            apiKeyModal.classList.remove('hidden');
+        };
+
+        window.closeApiKeyModal = function() {
+            const apiKeyModal = document.getElementById('apiKeyModal');
+            if (apiKeyModal) apiKeyModal.classList.add('hidden');
+        };
+
+        window.saveApiKey = function() {
+            const customApiKeyInput = document.getElementById('customApiKeyInput');
+            const apiKeyStatus = document.getElementById('apiKeyStatus');
+            
+            if (!customApiKeyInput || !apiKeyStatus) return; // Safety check
+
+            const newKey = customApiKeyInput.value.trim();
+            if (newKey) {
+                localStorage.setItem('geminiApiKey', newKey);
+                // Kita tidak mengupdate global API_KEY di sini, kita panggil loadApiKey() untuk menentukan API_KEY berdasarkan prioritas baru.
+                loadApiKey(); 
+                
+                apiKeyStatus.textContent = '✅ API Key berhasil disimpan!';
+                apiKeyStatus.classList.remove('text-red-500');
+                apiKeyStatus.classList.add('text-green-600');
+                console.log("Custom API Key diperbarui dan disimpan.");
+                setTimeout(() => {
+                    closeApiKeyModal();
+                    // Karena prioritas 1 (canvasKey) adalah yang utama, kita tidak perlu me-reload kecuali jika canvasKey juga kosong.
+                    // Namun, kita membiarkan ini seperti ini untuk memastikan API_KEY global diperbarui.
+                }, 1500);
+            } else {
+                localStorage.removeItem('geminiApiKey'); // Hapus jika dikosongkan
+                loadApiKey(); // Load kembali prioritas
+                apiKeyStatus.textContent = '✅ Custom API Key dihapus. Kembali menggunakan API Key lingkungan.';
+                apiKeyStatus.classList.remove('text-red-500');
+                apiKeyStatus.classList.add('text-green-600');
+                console.log("Custom API Key dihapus.");
+                setTimeout(() => {
+                    closeApiKeyModal();
+                }, 1500);
+            }
+        };
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const apiKeyModal = document.getElementById('apiKeyModal');
+            const adModal = document.getElementById('adModal');
+            if (apiKeyModal && event.target == apiKeyModal) {
+                closeApiKeyModal();
+            }
+            if (adModal && event.target == adModal && canCloseAd) {
+                closeAdModal();
+            }
+        };
+        
+        // --- ADVERTISEMENT MODAL LOGIC ---
+        
+        window.openAdModal = function() {
+            const adModal = document.getElementById('adModal');
+            const adCloseButton = document.getElementById('adCloseButton');
+
+            if (!adModal || !adCloseButton) {
+                console.error("Gagal menemukan elemen modal iklan.");
+                return;
+            }
+
+            canCloseAd = false;
+            adModal.classList.remove('hidden');
+            adCloseButton.disabled = true;
+            adCloseButton.title = "Tutup setelah 5 detik";
+            adCloseButton.innerHTML = '&times; <span id="adTimer">5</span>';
+            
+            // Start the 5-second countdown
+            let timer = 5;
+            const countdownInterval = setInterval(() => {
+                timer--;
+                const adTimerSpan = document.getElementById('adTimer');
+                if (adTimerSpan) {
+                    adTimerSpan.textContent = timer;
+                }
+                
+                if (timer <= 0) {
+                    clearInterval(countdownInterval);
+                    canCloseAd = true;
+                    adCloseButton.disabled = false;
+                    adCloseButton.title = "Tutup Iklan";
+                    adCloseButton.innerHTML = '&times;';
+                }
+            }, 1000);
+        };
+
+        window.closeAdModal = function() {
+            const adModal = document.getElementById('adModal');
+            if (!adModal) return;
+
+            if (canCloseAd) {
+                adModal.classList.add('hidden');
+            } else {
+                console.warn("Belum bisa menutup iklan. Menunggu 5 detik.");
+            }
+        };
+
+
+        // --- API UTILITY FUNCTIONS ---
+
+        function setGenerating(isGenerating, buttonId) {
+            const btn = document.getElementById(buttonId);
+            const loading = document.getElementById('loadingIndicator');
+            const copyBtn = document.getElementById('copyButton');
+            
+            if (!btn || !loading || !copyBtn) return; // Safety check
+
+            btn.disabled = isGenerating;
+            copyBtn.disabled = isGenerating;
+
+            if (isGenerating) {
+                loading.classList.remove('hidden');
+                btn.innerHTML = '<svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>AI sedang menyusun draf...</span>';
+            } else {
+                loading.classList.add('hidden');
+                if (buttonId === 'generateReplyBtn') {
+                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg><span>Generate Balasan</span>';
+                } else if (buttonId === 'generateAnnouncementBtn') {
+                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-.17C7.67 10.686 8 10.32 8 10c0-.528.167-.834.42-1.037.199-.168.307-.26.35-.395.053-.162.038-.328-.11-.476a1.996 1.996 0 00-1.082-.416A1 1 0 007 7h1z" clip-rule="evenodd" /></svg><span>Generate Pengumuman</span>';
+                }
+            }
+        }
+
+        async function makeApiCall(prompt, buttonId, format = 'text', displayInstruction = '') {
+            setGenerating(true, buttonId);
+            const outputTextElement = document.getElementById('outputText');
+            
+            // Clear existing content safely
+            outputTextElement.textContent = "";
+            
+            // Periksa API_KEY sebelum melakukan panggilan
+            if (!API_KEY) {
+                outputTextElement.textContent = "API Key belum diatur. Mohon masukkan API Key Anda melalui ikon kunci di sebelah tombol generate.";
+                document.getElementById('copyButton').disabled = true;
+                setGenerating(false, buttonId);
+                openApiKeyModal(); // Otomatis buka modal jika key kosong
+                return;
+            }
+
+            // Show processing status
+            if (format === 'html_formal') {
+                outputTextElement.innerHTML = '<p class="font-semibold text-red-700">Meminta kode HTML... Mohon tunggu sebentar.</p>';
+            } else {
+                outputTextElement.textContent = "AI sedang menyusun draf... Mohon tunggu sebentar.";
+            }
+
+
+            try {
+                const response = await exponentialBackoffFetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            systemInstruction: {
+                                parts: [{ text: "Anda adalah Asisten Komunikasi Guru profesional yang selalu menulis dalam Bahasa Indonesia baku namun ramah. Tugas Anda adalah menyusun draf balasan atau pengumuman yang jelas, konsisten, dan sesuai dengan format dan nada yang diminta." }]
+                            },
+                        })
+                    }
+                );
+                
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(`API Error ${response.status}: ${errorBody.error?.message || 'Unknown error'}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal menghasilkan teks. Silakan coba lagi.";
+                
+                let finalOutput = text.trim();
+
+                if (format === 'html_formal') {
+                    // Set as raw HTML inside a code block for copying (escaping handles injection safety)
+                    outputTextElement.innerHTML = `
+                        <p class="font-semibold text-blue-700">${displayInstruction}</p>
+                        <div class="bg-gray-100 p-4 mt-2 rounded-lg text-sm border border-gray-300 html-output-container">
+                            <code id="htmlCodeBlock">${finalOutput}</code>
+                        </div>
+                    `;
+                } else {
+                    // Plain text output
+                    outputTextElement.innerHTML = finalOutput.replace(/\n/g, '<br>'); // Preserve line breaks for display
+                }
+
+                document.getElementById('copyButton').disabled = false;
+
+            } catch (error) {
+                console.error("API Call Error:", error);
+                outputTextElement.textContent = `Terjadi kesalahan saat menghubungi layanan AI. Pesan Error: ${error.message}. Pastikan API Key Anda valid dan kuota tidak habis.`;
+                document.getElementById('copyButton').disabled = true;
+            } finally {
+                setGenerating(false, buttonId);
+            }
+        }
+
+        async function exponentialBackoffFetch(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status !== 429 && response.ok) {
+                        return response;
+                    } else if (response.status === 429 && i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    return response; // Return non-OK response if not 429 or max retries reached
+                } catch (error) {
+                    if (i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    throw error;
+                }
+            }
+        }
+
+        // --- TAB 1: REPLY GENERATOR LOGIC ---
+
+        window.generateReply = function() {
+            const parentMessage = document.getElementById('parentMessage').value.trim();
+            const replyType = document.getElementById('replyType').value;
+            const keyInfo = document.getElementById('keyInfo').value.trim();
+            const studentName = document.getElementById('studentName').value.trim() || '[Tidak Ada Nama Siswa]';
+            const languageStyle = document.getElementById('languageStyle').value;
+            const optionalNotes = document.getElementById('replyOptionalNotes').value.trim(); // Dapatkan Catatan Opsional
+
+            if (!parentMessage || !keyInfo) {
+                document.getElementById('outputText').textContent = "Pesan Asli Orang Tua dan Informasi Kunci (Fakta) wajib diisi untuk membuat balasan.";
+                document.getElementById('copyButton').disabled = true;
+                return;
+            }
+
+            let prompt = `Buat draf balasan pesan orang tua dengan rincian berikut:
+            
+            1. Pesan Asli Orang Tua: "${parentMessage}"
+            2. Jenis Balasan yang diminta: ${replyType}.
+            3. Nama Siswa Terkait: ${studentName}.
+            4. Informasi Kunci (Fakta) yang WAJIB dimasukkan: ${keyInfo}.
+            5. Gaya Bahasa Output: ${languageStyle}.
+            
+            ${optionalNotes ? `Instruksi Khusus Tambahan: ${optionalNotes}` : ''}
+
+            Instruksi Format Output: Output harus berupa teks biasa (Plain Text) yang bersih, siap disalin, tanpa simbol markdown, tanpa code block syntax, dan mudah ditempelkan (paste) langsung ke WhatsApp atau email.
+
+            Pastikan balasan Anda fokus, profesional, dan mencakup semua Informasi Kunci yang diberikan.
+            `;
+
+            makeApiCall(prompt, 'generateReplyBtn', 'text', '');
+        };
+
+        // --- TAB 2: ANNOUNCEMENT GENERATOR LOGIC (UPDATED) ---
+
+        window.generateAnnouncement = function() {
+            const purpose = document.getElementById('announcementPurpose').value.trim();
+            const target = document.getElementById('announcementTarget').value;
+            const details = document.getElementById('announcementDetails').value.trim();
+            const action = document.getElementById('announcementAction').value.trim();
+            const tone = document.getElementById('announcementTone').value;
+            const format = document.getElementById('announcementFormat').value;
+            const optionalNotes = document.getElementById('announcementOptionalNotes').value.trim(); // Dapatkan Catatan Opsional
+
+            if (!purpose || !action) {
+                document.getElementById('outputText').textContent = "Tujuan Pengumuman dan Tindakan yang Diharapkan wajib diisi untuk membuat pengumuman.";
+                document.getElementById('copyButton').disabled = true;
+                return;
+            }
+
+            let formatInstruction = "";
+            let displayInstruction = "";
+
+            if (format === 'html_formal') {
+                formatInstruction = "Output harus berupa kode HTML LENGKAP yang valid (termasuk tag <html>, <head>, <body>). Gunakan CSS inline atau tag <style> sederhana (font-family, margin, padding) agar terlihat profesional saat dibuka di Google Docs/Word. Judul utama pengumuman harus menggunakan tag <h1>.";
+                displayInstruction = "✅ DRAF HTML FORMAL SIAP DISALIN! Salin seluruh kode di bawah untuk ditempelkan ke Google Docs/Word.";
+            } else {
+                formatInstruction = "Output harus berupa teks biasa (Plain Text) yang bersih, siap disalin, tanpa simbol markdown, tanpa code block syntax, dan mudah ditempelkan (paste) langsung ke WhatsApp atau email.";
+                displayInstruction = ""; // No specific instruction for text
+            }
+
+            let prompt = `Buat draf Pengumuman Sekolah dengan format yang rapi berdasarkan rincian ini:
+            
+            1. Tujuan Pengumuman (Judul): ${purpose}
+            2. Target Penerima: ${target}
+            3. Nada Resmi: ${tone}
+            4. Detail Kunci 5W+1H (Informasi Penting): ${details || '[Tidak ada detail tambahan, fokus pada tujuan dan tindakan yang diharapkan]'}
+            5. Tindakan yang Diharapkan (Call to Action) yang WAJIB dimasukkan: ${action}.
+            
+            ${optionalNotes ? `Instruksi Khusus Tambahan: ${optionalNotes}` : ''}
+
+            Instruksi Format Output: ${formatInstruction}
+
+            Susun pengumuman ini agar terlihat jelas dan mudah dipahami oleh ${target}.
+            `;
+
+            makeApiCall(prompt, 'generateAnnouncementBtn', format, displayInstruction);
+        };
+
+        // --- COPY FUNCTION ---
+        // PERBAIKAN 4: Mengganti document.execCommand dengan Clipboard API
+        window.copyOutput = function() {
+            const outputElement = document.getElementById('outputText');
+            const copyStatus = document.getElementById('copyStatus');
+            let textToCopy = '';
+
+            // Check if the output contains the HTML code structure (identifiable by the <code> tag)
+            const codeBlock = document.getElementById('htmlCodeBlock');
+
+            if (codeBlock) {
+                // If it's HTML format, copy the raw inner text of the code block.
+                textToCopy = codeBlock.textContent.trim();
+            } else {
+                // If it's plain text format, copy the full text content, replacing <br> with newlines for actual copy.
+                // We use innerText/textContent here to get the rendered text content (without <br> tags being visible)
+                textToCopy = outputElement.innerText || outputElement.textContent.trim();
+            }
+
+            if (textToCopy && textToCopy !== "Hasil draf komunikasi akan muncul di sini. Silakan masukkan detail Anda dan klik 'Generate'.") {
+                // Gunakan Clipboard API modern
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyStatus.textContent = '✅ Draf berhasil disalin!';
+                }).catch(err => {
+                    console.error('Failed to copy text:', err);
+                    // Fallback to deprecated method if needed, but for simplicity here we just show the error
+                    copyStatus.textContent = '❌ Gagal menyalin. Silakan salin manual.';
+                });
+            } else {
+                copyStatus.textContent = 'Belum ada draf untuk disalin.';
+            }
+            setTimeout(() => copyStatus.textContent = '', 3000); 
+        };
+    </script>
+</body>
+</html>
