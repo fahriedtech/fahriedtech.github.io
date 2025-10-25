@@ -1,3 +1,4 @@
+ing: 20px 0;
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,47 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            /* Light mode colors */
-            --bg-color: #E0E5EC;
-            --text-color: #2D3748;
-            --text-secondary: #4A5568;
-            --header-bg: linear-gradient(135deg, #A8B2D1, #B8C6DB);
-            --card-bg: #E0E5EC;
-            --shadow-light: 9px 9px 16px #a3adb9, -9px -9px 16px #e6edf7;
-            --shadow-inset-light: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
-            --shadow-button-light: 6px 6px 12px #c8d0db, -6px -6px 12px #f8faff;
-            --shadow-active-light: inset 8px 8px 16px #c8d0db, inset -8px -8px 16px #f8faff;
-            --hover-bg: #D8DDE4;
-            --tab-bg: #E0E5EC;
-        }
-
-        [data-theme="dark"] {
-            /* Dark mode colors */
-            --bg-color: #1a202c;
-            --text-color: #f7fafc;
-            --text-secondary: #cbd5e0;
-            --header-bg: linear-gradient(135deg, #2d3748, #4a5568);
-            --card-bg: #2d3748;
-            --shadow-light: 9px 9px 16px #0f1419, -9px -9px 16px #252d3a;
-            --shadow-inset-light: inset 6px 6px 12px #0f1419, inset -6px -6px 12px #252d3a;
-            --shadow-button-light: 6px 6px 12px #0f1419, -6px -6px 12px #252d3a;
-            --shadow-active-light: inset 8px 8px 16px #0f1419, inset -8px -8px 16px #252d3a;
-            --hover-bg: #374151;
-            --tab-bg: #2d3748;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
         
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #E0E5EC;
+            color: #2D3748;
             /* Prevent text selection */
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -56,6 +26,12 @@
             /* Remove default tap highlight */
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background-color: #1a202c;
+            color: #e2e8f0;
         }
         
         .container {
@@ -66,21 +42,44 @@
         
         /* Header Section - Neumorphism */
         .header {
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://picsum.photos/seed/professional-woman/1200/400.jpg');
-            background-size: cover;
-            background-position: center;
-            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 0;
             position: relative;
-            box-shadow: var(--shadow-light);
+            box-shadow: 9px 9px 16px rgba(0, 0, 0, 0.2), -9px -9px 16px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://picsum.photos/seed/header-bg/1200/400') center/cover no-repeat;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
         }
         
         .profile-section {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
             gap: 20px;
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 255, 255, 0.3);
         }
         
         .profile-info {
@@ -88,89 +87,109 @@
         }
         
         .profile-info h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 8px;
             font-weight: 700;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
-        .profile-info p {
-            font-size: 1.2rem;
-            color: #ffffff;
+        .profile-description {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .profile-description .desc-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
             font-weight: 500;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .profile-description .desc-item i {
+            font-size: 0.9rem;
+            width: 16px;
+            text-align: center;
         }
         
         /* Dark Mode Toggle */
-        .theme-toggle {
+        .dark-mode-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
-            z-index: 100;
-            background-color: var(--card-bg);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: var(--shadow-button-light);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 7px 7px 14px rgba(0, 0, 0, 0.2), -7px -7px 14px rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark-mode-toggle:active {
+            transform: scale(0.95);
+        }
+        
+        .dark-mode-toggle i {
+            font-size: 1.3rem;
+            color: white;
             transition: all 0.3s ease;
         }
-
-        .theme-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-inset-light);
-        }
-
-        .theme-toggle:active {
-            transform: scale(0.95);
-            box-shadow: var(--shadow-active-light);
-        }
-
-        .theme-toggle i {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-        }
-
-        .theme-toggle .fa-sun {
-            display: none;
-        }
-
-        [data-theme="dark"] .theme-toggle .fa-moon {
-            display: none;
-        }
-
-        [data-theme="dark"] .theme-toggle .fa-sun {
-            display: block;
+        
+        body.dark-mode .dark-mode-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.05);
         }
         
         /* Tabs Section - Neumorphism */
         .tabs-section {
-            background-color: var(--bg-color);
+            background-color: #E0E5EC;
             padding: 20px 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: var(--shadow-inset-light);
+            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .tabs-section {
+            background-color: #1a202c;
+            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
         }
         
         .tabs-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            background-color: var(--tab-bg);
+            background-color: #E0E5EC;
             border-radius: 20px;
             padding: 16px;
-            box-shadow: var(--shadow-light);
+            box-shadow: 9px 9px 16px #a3adb9, -9px -9px 16px #e6edf7;
             gap: 18px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body.dark-mode .tabs-container {
+            background-color: #1a202c;
+            box-shadow: 9px 9px 16px #0f141c, -9px -9px 16px #252c3c;
         }
         
         .tab-button {
-            background-color: var(--tab-bg);
-            color: var(--text-secondary);
+            background-color: #E0E5EC;
+            color: #4A5568;
             border: none;
             padding: 16px 12px;
             font-weight: 600;
@@ -187,32 +206,56 @@
             height: 65px;
             white-space: nowrap;
             border-radius: 15px;
-            box-shadow: var(--shadow-button-light);
+            box-shadow: 6px 6px 12px #c8d0db, -6px -6px 12px #f8faff;
             outline: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
         }
         
+        body.dark-mode .tab-button {
+            background-color: #1a202c;
+            color: #a0aec0;
+            box-shadow: 6px 6px 12px #0f141c, -6px -6px 12px #252c3c;
+        }
+        
         .tab-button:hover {
-            color: var(--text-color);
+            color: #2D3748;
             transform: translateY(-2px);
         }
         
+        body.dark-mode .tab-button:hover {
+            color: #e2e8f0;
+        }
+        
         .tab-button.active {
-            color: var(--text-color);
-            box-shadow: var(--shadow-inset-light);
+            color: #2D3748;
+            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
+        }
+        
+        body.dark-mode .tab-button.active {
+            color: #e2e8f0;
+            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
         }
         
         .tab-button:focus {
             outline: none;
-            box-shadow: var(--shadow-inset-light);
+            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
+        }
+        
+        body.dark-mode .tab-button:focus {
+            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
         }
         
         .tab-button:active {
             transform: scale(0.92);
-            box-shadow: var(--shadow-active-light);
-            background-color: var(--hover-bg);
+            box-shadow: inset 8px 8px 16px #c8d0db, inset -8px -8px 16px #f8faff;
+            background-color: #D8DDE4;
+        }
+        
+        body.dark-mode .tab-button:active {
+            box-shadow: inset 8px 8px 16px #0f141c, inset -8px -8px 16px #252c3c;
+            background-color: #0f141c;
         }
         
         .tab-button i {
@@ -229,8 +272,13 @@
         .tab-content {
             display: none;
             padding: 40px 0;
-            background-color: var(--bg-color);
+            background-color: #E0E5EC;
             animation: fadeIn 0.5s ease;
+            transition: background-color 0.3s ease;
+        }
+        
+        body.dark-mode .tab-content {
+            background-color: #1a202c;
         }
         
         .tab-content.active {
@@ -249,16 +297,26 @@
         
         .content-header h2 {
             font-size: 1.8rem;
-            color: var(--text-color);
+            color: #2D3748;
             margin-bottom: 8px;
             font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .content-header h2 {
+            color: #e2e8f0;
         }
         
         .content-header p {
             font-size: 1rem;
-            color: var(--text-secondary);
+            color: #4A5568;
             max-width: 700px;
             margin: 0 auto;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .content-header p {
+            color: #a0aec0;
         }
         
         /* Vertical Layout - Single Column for All Screen Sizes */
@@ -271,25 +329,43 @@
         }
         
         .content-card {
-            background-color: var(--card-bg);
+            background-color: #E0E5EC;
             border-radius: 20px;
             overflow: hidden;
             transition: all 0.2s ease;
             cursor: pointer;
-            box-shadow: var(--shadow-light);
+            box-shadow: 9px 9px 16px #a3adb9, -9px -9px 16px #e6edf7;
             -webkit-tap-highlight-color: transparent;
             outline: none;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        body.dark-mode .content-card {
+            background-color: #1a202c;
+            box-shadow: 9px 9px 16px #0f141c, -9px -9px 16px #252c3c;
         }
         
         .content-card:hover {
-            box-shadow: var(--shadow-inset-light);
+            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
             transform: translateY(-3px);
+        }
+        
+        body.dark-mode .content-card:hover {
+            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
         }
         
         .content-card:active {
             transform: scale(0.96);
-            box-shadow: var(--shadow-active-light);
-            background-color: var(--hover-bg);
+            box-shadow: inset 8px 8px 16px #c8d0db, inset -8px -8px 16px #e6edf7;
+            background-color: #D8DDE4;
+        }
+        
+        body.dark-mode .content-card:active {
+            box-shadow: inset 8px 8px 16px #0f141c, inset -8px -8px 16px #252c3c;
+            background-color: #0f141c;
         }
         
         /* 16:9 Aspect Ratio for Images */
@@ -303,22 +379,33 @@
             -moz-user-drag: none;
             -o-user-drag: none;
             user-drag: none;
-            pointer-events: none;
         }
         
         /* Footer - Neumorphism */
         .footer {
-            background-color: var(--bg-color);
-            color: var(--text-secondary);
+            background-color: #E0E5EC;
+            color: #4A5568;
             text-align: center;
             padding: 30px 0;
-            box-shadow: var(--shadow-inset-light);
+            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode .footer {
+            background-color: #1a202c;
+            color: #a0aec0;
+            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
         }
         
         .footer p {
             margin: 0;
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: #4A5568;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .footer p {
+            color: #a0aec0;
         }
         
         .social-icons {
@@ -329,49 +416,168 @@
         }
         
         .social-icons a {
-            color: var(--text-secondary);
+            color: #4A5568;
             font-size: 1.1rem;
             transition: all 0.2s ease;
-            background-color: var(--card-bg);
+            background-color: #E0E5EC;
             width: 40px;
             height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-button-light);
+            box-shadow: 6px 6px 12px #c8d0db, -6px -6px 12px #f8faff;
             text-decoration: none;
             outline: none;
             -webkit-tap-highlight-color: transparent;
         }
         
+        body.dark-mode .social-icons a {
+            color: #a0aec0;
+            background-color: #1a202c;
+            box-shadow: 6px 6px 12px #0f141c, -6px -6px 12px #252c3c;
+        }
+        
         .social-icons a:hover {
-            box-shadow: var(--shadow-inset-light);
+            box-shadow: inset 3px 3px 6px #c8d0db, inset -3px -3px 6px #f8faff;
             transform: translateY(-2px);
+        }
+        
+        body.dark-mode .social-icons a:hover {
+            box-shadow: inset 3px 3px 6px #0f141c, inset -3px -3px 6px #252c3c;
         }
         
         .social-icons a:active {
             transform: scale(0.88);
-            box-shadow: var(--shadow-active-light);
-            background-color: var(--hover-bg);
+            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
+            background-color: #D8DDE4;
+        }
+        
+        body.dark-mode .social-icons a:active {
+            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
+            background-color: #0f141c;
         }
         
         .social-icons a:focus {
             outline: none;
         }
         
+        /* Popup Ad Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background-color: #E0E5EC;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 9px 9px 16px rgba(0, 0, 0, 0.3), -9px -9px 16px rgba(255, 255, 255, 0.1);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        body.dark-mode .popup-content {
+            background-color: #1a202c;
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+        }
+        
+        .popup-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 10px;
+            display: block;
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #4A5568;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 6px #c8d0db, -3px -3px 6px #f8faff;
+            transition: all 0.2s ease;
+        }
+        
+        body.dark-mode .popup-close {
+            color: #a0aec0;
+            box-shadow: 3px 3px 6px #0f141c, -3px -3px 6px #252c3c;
+        }
+        
+        .popup-close:hover {
+            box-shadow: inset 3px 3px 6px #c8d0db, inset -3px -3px 6px #f8faff;
+            transform: translateY(-2px);
+        }
+        
+        body.dark-mode .popup-close:hover {
+            box-shadow: inset 3px 3px 6px #0f141c, inset -3px -3px 6px #252c3c;
+        }
+        
+        .popup-close:active {
+            transform: scale(0.9);
+        }
+        
+        .popup-timer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #4A5568;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .popup-timer {
+            color: #a0aec0;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
-            .header {
-                padding: 60px 0;
+            .profile-section {
+                gap: 15px;
+            }
+            
+            .profile-image {
+                width: 100px;
+                height: 100px;
             }
             
             .profile-info h1 {
-                font-size: 2rem;
+                font-size: 1.6rem;
             }
             
-            .profile-info p {
-                font-size: 1rem;
+            .profile-description .desc-item {
+                font-size: 0.9rem;
             }
             
             .content-grid {
@@ -411,19 +617,48 @@
                 height: 36px;
                 font-size: 1rem;
             }
+            
+            .popup-content {
+                max-width: 95%;
+                padding: 15px;
+            }
+            
+            .popup-image {
+                max-height: 300px;
+            }
+            
+            .dark-mode-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
         }
         
         @media (max-width: 480px) {
             .header {
-                padding: 50px 0;
+                padding: 30px 0;
+            }
+            
+            .profile-section {
+                gap: 12px;
+            }
+            
+            .profile-image {
+                width: 80px;
+                height: 80px;
             }
             
             .profile-info h1 {
-                font-size: 1.8rem;
+                font-size: 1.4rem;
             }
             
-            .profile-info p {
-                font-size: 0.9rem;
+            .profile-description .desc-item {
+                font-size: 0.85rem;
+            }
+            
+            .profile-description .desc-item i {
+                font-size: 0.8rem;
             }
             
             .tabs-container {
@@ -478,21 +713,33 @@
                 height: 32px;
                 font-size: 0.9rem;
             }
+            
+            .popup-content {
+                max-width: 95%;
+                padding: 12px;
+            }
+            
+            .popup-image {
+                max-height: 250px;
+            }
+            
+            .popup-timer {
+                font-size: 0.8rem;
+            }
+            
+            .dark-mode-toggle {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .dark-mode-toggle i {
+                font-size: 1.1rem;
+            }
         }
         
         @media (max-width: 360px) {
-            .header {
-                padding: 40px 0;
-            }
-            
-            .profile-info h1 {
-                font-size: 1.6rem;
-            }
-            
-            .profile-info p {
-                font-size: 0.85rem;
-            }
-            
             .tabs-container {
                 padding: 8px;
                 gap: 10px;
@@ -528,23 +775,67 @@
                 height: 30px;
                 font-size: 0.85rem;
             }
+            
+            .popup-content {
+                max-width: 95%;
+                padding: 10px;
+            }
+            
+            .popup-image {
+                max-height: 200px;
+            }
+            
+            .popup-timer {
+                font-size: 0.75rem;
+            }
+            
+            .dark-mode-toggle {
+                top: 8px;
+                right: 8px;
+                width: 35px;
+                height: 35px;
+            }
+            
+            .dark-mode-toggle i {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Popup Ad -->
+    <div class="popup-overlay" id="popupAd">
+        <div class="popup-content">
+            <button class="popup-close" id="closePopup">
+                <i class="fas fa-times"></i>
+            </button>
+            <img src="https://picsum.photos/seed/popup-ad/600/400.jpg" alt="Iklan Spesial" class="popup-image">
+            <div class="popup-timer" id="popupTimer">
+                Iklan dapat ditutup dalam <span id="countdown">5</span> detik
+            </div>
+        </div>
+    </div>
+    
     <!-- Header Section -->
     <header class="header">
-        <!-- Dark Mode Toggle Button -->
-        <div class="theme-toggle" onclick="toggleTheme()">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
-        </div>
-        
-        <div class="container">
+        <div class="container header-content">
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
             <div class="profile-section">
+                <img src="https://picsum.photos/seed/professional-woman/120/120.jpg" alt="Fahri, S.Pd" class="profile-image">
                 <div class="profile-info">
-                    <a href="https://fahriedtech.github.io" style="text-decoration: none;"><h1>Fahri, S.Pd</h1></a>
-                    <p>Produk kami</p>
+                    <h1>Fahri, S.Pd</h1>
+                    <div class="profile-description">
+                        <div class="desc-item">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>Guru Informatika</span>
+                        </div>
+                        <div class="desc-item">
+                            <i class="fas fa-school"></i>
+                            <span>SMP Negeri 2 Manggar</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -588,21 +879,21 @@
                 <p>Modul pembelajaran berkualitas tinggi yang dirancang untuk meningkatkan efektivitas proses belajar mengajar</p>
             </div>
             <div class="content-grid">
-                <div class="content-card" onclick="showProductDetail('Modul Matematika')">
+                <a href="https://lynk.id/fahri/modul-matematika" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/mathematics-module/800/450.jpg" alt="Modul Matematika" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Modul Bahasa Indonesia')">
+                </a>
+                <a href="https://lynk.id/fahri/modul-bahasa-indonesia" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/indonesian-language/800/450.jpg" alt="Modul Bahasa Indonesia" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Modul IPA Terpadu')">
+                </a>
+                <a href="https://lynk.id/fahri/modul-ipa" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/science-education/800/450.jpg" alt="Modul IPA Terpadu" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Modul IPS')">
+                </a>
+                <a href="https://lynk.id/fahri/modul-ips" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/social-studies/800/450.jpg" alt="Modul IPS" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Modul PKN')">
+                </a>
+                <a href="https://lynk.id/fahri/modul-pkn" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/civic-education/800/450.jpg" alt="Modul PKN" class="card-image">
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -615,21 +906,21 @@
                 <p>Alat bantu mengajar interaktif yang membuat pembelajaran lebih menarik dan efektif</p>
             </div>
             <div class="content-grid">
-                <div class="content-card" onclick="showProductDetail('Presentasi Interaktif')">
+                <a href="https://lynk.id/fahri/presentasi-interaktif" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/interactive-presentation/800/450.jpg" alt="Presentasi Interaktif" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Video Edukasi')">
+                </a>
+                <a href="https://lynk.id/fahri/video-edukasi" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/educational-video/800/450.jpg" alt="Video Edukasi" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Game Edukasi')">
+                </a>
+                <a href="https://lynk.id/fahri/game-edukasi" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/educational-games/800/450.jpg" alt="Game Edukasi" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Audio Pembelajaran')">
+                </a>
+                <a href="https://lynk.id/fahri/audio-pembelajaran" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/educational-audio/800/450.jpg" alt="Audio Pembelajaran" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Simulasi Digital')">
+                </a>
+                <a href="https://lynk.id/fahri/simulasi-digital" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/digital-simulation/800/450.jpg" alt="Simulasi Digital" class="card-image">
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -642,21 +933,21 @@
                 <p>Materi pembelajaran yang disesuaikan dengan kurikulum nasional terbaru</p>
             </div>
             <div class="content-grid">
-                <div class="content-card" onclick="showProductDetail('Kurikulum Merdeka')">
+                <a href="https://lynk.id/fahri/kurikulum-merdeka" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/merdeka-curriculum/800/450.jpg" alt="Kurikulum Merdeka" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Kurikulum 2013')">
+                </a>
+                <a href="https://lynk.id/fahri/kurikulum-2013" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/curriculum-2013/800/450.jpg" alt="Kurikulum 2013" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Kurikulum Internasional')">
+                </a>
+                <a href="https://lynk.id/fahri/kurikulum-internasional" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/international-curriculum/800/450.jpg" alt="Kurikulum Internasional" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Kurikulum Vokasi')">
+                </a>
+                <a href="https://lynk.id/fahri/kurikulum-vokasi" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/vocational-curriculum/800/450.jpg" alt="Kurikulum Vokasi" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Kurikulum Khusus')">
+                </a>
+                <a href="https://lynk.id/fahri/kurikulum-khusus" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/special-curriculum/800/450.jpg" alt="Kurikulum Khusus" class="card-image">
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -669,21 +960,21 @@
                 <p>Koleksi ebook pendidikan lengkap untuk mendukung kebutuhan belajar mengajar</p>
             </div>
             <div class="content-grid">
-                <div class="content-card" onclick="showProductDetail('Ebook Guru Profesional')">
+                <a href="https://lynk.id/fahri/ebook-guru-profesional" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/professional-teacher-ebook/800/450.jpg" alt="Ebook Guru Profesional" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Ebook Parenting')">
+                </a>
+                <a href="https://lynk.id/fahri/ebook-parenting" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/parenting-guide/800/450.jpg" alt="Ebook Parenting" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Ebook Student Success')">
+                </a>
+                <a href="https://lynk.id/fahri/ebook-student-success" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/student-success-guide/800/450.jpg" alt="Ebook Student Success" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Ebook Manajemen Kelas')">
+                </a>
+                <a href="https://lynk.id/fahri/ebook-manajemen-kelas" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/classroom-management/800/450.jpg" alt="Ebook Manajemen Kelas" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Ebook Teknologi Pendidikan')">
+                </a>
+                <a href="https://lynk.id/fahri/ebook-teknologi-pendidikan" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/educational-technology/800/450.jpg" alt="Ebook Teknologi Pendidikan" class="card-image">
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -696,21 +987,21 @@
                 <p>Program pelatihan dan workshop untuk meningkatkan kompetensi pendidik</p>
             </div>
             <div class="content-grid">
-                <div class="content-card" onclick="showProductDetail('Workshop Guru')">
+                <a href="https://lynk.id/fahri/workshop-guru" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/teacher-workshop/800/450.jpg" alt="Workshop Guru" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Training Online')">
+                </a>
+                <a href="https://lynk.id/fahri/training-online" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/online-training/800/450.jpg" alt="Training Online" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('In-House Training')">
+                </a>
+                <a href="https://lynk.id/fahri/inhouse-training" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/inhouse-training/800/450.jpg" alt="In-House Training" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Seminar Pendidikan')">
+                </a>
+                <a href="https://lynk.id/fahri/seminar-pendidikan" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/education-seminar/800/450.jpg" alt="Seminar Pendidikan" class="card-image">
-                </div>
-                <div class="content-card" onclick="showProductDetail('Konsultasi Pendidikan')">
+                </a>
+                <a href="https://lynk.id/fahri/konsultasi-pendidikan" class="content-card" target="_blank">
                     <img src="https://picsum.photos/seed/education-consultation/800/450.jpg" alt="Konsultasi Pendidikan" class="card-image">
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -719,24 +1010,18 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2023 Fahri, S.Pd. Hak Cipta Dilindungi.</p>
-
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
         </div>
     </footer>
     
     <script>
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-
-        // Function to toggle theme
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        }
-
+        // Function to open tabs
         function openTab(evt, tabName) {
             // Hide all tab contents
             const tabContents = document.getElementsByClassName('tab-content');
@@ -757,10 +1042,74 @@
             evt.currentTarget.classList.add('active');
         }
         
-        // Function to show product detail when card is clicked
-        function showProductDetail(productName) {
-            alert(`Anda memilih: ${productName}`);
+        // Dark Mode Functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const darkModeIcon = darkModeToggle.querySelector('i');
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeIcon.classList.remove('fa-moon');
+            darkModeIcon.classList.add('fa-sun');
         }
+        
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+            }
+        });
+        
+        // Popup Ad functionality
+        let countdownInterval;
+        let countdownValue = 5;
+        const popupAd = document.getElementById('popupAd');
+        const closePopup = document.getElementById('closePopup');
+        const countdownElement = document.getElementById('countdown');
+        
+        // Show popup when page loads
+        window.addEventListener('load', function() {
+            // Show popup after a short delay
+            setTimeout(function() {
+                popupAd.classList.add('active');
+                startCountdown();
+            }, 1000);
+        });
+        
+        // Start countdown timer
+        function startCountdown() {
+            countdownValue = 5;
+            countdownElement.textContent = countdownValue;
+            
+            countdownInterval = setInterval(function() {
+                countdownValue--;
+                countdownElement.textContent = countdownValue;
+                
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    closePopup.disabled = false;
+                    closePopup.style.opacity = '1';
+                    countdownElement.textContent = 'Sekarang bisa ditutup!';
+                }
+            }, 1000);
+        }
+        
+        // Close popup when close button is clicked
+        closePopup.addEventListener('click', function() {
+            if (countdownValue <= 0) {
+                popupAd.classList.remove('active');
+                clearInterval(countdownInterval);
+            }
+        });
         
         // Add smooth scroll behavior
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -786,4 +1135,4 @@
         });
     </script>
 </body>
-</html>
+</html>   
