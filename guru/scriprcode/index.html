@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Block Script Generator</title>
+    
+    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #1f2937;
+        }
+        /* Mobile-first: Center content and ensure it is fluid */
+        .main-card {
+            width: 100%;
+            max-width: 500px; 
+        }
+        .program-script {
+            font-family: Consolas, "Courier New", monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            background-color: #f7f7f7; /* Hampir putih, latar belakang bersih */
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* Border abu-abu tipis */
+            color: #1f2937; /* Teks gelap */
+        }
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            /* Pastikan backdrop modal iklan berada di atas modal konfigurasi */
+            z-index: 50; 
+        }
+        #adModal.modal-backdrop {
+            z-index: 100;
+        }
+        /* Gaya untuk tombol close 'X' */
+        .close-button-ad {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparan */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            z-index: 101; /* Pastikan di atas gambar */
+        }
+        .close-button-ad:hover:not(:disabled) {
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        .close-button-ad:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+    </style>
+</head>
+<body class="p-4 flex justify-center items-start min-h-screen">
+
+    <div class="main-card bg-white rounded-xl shadow-2xl p-6 sm:p-8 mt-4 relative">
+        <header class="flex justify-center items-center mb-4">
+            <!-- Ikon robot dipindahkan, hanya menyisakan judul di H1 -->
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-indigo-700 text-center">
+                AI Block Script Generator
+            </h1>
+        </header>
+
+        <p class="text-gray-600 mb-6 text-center text-sm">
+            Masukkan ide program Anda. AI akan menghasilkan pseudocode yang jelas dalam bahasa Inggris (gaya Scratch/Pictoblox) untuk maksimal 2 sprite.
+        </p>
+
+        <!-- User Input Area -->
+        <textarea id="promptInput" rows="4" class="w-full p-3 border-2 border-indigo-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-sm" placeholder="Contoh: Kucing berjalan 100 langkah saat bendera diklik. Sprite kedua, seekor anjing, mengucapkan 'Halo!' saat menyentuh kucing."></textarea>
+
+        <!-- Button Container: Generate Button dan Robot Button berdampingan -->
+        <div class="flex space-x-3 mt-4">
+            <!-- Generate Button (mengambil sebagian besar ruang) -->
+            <button id="generateButton" onclick="handleGeneration()" class="flex-grow bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md active:bg-indigo-800 text-base">
+                Hasilkan Skrip Blok
+            </button>
+
+            <!-- Robot Button (ikon konfigurasi) -->
+            <button id="robotButton" onclick="showConfigModal()" title="Pengaturan API Key Kustom" class="flex-shrink-0 bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md active:bg-indigo-800 text-2xl leading-none transition transform hover:scale-105">
+                🤖
+            </button>
+        </div>
+
+        <!-- Result Area -->
+        <div id="resultArea" class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h2 class="text-xl font-bold text-gray-700 mb-3 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                Skrip Program Blok (Pseudocode)
+            </h2>
+            
+            <!-- Copy Button -->
+            <button id="copyButton" onclick="copyScript()" class="bg-blue-600 text-white text-xs font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md mb-3">
+                Salin Kode Blok
+            </button>
+
+            <!-- programOutput sekarang menggunakan textContent untuk output yang bersih dan mudah disalin -->
+            <div id="programOutput" class="min-h-[80px] text-gray-800 program-script text-xs sm:text-sm">
+                Hasil skrip blok akan muncul di sini.
+            </div>
+            
+            <div id="loadingIndicator" class="hidden text-center mt-4">
+                <div class="inline-block w-6 h-6 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                <p class="text-indigo-600 mt-2 font-medium text-sm">AI sedang merakit blok...</p>
+            </div>
+            <div id="errorDisplay" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm"></div>
+        </div>
+    </div>
+    
+    <!-- API Key Configuration Modal -->
+    <div id="configModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-11/12 max-w-md transform transition-all duration-300 scale-100">
+            <h3 class="text-xl font-bold text-indigo-700 mb-4">Pengaturan API Key</h3>
+            
+            <div id="configMessage" class="mb-4 p-2 text-sm text-blue-700 bg-blue-100 rounded-lg">
+                Kunci API Anda disimpan dengan aman menggunakan **Firestore** (bukan Local Storage) dan hanya dapat diakses oleh Anda.
+            </div>
+
+            <!-- Key Selection -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Sumber Kunci API:</label>
+                <div class="space-y-2">
+                    <!-- Token 1 Option (Predefined) -->
+                    <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="tokenChoice" id="choiceToken1" value="token1" checked class="form-radio text-indigo-600">
+                        <span class="text-gray-900 font-medium">Token 1 (API Bawaan)</span>
+                    </label>
+                    <!-- Custom Key Option -->
+                    <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="tokenChoice" id="choiceCustom" value="custom" class="form-radio text-indigo-600">
+                        <span class="text-gray-900 font-medium">Kunci API Kustom</span>
+                    </label>
+                </div>
+            </div>
+
+            <label for="apiKeyInput" class="block text-sm font-medium text-gray-700 mb-1">Gemini API Key Kustom:</label>
+            <!-- Input field is initially disabled by default (Token 1 is checked) -->
+            <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm mb-4 bg-gray-100" placeholder="Masukkan kunci API Anda di sini (Hanya jika memilih Kunci Kustom)" disabled>
+            
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideConfigModal()" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition duration-150">Batal</button>
+                <button onclick="saveAndCloseConfig()" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150">Simpan & Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advertising Popup Modal - BARU -->
+    <div id="adModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[100]">
+        <div class="bg-white p-2 rounded-xl shadow-2xl w-11/12 max-w-sm transform transition-all duration-300 scale-100 relative">
+            
+            <!-- Close button in the top right corner -->
+            <button id="closeAdButton" onclick="closeAdModal()" disabled class="close-button-ad">
+                <span id="closeAdText">X</span>
+            </button>
+
+            <!-- Image only content -->
+            <div class="rounded-lg overflow-hidden">
+                <img id="adImage" 
+                     src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/cd17839d941c9cb0525e9ec75302e17f92598d34/galeriimage6.jpg" 
+                     onerror="this.onerror=null;this.src='https://placehold.co/400x200/D3D3D3/000000?text=Error+Loading+Image';" 
+                     alt="Promotional Ad" 
+                     class="w-full h-auto object-cover rounded-lg">
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- Global Variables and DOM Elements ---
+        const promptInput = document.getElementById('promptInput');
+        const programOutput = document.getElementById('programOutput');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorDisplay = document.getElementById('errorDisplay');
+        const generateButton = document.getElementById('generateButton');
+        const copyButton = document.getElementById('copyButton');
+        const configModal = document.getElementById('configModal');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const configMessage = document.getElementById('configMessage');
+        const robotButton = document.getElementById('robotButton'); 
+
+        // API Key Selection Elements
+        const choiceToken1 = document.getElementById('choiceToken1');
+        const choiceCustom = document.getElementById('choiceCustom');
+
+        // Ad Modal Elements
+        const adModal = document.getElementById('adModal');
+        const closeAdButton = document.getElementById('closeAdButton');
+        const closeAdText = document.getElementById('closeAdText'); 
+        const AD_DELAY_MS = 5000; // 5 seconds
+        
+        // --- API Key Constants ---
+        const PREDEFINED_API_KEY = 'AIzaSyAPedPdcIK3mDXUDNjAm6vZaWfS1x0SotY';
+        const PREDEFINED_KEY_NAME = 'token1';
+        
+        // --- Firebase Configuration & State ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth, userId = null;
+        // customApiKey will hold the CURRENTLY ACTIVE key (either PREDEFINED_API_KEY or user's input)
+        let customApiKey = null; 
+        let selectedKeySource = PREDEFINED_KEY_NAME; // Default source
+
+        const API_KEY_COLLECTION = 'settings';
+        const API_KEY_DOC_ID = 'config';
+        
+        // --- Firebase Initialization ---
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config not found.");
+                return;
+            }
+            
+            try {
+                const firebaseApp = initializeApp(firebaseConfig);
+                auth = getAuth(firebaseApp);
+                db = getFirestore(firebaseApp);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken).catch(e => {
+                        console.error("Error signing in with custom token:", e);
+                        signInAnonymously(auth); 
+                    });
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                await new Promise(resolve => {
+                    const unsubscribe = onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid;
+                        } else {
+                            userId = crypto.randomUUID(); 
+                        }
+                        unsubscribe();
+                        resolve();
+                    });
+                });
+                
+                await loadApiKeyFromFirestore();
+                console.log("Firebase and API key settings initialized.");
+            } catch (e) {
+                console.error("Failed to initialize Firebase:", e);
+                // Fallback: use the predefined token
+                customApiKey = PREDEFINED_API_KEY; 
+            }
+        }
+
+        // --- Firestore API Key Logic ---
+        function getSettingsRef() {
+            if (!db || !userId) {
+                console.error("Firestore or User ID not initialized. Cannot access settings.");
+                return null;
+            }
+            // Path: /artifacts/{appId}/users/{userId}/settings/config
+            const path = `artifacts/${appId}/users/${userId}/${API_KEY_COLLECTION}/${API_KEY_DOC_ID}`;
+            return doc(db, path);
+        }
+        
+        // Function to control input field state based on radio selection
+        function setupKeyToggle() {
+            const toggleInputState = () => {
+                const isCustomSelected = choiceCustom.checked;
+                apiKeyInput.disabled = !isCustomSelected;
+                apiKeyInput.classList.toggle('bg-gray-100', !isCustomSelected);
+                apiKeyInput.classList.toggle('bg-white', isCustomSelected);
+                apiKeyInput.placeholder = isCustomSelected 
+                    ? "Masukkan kunci API Anda di sini" 
+                    : "Pilih Kunci API Kustom di atas untuk mengedit";
+            };
+
+            choiceToken1.addEventListener('change', toggleInputState);
+            choiceCustom.addEventListener('change', toggleInputState);
+            
+            // Set initial state after loading/defaults are applied
+            toggleInputState(); 
+        }
+
+        async function loadApiKeyFromFirestore() {
+            const settingsRef = getSettingsRef();
+            if (!settingsRef) {
+                customApiKey = PREDEFINED_API_KEY;
+                setupKeyToggle();
+                return;
+            }
+            try {
+                const docSnap = await getDoc(settingsRef);
+                
+                let loadedCustomKey = "";
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // 1. Load custom key (may be empty)
+                    loadedCustomKey = data.geminiApiKey || "";
+                    if (loadedCustomKey) {
+                        apiKeyInput.value = loadedCustomKey; 
+                    }
+                    
+                    // 2. Load selection preference, default to token1
+                    selectedKeySource = data.keySource || PREDEFINED_KEY_NAME;
+                    
+                    // 3. Set radio buttons and active key based on loaded data
+                    if (selectedKeySource === PREDEFINED_KEY_NAME) {
+                        choiceToken1.checked = true;
+                        customApiKey = PREDEFINED_API_KEY; 
+                    } else if (selectedKeySource === 'custom' && loadedCustomKey) {
+                        choiceCustom.checked = true;
+                        customApiKey = loadedCustomKey; 
+                    } else {
+                        // Fallback: If custom key was selected but is now empty/invalid, revert to Token 1
+                        choiceToken1.checked = true;
+                        selectedKeySource = PREDEFINED_KEY_NAME;
+                        customApiKey = PREDEFINED_API_KEY;
+                    }
+
+                } else {
+                    // Default if no settings document exists
+                    customApiKey = PREDEFINED_API_KEY;
+                    choiceToken1.checked = true;
+                }
+                
+                setupKeyToggle(); 
+
+            } catch (e) {
+                console.error("Error loading API Key settings:", e);
+                // Ensure Token 1 is the fallback if Firestore fails
+                customApiKey = PREDEFINED_API_KEY;
+                choiceToken1.checked = true;
+                setupKeyToggle();
+            }
+        }
+
+        // --- Modal Control (Konfigurasi API Key) ---
+
+        function showConfigModal() {
+            configModal.classList.remove('hidden');
+            configModal.classList.add('flex');
+            
+            // Ensure the UI state matches the loaded state before showing
+            if (selectedKeySource === PREDEFINED_KEY_NAME) {
+                choiceToken1.checked = true;
+            } else {
+                choiceCustom.checked = true;
+            }
+            setupKeyToggle();
+        }
+
+        function hideConfigModal() {
+            configModal.classList.remove('flex');
+            configModal.classList.add('hidden');
+        }
+
+        async function saveAndCloseConfig() {
+            let selectedChoice = document.querySelector('input[name="tokenChoice"]:checked').value;
+            const customKey = apiKeyInput.value.trim();
+            
+            let keyToSave = customKey;
+            let activeKey = null;
+
+            if (selectedChoice === PREDEFINED_KEY_NAME) {
+                activeKey = PREDEFINED_API_KEY;
+            } else if (selectedChoice === 'custom') {
+                if (customKey) {
+                    activeKey = customKey;
+                } else {
+                    // Fallback: If custom is selected but input is empty, revert to Token 1
+                    activeKey = PREDEFINED_API_KEY;
+                    // Use console.error instead of alert/confirm
+                    console.error("Kunci API Kustom kosong. Menggunakan Token 1 sebagai gantinya."); 
+                    
+                    // Revert UI and state
+                    choiceToken1.checked = true; 
+                    selectedChoice = PREDEFINED_KEY_NAME;
+                    keyToSave = ""; // Clear saved custom key if it was selected empty
+                }
+            }
+
+            // Save the custom key and the selection preference to Firestore
+            const settingsRef = getSettingsRef();
+            if (settingsRef) {
+                try {
+                    await setDoc(settingsRef, { 
+                        geminiApiKey: keyToSave, 
+                        keySource: selectedChoice 
+                    }, { merge: true });
+                    
+                    customApiKey = activeKey; // Update global variable used for generation
+                    selectedKeySource = selectedChoice;
+                    
+                    configMessage.textContent = `Pilihan API Key berhasil disimpan (${selectedChoice}).`;
+                    setTimeout(hideConfigModal, 1000); 
+
+                } catch (e) {
+                    console.error("Error saving configuration:", e);
+                    configMessage.textContent = 'Gagal menyimpan konfigurasi: ' + e.message;
+                }
+            } else {
+                // If Firestore is unavailable, just set the active key locally
+                customApiKey = activeKey;
+                selectedKeySource = selectedChoice;
+                configMessage.textContent = 'Firestore tidak tersedia. Pengaturan hanya berlaku di sesi ini.';
+                setTimeout(hideConfigModal, 1000);
+            }
+            
+            setupKeyToggle();
+        }
+        
+        // --- Modal Control (Iklan) ---
+
+        function showAdModal() {
+            adModal.classList.remove('hidden');
+            adModal.classList.add('flex');
+            
+            // Set initial state: disabled
+            closeAdButton.disabled = true;
+            closeAdButton.classList.remove('bg-black', 'hover:bg-gray-700'); 
+            closeAdButton.classList.add('bg-gray-400', 'opacity-50', 'cursor-not-allowed'); 
+            
+            let countdown = AD_DELAY_MS / 1000;
+            closeAdText.textContent = `X (${countdown}s)`; // Tampilkan hitungan mundur di tombol
+
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdown >= 1) {
+                    closeAdText.textContent = `X (${countdown}s)`;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1000);
+
+            // Enable button after 5 seconds
+            setTimeout(() => {
+                closeAdButton.disabled = false;
+                closeAdButton.classList.remove('bg-gray-400', 'opacity-50', 'cursor-not-allowed');
+                closeAdButton.classList.add('bg-black', 'hover:bg-gray-700'); 
+                closeAdText.textContent = 'X'; // Kembali ke 'X' saja
+            }, AD_DELAY_MS);
+        }
+
+        function closeAdModal() {
+            adModal.classList.remove('flex');
+            adModal.classList.add('hidden');
+        }
+
+        // --- Main Generation Logic ---
+        
+        // JSON Schema and System Prompt (Remains the same)
+        const responseSchema = { 
+            type: "OBJECT",
+            properties: {
+                sprites: {
+                    type: "ARRAY",
+                    description: "Array containing the program for each sprite. Max 2 sprites.",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            name: { type: "STRING", description: "Sprite name (e.g., Cat, Ball, Sprite1)." },
+                            blocks: {
+                                type: "ARRAY",
+                                description: "List of blocks in execution order.",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        type: { 
+                                            type: "STRING", 
+                                            description: "Block category: event, motion, looks, control, sensing, data." 
+                                        },
+                                        block: { 
+                                            type: "STRING", 
+                                            description: "Block function name (e.g., when_flag_clicked, move_steps, say_for_seconds, repeat_times)." 
+                                        },
+                                        value: { 
+                                            type: "STRING", 
+                                            description: "Main block parameter (e.g., '50', 'Hello!', 'right arrow')." 
+                                        },
+                                        times: { type: "NUMBER", description: "Only for 'repeat' block, number of iterations."},
+                                        duration: { type: "NUMBER", description: "Only for 'say_for_seconds', duration in seconds."}
+                                    },
+                                    required: ["type", "block"]
+                                }
+                            }
+                        },
+                        required: ["name", "blocks"]
+                    }
+                }
+            },
+            required: ["sprites"]
+        };
+
+        const systemPrompt = `
+            You are an AI expert in converting text descriptions into structured block program logic (like Scratch or Pictoblox). 
+            Your task is to generate valid JSON structure that accurately represents the sequence of programming blocks.
+            
+            CORE RULES:
+            1. The output MUST be valid JSON only, following the provided schema.
+            2. The program must include a MINIMUM of 1 and a MAXIMUM of 2 sprites.
+            3. Use simple, common block names (e.g., when_flag_clicked, move_steps, say_for_seconds).
+            4. Always start a script with an 'event' block (e.g., 'when_flag_clicked', 'when_key_pressed', 'when_this_sprite_clicked').
+            5. All user-facing values (the 'value' field) must be in English.
+        `;
+
+        // --- Utility Functions ---
+
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (!response.ok) {
+                        const errorBody = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, body: ${errorBody}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error;
+                    }
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+
+        async function fetchProgram(prompt, apiKey) {
+            // apiKey is now passed directly from handleGeneration (it's the active key)
+            const currentApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema,
+                    temperature: 0.7 
+                }
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            try {
+                const response = await fetchWithRetry(currentApiUrl, options);
+                const result = await response.json();
+
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!jsonText) {
+                    throw new Error("Failed to get a structured JSON response from the AI.");
+                }
+
+                const cleanedJsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+                return JSON.parse(cleanedJsonText);
+
+            } catch (error) {
+                console.error("API call error:", error);
+                throw new Error("An error occurred while contacting the AI generator. Please try again. (If using a custom key, check its validity.)");
+            }
+        }
+        
+        // Function to transform JSON into clean, SCRATCH-ACCURATE Pseudocode (Text-only)
+        function displayProgram(programData) {
+            programOutput.textContent = '';
+            let scriptText = '';
+            
+            if (!programData || !programData.sprites || programData.sprites.length === 0) {
+                programOutput.textContent = 'Gagal menghasilkan program yang valid. Silakan coba deskripsi yang lebih jelas.';
+                return;
+            }
+
+            programData.sprites.forEach((sprite) => {
+                // Header for the sprite script
+                scriptText += `\n// --- KODE UNTUK SPRITE: ${sprite.name.toUpperCase()} ---\n\n`;
+
+                let indentLevel = 0;
+                let openStructures = []; 
+
+                // Helper to generate a block line (now just plain text)
+                const addBlockLine = (lineContent) => {
+                    const indent = '    '.repeat(indentLevel);
+                    scriptText += `${indent}${lineContent}\n`;
+                };
+                
+                // Helper to close a control structure
+                const closeStructure = (structureName) => {
+                    indentLevel--;
+                    const indent = '    '.repeat(indentLevel);
+                    scriptText += `${indent}}\n`; // Menutup kurung kurawal '}'
+                };
+
+                // --- Iterating Blocks ---
+                sprite.blocks.forEach((block, i) => {
+                    
+                    // Closure Logic Check (Untuk menutup loop/kondisi sebelum event baru)
+                    if (i > 0 && block.type === 'event' && openStructures.length > 0) {
+                        while (openStructures.length > 0) {
+                            const struct = openStructures.pop();
+                            closeStructure(struct.name);
+                        }
+                        scriptText += '\n'; // Tambahkan baris kosong antara skrip
+                    }
+
+                    // --- BLOCK PROCESSING ---
+                    const value = block.value || '';
+                    const times = block.times || 10;
+                    const duration = block.duration || 1;
+
+                    switch (block.block) {
+                        // EVENTS (Hat Blocks) - Menggunakan sintaksis WHEN/ON
+                        case 'when_flag_clicked':
+                            addBlockLine(`WHEN green flag clicked`);
+                            break;
+                        case 'when_key_pressed':
+                            addBlockLine(`WHEN [${value || 'space'}] key pressed`);
+                            break;
+                        case 'when_this_sprite_clicked':
+                            addBlockLine(`WHEN this sprite clicked`);
+                            break;
+                        case 'when_i_receive':
+                            addBlockLine(`WHEN I receive [${value || 'message1'}]`);
+                            break;
+                        
+                        // CONTROL (Loop/Conditional Structure Openers)
+                        case 'forever':
+                            addBlockLine(`forever {`);
+                            openStructures.push({ name: 'FOREVER' }); 
+                            indentLevel++;
+                            break;
+                        case 'repeat_times':
+                            addBlockLine(`repeat (${times}) {`);
+                            openStructures.push({ name: 'REPEAT' });
+                            indentLevel++;
+                            break;
+                        case 'if_then':
+                            addBlockLine(`if <${value || 'condition'}> then {`);
+                            openStructures.push({ name: 'IF' });
+                            indentLevel++;
+                            break;
+                        case 'if_else':
+                            // Handle closing previous IF and starting ELSE
+                            if (openStructures[openStructures.length - 1] && openStructures[openStructures.length - 1].name === 'IF') {
+                                indentLevel--;
+                                const indent = '    '.repeat(indentLevel);
+                                scriptText += `${indent}} else {\n`; // Menutup IF dan membuka ELSE
+                                openStructures.pop(); // Ganti status IF menjadi ELSE
+                                openStructures.push({ name: 'ELSE' });
+                                indentLevel++;
+                            } else {
+                                // Fallback for standalone ELSE block logic error
+                                addBlockLine(`else {`);
+                                openStructures.push({ name: 'ELSE' });
+                                indentLevel++;
+                            }
+                            break;
+
+                        // MOTION
+                        case 'move_steps':
+                            addBlockLine(`move (${value || 10}) steps`);
+                            break;
+                        case 'turn_degrees':
+                            addBlockLine(`turn (${value || 15}) degrees`);
+                            break;
+                        case 'go_to_xy':
+                            const coords = value ? value.split(',').map(s => s.trim()) : ['0', '0'];
+                            addBlockLine(`go to x: (${coords[0]}) y: (${coords[1]})`);
+                            break;
+                        case 'glide_to_xy':
+                            const glide_params = value ? value.split(',').map(s => s.trim()) : ['1', '0', '0'];
+                            addBlockLine(`glide (${glide_params[0] || 1}) secs to x: (${glide_params[1] || 0}) y: (${glide_params[2] || 0})`);
+                            break;
+                        case 'point_in_direction':
+                            addBlockLine(`point in direction (${value || 90})`);
+                            break;
+                            
+                        // LOOKS
+                        case 'say_for_seconds':
+                            addBlockLine(`say "${value || 'Hello!'}" for (${duration}) seconds`);
+                            break;
+                        case 'next_costume':
+                            addBlockLine(`next costume`);
+                            break;
+                        case 'switch_backdrop':
+                            addBlockLine(`switch backdrop to [${value || 'Backdrop1'}]`);
+                            break;
+                        case 'change_size_by':
+                            addBlockLine(`change size by (${value || 10})`);
+                            break;
+
+                        // SENSING (Operator / Blok Boolean)
+                        case 'touching_sprite':
+                            addBlockLine(`<<touching [${value || 'Sprite1'}]?>>`);
+                            break;
+                        case 'ask_and_wait':
+                            addBlockLine(`ask [${value || 'What is your name?'}] and wait`);
+                            break;
+
+                        // GENERAL CONTROL & BROADCAST
+                        case 'wait_seconds':
+                            addBlockLine(`wait (${value || 1}) seconds`);
+                            break;
+                        case 'broadcast':
+                            addBlockLine(`broadcast [${value || 'message1'}]`);
+                            break;
+                        case 'stop_all':
+                            addBlockLine(`stop [all]`);
+                            break;
+
+                        // Default/Fallback Block 
+                        default:
+                            let blockName = block.block.toLowerCase().replace(/_/g, ' ');
+                            let paramStr = value ? ` (${value})` : '';
+                            addBlockLine(`${blockName}${paramStr}`);
+                            break;
+                    }
+                });
+
+                // *** MANDATORY CLOSURE LOGIC ***
+                // Tutup semua loop atau kondisi yang masih terbuka
+                while (openStructures.length > 0) {
+                    const struct = openStructures.pop();
+                    closeStructure(struct.name);
+                }
+                
+                scriptText += '\n'; // Baris kosong setelah setiap sprite
+            });
+
+            programOutput.textContent = scriptText.trim();
+        }
+        
+        // Function to handle copying text to clipboard
+        function copyScript() {
+            // Extract the actual text content from the element
+            const textToCopy = programOutput.textContent.trim();
+            
+            if (!textToCopy || textToCopy.includes('Hasil skrip blok akan muncul di sini.') || textToCopy.includes('Gagal menghasilkan program')) {
+                return;
+            }
+
+            // Using document.execCommand('copy') as mandated for iFrame compatibility
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed'; 
+            textarea.style.opacity = 0; 
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                
+                if (successful) {
+                    // Provide feedback to the user
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = 'Tersalin! ✅';
+                    copyButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    copyButton.classList.add('bg-green-500');
+
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                        copyButton.classList.remove('bg-green-500');
+                        copyButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }, 2000);
+                } // Error handling is done in the catch block
+
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                // Use the configured error display instead of alert/confirm
+                errorDisplay.textContent = 'Gagal menyalin. Silakan salin secara manual.';
+                errorDisplay.classList.remove('hidden');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+
+        // --- Main Handler ---
+        async function handleGeneration() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                errorDisplay.textContent = 'Silakan masukkan deskripsi program.';
+                errorDisplay.classList.remove('hidden');
+                programOutput.textContent = '';
+                return;
+            }
+
+            // UI State: Loading
+            errorDisplay.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+            programOutput.textContent = 'Menunggu respons AI...'; 
+            generateButton.disabled = true;
+            generateButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            generateButton.classList.add('bg-gray-400');
+
+            // Use the determined active key (which is set to Token 1 or the custom key)
+            const activeKey = customApiKey; 
+
+            if (!activeKey || activeKey === "") {
+                errorDisplay.textContent = 'Kunci API tidak ditemukan. Silakan pilih atau masukkan kunci kustom melalui tombol robot (🤖) di sebelah kanan.';
+                errorDisplay.classList.remove('hidden');
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+                generateButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                generateButton.classList.remove('bg-gray-400');
+                return;
+            }
+
+            try {
+                const programData = await fetchProgram(prompt, activeKey);
+                displayProgram(programData);
+            } catch (error) {
+                errorDisplay.textContent = error.message || 'Terjadi kesalahan yang tidak diketahui selama pembuatan skrip.';
+                errorDisplay.classList.remove('hidden');
+                programOutput.textContent = ''; 
+            } finally {
+                // UI State: Ready
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+                generateButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                generateButton.classList.remove('bg-gray-400');
+            }
+        }
+        
+        // --- Initialization ---
+
+        // Panggil inisialisasi Firebase dan kemudian tampilkan iklan
+        window.onload = function() {
+            // Initialize Firebase first
+            initializeFirebase().then(() => {
+                // Then show the ad modal
+                showAdModal(); 
+            }).catch(err => {
+                console.error("Initialization error, still trying to show ad:", err);
+                showAdModal(); 
+            });
+        };
+        
+        // Expose functions globally for HTML event handlers
+        window.showConfigModal = showConfigModal;
+        window.hideConfigModal = hideConfigModal;
+        window.saveAndCloseConfig = saveAndCloseConfig;
+        window.handleGeneration = handleGeneration;
+        window.copyScript = copyScript;
+        window.showAdModal = showAdModal;
+        window.closeAdModal = closeAdModal;
+
+    </script>
+
+</body>
+</html>
