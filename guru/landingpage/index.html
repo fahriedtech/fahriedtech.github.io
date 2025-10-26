@@ -337,6 +337,91 @@
             text-decoration: underline;
         }
         
+        /* Popup Iklan */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .popup-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .popup-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .popup-close.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .popup-close:hover {
+            background-color: white;
+            transform: scale(1.1);
+        }
+        
+        .popup-timer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -376,6 +461,12 @@
                 height: 38px;
                 font-size: 1rem;
             }
+            
+            .popup-close {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
         }
         
         /* Smooth scrolling */
@@ -385,6 +476,15 @@
     </style>
 </head>
 <body>
+    <!-- Popup Iklan -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <img src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan" class="popup-image">
+            <button class="popup-close" id="popupClose">×</button>
+            <div class="popup-timer" id="popupTimer">Iklan akan hilang dalam 5 detik</div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>Membuat Landing Page dengan AI</h1>
@@ -806,15 +906,15 @@
             margin-top: 20px;
             transition: transform 0.3s ease;
         }
-        .btn:hover { transform: translateY(-2px); }
+        .btn:hover { transform: translateY(-3px); }
     &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
     &lt;section class="hero"&gt;
         &lt;div class="container"&gt;
-            &lt;h1&gt;Selamat Datang di Website Saya&lt;/h1&gt;
-            &lt;p&gt;Ini adalah landing page pertama saya yang dibuat dengan bantuan AI&lt;/p&gt;
-            &lt;a href="#contact" class="btn"&gt;Hubungi Saya&lt;/a&gt;
+            &lt;h1&gt;Judul Landing Page Anda&lt;/h1&gt;
+            &lt;p&gt;Deskripsi singkat yang menarik perhatian pengunjung&lt;/p&gt;
+            &lt;a href="#" class="btn"&gt;Call to Action&lt;/a&gt;
         &lt;/div&gt;
     &lt;/section&gt;
 &lt;/body&gt;
@@ -824,76 +924,74 @@
         </div>
         
         <footer>
-            <a href="https://pakfahri.github.io/profil" class="profile-link" target="_blank" id="profile-link">
-                Fahri, S.Pd. | Guru Informatika | SMP Negeri 2 Manggar
-            </a>
+            <p>© 2023 Panduan Membuat Landing Page dengan AI | Dibuat dengan ❤️ oleh <a href="#" class="profile-link">Fahri, S.Pd</a></p>
         </footer>
     </div>
 
     <script>
-        // Fungsi untuk expand/collapse sections
-        const sectionHeaders = document.querySelectorAll('.section-header');
-        
-        // Buka bagian pertama secara default
-        document.getElementById('intro-content').classList.add('expanded');
-        document.querySelector('[data-section="intro"] .toggle-icon').textContent = '▲';
-        
-        sectionHeaders.forEach(header => {
+        // Fungsi untuk toggle section
+        document.querySelectorAll('.section-header').forEach(header => {
             header.addEventListener('click', function() {
                 const sectionId = this.getAttribute('data-section');
-                const content = document.getElementById(sectionId + '-content');
+                const content = document.getElementById(`${sectionId}-content`);
                 const icon = this.querySelector('.toggle-icon');
                 
-                // Toggle expanded class
+                // Toggle class expanded
                 content.classList.toggle('expanded');
                 
-                // Ubah ikon
+                // Rotate icon
                 if (content.classList.contains('expanded')) {
-                    icon.textContent = '▲';
+                    icon.style.transform = 'rotate(180deg)';
                 } else {
-                    icon.textContent = '▼';
+                    icon.style.transform = 'rotate(0deg)';
                 }
             });
         });
         
-        // Tombol mulai sekarang
+        // Fungsi untuk animasi tombol mulai
         document.getElementById('start-button').addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Tutup semua section terlebih dahulu
-            sectionHeaders.forEach(header => {
-                const sectionId = header.getAttribute('data-section');
-                const content = document.getElementById(sectionId + '-content');
-                const icon = header.querySelector('.toggle-icon');
-                
-                content.classList.remove('expanded');
-                icon.textContent = '▼';
-            });
-            
-            // Buka bagian langkah pembuatan
-            document.getElementById('steps-content').classList.add('expanded');
-            document.querySelector('[data-section="steps"] .toggle-icon').textContent = '▲';
-            
-            // Scroll ke bagian tersebut
-            document.getElementById('steps-section').scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-        
-        // Animasi kelap-kelip untuk profile link
-        const profileLink = document.getElementById('profile-link');
-        
-        profileLink.addEventListener('click', function(e) {
-            // Tambahkan animasi kelap-kelip
             this.classList.add('blinking');
             
-            // Hapus animasi setelah selesai
             setTimeout(() => {
                 this.classList.remove('blinking');
-            }, 2000); // Sesuai dengan durasi animasi
+                alert('Selamat! Anda telah memulai perjalanan membuat landing page dengan AI. Mari praktikkan langkah-langkah di atas!');
+            }, 2000);
+        });
+        
+        // Fungsi untuk popup iklan
+        document.addEventListener('DOMContentLoaded', function() {
+            const popupOverlay = document.getElementById('popupOverlay');
+            const popupClose = document.getElementById('popupClose');
+            const popupTimer = document.getElementById('popupTimer');
             
-            // Biarkan link tetap bekerja normal
-            // Browser akan membuka link setelah animasi
+            // Tampilkan popup saat halaman dimuat
+            setTimeout(() => {
+                popupOverlay.style.display = 'flex';
+                
+                // Timer 5 detik
+                let countdown = 5;
+                const timerInterval = setInterval(() => {
+                    countdown--;
+                    popupTimer.textContent = `Iklan akan hilang dalam ${countdown} detik`;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(timerInterval);
+                        popupClose.classList.add('active');
+                        popupTimer.textContent = 'Klik tombol X untuk menutup iklan';
+                    }
+                }, 1000);
+                
+                // Fungsi untuk menutup popup
+                popupClose.addEventListener('click', function() {
+                    if (this.classList.contains('active')) {
+                        popupOverlay.style.animation = 'fadeOut 0.3s ease-out';
+                        setTimeout(() => {
+                            popupOverlay.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            }, 1000);
         });
     </script>
 </body>
