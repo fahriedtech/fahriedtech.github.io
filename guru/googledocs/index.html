@@ -349,6 +349,86 @@
             background-color: #e0e0e0;
         }
         
+        /* --- STYLE UNTUK POP-UP IKLAN --- */
+        #adOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        #adOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #adContainer {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        #adImage {
+            display: block;
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        
+        #adCloseBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            opacity: 0.7;
+        }
+        
+        #adCloseBtn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 1;
+        }
+        
+        #adCloseBtn:disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+        
+        #adTimer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
         /* --- Media Queries untuk Responsivitas --- */
         @media (max-width: 768px) {
             body {
@@ -456,6 +536,15 @@
     </style>
 </head>
 <body>
+
+    <!-- Pop-up Iklan -->
+    <div id="adOverlay">
+        <div id="adContainer">
+            <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan">
+            <button id="adCloseBtn" disabled>×</button>
+            <div id="adTimer">5</div>
+        </div>
+    </div>
 
     <!-- Indikator Progress Baca -->
     <div id="progressBar">
@@ -661,6 +750,32 @@
     <button id="scrollToTopBtn" title="Kembali ke atas">↑</button>
 
     <script>
+        // --- JavaScript untuk Pop-up Iklan ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const adOverlay = document.getElementById('adOverlay');
+            const adCloseBtn = document.getElementById('adCloseBtn');
+            const adTimer = document.getElementById('adTimer');
+            
+            let countdown = 5;
+            
+            // Timer countdown
+            const timerInterval = setInterval(function() {
+                countdown--;
+                adTimer.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(timerInterval);
+                    adCloseBtn.disabled = false;
+                    adTimer.style.display = 'none';
+                }
+            }, 1000);
+            
+            // Event listener untuk tombol close
+            adCloseBtn.addEventListener('click', function() {
+                adOverlay.classList.add('hidden');
+            });
+        });
+
         // --- JavaScript untuk Scroll to Top dan Progress Bar ---
         const scrollToTopBtn = document.getElementById("scrollToTopBtn");
         const progressBar = document.querySelector("#progressBar .progress");
