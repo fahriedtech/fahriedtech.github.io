@@ -321,7 +321,23 @@
             max-width: 200px;
         }
         
-        /* Override untuk signature block */
+        /* Override untuk signature block - PERBAIKAN TAMBAHAN */
+        #output-container table.signature-block,
+        #output-container table.signature-block th,
+        #output-container table.signature-block td {
+            text-align: center !important;
+            vertical-align: top;
+        }
+
+        #output-container table.signature-block {
+            border: none !important;
+        }
+
+        #output-container table.signature-block td {
+            border: none !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+        
         #output-container table.signature-block {
             table-layout: fixed;
             width: 100% !important;
@@ -738,7 +754,7 @@
                     "Mengomunikasikan ide dan pengalaman melalui paragraf sederhana dan terstruktur dengan penggunaan kosakata spesifik dan struktur kalimat sederhana.",
                     "Merencanakan, menulis, dan menyajikan teks informasi, imajinasi, dan persuasi menggunakan kalimat sederhana dan majemuk.",
                     "Menyusun argumen dan menjelaskan atau mempertahankan pendapat dengan informasi dan detil dasar.",
-                    "Menggunakan tense masa kini, masa depan, dan lampau, serta penanda waktu, keterangan frekuensi, dan konjungsi umum untuk menghubungkan ide.",
+                    "Menggunakan tense masa kini, masa future, dan lampau, serta penanda waktu, keterangan frekuensi, dan konjungsi umum untuk menghubungkan ide.",
                     "Menuliskan kata baru berdasarkan hubungan huruf-bunyi bahasa Inggris serta menggunakan tanda baca dan huruf kapital dengan konsisten."
                 ],
                 "Bahasa Indonesia": [
@@ -1202,12 +1218,13 @@
                  coreModuleInstruction = `**A. Modul Ajar Inti LENGKAP**
 - Judul H1: "MODUL AJAR ${mapelUpperCase} FASE D (SMP)". WAJIB ditengahkan.
 - H2 yang WAJIB ada (sesuai urutan): A. Identitas Modul; B. IDENTIFIKASI KESIAPAN PESERTA DIDIK; C. KARAKTERISTIK MATERI PELAJARAN; D. DIMENSI PROFIL LULUSAN PEMBELAJARAN.
-- Setelah H1 DESAIN PEMBELAJARAN, H2 yang WAJIB ada (sesuai urutan): A. CAPAIAN PEMBELAJRAN; B. LINTAS DISIPLIN ILMU; C. TUJUAN PEMBELAJARAN; D. TOPIK PEMBELAJARAN KONTEKSTUAL; E. PEMAHAMAN BERMAKNA; F. PERTANYAAN PEMANTIK; G. KERANGKA PEMBELAJARAN.
+- KONTEN 'A. Identitas Modul' WAJIB menyajikan semua data dari 'Bagian 1: Informasi Umum' (yang ada di akhir prompt) dalam format tabel HTML dua kolom yang rapi.
+- Setelah H1 DESAIN PEMBELAJARAN, H2 yang WAJIB ada (sesuai urutan): A. CAPAIAN PEMBELAJRAN; B. LINTAS DISIPLIN ILMU; C. TUJUAN PEMBELARAN; D. TOPIK PEMBELAJARAN KONTEKSTUAL; E. PEMAHAMAN BERMAKNA; F. PERTANYAN PEMANTIK; G. KERANGKA PEMBELAJAN.
 - **H2 Kerangka Pembelajaran WAJIB memiliki empat sub-judul H3:** "Praktik Pedagogis", "Kemitraan Pembelajaran", "Lingkungan Pembelajaran", dan "Pemanfaatan Digital".
 - Judul H1: LANGKAH-LANGKAH PEMBELAJARAN (WAJIB ditengahkan).
 - **TABEL LANGKAH PEMBELAJARAN WAJIB:** Formatnya HANYA tabel HTML tunggal 3 kolom (Tahapan, Kegiatan Pembelajaran, Alokasi Waktu).
-- **KEGIATAN AWAL WAJIB:** Kegiatan Pendahuluan (Awal) WAJIB memiliki minimal satu aktivitas yang secara eksplisit mencerminkan dan diberi label **Mindful Learning**, satu **Meaningful Learning**, dan satu **Joyful Learning**.
 - **INTEGRASI KOMBINASI (PENTING):** Aktivitas Kombinasi ("${kombinasiModel}") harus diintegrasikan secara natural di salah satu sub-langkah Kegiatan Inti dan dijelaskan implementasinya (maks. 2 kalimat) di deskripsi kegiatan tersebut. JANGAN gunakan tag khusus seperti [INTEGRASI KOMBINASI] atau tag berulang.
+${modelUtama === "Pembelajaran Mendalam (Memahami, Mengaplikasi, Merefleksi)" ? `- **INTEGRASI WAJIB:** Sepanjang "LANGKAH-LANGKAH PEMBELAJARAN" (terutama di Kegiatan Inti), AI WAJIB mencari kesempatan untuk mengintegrasikan dan melabeli secara eksplisit konsep **Mindful Learning**, **Meaningful Learning**, dan **Joyful Learning** ke dalam sub-aktivitas yang paling relevan. Pastikan setiap konsep muncul setidaknya satu kali di sepanjang Kegiatan Inti (kecuali jika sintaks model utama tidak memungkinkan).` : ''}
 - Rancang Kegiatan Inti secara rinci sesuai sintaks/langkah-langkah dari Aktivitas Pembelajaran Utama (${modelUtama}). JANGAN sertakan asesmen di bagian ini.
 - Gunakan input Alur Pembelajaran JIKA ADA.
 `;
@@ -1220,12 +1237,34 @@
                  signatureInstruction = `
 - Setelah Bagian Terakhir (Tabel Langkah-Langkah Pembelajaran), Anda HARUS menambahkan Bagian Tanda Tangan Pengesahan.
 - Struktur tabel HARUS 2 kolom. Kolom KIRI untuk Kepala Sekolah, Kolom KANAN untuk Guru Mata Pelajaran.
-- Baris 1: Kolom KIRI: "Mengetahui,". Kolom KANAN: "${kotaTandaTangan}, ${todayDate}". (Gunakan p tag, ratakan ke tengah)
+- Baris 1: Kolom KIRI: "Mengetahui,". Kolom KANAN: "${kotaTandaTangan}, ${todayDate}".
 - Baris 2: Kolom KIRI: "Kepala Sekolah". Kolom KANAN: "Guru Mata Pelajaran".
-- Baris 3 & 4 (Baris tanda tangan kosong): Buat jarak sekitar 4 baris (br tag atau padding di CSS jika perlu, tapi lebih aman dengan baris kosong/p).
-- Baris 5: Kolom KIRI: "${kepsekFinal}". Kolom KANAN: "${guruFinal}". JANGAN gunakan label "Nama:".
-- Baris 6: Kolom KIRI: "NIP. ${nipKepsekFinal}". Kolom KANAN: "NIP. ${nipGuruFinal}". JANGAN gunakan label "NIP:", gunakan awalan "NIP." saja.
-- Semua teks dalam sel tabel HARUS diratakan ke TENGAH (align center) menggunakan atribut HTML atau styling.
+- Baris 3 & 4 (Baris tanda tangan kosong): Buat jarak sekitar 4 baris.
+- Baris 5: Kolom KIRI: "${kepsekFinal}". Kolom KANAN: "${guruFinal}".
+- Baris 6: Kolom KIRI: "NIP. ${nipKepsekFinal}". Kolom KANAN: "NIP. ${nipGuruFinal}".
+- **WAJIB:** Gunakan atribut style="text-align: center" pada setiap sel (<td>) tabel tanda tangan.
+- **WAJIB:** Berikan class="signature-block" pada tabel tanda tangan.
+- **CONTOH FORMAT TANDA TANGAN YANG HARUS DIBUAT:**
+  <table class="signature-block">
+    <tr>
+      <td style="text-align: center">Mengetahui,</td>
+      <td style="text-align: center">${kotaTandaTangan}, ${todayDate}</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Kepala Sekolah</td>
+      <td style="text-align: center">Guru Mata Pelajaran</td>
+    </tr>
+    <tr><td style="text-align: center"><br><br></td><td style="text-align: center"><br><br></td></tr>
+    <tr><td style="text-align: center"><br><br></td><td style="text-align: center"><br><br></td></tr>
+    <tr>
+      <td style="text-align: center">${kepsekFinal}</td>
+      <td style="text-align: center">${guruFinal}</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">NIP. ${nipKepsekFinal}</td>
+      <td style="text-align: center">NIP. ${nipGuruFinal}</td>
+    </tr>
+  </table>
 `;
 
             } else if (isAnyLampiranSelected) {
