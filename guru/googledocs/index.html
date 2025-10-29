@@ -209,6 +209,12 @@
             border-radius: 8px;
             margin-top: 14px;
             border: 1px solid var(--border-color);
+            /* Efek transisi untuk lazy loading */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .content-item img.loaded {
+            opacity: 1;
         }
         .icon {
             font-size: 1em;
@@ -261,6 +267,12 @@
             margin-top: 10px;
             border: 1px solid var(--border-color);
             display: block;
+            /* Efek transisi untuk lazy loading */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .pro-tip img.loaded {
+            opacity: 1;
         }
         
         /* --- Footer Styles yang Diperbarui --- */
@@ -578,22 +590,22 @@
                             <div class="content-item">
                                 <h4>1.1 Lupakan "Save": Penyimpanan Otomatis</h4>
                                 <p>Google Docs menyimpan setiap perubahan Anda secara otomatis ke cloud. Anda tidak perlu lagi menekan tombol <q>Save</q>. Pekerjaan Anda aman dan dapat diakses dari mana saja.</p>
-                                <img src="/guru/googledocs/cloudstorage.png" alt="Konsep Cloud Storage">
+                                <img data-src="/guru/googledocs/cloudstorage.png" alt="Konsep Cloud Storage" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>1.2 Cara Memulai: Akses dengan Akun Google</h4>
                                 <p>Langkah pertama adalah masuk ke akun Google Anda. Kemudian, kunjungi docs.google.com dan klik <q>+ Blank</q> untuk membuat dokumen baru dari awal.</p>
-                                <img src="/guru/googledocs/blank.png" alt="Halaman Utama Google Docs">
+                                <img data-src="/guru/googledocs/blank.png" alt="Halaman Utama Google Docs" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>1.3 Mengenal Tampilan: Menu Format, Insert, Share</h4>
                                 <p>Antarmuka Google Docs dirancang intuitif. Menu utama seperti File, Edit, View, Insert, Format, dll. berada di bagian atas. Tombol <q>Share</q> yang penting berada di kanan atas.</p>
-                                <img src="/guru/googledocs/menu.png" alt="Menu Antarmuka Google Docs">
+                                <img data-src="/guru/googledocs/menu.png" alt="Menu Antarmuka Google Docs" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>1.4 Bekerja Tanpa Internet (Mode Offline)</h4>
                                 <p>Anda dapat mengatur Google Docs untuk bekerja offline. Buka menu <span class="menu-path">File > Settings > Offline</span>, lalu aktifkan <q>Offline</q>. Ini akan menyinkronkan pekerjaan Anda saat Anda kembali online.</p>
-                                <img src="/guru/googledocs/offline.gif" alt="Pengaturan Mode Offline">
+                                <img data-src="/guru/googledocs/offline.gif" alt="Pengaturan Mode Offline" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -608,22 +620,22 @@
                             <div class="content-item">
                                 <h4>2.1 Pemformatan Esensial: Tebal, Miring, Font</h4>
                                 <p>Gunakan toolbar di bagian atas untuk memformat teks. Pilih teks, lalu klik ikon <strong>B</strong> (Tebal), <em>I</em> (Miring), atau U (Garis Bawah). Anda juga bisa mengubah jenis font dan ukurannya.</p>
-                                <img src="/guru/googledocs/bold.gif" alt="Toolbar Pemformatan Teks">
+                                <img data-src="/guru/googledocs/bold.gif" alt="Toolbar Pemformatan Teks" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>2.2 Membuat Struktur: Gaya Judul (Heading)</h4>
                                 <p>Gunakan gaya Heading 1, Heading 2, dst. dari dropdown toolbar untuk membuat struktur dokumen yang jelas. Ini penting untuk navigasi dan membuat daftar isi otomatis.</p>
-                                <img src="/guru/googledocs/header.gif" alt="Dropdown Gaya Heading">
+                                <img data-src="/guru/googledocs/header.gif" alt="Dropdown Gaya Heading" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>2.3 Elemen Cepat: Gambar dan Tautan (Link)</h4>
                                 <p>Klik menu <strong>Insert</strong> untuk menambahkan gambar dari komputer atau internet. Untuk membuat tautan, pilih teks, lalu tekan <kbd>Ctrl</kbd> + <kbd>K</kbd> (atau <kbd>Cmd</kbd> + <kbd>K</kbd> di Mac) dan masukkan URL.</p>
-                                <img src="/guru/googledocs/sisipgambar.gif" alt="Menu Insert">
+                                <img data-src="/guru/googledocs/sisipgambar.gif" alt="Menu Insert" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>2.4 Daftar Isi Otomatis (Menggunakan Heading)</h4>
                                 <p>Jika Anda sudah menggunakan Heading Styles, buat daftar isi dengan mudah. Pergi ke <span class="menu-path">Insert > Table of contents</span> dan pilih gaya yang Anda inginkan.</p>
-                                <img src="/guru/googledocs/daftarisi.gif" alt="Contoh Daftar Isi Otomatis">
+                                <img data-src="/guru/googledocs/daftarisi.gif" alt="Contoh Daftar Isi Otomatis" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -649,17 +661,17 @@
                             <div class="content-item">
                                 <h4>3.1 Mengganti "Kirim File" dengan "Berbagi Akses"</h4>
                                 <p>Alih-alih mengirim file bolak-balik, Anda cukup berbagi akses ke dokumen. Klik tombol <strong>Share</strong> di kanan atas dan masukkan email orang yang ingin Anda ajak berkolaborasi.</p>
-                                <img src="/guru/googledocs/bagikan.gif" alt="Tombol Share">
+                                <img data-src="/guru/googledocs/bagikan.gif" alt="Tombol Share" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>3.2 Tiga Peran Kunci: Editor, Komentator, Pelihat</h4>
                                 <p>Saat berbagi, Anda bisa menentukan peran: <strong>Editor</strong> (bisa mengubah langsung), <strong>Komentator</strong> (hanya bisa memberi komentar), dan <strong>Pelihat</strong> (hanya bisa melihat).</p>
-                                <img src="/guru/googledocs/peran.gif" alt="Dialog Peran Akses">
+                                <img data-src="/guru/googledocs/peran.gif" alt="Dialog Peran Akses" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>3.3 Bekerja Bersamaan: Kursor Kolaborator</h4>
                                 <p>Fitur ajaib Google Docs! Anda bisa melihat kursor setiap orang yang sedang mengedit dokumen, masing-masing dengan warna berbeda, beserta namanya.</p>
-                                <img src="/guru/googledocs/kolaborasi.gif" alt="Kursor Kolaborator">
+                                <img data-src="/guru/googledocs/kolaborasi.gif" alt="Kursor Kolaborator" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -674,17 +686,17 @@
                             <div class="content-item">
                                 <h4>4.1 Memberi Catatan: Komentar dan @nama</h4>
                                 <p>Block teks yang ingin Anda komentari, lalu klik ikon komentar atau tekan <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>M</kbd>. Anda bisa menandai orang dengan mengetik <kbd>@</kbd> diikuti nama email mereka.</p>
-                                <img src="/guru/googledocs/komentar.gif" alt="Fitur Komentar">
+                                <img data-src="/guru/googledocs/komentar.gif" alt="Fitur Komentar" class="lazy">
                             </div>
                             <div class="pro-tip">
                                 <h4>Pro Tip: Mode Saran</h4>
                                 <p>Ubah mode editing dari <q>Editing</q> menjadi <strong>Suggesting</strong>. Setiap perubahan yang Anda buat akan menjadi saran yang bisa diterima atau ditolak oleh pemilik dokumen. Ini sangat berguna untuk kolaborasi profesional.</p>
-                                <img src="/guru/googledocs/saranedit.gif" alt="Mode Saran">
+                                <img data-src="/guru/googledocs/saranedit.gif" alt="Mode Saran" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>4.3 Menjaga Dokumen Aman: Riwayat Versi</h4>
                                 <p>Google Docs menyimpan semua versi dokumen. Pergi ke <span class="menu-path">File > Version history > See version history</span> untuk melihat perubahan dan memulihkan dokumen ke versi sebelumnya.</p>
-                                <img src="/guru/googledocs/history.gif" alt="Riwayat Versi">
+                                <img data-src="/guru/googledocs/history.gif" alt="Riwayat Versi" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -710,12 +722,12 @@
                             <div class="content-item">
                                 <h4>5.1 Pengganti "Save As": Ekspor PDF atau .docx</h4>
                                 <p>Setelah selesai, Anda bisa mengunduh dokumen dalam berbagai format. Pergi ke <span class="menu-path">File > Download</span> dan pilih <strong>PDF Document (.pdf)</strong> atau <strong>Microsoft Word (.docx)</strong>.</p>
-                                <img src="/guru/googledocs/simpansebagai.gif" alt="Menu Unduh/Ekspor">
+                                <img data-src="/guru/googledocs/simpansebagai.gif" alt="Menu Unduh/Ekspor" class="lazy">
                             </div>
                             <div class="content-item">
                                 <h4>5.2 Pengaturan Akhir: Mencetak Dokumen</h4>
                                 <p>Pergi ke <span class="menu-path">File > Print</span> atau tekan <kbd>Ctrl</kbd> + <kbd>P</kbd> (atau <kbd>Cmd</kbd> + <kbd>P</kbd>). Anda akan melihat pratinjau dan dapat mengatur pengaturan pencetakan seperti ukuran kertas dan margin.</p>
-                                <img src="/guru/googledocs/print.gif" alt="Dialog Print">
+                                <img data-src="/guru/googledocs/print.gif" alt="Dialog Print" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -730,8 +742,7 @@
                             <div class="content-item">
                                 <h4>6.1 Mengetik Lebih Cepat: Voice Typing</h4>
                                 <p>Aktifkan fitur ini melalui menu <span class="menu-path">Tools > Voice typing</span>. Klik ikon mikrofon dan mulailah berbicara. Google Docs akan mengetikkan apa yang Anda ucapkan.</p>
-                                <img src="/guru/googledocs/voicetyping.gif" alt="Fitur Voice Typing">
-         
+                                <img data-src="/guru/googledocs/voicetyping.gif" alt="Fitur Voice Typing" class="lazy">
                             </div>
                         </div>
                     </div>
@@ -812,6 +823,8 @@
                 content.classList.remove('active');
             } else {
                 content.classList.add('active');
+                // Load gambar saat konten dibuka
+                loadImagesInElement(content);
             }
             
             icon.classList.toggle('rotate');
@@ -842,7 +855,69 @@
                 }, { passive: true });
             });
         });
-    </script>
 
+        // --- JavaScript untuk Lazy Loading Gambar ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load gambar yang terlihat di viewport saat halaman pertama kali dimuat
+            loadVisibleImages();
+            
+            // Set up Intersection Observer untuk gambar yang belum terlihat
+            const lazyImages = document.querySelectorAll('img.lazy');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            img.classList.add('loaded');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(img => {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback untuk browser yang tidak mendukung IntersectionObserver
+                lazyImages.forEach(img => {
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    img.classList.add('loaded');
+                });
+            }
+            
+            // Load gambar saat konten dibuka (untuk konten yang belum terlihat di viewport)
+            window.loadImagesInElement = function(element) {
+                const images = element.querySelectorAll('img.lazy');
+                images.forEach(img => {
+                    if (img.dataset.src && !img.src) {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        img.classList.add('loaded');
+                    }
+                });
+            };
+            
+            // Fungsi untuk memuat gambar yang terlihat di viewport
+            function loadVisibleImages() {
+                lazyImages.forEach(img => {
+                    const rect = img.getBoundingClientRect();
+                    if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        img.classList.add('loaded');
+                    }
+                });
+            }
+            
+            // Load gambar yang terlihat saat scroll
+            window.addEventListener('scroll', function() {
+                loadVisibleImages();
+            });
+        });
+    </script>
 </body>
 </html>
