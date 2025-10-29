@@ -7,6 +7,7 @@
     <link rel="icon" href="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/main/images/favicon.png" type="image/png">
     <style>
         /* --- PERBAIKAN: Global Box-Sizing & Anti-Overflow --- */
+        /* Ini adalah praktik terbaik untuk memastikan layout yang konsisten dan mencegah overflow horizontal. */
         html {
             box-sizing: border-box;
         }
@@ -14,14 +15,17 @@
             box-sizing: inherit;
         }
         body, html {
+            /* Mencegah scroll horizontal di level tertinggi */
             overflow-x: hidden;
         }
         
         /* CSS untuk Tampilan Profesional */
         
+        /* --- PEMBARUAN IMPORT FONT --- */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto+Slab:wght@500;600&family=Roboto:wght@400;500&family=Inter:wght@400;600&display=swap');
         
         :root {
+            /* --- Variabel Warna (Tidak Berubah) --- */
             --primary-color: #4285F4;
             --primary-hover: #1967d2;
             --secondary-color: #34A853;
@@ -32,13 +36,15 @@
             --bg-secondary: #fff;
             --border-color: #e8eaed;
 
-            --font-title: 'Poppins', sans-serif;
-            --font-section: 'Roboto Slab', serif;
-            --font-chapter: 'Roboto', sans-serif;
-            --font-content: 'Inter', sans-serif;
+            /* --- PEMBARUAN VARIABEL FONT --- */
+            --font-title: 'Poppins', sans-serif;      /* Untuk Judul Utama & Sub Judul */
+            --font-section: 'Roboto Slab', serif;     /* Untuk Judul Bagian */
+            --font-chapter: 'Roboto', sans-serif;     /* Untuk Judul Bab */
+            --font-content: 'Inter', sans-serif;      /* Untuk Isi Konten (paragraf & sub-judul item) */
         }
 
         body {
+            /* Menggunakan font konten sebagai default untuk seluruh body */
             font-family: var(--font-content);
             line-height: 1.7;
             margin: 0;
@@ -76,6 +82,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             flex: 1;
             margin-top: 8px;
+            /* PERBAIKAN: Pastikan container tidak pernah lebih lebar dari layar */
             width: 100%;
         }
         header {
@@ -192,6 +199,7 @@
             color: var(--text-secondary);
             line-height: 1.6;
             font-family: var(--font-content);
+            /* PERBAIKAN: Memastikan teks panjang dapat pecah barisnya */
             overflow-wrap: break-word;
             word-wrap: break-word;
         }
@@ -201,11 +209,6 @@
             border-radius: 8px;
             margin-top: 14px;
             border: 1px solid var(--border-color);
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .content-item img.loaded {
-            opacity: 1;
         }
         .icon {
             font-size: 1em;
@@ -225,6 +228,7 @@
             border-left: 4px solid var(--secondary-color);
             background-color: var(--secondary-bg);
             border-radius: 0 8px 8px 0;
+            /* PERBAIKAN: Memastikan konten tidak terpotong */
             overflow-wrap: break-word;
             word-wrap: break-word;
             overflow: hidden;
@@ -235,15 +239,17 @@
             align-items: center;
             gap: 8px;
             font-family: var(--font-content);
+            /* PERBAIKAN: Memastikan judul tidak terpotong */
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
         .pro-tip h4::before {
             content: "💡";
             font-size: 1.2em;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Mencegah ikon menyusut */
         }
         .pro-tip p {
+            /* PERBAIKAN: Memastikan paragraf tidak terpotong */
             overflow-wrap: break-word;
             word-wrap: break-word;
             margin-bottom: 10px;
@@ -255,11 +261,6 @@
             margin-top: 10px;
             border: 1px solid var(--border-color);
             display: block;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .pro-tip img.loaded {
-            opacity: 1;
         }
         
         /* --- Footer Styles yang Diperbarui --- */
@@ -331,8 +332,9 @@
             font-size: 0.9em;
             color: var(--text-primary);
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            /* PERBAIKAN: Beri sedikit ruang agar tidak menempel dan memecah dengan lebih baik */
             margin: 0 2px;
-            display: inline-block;
+            display: inline-block; /* Membantu kontrol margin dan wrapping */
         }
 
         .menu-path {
@@ -348,7 +350,7 @@
             background-color: #e0e0e0;
         }
         
-        /* --- STYLE UNTUK POP-UP IKLAN YANG DIPERBAIKI --- */
+        /* --- STYLE UNTUK POP-UP IKLAN --- */
         #adOverlay {
             position: fixed;
             top: 0;
@@ -377,19 +379,13 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
         
         #adImage {
             display: block;
             max-width: 100%;
-            max-height: 60vh;
+            max-height: 80vh;
             object-fit: contain;
-            border-radius: 8px;
         }
         
         #adCloseBtn {
@@ -433,36 +429,6 @@
             font-size: 14px;
             font-weight: bold;
         }
-
-        /* Fallback jika gambar iklan tidak tersedia */
-        .ad-fallback {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .ad-fallback h3 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-        
-        .ad-fallback p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-        
-        .ad-fallback .ad-cta {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        
-        .ad-fallback .ad-cta:hover {
-            background-color: var(--primary-hover);
-        }
         
         /* --- Media Queries untuk Responsivitas --- */
         @media (max-width: 768px) {
@@ -494,10 +460,6 @@
             }
             .content-item p {
                 font-size: 0.9em;
-            }
-            #adContainer {
-                max-width: 95%;
-                padding: 15px;
             }
         }
         
@@ -536,11 +498,13 @@
                 width: 44px;
                 height: 44px;
             }
+            /* PERBAIKAN: Keterbacaan elemen kecil di layar sangat kecil */
             kbd {
                 font-size: 1em;
                 padding: 3px 7px;
             }
             
+            /* PERBAIKAN: Memastikan Pro Tip tidak terpotong di mobile */
             .pro-tip {
                 margin-top: 20px;
                 padding: 14px;
@@ -569,28 +533,15 @@
                 max-width: 100%;
                 height: auto;
             }
-            #adContainer {
-                max-width: 98%;
-                padding: 10px;
-            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Pop-up Iklan yang Diperbaiki dengan Fallback -->
+    <!-- Pop-up Iklan -->
     <div id="adOverlay">
         <div id="adContainer">
-            <!-- Gambar iklan utama -->
-            <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan" style="display: none;">
-            
-            <!-- Fallback jika gambar tidak tersedia -->
-            <div id="adFallback" class="ad-fallback">
-                <h3>✨ Panduan Google Docs Premium</h3>
-                <p>Dapatkan akses ke panduan lengkap dengan tips dan trik advanced untuk menguasai Google Docs!</p>
-                <a href="https://fahriedtech.github.io/" class="ad-cta" target="_blank">Pelajari Lebih Lanjut</a>
-            </div>
-            
+            <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan">
             <button id="adCloseBtn" disabled>×</button>
             <div id="adTimer">5</div>
         </div>
@@ -627,22 +578,22 @@
                             <div class="content-item">
                                 <h4>1.1 Lupakan "Save": Penyimpanan Otomatis</h4>
                                 <p>Google Docs menyimpan setiap perubahan Anda secara otomatis ke cloud. Anda tidak perlu lagi menekan tombol <q>Save</q>. Pekerjaan Anda aman dan dapat diakses dari mana saja.</p>
-                                <img data-src="/guru/googledocs/cloudstorage.png" alt="Konsep Cloud Storage" class="lazy">
+                                <img src="/guru/googledocs/cloudstorage.png" alt="Konsep Cloud Storage">
                             </div>
                             <div class="content-item">
                                 <h4>1.2 Cara Memulai: Akses dengan Akun Google</h4>
                                 <p>Langkah pertama adalah masuk ke akun Google Anda. Kemudian, kunjungi docs.google.com dan klik <q>+ Blank</q> untuk membuat dokumen baru dari awal.</p>
-                                <img data-src="/guru/googledocs/blank.png" alt="Halaman Utama Google Docs" class="lazy">
+                                <img src="/guru/googledocs/blank.png" alt="Halaman Utama Google Docs">
                             </div>
                             <div class="content-item">
                                 <h4>1.3 Mengenal Tampilan: Menu Format, Insert, Share</h4>
                                 <p>Antarmuka Google Docs dirancang intuitif. Menu utama seperti File, Edit, View, Insert, Format, dll. berada di bagian atas. Tombol <q>Share</q> yang penting berada di kanan atas.</p>
-                                <img data-src="/guru/googledocs/menu.png" alt="Menu Antarmuka Google Docs" class="lazy">
+                                <img src="/guru/googledocs/menu.png" alt="Menu Antarmuka Google Docs">
                             </div>
                             <div class="content-item">
                                 <h4>1.4 Bekerja Tanpa Internet (Mode Offline)</h4>
                                 <p>Anda dapat mengatur Google Docs untuk bekerja offline. Buka menu <span class="menu-path">File > Settings > Offline</span>, lalu aktifkan <q>Offline</q>. Ini akan menyinkronkan pekerjaan Anda saat Anda kembali online.</p>
-                                <img data-src="/guru/googledocs/offline.gif" alt="Pengaturan Mode Offline" class="lazy">
+                                <img src="/guru/googledocs/offline.gif" alt="Pengaturan Mode Offline">
                             </div>
                         </div>
                     </div>
@@ -657,22 +608,22 @@
                             <div class="content-item">
                                 <h4>2.1 Pemformatan Esensial: Tebal, Miring, Font</h4>
                                 <p>Gunakan toolbar di bagian atas untuk memformat teks. Pilih teks, lalu klik ikon <strong>B</strong> (Tebal), <em>I</em> (Miring), atau U (Garis Bawah). Anda juga bisa mengubah jenis font dan ukurannya.</p>
-                                <img data-src="/guru/googledocs/bold.gif" alt="Toolbar Pemformatan Teks" class="lazy">
+                                <img src="/guru/googledocs/bold.gif" alt="Toolbar Pemformatan Teks">
                             </div>
                             <div class="content-item">
                                 <h4>2.2 Membuat Struktur: Gaya Judul (Heading)</h4>
                                 <p>Gunakan gaya Heading 1, Heading 2, dst. dari dropdown toolbar untuk membuat struktur dokumen yang jelas. Ini penting untuk navigasi dan membuat daftar isi otomatis.</p>
-                                <img data-src="/guru/googledocs/header.gif" alt="Dropdown Gaya Heading" class="lazy">
+                                <img src="/guru/googledocs/header.gif" alt="Dropdown Gaya Heading">
                             </div>
                             <div class="content-item">
                                 <h4>2.3 Elemen Cepat: Gambar dan Tautan (Link)</h4>
                                 <p>Klik menu <strong>Insert</strong> untuk menambahkan gambar dari komputer atau internet. Untuk membuat tautan, pilih teks, lalu tekan <kbd>Ctrl</kbd> + <kbd>K</kbd> (atau <kbd>Cmd</kbd> + <kbd>K</kbd> di Mac) dan masukkan URL.</p>
-                                <img data-src="/guru/googledocs/sisipgambar.gif" alt="Menu Insert" class="lazy">
+                                <img src="/guru/googledocs/sisipgambar.gif" alt="Menu Insert">
                             </div>
                             <div class="content-item">
                                 <h4>2.4 Daftar Isi Otomatis (Menggunakan Heading)</h4>
                                 <p>Jika Anda sudah menggunakan Heading Styles, buat daftar isi dengan mudah. Pergi ke <span class="menu-path">Insert > Table of contents</span> dan pilih gaya yang Anda inginkan.</p>
-                                <img data-src="/guru/googledocs/daftarisi.gif" alt="Contoh Daftar Isi Otomatis" class="lazy">
+                                <img src="/guru/googledocs/daftarisi.gif" alt="Contoh Daftar Isi Otomatis">
                             </div>
                         </div>
                     </div>
@@ -698,17 +649,17 @@
                             <div class="content-item">
                                 <h4>3.1 Mengganti "Kirim File" dengan "Berbagi Akses"</h4>
                                 <p>Alih-alih mengirim file bolak-balik, Anda cukup berbagi akses ke dokumen. Klik tombol <strong>Share</strong> di kanan atas dan masukkan email orang yang ingin Anda ajak berkolaborasi.</p>
-                                <img data-src="/guru/googledocs/bagikan.gif" alt="Tombol Share" class="lazy">
+                                <img src="/guru/googledocs/bagikan.gif" alt="Tombol Share">
                             </div>
                             <div class="content-item">
                                 <h4>3.2 Tiga Peran Kunci: Editor, Komentator, Pelihat</h4>
                                 <p>Saat berbagi, Anda bisa menentukan peran: <strong>Editor</strong> (bisa mengubah langsung), <strong>Komentator</strong> (hanya bisa memberi komentar), dan <strong>Pelihat</strong> (hanya bisa melihat).</p>
-                                <img data-src="/guru/googledocs/peran.gif" alt="Dialog Peran Akses" class="lazy">
+                                <img src="/guru/googledocs/peran.gif" alt="Dialog Peran Akses">
                             </div>
                             <div class="content-item">
                                 <h4>3.3 Bekerja Bersamaan: Kursor Kolaborator</h4>
                                 <p>Fitur ajaib Google Docs! Anda bisa melihat kursor setiap orang yang sedang mengedit dokumen, masing-masing dengan warna berbeda, beserta namanya.</p>
-                                <img data-src="/guru/googledocs/kolaborasi.gif" alt="Kursor Kolaborator" class="lazy">
+                                <img src="/guru/googledocs/kolaborasi.gif" alt="Kursor Kolaborator">
                             </div>
                         </div>
                     </div>
@@ -723,17 +674,17 @@
                             <div class="content-item">
                                 <h4>4.1 Memberi Catatan: Komentar dan @nama</h4>
                                 <p>Block teks yang ingin Anda komentari, lalu klik ikon komentar atau tekan <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>M</kbd>. Anda bisa menandai orang dengan mengetik <kbd>@</kbd> diikuti nama email mereka.</p>
-                                <img data-src="/guru/googledocs/komentar.gif" alt="Fitur Komentar" class="lazy">
+                                <img src="/guru/googledocs/komentar.gif" alt="Fitur Komentar">
                             </div>
                             <div class="pro-tip">
                                 <h4>Pro Tip: Mode Saran</h4>
                                 <p>Ubah mode editing dari <q>Editing</q> menjadi <strong>Suggesting</strong>. Setiap perubahan yang Anda buat akan menjadi saran yang bisa diterima atau ditolak oleh pemilik dokumen. Ini sangat berguna untuk kolaborasi profesional.</p>
-                                <img data-src="/guru/googledocs/saranedit.gif" alt="Mode Saran" class="lazy">
+                                <img src="/guru/googledocs/saranedit.gif" alt="Mode Saran">
                             </div>
                             <div class="content-item">
                                 <h4>4.3 Menjaga Dokumen Aman: Riwayat Versi</h4>
                                 <p>Google Docs menyimpan semua versi dokumen. Pergi ke <span class="menu-path">File > Version history > See version history</span> untuk melihat perubahan dan memulihkan dokumen ke versi sebelumnya.</p>
-                                <img data-src="/guru/googledocs/history.gif" alt="Riwayat Versi" class="lazy">
+                                <img src="/guru/googledocs/history.gif" alt="Riwayat Versi">
                             </div>
                         </div>
                     </div>
@@ -759,12 +710,12 @@
                             <div class="content-item">
                                 <h4>5.1 Pengganti "Save As": Ekspor PDF atau .docx</h4>
                                 <p>Setelah selesai, Anda bisa mengunduh dokumen dalam berbagai format. Pergi ke <span class="menu-path">File > Download</span> dan pilih <strong>PDF Document (.pdf)</strong> atau <strong>Microsoft Word (.docx)</strong>.</p>
-                                <img data-src="/guru/googledocs/simpansebagai.gif" alt="Menu Unduh/Ekspor" class="lazy">
+                                <img src="/guru/googledocs/simpansebagai.gif" alt="Menu Unduh/Ekspor">
                             </div>
                             <div class="content-item">
                                 <h4>5.2 Pengaturan Akhir: Mencetak Dokumen</h4>
                                 <p>Pergi ke <span class="menu-path">File > Print</span> atau tekan <kbd>Ctrl</kbd> + <kbd>P</kbd> (atau <kbd>Cmd</kbd> + <kbd>P</kbd>). Anda akan melihat pratinjau dan dapat mengatur pengaturan pencetakan seperti ukuran kertas dan margin.</p>
-                                <img data-src="/guru/googledocs/print.gif" alt="Dialog Print" class="lazy">
+                                <img src="/guru/googledocs/print.gif" alt="Dialog Print">
                             </div>
                         </div>
                     </div>
@@ -779,7 +730,8 @@
                             <div class="content-item">
                                 <h4>6.1 Mengetik Lebih Cepat: Voice Typing</h4>
                                 <p>Aktifkan fitur ini melalui menu <span class="menu-path">Tools > Voice typing</span>. Klik ikon mikrofon dan mulailah berbicara. Google Docs akan mengetikkan apa yang Anda ucapkan.</p>
-                                <img data-src="/guru/googledocs/voicetyping.gif" alt="Fitur Voice Typing" class="lazy">
+                                <img src="/guru/googledocs/voicetyping.gif" alt="Fitur Voice Typing">
+         
                             </div>
                         </div>
                     </div>
@@ -799,34 +751,15 @@
     <button id="scrollToTopBtn" title="Kembali ke atas">↑</button>
 
     <script>
-        // --- JavaScript untuk Pop-up Iklan yang Diperbaiki ---
-        (function() {
+        // --- JavaScript untuk Pop-up Iklan ---
+        document.addEventListener('DOMContentLoaded', function() {
             const adOverlay = document.getElementById('adOverlay');
             const adCloseBtn = document.getElementById('adCloseBtn');
             const adTimer = document.getElementById('adTimer');
-            const adImage = document.getElementById('adImage');
-            const adFallback = document.getElementById('adFallback');
-            
-            // Pastikan iklan ditampilkan segera
-            adOverlay.classList.remove('hidden');
-            
-            // Cek apakah gambar iklan tersedia
-            const img = new Image();
-            img.onload = function() {
-                // Gambar tersedia, tampilkan gambar dan sembunyikan fallback
-                adImage.style.display = 'block';
-                adFallback.style.display = 'none';
-            };
-            img.onerror = function() {
-                // Gambar tidak tersedia, tampilkan fallback
-                adImage.style.display = 'none';
-                adFallback.style.display = 'block';
-            };
-            img.src = 'https://fahriedtech.github.io/iklan.jpg';
             
             let countdown = 5;
             
-            // Timer countdown yang diperbaiki
+            // Timer countdown
             const timerInterval = setInterval(function() {
                 countdown--;
                 adTimer.textContent = countdown;
@@ -835,27 +768,14 @@
                     clearInterval(timerInterval);
                     adCloseBtn.disabled = false;
                     adTimer.style.display = 'none';
-                    // Tambahkan event listener setelah tombol diaktifkan
-                    adCloseBtn.addEventListener('click', function() {
-                        adOverlay.classList.add('hidden');
-                    });
                 }
             }, 1000);
             
-            // Event listener alternatif untuk menutup iklan dengan menekan ESC
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape' && !adCloseBtn.disabled) {
-                    adOverlay.classList.add('hidden');
-                }
+            // Event listener untuk tombol close
+            adCloseBtn.addEventListener('click', function() {
+                adOverlay.classList.add('hidden');
             });
-            
-            // Event listener untuk menutup iklan dengan mengklik di luar kontainer
-            adOverlay.addEventListener('click', function(event) {
-                if (event.target === adOverlay && !adCloseBtn.disabled) {
-                    adOverlay.classList.add('hidden');
-                }
-            });
-        })();
+        });
 
         // --- JavaScript untuk Scroll to Top dan Progress Bar ---
         const scrollToTopBtn = document.getElementById("scrollToTopBtn");
@@ -892,8 +812,6 @@
                 content.classList.remove('active');
             } else {
                 content.classList.add('active');
-                // Load gambar saat konten dibuka
-                loadImagesInElement(content);
             }
             
             icon.classList.toggle('rotate');
@@ -924,73 +842,7 @@
                 }, { passive: true });
             });
         });
-
-        // --- JavaScript untuk Lazy Loading Gambar ---
-        // Fungsi ini akan dijalankan setelah iklan selesai
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tunggu sedikit untuk memastikan iklan sudah muncul
-            setTimeout(function() {
-                // Load gambar yang terlihat di viewport saat halaman pertama kali dimuat
-                loadVisibleImages();
-                
-                // Set up Intersection Observer untuk gambar yang belum terlihat
-                const lazyImages = document.querySelectorAll('img.lazy');
-                
-                if ('IntersectionObserver' in window) {
-                    const imageObserver = new IntersectionObserver((entries, observer) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const img = entry.target;
-                                img.src = img.dataset.src;
-                                img.classList.remove('lazy');
-                                img.classList.add('loaded');
-                                imageObserver.unobserve(img);
-                            }
-                        });
-                    });
-                    
-                    lazyImages.forEach(img => {
-                        imageObserver.observe(img);
-                    });
-                } else {
-                    // Fallback untuk browser yang tidak mendukung IntersectionObserver
-                    lazyImages.forEach(img => {
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        img.classList.add('loaded');
-                    });
-                }
-                
-                // Load gambar saat konten dibuka (untuk konten yang belum terlihat di viewport)
-                window.loadImagesInElement = function(element) {
-                    const images = element.querySelectorAll('img.lazy');
-                    images.forEach(img => {
-                        if (img.dataset.src && !img.src) {
-                            img.src = img.dataset.src;
-                            img.classList.remove('lazy');
-                            img.classList.add('loaded');
-                        }
-                    });
-                };
-                
-                // Fungsi untuk memuat gambar yang terlihat di viewport
-                function loadVisibleImages() {
-                    lazyImages.forEach(img => {
-                        const rect = img.getBoundingClientRect();
-                        if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                            img.src = img.dataset.src;
-                            img.classList.remove('lazy');
-                            img.classList.add('loaded');
-                        }
-                    });
-                }
-                
-                // Load gambar yang terlihat saat scroll
-                window.addEventListener('scroll', function() {
-                    loadVisibleImages();
-                });
-            }, 100); // Tunggu 100ms untuk memastikan iklan sudah muncul
-        });
     </script>
+
 </body>
 </html>
