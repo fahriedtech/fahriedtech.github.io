@@ -7,7 +7,6 @@
     <link rel="icon" href="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/main/images/favicon.png" type="image/png">
     <style>
         /* --- PERBAIKAN: Global Box-Sizing & Anti-Overflow --- */
-        /* Ini adalah praktik terbaik untuk memastikan layout yang konsisten dan mencegah overflow horizontal. */
         html {
             box-sizing: border-box;
         }
@@ -15,17 +14,14 @@
             box-sizing: inherit;
         }
         body, html {
-            /* Mencegah scroll horizontal di level tertinggi */
             overflow-x: hidden;
         }
         
         /* CSS untuk Tampilan Profesional */
         
-        /* --- PEMBARUAN IMPORT FONT --- */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto+Slab:wght@500;600&family=Roboto:wght@400;500&family=Inter:wght@400;600&display=swap');
         
         :root {
-            /* --- Variabel Warna (Tidak Berubah) --- */
             --primary-color: #4285F4;
             --primary-hover: #1967d2;
             --secondary-color: #34A853;
@@ -36,15 +32,13 @@
             --bg-secondary: #fff;
             --border-color: #e8eaed;
 
-            /* --- PEMBARUAN VARIABEL FONT --- */
-            --font-title: 'Poppins', sans-serif;      /* Untuk Judul Utama & Sub Judul */
-            --font-section: 'Roboto Slab', serif;     /* Untuk Judul Bagian */
-            --font-chapter: 'Roboto', sans-serif;     /* Untuk Judul Bab */
-            --font-content: 'Inter', sans-serif;      /* Untuk Isi Konten (paragraf & sub-judul item) */
+            --font-title: 'Poppins', sans-serif;
+            --font-section: 'Roboto Slab', serif;
+            --font-chapter: 'Roboto', sans-serif;
+            --font-content: 'Inter', sans-serif;
         }
 
         body {
-            /* Menggunakan font konten sebagai default untuk seluruh body */
             font-family: var(--font-content);
             line-height: 1.7;
             margin: 0;
@@ -82,7 +76,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             flex: 1;
             margin-top: 8px;
-            /* PERBAIKAN: Pastikan container tidak pernah lebih lebar dari layar */
             width: 100%;
         }
         header {
@@ -199,7 +192,6 @@
             color: var(--text-secondary);
             line-height: 1.6;
             font-family: var(--font-content);
-            /* PERBAIKAN: Memastikan teks panjang dapat pecah barisnya */
             overflow-wrap: break-word;
             word-wrap: break-word;
         }
@@ -209,7 +201,6 @@
             border-radius: 8px;
             margin-top: 14px;
             border: 1px solid var(--border-color);
-            /* Efek transisi untuk lazy loading */
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
@@ -234,7 +225,6 @@
             border-left: 4px solid var(--secondary-color);
             background-color: var(--secondary-bg);
             border-radius: 0 8px 8px 0;
-            /* PERBAIKAN: Memastikan konten tidak terpotong */
             overflow-wrap: break-word;
             word-wrap: break-word;
             overflow: hidden;
@@ -245,17 +235,15 @@
             align-items: center;
             gap: 8px;
             font-family: var(--font-content);
-            /* PERBAIKAN: Memastikan judul tidak terpotong */
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
         .pro-tip h4::before {
             content: "💡";
             font-size: 1.2em;
-            flex-shrink: 0; /* Mencegah ikon menyusut */
+            flex-shrink: 0;
         }
         .pro-tip p {
-            /* PERBAIKAN: Memastikan paragraf tidak terpotong */
             overflow-wrap: break-word;
             word-wrap: break-word;
             margin-bottom: 10px;
@@ -267,7 +255,6 @@
             margin-top: 10px;
             border: 1px solid var(--border-color);
             display: block;
-            /* Efek transisi untuk lazy loading */
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
@@ -344,9 +331,8 @@
             font-size: 0.9em;
             color: var(--text-primary);
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            /* PERBAIKAN: Beri sedikit ruang agar tidak menempel dan memecah dengan lebih baik */
             margin: 0 2px;
-            display: inline-block; /* Membantu kontrol margin dan wrapping */
+            display: inline-block;
         }
 
         .menu-path {
@@ -362,7 +348,7 @@
             background-color: #e0e0e0;
         }
         
-        /* --- STYLE UNTUK POP-UP IKLAN --- */
+        /* --- STYLE UNTUK POP-UP IKLAN YANG DIPERBAIKI --- */
         #adOverlay {
             position: fixed;
             top: 0;
@@ -510,13 +496,11 @@
                 width: 44px;
                 height: 44px;
             }
-            /* PERBAIKAN: Keterbacaan elemen kecil di layar sangat kecil */
             kbd {
                 font-size: 1em;
                 padding: 3px 7px;
             }
             
-            /* PERBAIKAN: Memastikan Pro Tip tidak terpotong di mobile */
             .pro-tip {
                 margin-top: 20px;
                 padding: 14px;
@@ -550,7 +534,7 @@
 </head>
 <body>
 
-    <!-- Pop-up Iklan -->
+    <!-- Pop-up Iklan yang Diperbaiki -->
     <div id="adOverlay">
         <div id="adContainer">
             <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan">
@@ -762,15 +746,19 @@
     <button id="scrollToTopBtn" title="Kembali ke atas">↑</button>
 
     <script>
-        // --- JavaScript untuk Pop-up Iklan ---
-        document.addEventListener('DOMContentLoaded', function() {
+        // --- JavaScript untuk Pop-up Iklan yang Diperbaiki ---
+        // Iklan langsung muncul tanpa menunggu konten lain
+        (function() {
             const adOverlay = document.getElementById('adOverlay');
             const adCloseBtn = document.getElementById('adCloseBtn');
             const adTimer = document.getElementById('adTimer');
             
+            // Pastikan iklan ditampilkan segera
+            adOverlay.classList.remove('hidden');
+            
             let countdown = 5;
             
-            // Timer countdown
+            // Timer countdown yang diperbaiki
             const timerInterval = setInterval(function() {
                 countdown--;
                 adTimer.textContent = countdown;
@@ -779,14 +767,27 @@
                     clearInterval(timerInterval);
                     adCloseBtn.disabled = false;
                     adTimer.style.display = 'none';
+                    // Tambahkan event listener setelah tombol diaktifkan
+                    adCloseBtn.addEventListener('click', function() {
+                        adOverlay.classList.add('hidden');
+                    });
                 }
             }, 1000);
             
-            // Event listener untuk tombol close
-            adCloseBtn.addEventListener('click', function() {
-                adOverlay.classList.add('hidden');
+            // Event listener alternatif untuk menutup iklan dengan menekan ESC
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && !adCloseBtn.disabled) {
+                    adOverlay.classList.add('hidden');
+                }
             });
-        });
+            
+            // Event listener untuk menutup iklan dengan mengklik di luar kontainer
+            adOverlay.addEventListener('click', function(event) {
+                if (event.target === adOverlay && !adCloseBtn.disabled) {
+                    adOverlay.classList.add('hidden');
+                }
+            });
+        })();
 
         // --- JavaScript untuk Scroll to Top dan Progress Bar ---
         const scrollToTopBtn = document.getElementById("scrollToTopBtn");
@@ -857,66 +858,70 @@
         });
 
         // --- JavaScript untuk Lazy Loading Gambar ---
+        // Fungsi ini akan dijalankan setelah iklan selesai
         document.addEventListener('DOMContentLoaded', function() {
-            // Load gambar yang terlihat di viewport saat halaman pertama kali dimuat
-            loadVisibleImages();
-            
-            // Set up Intersection Observer untuk gambar yang belum terlihat
-            const lazyImages = document.querySelectorAll('img.lazy');
-            
-            if ('IntersectionObserver' in window) {
-                const imageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
+            // Tunggu sedikit untuk memastikan iklan sudah muncul
+            setTimeout(function() {
+                // Load gambar yang terlihat di viewport saat halaman pertama kali dimuat
+                loadVisibleImages();
+                
+                // Set up Intersection Observer untuk gambar yang belum terlihat
+                const lazyImages = document.querySelectorAll('img.lazy');
+                
+                if ('IntersectionObserver' in window) {
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const img = entry.target;
+                                img.src = img.dataset.src;
+                                img.classList.remove('lazy');
+                                img.classList.add('loaded');
+                                imageObserver.unobserve(img);
+                            }
+                        });
+                    });
+                    
+                    lazyImages.forEach(img => {
+                        imageObserver.observe(img);
+                    });
+                } else {
+                    // Fallback untuk browser yang tidak mendukung IntersectionObserver
+                    lazyImages.forEach(img => {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        img.classList.add('loaded');
+                    });
+                }
+                
+                // Load gambar saat konten dibuka (untuk konten yang belum terlihat di viewport)
+                window.loadImagesInElement = function(element) {
+                    const images = element.querySelectorAll('img.lazy');
+                    images.forEach(img => {
+                        if (img.dataset.src && !img.src) {
                             img.src = img.dataset.src;
                             img.classList.remove('lazy');
                             img.classList.add('loaded');
-                            imageObserver.unobserve(img);
                         }
                     });
-                });
+                };
                 
-                lazyImages.forEach(img => {
-                    imageObserver.observe(img);
+                // Fungsi untuk memuat gambar yang terlihat di viewport
+                function loadVisibleImages() {
+                    lazyImages.forEach(img => {
+                        const rect = img.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            img.classList.add('loaded');
+                        }
+                    });
+                }
+                
+                // Load gambar yang terlihat saat scroll
+                window.addEventListener('scroll', function() {
+                    loadVisibleImages();
                 });
-            } else {
-                // Fallback untuk browser yang tidak mendukung IntersectionObserver
-                lazyImages.forEach(img => {
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    img.classList.add('loaded');
-                });
-            }
-            
-            // Load gambar saat konten dibuka (untuk konten yang belum terlihat di viewport)
-            window.loadImagesInElement = function(element) {
-                const images = element.querySelectorAll('img.lazy');
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        img.classList.add('loaded');
-                    }
-                });
-            };
-            
-            // Fungsi untuk memuat gambar yang terlihat di viewport
-            function loadVisibleImages() {
-                lazyImages.forEach(img => {
-                    const rect = img.getBoundingClientRect();
-                    if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        img.classList.add('loaded');
-                    }
-                });
-            }
-            
-            // Load gambar yang terlihat saat scroll
-            window.addEventListener('scroll', function() {
-                loadVisibleImages();
-            });
+            }, 100); // Tunggu 100ms untuk memastikan iklan sudah muncul
         });
     </script>
 </body>
