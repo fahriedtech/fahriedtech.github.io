@@ -377,13 +377,19 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
         
         #adImage {
             display: block;
             max-width: 100%;
-            max-height: 80vh;
+            max-height: 60vh;
             object-fit: contain;
+            border-radius: 8px;
         }
         
         #adCloseBtn {
@@ -427,6 +433,36 @@
             font-size: 14px;
             font-weight: bold;
         }
+
+        /* Fallback jika gambar iklan tidak tersedia */
+        .ad-fallback {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .ad-fallback h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .ad-fallback p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .ad-fallback .ad-cta {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .ad-fallback .ad-cta:hover {
+            background-color: var(--primary-hover);
+        }
         
         /* --- Media Queries untuk Responsivitas --- */
         @media (max-width: 768px) {
@@ -458,6 +494,10 @@
             }
             .content-item p {
                 font-size: 0.9em;
+            }
+            #adContainer {
+                max-width: 95%;
+                padding: 15px;
             }
         }
         
@@ -529,15 +569,28 @@
                 max-width: 100%;
                 height: auto;
             }
+            #adContainer {
+                max-width: 98%;
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Pop-up Iklan yang Diperbaiki -->
+    <!-- Pop-up Iklan yang Diperbaiki dengan Fallback -->
     <div id="adOverlay">
         <div id="adContainer">
-            <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan">
+            <!-- Gambar iklan utama -->
+            <img id="adImage" src="https://fahriedtech.github.io/iklan.jpg" alt="Iklan" style="display: none;">
+            
+            <!-- Fallback jika gambar tidak tersedia -->
+            <div id="adFallback" class="ad-fallback">
+                <h3>✨ Panduan Google Docs Premium</h3>
+                <p>Dapatkan akses ke panduan lengkap dengan tips dan trik advanced untuk menguasai Google Docs!</p>
+                <a href="https://fahriedtech.github.io/" class="ad-cta" target="_blank">Pelajari Lebih Lanjut</a>
+            </div>
+            
             <button id="adCloseBtn" disabled>×</button>
             <div id="adTimer">5</div>
         </div>
@@ -747,14 +800,29 @@
 
     <script>
         // --- JavaScript untuk Pop-up Iklan yang Diperbaiki ---
-        // Iklan langsung muncul tanpa menunggu konten lain
         (function() {
             const adOverlay = document.getElementById('adOverlay');
             const adCloseBtn = document.getElementById('adCloseBtn');
             const adTimer = document.getElementById('adTimer');
+            const adImage = document.getElementById('adImage');
+            const adFallback = document.getElementById('adFallback');
             
             // Pastikan iklan ditampilkan segera
             adOverlay.classList.remove('hidden');
+            
+            // Cek apakah gambar iklan tersedia
+            const img = new Image();
+            img.onload = function() {
+                // Gambar tersedia, tampilkan gambar dan sembunyikan fallback
+                adImage.style.display = 'block';
+                adFallback.style.display = 'none';
+            };
+            img.onerror = function() {
+                // Gambar tidak tersedia, tampilkan fallback
+                adImage.style.display = 'none';
+                adFallback.style.display = 'block';
+            };
+            img.src = 'https://fahriedtech.github.io/iklan.jpg';
             
             let countdown = 5;
             
