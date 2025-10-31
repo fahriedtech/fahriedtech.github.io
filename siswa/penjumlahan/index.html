@@ -86,9 +86,9 @@
     @media screen and (max-width: 768px) and (orientation: landscape) {
       .game-container {
         transform-origin: top left;
-        transform: scale(0.8);
-        width: 125%;
-        height: 125%;
+        transform: scale(0.5);
+        width: 200%;
+        height: 200%;
       }
       
       body {
@@ -99,18 +99,18 @@
     /* Smaller mobile devices */
     @media screen and (max-width: 640px) and (orientation: landscape) {
       .game-container {
-        transform: scale(0.7);
-        width: 142.86%;
-        height: 142.86%;
+        transform: scale(0.45);
+        width: 222.22%;
+        height: 222.22%;
       }
     }
 
     /* Very small mobile devices */
     @media screen and (max-width: 480px) and (orientation: landscape) {
       .game-container {
-        transform: scale(0.6);
-        width: 166.67%;
-        height: 166.67%;
+        transform: scale(0.4);
+        width: 250%;
+        height: 250%;
       }
     }
 
@@ -219,6 +219,10 @@
       padding: 15px;
       background: rgba(255, 255, 255, 0.9);
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
     }
 
     .game-title {
@@ -227,11 +231,10 @@
       color: #2c3e50;
       margin: 0;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      flex: 1;
     }
 
-    .difficulty-selector {
-      margin-top: 10px;
-    }
+
 
     .difficulty-btn {
       padding: 8px 20px;
@@ -268,43 +271,29 @@
     }
 
     .score-display {
-      position: absolute;
-      top: 20px;
-      width: 100%;
-      height: 100px;
-      pointer-events: none;
-    }
-
-    .team-score.left {
-      position: absolute;
-      top: 0;
-      left: 20px;
-    }
-
-    .team-score.right {
-      position: absolute;
-      top: 0;
-      right: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
     }
 
     .team-score {
       background: rgba(255, 255, 255, 0.95);
-      padding: 15px 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
       text-align: center;
-      border: 4px solid #2196F3;
-      pointer-events: auto;
+      border: 3px solid #2196F3;
+      min-width: 100px;
     }
 
     .team-score.right {
-      border: 4px solid #f44336;
+      border: 3px solid #f44336;
     }
 
     .team-label {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
 
     .team-score.left .team-label {
@@ -316,7 +305,7 @@
     }
 
     .score-number {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: bold;
       color: #2c3e50;
     }
@@ -911,11 +900,6 @@
    </div><!-- Halaman Game -->
    <div class="game-page hidden" id="gamePage">
     <div class="title-bar">
-     <h1 class="game-title" id="gameTitle">Tarik Tambang Angka</h1>
-     <div class="difficulty-selector"><button class="difficulty-btn" onclick="goHome()" id="homeBtn">🏠 Beranda</button>
-     </div>
-    </div>
-    <div class="arena">
      <div class="score-display">
       <div class="team-score left">
        <div class="team-label" id="leftTeamLabel">
@@ -925,6 +909,9 @@
         0
        </div>
       </div>
+     </div>
+     <h1 class="game-title" id="gameTitle">Tarik Tambang Angka</h1>
+     <div class="score-display">
       <div class="team-score right">
        <div class="team-label" id="rightTeamLabel">
         Tim Kanan
@@ -934,6 +921,8 @@
        </div>
       </div>
      </div>
+    </div>
+    <div class="arena">
      <div class="start-game-overlay" id="startGameOverlay">
       <div class="start-game-content">
        <h2 class="start-title">Siap Bermain?</h2>
@@ -1008,7 +997,7 @@
      <div class="question-area">
       <div class="timer-display-center" id="timerDisplay">
        00:00
-      </div>
+      </div><button class="difficulty-btn" onclick="goHome()" id="homeBtn" style="margin-top: 15px;">🏠 Beranda</button>
      </div>
      <div class="team-controls right">
       <div class="control-label" id="rightControlLabel">
@@ -1049,8 +1038,8 @@
 
     let gameState = {
       difficulty: 1,
-      leftQuestion: { num1: 0, num2: 0, answer: 0 },
-      rightQuestion: { num1: 0, num2: 0, answer: 0 },
+      leftQuestion: { num1: 0, num2: 0, operation: '+', answer: 0 },
+      rightQuestion: { num1: 0, num2: 0, operation: '+', answer: 0 },
       leftAnswer: '',
       rightAnswer: '',
       leftScore: 0,
@@ -1118,19 +1107,26 @@
       // Generate question for left team
       const leftNum1 = Math.floor(Math.random() * max) + 1;
       const leftNum2 = Math.floor(Math.random() * max) + 1;
+      
       gameState.leftQuestion = {
         num1: leftNum1,
         num2: leftNum2,
+        operation: '+',
         answer: leftNum1 + leftNum2
       };
       document.getElementById('leftQuestion').textContent = `${leftNum1} + ${leftNum2}`;
       
-      // Generate question for right team
-      const rightNum1 = Math.floor(Math.random() * max) + 1;
-      const rightNum2 = Math.floor(Math.random() * max) + 1;
+      // Generate different question for right team
+      let rightNum1, rightNum2;
+      do {
+        rightNum1 = Math.floor(Math.random() * max) + 1;
+        rightNum2 = Math.floor(Math.random() * max) + 1;
+      } while (rightNum1 === leftNum1 && rightNum2 === leftNum2);
+      
       gameState.rightQuestion = {
         num1: rightNum1,
         num2: rightNum2,
+        operation: '+',
         answer: rightNum1 + rightNum2
       };
       document.getElementById('rightQuestion').textContent = `${rightNum1} + ${rightNum2}`;
@@ -1145,6 +1141,7 @@
         gameState.leftQuestion = {
           num1: num1,
           num2: num2,
+          operation: '+',
           answer: num1 + num2
         };
         document.getElementById('leftQuestion').textContent = `${num1} + ${num2}`;
@@ -1152,6 +1149,7 @@
         gameState.rightQuestion = {
           num1: num1,
           num2: num2,
+          operation: '+',
           answer: num1 + num2
         };
         document.getElementById('rightQuestion').textContent = `${num1} + ${num2}`;
@@ -1386,8 +1384,8 @@
     }
 
     function resetGameState() {
-      gameState.leftQuestion = { num1: 0, num2: 0, answer: 0 };
-      gameState.rightQuestion = { num1: 0, num2: 0, answer: 0 };
+      gameState.leftQuestion = { num1: 0, num2: 0, operation: '+', answer: 0 };
+      gameState.rightQuestion = { num1: 0, num2: 0, operation: '+', answer: 0 };
       gameState.leftAnswer = '';
       gameState.rightAnswer = '';
       gameState.leftScore = 0;
@@ -1470,5 +1468,5 @@
 
     // Game akan dimulai setelah tombol start ditekan
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9975653df2ebb573',t:'MTc2MTkzNzIyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99757391b5adea7f',t:'MTc2MTkzNzgxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
