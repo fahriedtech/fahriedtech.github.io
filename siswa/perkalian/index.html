@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Full Layar dengan Footer Teks di Tengah</title>
+    <style>
+        /* 1. Pengaturan Dasar Halaman */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+            width: 100%;
+            height: 100%;
+            /* Mode Gelap */
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: Arial, sans-serif;
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        /* 2. Pengaturan Iframe agar Otomatis Mengisi Ruang Tengah */
+        iframe {
+            display: block;
+            flex-grow: 1; 
+            width: 100vw;   
+            border: none;
+        }
+
+        /* 3. Gaya untuk Footer Kecil dan di Tengah */
+        .small-footer {
+            background-color: #1a1a1a; 
+            color: #ffffff; 
+            font-size: 0.7em; 
+            padding: 3px 0; 
+            height: 20px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; /* Kunci: Pusatkan konten secara horizontal */
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5); 
+        }
+
+        .small-footer a {
+            color: inherit; 
+            text-decoration: none; 
+            display: inline-block;
+            /* ANIMASI MARQUEE DIHAPUS */
+        }
+
+        /* KEYFRAMES ANIMASI DIHAPUS */
+    </style>
+</head>
+<body>
+    
+    <iframe src="https://scratch.mit.edu/projects/1221369784/embed" 
+            allowtransparency="true" 
+            frameborder="0" 
+            scrolling="no" 
+            allowfullscreen>
+    </iframe>
+
+    <div class="small-footer">
+        <a href="https://fahriedtech.github.io/" target="_blank">
+            Game ini dibuat oleh Pak Fahri, S.Pd Guru SMP Negeri 2 Manggar
+        </a>
+    </div>
+
+</body>
+</html>
