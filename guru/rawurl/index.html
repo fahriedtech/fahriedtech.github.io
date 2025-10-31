@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Raw URL Generator</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter secara default */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Warna latar belakang lembut */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+<div class="container w-full max-w-xl bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl">
+    <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">
+        <span class="text-blue-600">Raw URL</span> Generator
+    </h1>
+    <p class="text-center text-gray-600 mb-8">
+        Ubah alamat file GitHub (<code>.../blob/...</code>) menjadi alamat <em>raw</em> yang siap tempel.
+
+    </p>
+    
+    <!-- PANDUAN VISUAL KONVERSI -->
+    <details class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm cursor-pointer">
+        <summary class="font-bold text-blue-700 hover:text-blue-800 transition">Mengapa URL Raw Saya Gagal Dibuka? (Penyelesaian Masalah)</summary>
+        <div class="mt-3 space-y-3 text-gray-700">
+            <p class="font-bold text-red-600">Penyebab 404 yang Paling Umum:</p>
+            <ol class="list-decimal list-inside pl-4 space-y-1">
+                <li>Tautan menuju Folder, bukan File.Tautan Raw harus spesifik ke sebuah file.</li>
+                <li>Kesalahan pengetikan pada nama file atau path (bersifat case-sensitive).</li>
+                <li>Repositori bersifat Private. (Sudah Anda pastikan tidak).</li>
+            </ol>
+        </div>
+    </details>
+    <!-- AKHIR PANDUAN VISUAL -->
+
+    <div id="input-section" class="mb-6">
+        <label for="githubUrl" class="block text-sm font-medium text-gray-700 mb-2">
+            1. Masukkan Alamat File GitHub:
+        </label>
+        <input type="text" id="githubUrl" placeholder="Contoh: https://github.com/user/repo/blob/main/path/file.jpg"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 shadow-inner text-sm"
+               oninput="handleInput()">
+    </div>
+
+    <!-- OUTPUT 1: VERSI TEPAT (Commit Hash/Branch Asli) -->
+    <div id="output-exact-section" class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            2a. Alamat Raw Versi Tepat (Paling Stabil):
+        </label>
+        <div class="relative">
+            <textarea id="rawUrlOutputExact" rows="2" readonly
+                      class="w-full p-3 bg-gray-100 border border-dashed border-gray-400 rounded-lg text-sm text-green-700 font-mono resize-none"></textarea>
+            
+            <button id="copyButtonExact" onclick="copyRawUrl('rawUrlOutputExact')"
+                    class="absolute bottom-2 right-2 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-green-700 disabled:opacity-50 transition duration-150"
+                    disabled>
+                Salin
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Menggunakan Branch/Hash yang Anda input.</p>
+    </div>
+
+    <!-- OUTPUT 2: VERSI TERBARU (Forced 'main' Branch) -->
+    <div id="output-latest-section" class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            2b. Alamat Raw Versi Terbaru (Force 'main'):
+        </label>
+        <div class="relative">
+            <textarea id="rawUrlOutputLatest" rows="2" readonly
+                      class="w-full p-3 bg-gray-100 border border-dashed border-gray-400 rounded-lg text-sm text-blue-700 font-mono resize-none"></textarea>
+            
+            <button id="copyButtonLatest" onclick="copyRawUrl('rawUrlOutputLatest')"
+                    class="absolute bottom-2 right-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 disabled:opacity-50 transition duration-150"
+                    disabled>
+                Salin
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Mengganti Branch/Hash menjadi `main` (untuk file yang selalu diperbarui).</p>
+    </div>
+
+    <!-- Area Pesan (Error & Sukses) -->
+    <div id="messageArea" class="mt-4">
+        <div id="errorMessage" class="hidden p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm transition-opacity duration-300">
+            <span class="font-bold">Kesalahan Input:</span> Harap masukkan URL GitHub yang valid yang mengandung <code>github.com</code> dan <code>/blob/</code>.
+        </div>
+        <div id="successMessage" class="hidden p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm transition-opacity duration-300">
+            <span class="font-bold">Berhasil Disalin!</span> Alamat *raw* sudah ada di clipboard Anda.
+        </div>
+    </div>
+    
+    <!-- Troubleshooting Tip -->
+    <div class="p-3 mt-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg text-sm">
+        <span class="font-bold">Penting:</span> Jika kedua tautan di atas gagal 404, <strong>TIDAK ADA URL RAW YANG BISA BEKERJA</strong>. Masalahnya pasti ada pada <strong>izin akses repositori</strong> atau <strong>path file yang salah</strong>.
+
+    </div>
+</div>
+
+<script>
+    // Inisialisasi DOM elements
+    const githubUrlInput = document.getElementById('githubUrl');
+    const rawUrlOutputExact = document.getElementById('rawUrlOutputExact');
+    const rawUrlOutputLatest = document.getElementById('rawUrlOutputLatest');
+    const copyButtonExact = document.getElementById('copyButtonExact');
+    const copyButtonLatest = document.getElementById('copyButtonLatest');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    /**
+     * Membersihkan URL dari fragment (#LXX) dan query parameters (?...)
+     * @param {string} url - URL GitHub mentah.
+     * @returns {string} URL yang sudah dibersihkan.
+     */
+    function cleanUrl(url) {
+        return url.split('#')[0].split('?')[0];
+    }
+
+    /**
+     * Mengonversi URL GitHub ke URL Raw.
+     * @param {string} cleanedUrl - URL yang sudah dibersihkan.
+     * @param {boolean} forceMain - Jika true, mengganti branch/hash menjadi 'main'.
+     * @returns {string} URL Raw yang dikonversi.
+     */
+    function generateRawUrl(cleanedUrl, forceMain) {
+        // 1. Ganti host dari github.com ke raw.githubusercontent.com
+        let rawUrl = cleanedUrl.replace('github.com', 'raw.githubusercontent.com');
+
+        // Cari string '/blob/' yang HARUS diikuti oleh branch/hash
+        const blobIndex = rawUrl.indexOf('/blob/');
+        if (blobIndex === -1) {
+            return null; // Format tidak valid
+        }
+
+        // Cari akhir dari branch/hash (yaitu '/' berikutnya)
+        const pathStartIndex = rawUrl.indexOf('/', blobIndex + 6); // +6 untuk melewati '/blob/'
+        if (pathStartIndex === -1) {
+            return null; // Format tidak lengkap
+        }
+
+        // Dapatkan bagian sebelum path (termasuk branch/hash)
+        const prefix = rawUrl.substring(0, blobIndex);
+        const suffix = rawUrl.substring(pathStartIndex);
+        let branchOrHash = rawUrl.substring(blobIndex + 6, pathStartIndex);
+
+        if (forceMain) {
+            branchOrHash = 'main'; // Ganti ke branch 'main'
+        }
+
+        // Gabungkan kembali: prefix + branch/hash baru + suffix
+        return prefix + '/' + branchOrHash + suffix;
+    }
+
+    /**
+     * Menangani input pengguna dan menampilkan hasil konversi.
+     */
+    function handleInput() {
+        const url = githubUrlInput.value.trim();
+        rawUrlOutputExact.value = '';
+        rawUrlOutputLatest.value = '';
+        copyButtonExact.disabled = true;
+        copyButtonLatest.disabled = true;
+        errorMessage.classList.add('hidden');
+        successMessage.classList.add('hidden');
+
+        if (url === '') {
+            return;
+        }
+
+        // Validasi: harus mengandung github.com dan /blob/
+        const isValid = url.includes('github.com') && url.includes('/blob/');
+
+        if (!isValid) {
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+
+        const cleanedUrl = cleanUrl(url);
+
+        // --- Generasi Versi Tepat (Exact) ---
+        const rawUrlExact = generateRawUrl(cleanedUrl, false);
+        if (rawUrlExact) {
+            rawUrlOutputExact.value = rawUrlExact;
+            copyButtonExact.disabled = false;
+        }
+
+        // --- Generasi Versi Terbaru (Latest) ---
+        const rawUrlLatest = generateRawUrl(cleanedUrl, true);
+        if (rawUrlLatest) {
+            rawUrlOutputLatest.value = rawUrlLatest;
+            copyButtonLatest.disabled = false;
+        }
+
+        if (!rawUrlExact && !rawUrlLatest) {
+             errorMessage.classList.remove('hidden');
+             rawUrlOutputExact.value = 'URL GAGAL DIKONVERSI. Cek kembali format Anda.';
+             return;
+        }
+    }
+
+    /**
+     * Menyalin URL Raw yang dihasilkan ke clipboard.
+     * @param {string} elementId - ID dari textarea yang akan disalin.
+     */
+    function copyRawUrl(elementId) {
+        const textToCopy = document.getElementById(elementId).value;
+        if (!textToCopy) return;
+
+        // Salin ke clipboard
+        try {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Tampilkan pesan sukses
+            successMessage.classList.remove('hidden');
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 2500);
+
+        } catch (err) {
+            errorMessage.textContent = 'Gagal menyalin URL. Silakan salin manual.';
+            errorMessage.classList.remove('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>
