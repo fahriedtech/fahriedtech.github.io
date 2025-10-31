@@ -62,8 +62,8 @@
       line-height: 1.4;
     }
 
-    /* Show rotate overlay only in portrait mode on mobile */
-    @media screen and (max-width: 768px) and (orientation: portrait) {
+    /* Always show rotate overlay in portrait mode */
+    @media screen and (orientation: portrait) {
       .rotate-overlay {
         display: flex;
       }
@@ -78,9 +78,40 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      max-width: 1920px;
+      width: 100%;
       margin: 0 auto;
-      aspect-ratio: 16/9;
+    }
+
+    /* Mobile landscape optimization - scale to fit screen */
+    @media screen and (max-width: 768px) and (orientation: landscape) {
+      .game-container {
+        transform-origin: top left;
+        transform: scale(0.8);
+        width: 125%;
+        height: 125%;
+      }
+      
+      body {
+        overflow: hidden;
+      }
+    }
+
+    /* Smaller mobile devices */
+    @media screen and (max-width: 640px) and (orientation: landscape) {
+      .game-container {
+        transform: scale(0.7);
+        width: 142.86%;
+        height: 142.86%;
+      }
+    }
+
+    /* Very small mobile devices */
+    @media screen and (max-width: 480px) and (orientation: landscape) {
+      .game-container {
+        transform: scale(0.6);
+        width: 166.67%;
+        height: 166.67%;
+      }
     }
 
     .difficulty-selection-page {
@@ -832,8 +863,8 @@
       text-decoration: underline;
     }
 
-    /* Hide footer on mobile portrait to avoid conflicts with rotate overlay */
-    @media screen and (max-width: 768px) and (orientation: portrait) {
+    /* Hide footer on portrait to avoid conflicts with rotate overlay */
+    @media screen and (orientation: portrait) {
       .footer {
         display: none;
       }
@@ -1439,5 +1470,5 @@
 
     // Game akan dimulai setelah tombol start ditekan
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9974c9a6a150b573',t:'MTc2MTkzMDg1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9975653df2ebb573',t:'MTc2MTkzNzIyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
