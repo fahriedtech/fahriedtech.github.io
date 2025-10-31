@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarik Tambang Angka</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', 'Arial', sans-serif;
+      overflow: hidden;
+      height: 100%;
+      background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 100%);
+    }
+
+    html {
+      height: 100%;
+    }
+
+    /* Landscape lock overlay */
+    .rotate-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #2c3e50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .rotate-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: rotatePhone 2s ease-in-out infinite;
+    }
+
+    @keyframes rotatePhone {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(90deg); }
+    }
+
+    .rotate-text {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .rotate-subtext {
+      font-size: 16px;
+      opacity: 0.8;
+      max-width: 300px;
+      line-height: 1.4;
+    }
+
+    /* Show rotate overlay only in portrait mode on mobile */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .rotate-overlay {
+        display: flex;
+      }
+      
+      .game-container {
+        display: none;
+      }
+    }
+
+    .game-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      max-width: 1920px;
+      margin: 0 auto;
+      aspect-ratio: 16/9;
+    }
+
+    .difficulty-selection-page {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+
+    .difficulty-selection-page.hidden {
+      display: none;
+    }
+
+    .difficulty-content {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 60px;
+      border-radius: 30px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      max-width: 600px;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    @keyframes slideIn {
+      0% { transform: translateY(-50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .difficulty-main-title {
+      font-size: 48px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .difficulty-subtitle {
+      font-size: 24px;
+      color: #7f8c8d;
+      margin: 0 0 40px 0;
+      line-height: 1.4;
+    }
+
+    .difficulty-options {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .difficulty-option {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 30px 40px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      min-width: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .difficulty-option:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+    }
+
+    .difficulty-option:active {
+      transform: translateY(-2px);
+    }
+
+    .difficulty-option.easy {
+      background: linear-gradient(135deg, #27ae60, #229954);
+    }
+
+    .difficulty-option.hard {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    .difficulty-description {
+      font-size: 16px;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .game-page {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-page.hidden {
+      display: none;
+    }
+
+    .title-bar {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .game-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .difficulty-selector {
+      margin-top: 10px;
+    }
+
+    .difficulty-btn {
+      padding: 8px 20px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #3498db;
+      color: white;
+    }
+
+    .difficulty-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .difficulty-btn.active {
+      background: #27ae60;
+    }
+
+    .arena {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 15px 40px;
+      background: linear-gradient(to bottom, #7cb342 0%, #558b2f 100%);
+      min-height: 0;
+    }
+
+    .score-display {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      height: 100px;
+      pointer-events: none;
+    }
+
+    .team-score.left {
+      position: absolute;
+      top: 0;
+      left: 20px;
+    }
+
+    .team-score.right {
+      position: absolute;
+      top: 0;
+      right: 20px;
+    }
+
+    .team-score {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      text-align: center;
+      border: 4px solid #2196F3;
+      pointer-events: auto;
+    }
+
+    .team-score.right {
+      border: 4px solid #f44336;
+    }
+
+    .team-label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .team-score.left .team-label {
+      color: #2196F3;
+    }
+
+    .team-score.right .team-label {
+      color: #f44336;
+    }
+
+    .score-number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .rope-container {
+      width: 80%;
+      max-width: 700px;
+      height: 150px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .character {
+      width: 100px;
+      height: 130px;
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.5s;
+      z-index: 10;
+    }
+
+    .character.left {
+      left: -20px;
+    }
+
+    .character.right {
+      right: -20px;
+    }
+
+    .character-image {
+      width: 100px;
+      height: 130px;
+      object-fit: contain;
+      transition: transform 0.5s;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .character-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 80px;
+      height: 120px;
+    }
+
+    .character-body {
+      width: 70px;
+      height: 90px;
+      border-radius: 35px 35px 15px 15px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .character.left .character-body {
+      background: #2196F3;
+    }
+
+    .character.right .character-body {
+      background: #f44336;
+    }
+
+    .character-face {
+      font-size: 24px;
+      margin-bottom: 2px;
+    }
+
+    .character-arms {
+      position: absolute;
+      top: 25px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .arm {
+      width: 20px;
+      height: 35px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .character.left .arm {
+      background: #2196F3;
+    }
+
+    .character.right .arm {
+      background: #f44336;
+    }
+
+    .arm.left-arm {
+      transform: rotate(-30deg);
+      left: -15px;
+    }
+
+    .arm.right-arm {
+      transform: rotate(30deg);
+      right: -15px;
+    }
+
+    .character-legs {
+      display: flex;
+      gap: 8px;
+      margin-top: -8px;
+    }
+
+    .leg {
+      width: 18px;
+      height: 35px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .character.left .leg {
+      background: #2196F3;
+    }
+
+    .character.right .leg {
+      background: #f44336;
+    }
+
+    .character-hat {
+      position: absolute;
+      top: -15px;
+      width: 50px;
+      height: 20px;
+      border-radius: 25px 25px 0 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .character.left .character-hat {
+      background: #2196F3;
+    }
+
+    .character.right .character-hat {
+      background: #f44336;
+    }
+
+    .rope {
+      width: 100%;
+      height: 20px;
+      background: repeating-linear-gradient(
+        90deg,
+        #8B4513 0px,
+        #8B4513 10px,
+        #A0522D 10px,
+        #A0522D 20px
+      );
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .flag {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.5s;
+    }
+
+    .flag-pole {
+      width: 4px;
+      height: 50px;
+      background: #333;
+      margin: 0 auto;
+    }
+
+    .flag-cloth {
+      width: 30px;
+      height: 20px;
+      background: #FFD700;
+      border: 2px solid #FFA500;
+      position: absolute;
+      top: 5px;
+      left: 4px;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .win-zone {
+      position: absolute;
+      top: 0;
+      width: 15%;
+      height: 100%;
+      opacity: 0;
+    }
+
+    .win-zone.left {
+      left: 0;
+      background: linear-gradient(to right, #2196F3, transparent);
+    }
+
+    .win-zone.right {
+      right: 0;
+      background: linear-gradient(to left, #f44336, transparent);
+    }
+
+    .controls-area {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      min-height: 280px;
+    }
+
+    .team-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 38%;
+      max-width: 320px;
+    }
+
+    .team-controls.left {
+      border: 3px solid #2196F3;
+      border-radius: 15px;
+      padding: 15px;
+      background: rgba(33, 150, 243, 0.05);
+    }
+
+    .team-controls.right {
+      border: 3px solid #f44336;
+      border-radius: 15px;
+      padding: 15px;
+      background: rgba(244, 67, 54, 0.05);
+    }
+
+    .control-label {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .team-controls.left .control-label {
+      color: #2196F3;
+    }
+
+    .team-controls.right .control-label {
+      color: #f44336;
+    }
+
+    .answer-display {
+      width: 100%;
+      height: 45px;
+      background: white;
+      border: 3px solid #ddd;
+      border-radius: 8px;
+      font-size: 24px;
+      text-align: center;
+      line-height: 45px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .key-btn {
+      padding: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #ecf0f1;
+      color: #2c3e50;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      min-height: 45px;
+    }
+
+    .key-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .key-btn:active {
+      transform: translateY(0);
+    }
+
+    .key-btn.clear {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .key-btn.submit {
+      background: #27ae60;
+      color: white;
+    }
+
+    .key-btn.zero {
+      grid-column: 2;
+    }
+
+    .question-area {
+      width: 24%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 200px;
+    }
+
+    .team-question {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c3e50;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .team-controls.left .team-question {
+      border: 3px solid #2196F3;
+    }
+
+    .team-controls.right .team-question {
+      border: 3px solid #f44336;
+    }
+
+    .timer-display-center {
+      font-size: 36px;
+      font-weight: bold;
+      color: #7f8c8d;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 3px solid #bdc3c7;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-width: 500px;
+      animation: modalPop 0.5s;
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 42px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .modal-winner {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .play-again-btn {
+      padding: 15px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: #3498db;
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .play-again-btn:hover {
+      background: #2980b9;
+      transform: scale(1.05);
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f44336;
+      position: absolute;
+      animation: confetti-fall 3s linear;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .pull-animation {
+      animation: pull 0.5s;
+    }
+
+    @keyframes pull {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-10px); }
+    }
+
+    .timer-display-bottom {
+      font-size: 24px;
+      font-weight: bold;
+      color: #7f8c8d;
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+    }
+
+    .celebration-animation {
+      animation: celebrate 1s ease-in-out;
+    }
+
+    @keyframes celebrate {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    .start-game-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .start-game-overlay.hidden {
+      display: none;
+    }
+
+    .start-game-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-width: 400px;
+      animation: modalPop 0.5s;
+    }
+
+    .start-title {
+      font-size: 36px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+    }
+
+    .start-description {
+      font-size: 18px;
+      color: #7f8c8d;
+      margin: 0 0 30px 0;
+      line-height: 1.5;
+    }
+
+    .start-game-btn {
+      padding: 15px 40px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: #27ae60;
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .start-game-btn:hover {
+      background: #229954;
+      transform: scale(1.05);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 5px 10px;
+      font-size: 10px;
+      z-index: 50;
+      backdrop-filter: blur(5px);
+    }
+
+    .footer a {
+      color: #87CEEB;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: #98D8C8;
+      text-decoration: underline;
+    }
+
+    /* Hide footer on mobile portrait to avoid conflicts with rotate overlay */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .footer {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Landscape Lock Overlay -->
+  <div class="rotate-overlay" id="rotateOverlay">
+   <div class="rotate-icon">
+    📱
+   </div>
+   <div class="rotate-text">
+    Putar Perangkat Anda
+   </div>
+   <div class="rotate-subtext">
+    Game ini dirancang untuk dimainkan dalam mode landscape untuk pengalaman terbaik
+   </div>
+  </div>
+  <div class="game-container"><!-- Halaman Pilihan Kesulitan -->
+   <div class="difficulty-selection-page" id="difficultyPage">
+    <div class="difficulty-content">
+     <h1 class="difficulty-main-title">Tarik Tambang Angka</h1>
+     <p class="difficulty-subtitle">Pilih tingkat kesulitan untuk memulai permainan</p>
+     <div class="difficulty-options"><button class="difficulty-option easy" onclick="selectDifficulty(1)">
+       <div>
+        1 Digit
+       </div>
+       <div class="difficulty-description">
+        Angka 1-9<br>
+        Mudah &amp; Cepat
+       </div></button> <button class="difficulty-option hard" onclick="selectDifficulty(2)">
+       <div>
+        2 Digit
+       </div>
+       <div class="difficulty-description">
+        Angka 1-20<br>
+        Lebih Menantang
+       </div></button>
+     </div>
+    </div>
+   </div><!-- Halaman Game -->
+   <div class="game-page hidden" id="gamePage">
+    <div class="title-bar">
+     <h1 class="game-title" id="gameTitle">Tarik Tambang Angka</h1>
+     <div class="difficulty-selector"><button class="difficulty-btn" onclick="goHome()" id="homeBtn">🏠 Beranda</button>
+     </div>
+    </div>
+    <div class="arena">
+     <div class="score-display">
+      <div class="team-score left">
+       <div class="team-label" id="leftTeamLabel">
+        Tim Kiri
+       </div>
+       <div class="score-number" id="leftScore">
+        0
+       </div>
+      </div>
+      <div class="team-score right">
+       <div class="team-label" id="rightTeamLabel">
+        Tim Kanan
+       </div>
+       <div class="score-number" id="rightScore">
+        0
+       </div>
+      </div>
+     </div>
+     <div class="start-game-overlay" id="startGameOverlay">
+      <div class="start-game-content">
+       <h2 class="start-title">Siap Bermain?</h2>
+       <p class="start-description">Jawab soal matematika dengan cepat untuk menarik tali!</p><button class="start-game-btn" onclick="startGame()" id="startGameBtn">Mulai Permainan</button>
+      </div>
+     </div>
+     <div class="rope-container">
+      <div class="win-zone left"></div>
+      <div class="win-zone right"></div>
+      <div class="character left" id="leftCharacter"><img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/bec7741a6b8bee65e6b9d79010e197dc8050bd52/images/timbiru.png" alt="Tim Biru Character" class="character-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+       <div class="character-fallback" style="display: none;">
+        <div class="character-body">
+         <div class="character-hat"></div>
+         <div class="character-face">
+          😊
+         </div>
+         <div class="character-name">
+          BIRU
+         </div>
+         <div class="character-arms">
+          <div class="arm left-arm"></div>
+          <div class="arm right-arm"></div>
+         </div>
+        </div>
+        <div class="character-legs">
+         <div class="leg"></div>
+         <div class="leg"></div>
+        </div>
+       </div>
+      </div>
+      <div class="rope">
+       <div class="flag" id="flag">
+        <div class="flag-pole"></div>
+        <div class="flag-cloth"></div>
+       </div>
+      </div>
+      <div class="character right" id="rightCharacter"><img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/bec7741a6b8bee65e6b9d79010e197dc8050bd52/images/timmerah.png" alt="Tim Merah Character" class="character-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+       <div class="character-fallback" style="display: none;">
+        <div class="character-body">
+         <div class="character-hat"></div>
+         <div class="character-face">
+          😊
+         </div>
+         <div class="character-name">
+          MERAH
+         </div>
+         <div class="character-arms">
+          <div class="arm left-arm"></div>
+          <div class="arm right-arm"></div>
+         </div>
+        </div>
+        <div class="character-legs">
+         <div class="leg"></div>
+         <div class="leg"></div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="controls-area">
+     <div class="team-controls left">
+      <div class="control-label" id="leftControlLabel">
+       Tim Kiri
+      </div>
+      <div class="team-question" id="leftQuestion">
+       5 + 3
+      </div>
+      <div class="answer-display" id="leftAnswer"></div>
+      <div class="keypad"><button class="key-btn" onclick="addDigit('left', '1')">1</button> <button class="key-btn" onclick="addDigit('left', '2')">2</button> <button class="key-btn" onclick="addDigit('left', '3')">3</button> <button class="key-btn" onclick="addDigit('left', '4')">4</button> <button class="key-btn" onclick="addDigit('left', '5')">5</button> <button class="key-btn" onclick="addDigit('left', '6')">6</button> <button class="key-btn" onclick="addDigit('left', '7')">7</button> <button class="key-btn" onclick="addDigit('left', '8')">8</button> <button class="key-btn" onclick="addDigit('left', '9')">9</button> <button class="key-btn clear" onclick="clearAnswer('left')" id="leftClearBtn">C</button> <button class="key-btn zero" onclick="addDigit('left', '0')">0</button> <button class="key-btn submit" onclick="submitAnswer('left')" id="leftSubmitBtn">Enter</button>
+      </div>
+     </div>
+     <div class="question-area">
+      <div class="timer-display-center" id="timerDisplay">
+       00:00
+      </div>
+     </div>
+     <div class="team-controls right">
+      <div class="control-label" id="rightControlLabel">
+       Tim Kanan
+      </div>
+      <div class="team-question" id="rightQuestion">
+       7 + 2
+      </div>
+      <div class="answer-display" id="rightAnswer"></div>
+      <div class="keypad"><button class="key-btn" onclick="addDigit('right', '1')">1</button> <button class="key-btn" onclick="addDigit('right', '2')">2</button> <button class="key-btn" onclick="addDigit('right', '3')">3</button> <button class="key-btn" onclick="addDigit('right', '4')">4</button> <button class="key-btn" onclick="addDigit('right', '5')">5</button> <button class="key-btn" onclick="addDigit('right', '6')">6</button> <button class="key-btn" onclick="addDigit('right', '7')">7</button> <button class="key-btn" onclick="addDigit('right', '8')">8</button> <button class="key-btn" onclick="addDigit('right', '9')">9</button> <button class="key-btn clear" onclick="clearAnswer('right')" id="rightClearBtn">C</button> <button class="key-btn zero" onclick="addDigit('right', '0')">0</button> <button class="key-btn submit" onclick="submitAnswer('right')" id="rightSubmitBtn">Enter</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="modal" id="winModal">
+   <div class="modal-content">
+    <div class="modal-title">
+     🎉 Selamat! 🎉
+    </div>
+    <div class="modal-winner" id="winnerText">
+     Tim Biru Menang!
+    </div><button class="play-again-btn" onclick="resetGame()" id="playAgainBtn">Main Lagi</button>
+   </div>
+  </div><!-- Footer -->
+  <div class="footer">
+   Game ini dibuat oleh <a href="https://fahriedtech.github.io" target="_blank" rel="noopener noreferrer">Pak Fahri, Guru SMP Negeri 2 Manggar</a>
+  </div>
+  <script>
+    const defaultConfig = {
+      game_title: "Tarik Tambang Angka",
+      left_team_name: "Tim Kiri",
+      right_team_name: "Tim Kanan",
+      clear_button_text: "C",
+      submit_button_text: "Enter",
+      play_again_text: "Main Lagi"
+    };
+
+    let gameState = {
+      difficulty: 1,
+      leftQuestion: { num1: 0, num2: 0, answer: 0 },
+      rightQuestion: { num1: 0, num2: 0, answer: 0 },
+      leftAnswer: '',
+      rightAnswer: '',
+      leftScore: 0,
+      rightScore: 0,
+      ropePosition: 50,
+      timer: 0,
+      timerInterval: null,
+      gameStarted: false,
+      currentPage: 'difficulty'
+    };
+
+    function selectDifficulty(level) {
+      gameState.difficulty = level;
+      
+      // Pindah ke halaman game
+      showGamePage();
+    }
+
+    function showGamePage() {
+      document.getElementById('difficultyPage').classList.add('hidden');
+      document.getElementById('gamePage').classList.remove('hidden');
+      gameState.currentPage = 'game';
+      
+
+      
+      // Generate questions setelah masuk halaman game
+      generateQuestions();
+      clearAnswer('left');
+      clearAnswer('right');
+    }
+
+    function showDifficultyPage() {
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('difficultyPage').classList.remove('hidden');
+      gameState.currentPage = 'difficulty';
+      
+      // Reset game state completely
+      resetGameState();
+      
+      // Reset UI elements
+      document.getElementById('leftScore').textContent = '0';
+      document.getElementById('rightScore').textContent = '0';
+      document.getElementById('leftCharacter').classList.remove('celebration-animation');
+      document.getElementById('rightCharacter').classList.remove('celebration-animation');
+      document.getElementById('timerDisplay').textContent = '00:00';
+      
+      updateRopePosition();
+      clearAnswer('left');
+      clearAnswer('right');
+      
+      // Hide any open modals
+      document.getElementById('winModal').classList.remove('show');
+      
+      // Reset start game overlay to show when entering game again
+      document.getElementById('startGameOverlay').classList.remove('hidden');
+    }
+
+    function goHome() {
+      showDifficultyPage();
+    }
+
+    function generateQuestions() {
+      const max = gameState.difficulty === 1 ? 9 : 20;
+      
+      // Generate question for left team
+      const leftNum1 = Math.floor(Math.random() * max) + 1;
+      const leftNum2 = Math.floor(Math.random() * max) + 1;
+      gameState.leftQuestion = {
+        num1: leftNum1,
+        num2: leftNum2,
+        answer: leftNum1 + leftNum2
+      };
+      document.getElementById('leftQuestion').textContent = `${leftNum1} + ${leftNum2}`;
+      
+      // Generate question for right team
+      const rightNum1 = Math.floor(Math.random() * max) + 1;
+      const rightNum2 = Math.floor(Math.random() * max) + 1;
+      gameState.rightQuestion = {
+        num1: rightNum1,
+        num2: rightNum2,
+        answer: rightNum1 + rightNum2
+      };
+      document.getElementById('rightQuestion').textContent = `${rightNum1} + ${rightNum2}`;
+    }
+
+    function generateNewQuestion(team) {
+      const max = gameState.difficulty === 1 ? 9 : 20;
+      const num1 = Math.floor(Math.random() * max) + 1;
+      const num2 = Math.floor(Math.random() * max) + 1;
+      
+      if (team === 'left') {
+        gameState.leftQuestion = {
+          num1: num1,
+          num2: num2,
+          answer: num1 + num2
+        };
+        document.getElementById('leftQuestion').textContent = `${num1} + ${num2}`;
+      } else {
+        gameState.rightQuestion = {
+          num1: num1,
+          num2: num2,
+          answer: num1 + num2
+        };
+        document.getElementById('rightQuestion').textContent = `${num1} + ${num2}`;
+      }
+    }
+
+    function setDifficulty(level) {
+      gameState.difficulty = level;
+      const buttons = document.querySelectorAll('.difficulty-btn');
+      buttons.forEach((btn, index) => {
+        btn.classList.toggle('active', index + 1 === level);
+      });
+      generateQuestions();
+      clearAnswer('left');
+      clearAnswer('right');
+    }
+
+    function addDigit(team, digit) {
+      if (team === 'left') {
+        gameState.leftAnswer += digit;
+        document.getElementById('leftAnswer').textContent = gameState.leftAnswer;
+      } else {
+        gameState.rightAnswer += digit;
+        document.getElementById('rightAnswer').textContent = gameState.rightAnswer;
+      }
+    }
+
+    function clearAnswer(team) {
+      if (team === 'left') {
+        gameState.leftAnswer = '';
+        document.getElementById('leftAnswer').textContent = '';
+      } else {
+        gameState.rightAnswer = '';
+        document.getElementById('rightAnswer').textContent = '';
+      }
+    }
+
+    function playSound(type) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        if (type === 'correct') {
+          const frequencies = [523.25, 659.25, 783.99];
+          frequencies.forEach((freq, index) => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.1);
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime + index * 0.1);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + index * 0.1 + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.1 + 0.3);
+            
+            oscillator.start(audioContext.currentTime + index * 0.1);
+            oscillator.stop(audioContext.currentTime + index * 0.1 + 0.3);
+          });
+        } else if (type === 'wrong') {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
+          oscillator.type = 'sawtooth';
+          
+          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+          gainNode.gain.linearRampToValueAtTime(0.2, audioContext.currentTime + 0.05);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } else if (type === 'victory') {
+          // Victory fanfare sound
+          const victoryMelody = [
+            { freq: 523.25, time: 0, duration: 0.3 },    // C5
+            { freq: 659.25, time: 0.3, duration: 0.3 },  // E5
+            { freq: 783.99, time: 0.6, duration: 0.3 },  // G5
+            { freq: 1046.50, time: 0.9, duration: 0.6 }, // C6 (longer)
+            { freq: 783.99, time: 1.5, duration: 0.2 },  // G5
+            { freq: 1046.50, time: 1.7, duration: 0.8 }  // C6 (final long note)
+          ];
+          
+          victoryMelody.forEach(note => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(note.freq, audioContext.currentTime + note.time);
+            oscillator.type = 'triangle';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime + note.time);
+            gainNode.gain.linearRampToValueAtTime(0.4, audioContext.currentTime + note.time + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.time + note.duration);
+            
+            oscillator.start(audioContext.currentTime + note.time);
+            oscillator.stop(audioContext.currentTime + note.time + note.duration);
+          });
+        }
+      } catch (error) {
+        console.log('Audio not supported');
+      }
+    }
+
+
+
+    function startGame() {
+      gameState.gameStarted = true;
+      document.getElementById('startGameOverlay').classList.add('hidden');
+      generateQuestions();
+      startTimer();
+    }
+
+    function submitAnswer(team) {
+      if (!gameState.gameStarted) return;
+      
+      const answer = team === 'left' ? gameState.leftAnswer : gameState.rightAnswer;
+      
+      if (answer === '') return;
+
+      const correctAnswer = team === 'left' ? gameState.leftQuestion.answer : gameState.rightQuestion.answer;
+      const isCorrect = parseInt(answer) === correctAnswer;
+
+      if (isCorrect) {
+        playSound('correct');
+        
+        if (team === 'left') {
+          gameState.leftScore++;
+          gameState.ropePosition -= 4; // Setiap poin = 4% pergerakan (10 langkah = 40% total)
+          document.getElementById('leftScore').textContent = gameState.leftScore;
+          document.getElementById('leftCharacter').classList.add('pull-animation');
+          setTimeout(() => {
+            document.getElementById('leftCharacter').classList.remove('pull-animation');
+          }, 500);
+        } else {
+          gameState.rightScore++;
+          gameState.ropePosition += 4; // Setiap poin = 4% pergerakan (10 langkah = 40% total)
+          document.getElementById('rightScore').textContent = gameState.rightScore;
+          document.getElementById('rightCharacter').classList.add('pull-animation');
+          setTimeout(() => {
+            document.getElementById('rightCharacter').classList.remove('pull-animation');
+          }, 500);
+        }
+
+        updateRopePosition();
+        
+        if (!checkWinCondition()) {
+          generateNewQuestion(team);
+          clearAnswer(team);
+        }
+      } else {
+        playSound('wrong');
+        
+        const answerDisplay = document.getElementById(team === 'left' ? 'leftAnswer' : 'rightAnswer');
+        answerDisplay.style.background = '#ffebee';
+        answerDisplay.style.color = '#f44336';
+        answerDisplay.style.border = '3px solid #f44336';
+        
+        setTimeout(() => {
+          answerDisplay.style.background = 'white';
+          answerDisplay.style.color = '#2c3e50';
+          answerDisplay.style.border = '3px solid #ddd';
+          clearAnswer(team);
+        }, 1000);
+      }
+    }
+
+    function updateRopePosition() {
+      const flag = document.getElementById('flag');
+      flag.style.left = `${gameState.ropePosition}%`;
+    }
+
+    function checkWinCondition() {
+      if (gameState.ropePosition <= 10) {
+        showWinModal('left');
+        return true;
+      } else if (gameState.ropePosition >= 90) {
+        showWinModal('right');
+        return true;
+      }
+      return false;
+    }
+
+    function showWinModal(winner) {
+      const modal = document.getElementById('winModal');
+      const winnerText = document.getElementById('winnerText');
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      
+      const teamName = winner === 'left' ? 
+        (config.left_team_name || defaultConfig.left_team_name) : 
+        (config.right_team_name || defaultConfig.right_team_name);
+      
+      winnerText.textContent = `${teamName} Menang!`;
+      winnerText.style.color = winner === 'left' ? '#2196F3' : '#f44336';
+      
+
+      
+      // Play victory sound
+      playSound('victory');
+      
+      modal.classList.add('show');
+      createConfetti(winner === 'left' ? '#2196F3' : '#f44336');
+
+      const winnerChar = document.getElementById(winner === 'left' ? 'leftCharacter' : 'rightCharacter');
+      winnerChar.classList.add('celebration-animation');
+      
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+    }
+
+    function createConfetti(color) {
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.background = color;
+          confetti.style.animationDelay = Math.random() * 2 + 's';
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+      }
+    }
+
+    function resetGameState() {
+      gameState.leftQuestion = { num1: 0, num2: 0, answer: 0 };
+      gameState.rightQuestion = { num1: 0, num2: 0, answer: 0 };
+      gameState.leftAnswer = '';
+      gameState.rightAnswer = '';
+      gameState.leftScore = 0;
+      gameState.rightScore = 0;
+      gameState.ropePosition = 50;
+      gameState.timer = 0;
+      gameState.gameStarted = false;
+      
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+
+    function resetGame() {
+      resetGameState();
+
+      document.getElementById('leftScore').textContent = '0';
+      document.getElementById('rightScore').textContent = '0';
+      document.getElementById('leftCharacter').classList.remove('celebration-animation');
+      document.getElementById('rightCharacter').classList.remove('celebration-animation');
+      document.getElementById('timerDisplay').textContent = '00:00';
+      
+      updateRopePosition();
+      clearAnswer('left');
+      clearAnswer('right');
+      
+      document.getElementById('winModal').classList.remove('show');
+      document.getElementById('startGameOverlay').classList.remove('hidden');
+    }
+
+    function startTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+      
+      gameState.timer = 0;
+      gameState.timerInterval = setInterval(() => {
+        gameState.timer++;
+        const minutes = Math.floor(gameState.timer / 60);
+        const seconds = gameState.timer % 60;
+        document.getElementById('timerDisplay').textContent = 
+          `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    async function onConfigChange(config) {
+      document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
+      document.getElementById('leftTeamLabel').textContent = config.left_team_name || defaultConfig.left_team_name;
+      document.getElementById('rightTeamLabel').textContent = config.right_team_name || defaultConfig.right_team_name;
+      document.getElementById('leftControlLabel').textContent = config.left_team_name || defaultConfig.left_team_name;
+      document.getElementById('rightControlLabel').textContent = config.right_team_name || defaultConfig.right_team_name;
+      document.getElementById('leftClearBtn').textContent = config.clear_button_text || defaultConfig.clear_button_text;
+      document.getElementById('rightClearBtn').textContent = config.clear_button_text || defaultConfig.clear_button_text;
+      document.getElementById('leftSubmitBtn').textContent = config.submit_button_text || defaultConfig.submit_button_text;
+      document.getElementById('rightSubmitBtn').textContent = config.submit_button_text || defaultConfig.submit_button_text;
+      document.getElementById('playAgainBtn').textContent = config.play_again_text || defaultConfig.play_again_text;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["game_title", config.game_title || defaultConfig.game_title],
+          ["left_team_name", config.left_team_name || defaultConfig.left_team_name],
+          ["right_team_name", config.right_team_name || defaultConfig.right_team_name],
+          ["clear_button_text", config.clear_button_text || defaultConfig.clear_button_text],
+          ["submit_button_text", config.submit_button_text || defaultConfig.submit_button_text],
+          ["play_again_text", config.play_again_text || defaultConfig.play_again_text]
+        ])
+      });
+    }
+
+    // Game akan dimulai setelah tombol start ditekan
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9974c9a6a150b573',t:'MTc2MTkzMDg1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
