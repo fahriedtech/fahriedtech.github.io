@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pertahanan Kastil Angka</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Game Container */
+    #game-container {
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      position: relative;
+    }
+
+    /* Difficulty Selection Screen */
+    #difficulty-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 20px;
+    }
+
+    #difficulty-screen.hidden {
+      display: none;
+    }
+
+    .difficulty-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .difficulty-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .difficulty-subtitle {
+      font-size: 18px;
+      color: #7f8c8d;
+      margin-bottom: 40px;
+      line-height: 1.4;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .difficulty-btn {
+      padding: 15px 25px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      height: 70px;
+    }
+
+    .difficulty-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .difficulty-btn.level1 {
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    }
+
+    .difficulty-btn.level2 {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .difficulty-desc {
+      font-size: 12px;
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+
+    /* Game Screen */
+    #game-screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #game-screen.active {
+      display: flex;
+    }
+
+    /* Title Bar */
+    .title-bar {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      height: 60px;
+      gap: 10px;
+    }
+
+    .castle-health {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .castle-health.blue {
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      padding: 6px;
+    }
+
+    .castle-health.red {
+      border: 2px solid #f44336;
+      border-radius: 8px;
+      padding: 6px;
+    }
+
+    .health-label {
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .health-label.blue {
+      color: #2196F3;
+    }
+
+    .health-label.red {
+      color: #f44336;
+    }
+
+    .health-bar-container {
+      width: 100%;
+      height: 12px;
+      background: #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .health-bar {
+      height: 100%;
+      transition: width 0.5s ease;
+      border-radius: 6px;
+    }
+
+    .health-bar.blue {
+      background: linear-gradient(90deg, #2196F3 0%, #1976D2 100%);
+    }
+
+    .health-bar.red {
+      background: linear-gradient(90deg, #f44336 0%, #d32f2f 100%);
+    }
+
+    .game-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: center;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Arena - PERBANDINGAN 1/3 */
+    .arena {
+      flex: 0 0 33.33vh;
+      background: linear-gradient(135deg, #7cb342 0%, #558b2f 100%);
+      position: relative;
+      overflow: hidden;
+      min-height: 150px;
+    }
+
+    .castle {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 80px;
+      height: 80px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: all 0.3s ease;
+    }
+
+    .castle.left {
+      left: 5%;
+    }
+
+    .castle.right {
+      right: 5%;
+    }
+
+    .castle.shake {
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateY(-50%) translateX(0); }
+      25% { transform: translateY(-50%) translateX(-5px); }
+      75% { transform: translateY(-50%) translateX(5px); }
+    }
+
+    .castle.repair {
+      animation: repair 0.5s ease;
+    }
+
+    @keyframes repair {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.5) drop-shadow(0 0 15px currentColor); }
+    }
+
+    .projectile {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Start Overlay */
+    .start-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      color: white;
+      padding: 15px;
+    }
+
+    .start-overlay.hidden {
+      display: none;
+    }
+
+    .start-message {
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      max-width: 400px;
+    }
+
+    .start-btn {
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      height: 45px;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Controls Area - PERBANDINGAN 2/3 */
+    .controls-area {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      min-height: 0;
+      height: 66.67vh;
+    }
+
+    .teams-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      flex: 1;
+      min-height: 0;
+      align-items: stretch;
+    }
+
+    /* TIM CONTROL - LEBAR 1/4 DAN TINGGI PENUH */
+    .team-control {
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 25%;
+      min-width: 0;
+      height: 100%;
+    }
+
+    .team-control.blue {
+      border: 3px solid #2196F3;
+      background: rgba(33, 150, 243, 0.08);
+    }
+
+    .team-control.red {
+      border: 3px solid #f44336;
+      background: rgba(244, 67, 54, 0.08);
+    }
+
+    .team-label {
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      white-space: nowrap;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .team-label.blue {
+      color: #2196F3;
+    }
+
+    .team-label.red {
+      color: #f44336;
+    }
+
+    .question {
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      padding: 6px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .keypad-btn {
+      padding: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .keypad-btn:hover {
+      background: #f0f0f0;
+      transform: scale(1.03);
+    }
+
+    .keypad-btn:active {
+      transform: scale(0.97);
+    }
+
+    .keypad-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .answer-display {
+      grid-column: 1 / -1;
+      padding: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      background: #f5f5f5;
+      border-radius: 4px;
+      min-height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+
+    /* Action Tabs - DIPERBAIKI AGAR TIDAK TERTUTUP */
+    .action-tabs {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      height: 32px;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .action-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 4px 2px;
+    }
+
+    /* TIM BIRU */
+    .action-tab.attack.blue {
+      background: #1565C0;
+      border-right: 1px solid #0D47A1;
+    }
+
+    .action-tab.repair.blue {
+      background: #42A5F5;
+      border-left: 1px solid #2196F3;
+    }
+
+    .action-tab.active.attack.blue {
+      background: #2196F3;
+      box-shadow: 0 0 8px rgba(33, 150, 243, 0.6);
+      transform: translateY(-1px);
+      z-index: 2;
+      filter: brightness(1.2);
+    }
+
+    .action-tab.active.repair.blue {
+      background: #64B5F6;
+      box-shadow: 0 0 8px rgba(33, 150, 243, 0.6);
+      transform: translateY(-1px);
+      z-index: 2;
+      filter: brightness(1.2);
+    }
+
+    .action-tab:not(.active).attack.blue {
+      background: #0D47A1;
+      opacity: 0.7;
+      filter: brightness(0.9);
+    }
+
+    .action-tab:not(.active).repair.blue {
+      background: #1E88E5;
+      opacity: 0.7;
+      filter: brightness(0.9);
+    }
+
+    /* TIM MERAH */
+    .action-tab.attack.red {
+      background: #C62828;
+      border-right: 1px solid #B71C1C;
+    }
+
+    .action-tab.repair.red {
+      background: #EF5350;
+      border-left: 1px solid #E53935;
+    }
+
+    .action-tab.active.attack.red {
+      background: #F44336;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+      transform: translateY(-1px);
+      z-index: 2;
+      filter: brightness(1.2);
+    }
+
+    .action-tab.active.repair.red {
+      background: #EF9A9A;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+      transform: translateY(-1px);
+      z-index: 2;
+      filter: brightness(1.2);
+    }
+
+    .action-tab:not(.active).attack.red {
+      background: #B71C1C;
+      opacity: 0.7;
+      filter: brightness(0.9);
+    }
+
+    .action-tab:not(.active).repair.red {
+      background: #E53935;
+      opacity: 0.7;
+      filter: brightness(0.9);
+    }
+
+    .action-tab:hover:not(.active) {
+      opacity: 0.8;
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    /* CENTER CONTROLS - LEBAR 2/4 DAN TINGGI SAMA */
+    .center-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(245, 245, 245, 0.8);
+      margin: 0 15px;
+      width: 50%;
+      min-width: 0;
+      height: 100%;
+    }
+
+    .timer {
+      font-size: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      text-align: center;
+      height: 25px;
+      flex-shrink: 0;
+    }
+
+    .timer.waiting {
+      color: #95a5a6;
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    .home-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .home-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .notification {
+      font-size: 11px;
+      font-weight: bold;
+      text-align: center;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.1);
+      min-height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Victory Overlay */
+    .victory-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      color: white;
+      padding: 15px;
+    }
+
+    .victory-overlay.active {
+      display: flex;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .victory-message {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 0 0 15px currentColor;
+      animation: pulse 1s ease infinite;
+      text-align: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    .victory-stats {
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .play-again-btn {
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      height: 35px;
+    }
+
+    .play-again-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Animasi projectile */
+    @keyframes flyBlue {
+      0% { left: 10%; opacity: 1; transform: translateY(-50%); }
+      100% { left: 85%; opacity: 0; transform: translateY(-50%); }
+    }
+
+    @keyframes flyRed {
+      0% { right: 10%; opacity: 1; transform: translateY(-50%); }
+      100% { right: 85%; opacity: 0; transform: translateY(-50%); }
+    }
+  </style>
+ </head>
+ <body>
+  <!-- Game Container -->
+  <div id="game-container">
+      <!-- Difficulty Selection Screen -->
+      <div id="difficulty-screen">
+        <div class="difficulty-card">
+          <h1 class="difficulty-title">Pertahanan Kastil Angka</h1>
+          <p class="difficulty-subtitle">Pilih tingkat kesulitan soal pengurangan untuk memulai pertempuran</p>
+          <div class="difficulty-buttons">
+            <button class="difficulty-btn level1" onclick="startGame(1)"> 
+              🟢 Level 1 
+              <div class="difficulty-desc">Pengurangan Angka 1-9, Hasil Bervariasi</div>
+            </button> 
+            <button class="difficulty-btn level2" onclick="startGame(2)"> 
+              🔴 Level 2 
+              <div class="difficulty-desc">Pengurangan Angka 1-50, Hasil Positif</div>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Game Screen -->
+      <div id="game-screen">
+        <!-- Title Bar -->
+        <div class="title-bar">
+          <div class="castle-health blue">
+            <div class="health-label blue">Kastil Biru</div>
+            <div class="health-bar-container">
+              <div class="health-bar blue" id="blue-health" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="game-title">Pertahanan Kastil Angka</div>
+          <div class="castle-health red">
+            <div class="health-label red">Kastil Merah</div>
+            <div class="health-bar-container">
+              <div class="health-bar red" id="red-health" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Arena - 1/3 TINGGI -->
+        <div class="arena">
+          <div class="start-overlay" id="start-overlay">
+            <div class="start-message">
+              Jawab soal pengurangan dengan cepat untuk menyerang kastil lawan atau memperbaiki kastilmu!<br><br>
+              <strong>Klik "Mulai Pertempuran!" untuk memulai timer</strong>
+            </div>
+            <button class="start-btn" onclick="startRound()">Mulai Pertempuran!</button>
+          </div>
+          <!-- Kastil Biru dengan gambar -->
+          <div class="castle left" id="blue-castle" style="background-image: url('https://github.com/fahriedtech/fahriedtech.github.io/blob/b5d0d4f8bdef89f7a17f68601087177673509f05/images/kastilbiru.png?raw=true');"></div>
+          <!-- Kastil Merah dengan gambar -->
+          <div class="castle right" id="red-castle" style="background-image: url('https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/b5d0d4f8bdef89f7a17f68601087177673509f05/images/kastilmerah.png');"></div>
+          <div class="victory-overlay" id="victory-overlay">
+            <div class="victory-message" id="victory-message">🎉 Tim Biru Menang! 🎉</div>
+            <div class="victory-stats" id="victory-stats"></div>
+            <button class="play-again-btn" onclick="backToMenu()">Main Lagi</button>
+          </div>
+        </div>
+        
+        <!-- Controls Area - 2/3 TINGGI -->
+        <div class="controls-area">
+          <div style="display: flex; align-items: stretch; height: 100%; gap: 15px;">
+            <!-- Blue Team Control - LEBAR 1/4 -->
+            <div class="team-control blue">
+              <div class="team-label blue">Tim Biru</div>
+              <div class="question" id="blue-question">5 - 3 = ?</div>
+              <div class="keypad">
+                <div class="answer-display" id="blue-answer"></div>
+                <button class="keypad-btn" onclick="inputNumber('blue', 1)" disabled>1</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 2)" disabled>2</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 3)" disabled>3</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 4)" disabled>4</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 5)" disabled>5</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 6)" disabled>6</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 7)" disabled>7</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 8)" disabled>8</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 9)" disabled>9</button>
+                <button class="keypad-btn" onclick="clearAnswer('blue')" disabled>⌫</button>
+                <button class="keypad-btn" onclick="inputNumber('blue', 0)" disabled>0</button>
+                <button class="keypad-btn" onclick="submitAnswer('blue')" disabled>✓</button>
+              </div>
+              <div class="action-tabs">
+                <button class="action-tab attack blue active" id="blue-attack-tab" onclick="setAction('blue', 'attack')">⚔️ Serang</button>
+                <button class="action-tab repair blue" id="blue-repair-tab" onclick="setAction('blue', 'repair')">🔧 Perbaiki</button>
+              </div>
+            </div>
+            
+            <!-- Center Controls - LEBAR 2/4 -->
+            <div class="center-controls">
+              <div class="timer waiting" id="timer">Menunggu dimulai</div>
+              <button class="home-btn" onclick="confirmHome()">🏠 Beranda</button>
+              <div class="notification" id="notification"></div>
+            </div>
+            
+            <!-- Red Team Control - LEBAR 1/4 -->
+            <div class="team-control red">
+              <div class="team-label red">Tim Merah</div>
+              <div class="question" id="red-question">7 - 2 = ?</div>
+              <div class="keypad">
+                <div class="answer-display" id="red-answer"></div>
+                <button class="keypad-btn" onclick="inputNumber('red', 1)" disabled>1</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 2)" disabled>2</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 3)" disabled>3</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 4)" disabled>4</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 5)" disabled>5</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 6)" disabled>6</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 7)" disabled>7</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 8)" disabled>8</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 9)" disabled>9</button>
+                <button class="keypad-btn" onclick="clearAnswer('red')" disabled>⌫</button>
+                <button class="keypad-btn" onclick="inputNumber('red', 0)" disabled>0</button>
+                <button class="keypad-btn" onclick="submitAnswer('red')" disabled>✓</button>
+              </div>
+              <div class="action-tabs">
+                <button class="action-tab attack red active" id="red-attack-tab" onclick="setAction('red', 'attack')">⚔️ Serang</button>
+                <button class="action-tab repair red" id="red-repair-tab" onclick="setAction('red', 'repair')">🔧 Perbaiki</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <!-- Audio Elements - Tetap ada untuk kompatibilitas -->
+  <audio id="correct-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+  </audio>
+  <audio id="wrong-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+  </audio>
+  <audio id="win-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+  </audio>
+  <audio id="start-sound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+  </audio>
+  
+  <script>
+    let gameState = {
+      difficulty: 1,
+      blueHealth: 100,
+      redHealth: 100,
+      blueAction: 'attack',
+      redAction: 'attack',
+      blueAnswer: '',
+      redAnswer: '',
+      blueQuestion: { num1: 0, num2: 0, answer: 0 },
+      redQuestion: { num1: 0, num2: 0, answer: 0 },
+      timerSeconds: 0,
+      timerInterval: null,
+      gameStarted: false,
+      lastAnswers: { blue: [], red: [] },
+      audioContext: null
+    };
+
+    // Inisialisasi Web Audio Context
+    function initAudioContext() {
+      if (!gameState.audioContext) {
+        try {
+          gameState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          console.log('Web Audio Context initialized');
+        } catch (e) {
+          console.log('Web Audio API not supported:', e);
+        }
+      }
+    }
+
+    // FUNGSI GENERATE SOAL YANG LEBIH SEDERHANA DAN EFEKTIF
+    function generateQuestion(difficulty) {
+      let num1, num2, answer;
+      
+      if (difficulty === 1) {
+        // LEVEL 1: Angka 1-9, pastikan num1 > num2 untuk hasil positif
+        num1 = Math.floor(Math.random() * 9) + 1;
+        
+        // Pastikan num2 lebih kecil dari num1 tapi minimal 1
+        const maxNum2 = num1 - 1;
+        num2 = Math.floor(Math.random() * maxNum2) + 1;
+        
+        answer = num1 - num2;
+      } else {
+        // LEVEL 2: Angka 1-50, pastikan selisih cukup besar
+        num1 = Math.floor(Math.random() * 50) + 10; // Minimal 10 agar tidak terlalu kecil
+        num2 = Math.floor(Math.random() * (num1 - 5)) + 1; // Pastikan selisih minimal 5
+        
+        answer = num1 - num2;
+      }
+      
+      console.log(`Soal baru: ${num1} - ${num2} = ${answer}`);
+      
+      return {
+        num1: num1,
+        num2: num2,
+        answer: answer
+      };
+    }
+
+    // Fungsi playSound dengan Web Audio API
+    function playSound(soundType) {
+      initAudioContext();
+      
+      if (!gameState.audioContext) {
+        console.log('Web Audio API not available');
+        return;
+      }
+
+      try {
+        switch(soundType) {
+          case 'correct':
+            playCorrectSound();
+            break;
+          case 'wrong':
+            playWrongSound();
+            break;
+          case 'win':
+            playVictorySound();
+            break;
+          case 'start':
+            playStartSound();
+            break;
+          default:
+            console.log('Unknown sound type:', soundType);
+        }
+      } catch (e) {
+        console.log('Sound error:', e);
+      }
+    }
+
+    // 1. SUARA BENAR (Correct Sound)
+    function playCorrectSound() {
+      const context = gameState.audioContext;
+      const now = context.currentTime;
+      
+      const frequencies = [523.25, 659.25, 783.99];
+      const noteDuration = 0.3;
+      
+      frequencies.forEach((freq, index) => {
+        const startTime = now + (index * 0.1);
+        
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(freq, startTime);
+        
+        gainNode.gain.setValueAtTime(0, startTime);
+        gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+        gainNode.gain.linearRampToValueAtTime(0.3, startTime + noteDuration - 0.05);
+        gainNode.gain.linearRampToValueAtTime(0, startTime + noteDuration);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + noteDuration);
+      });
+    }
+
+    // 2. SUARA SALAH (Wrong Sound)
+    function playWrongSound() {
+      const context = gameState.audioContext;
+      const now = context.currentTime;
+      const duration = 0.5;
+      
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      
+      oscillator.type = 'sawtooth';
+      
+      oscillator.frequency.setValueAtTime(200, now);
+      oscillator.frequency.exponentialRampToValueAtTime(100, now + duration);
+      
+      gainNode.gain.setValueAtTime(0.3, now);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+      
+      oscillator.start(now);
+      oscillator.stop(now + duration);
+    }
+
+    // 3. SUARA KEMENANGAN (Victory Sound)
+    function playVictorySound() {
+      const context = gameState.audioContext;
+      const now = context.currentTime;
+      
+      const melody = [
+        { freq: 523.25, start: 0.0, duration: 0.3 },
+        { freq: 659.25, start: 0.3, duration: 0.3 },
+        { freq: 783.99, start: 0.6, duration: 0.3 },
+        { freq: 1046.50, start: 0.9, duration: 0.4 },
+        { freq: 783.99, start: 1.3, duration: 0.3 },
+        { freq: 1046.50, start: 1.6, duration: 0.5 }
+      ];
+      
+      melody.forEach(note => {
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        
+        oscillator.type = 'triangle';
+        oscillator.frequency.setValueAtTime(note.freq, now + note.start);
+        
+        gainNode.gain.setValueAtTime(0, now + note.start);
+        gainNode.gain.linearRampToValueAtTime(0.3, now + note.start + 0.05);
+        gainNode.gain.linearRampToValueAtTime(0.3, now + note.start + note.duration - 0.1);
+        gainNode.gain.linearRampToValueAtTime(0, now + note.start + note.duration);
+        
+        oscillator.start(now + note.start);
+        oscillator.stop(now + note.start + note.duration);
+      });
+    }
+
+    // 4. SUARA MULAI (Start Sound)
+    function playStartSound() {
+      const context = gameState.audioContext;
+      const now = context.currentTime;
+      const duration = 0.4;
+      
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(392.00, now);
+      
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.3, now + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0.3, now + duration - 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, now + duration);
+      
+      oscillator.start(now);
+      oscillator.stop(now + duration);
+    }
+
+    function startGame(difficulty) {
+      gameState.difficulty = difficulty;
+      gameState.blueHealth = 100;
+      gameState.redHealth = 100;
+      gameState.timerSeconds = 0;
+      gameState.gameStarted = false;
+      gameState.lastAnswers = { blue: [], red: [] };
+      
+      document.getElementById('difficulty-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.add('active');
+      document.getElementById('start-overlay').classList.remove('hidden');
+      
+      gameState.blueQuestion = generateQuestion(difficulty);
+      gameState.redQuestion = generateQuestion(difficulty);
+      
+      updateQuestions();
+      updateHealth();
+      updateTimerDisplay();
+      
+      disableKeypads(true);
+    }
+
+    function startRound() {
+      document.getElementById('start-overlay').classList.add('hidden');
+      gameState.gameStarted = true;
+      
+      playSound('start');
+      
+      disableKeypads(false);
+      
+      gameState.timerSeconds = 0;
+      updateTimerDisplay();
+      
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+      
+      gameState.timerInterval = setInterval(() => {
+        gameState.timerSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function disableKeypads(disabled) {
+      const blueButtons = document.querySelectorAll('.team-control.blue .keypad-btn');
+      const redButtons = document.querySelectorAll('.team-control.red .keypad-btn');
+      
+      blueButtons.forEach(btn => {
+        btn.disabled = disabled;
+      });
+      
+      redButtons.forEach(btn => {
+        btn.disabled = disabled;
+      });
+    }
+
+    function updateQuestions() {
+      document.getElementById('blue-question').textContent = 
+        `${gameState.blueQuestion.num1} - ${gameState.blueQuestion.num2} = ?`;
+      document.getElementById('red-question').textContent = 
+        `${gameState.redQuestion.num1} - ${gameState.redQuestion.num2} = ?`;
+    }
+
+    function updateHealth() {
+      document.getElementById('blue-health').style.width = `${gameState.blueHealth}%`;
+      document.getElementById('red-health').style.width = `${gameState.redHealth}%`;
+    }
+
+    function updateTimerDisplay() {
+      const timerElement = document.getElementById('timer');
+      
+      if (!gameState.gameStarted) {
+        timerElement.textContent = 'Menunggu dimulai';
+        timerElement.classList.add('waiting');
+      } else {
+        timerElement.classList.remove('waiting');
+        const minutes = Math.floor(gameState.timerSeconds / 60);
+        const seconds = gameState.timerSeconds % 60;
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+    }
+
+    function setAction(team, action) {
+      gameState[`${team}Action`] = action;
+      
+      const attackTab = document.getElementById(`${team}-attack-tab`);
+      const repairTab = document.getElementById(`${team}-repair-tab`);
+      
+      if (action === 'attack') {
+        attackTab.classList.add('active');
+        repairTab.classList.remove('active');
+      } else {
+        attackTab.classList.remove('active');
+        repairTab.classList.add('active');
+      }
+    }
+
+    function inputNumber(team, number) {
+      if (gameState[`${team}Answer`].length < 2) {
+        gameState[`${team}Answer`] += number.toString();
+        updateAnswerDisplay(team);
+      }
+    }
+
+    function clearAnswer(team) {
+      gameState[`${team}Answer`] = '';
+      updateAnswerDisplay(team);
+    }
+
+    function updateAnswerDisplay(team) {
+      document.getElementById(`${team}-answer`).textContent = gameState[`${team}Answer`] || '?';
+    }
+
+    function submitAnswer(team) {
+      if (!gameState.gameStarted) return;
+      
+      const answer = parseInt(gameState[`${team}Answer`]);
+      if (isNaN(answer)) return;
+      
+      const question = gameState[`${team}Question`];
+      const action = gameState[`${team}Action`];
+      
+      console.log(`${team} menjawab: ${answer}, benar: ${question.answer}, aksi: ${action}`);
+      
+      if (answer === question.answer) {
+        playSound('correct');
+        
+        if (action === 'attack') {
+          const targetTeam = team === 'blue' ? 'red' : 'blue';
+          gameState[`${targetTeam}Health`] = Math.max(0, gameState[`${targetTeam}Health`] - 10);
+          
+          createProjectile(team, targetTeam);
+          shakeCastle(targetTeam);
+          
+          updateNotification(`${team === 'blue' ? 'Biru' : 'Merah'} menyerang! -10 HP`);
+        } else {
+          gameState[`${team}Health`] = Math.min(100, gameState[`${team}Health`] + 5);
+          repairCastle(team);
+          updateNotification(`${team === 'blue' ? 'Biru' : 'Merah'} memperbaiki! +5 HP`);
+        }
+        
+        updateHealth();
+        checkVictory();
+      } else {
+        playSound('wrong');
+        updateNotification(`${team === 'blue' ? 'Biru' : 'Merah'} salah! Coba lagi!`);
+      }
+      
+      // ⭐⭐ SELALU BUAT SOAL BARU - BAIK JAWABAN BENAR MAUPUN SALAH ⭐⭐
+      gameState[`${team}Question`] = generateQuestion(gameState.difficulty);
+      
+      // Reset jawaban dan update tampilan soal
+      gameState[`${team}Answer`] = '';
+      updateAnswerDisplay(team);
+      updateQuestions();
+      
+      console.log(`Soal baru untuk ${team}: ${gameState[`${team}Question`].num1} - ${gameState[`${team}Question`].num2} = ?`);
+    }
+
+    function createProjectile(fromTeam, toTeam) {
+      const projectile = document.createElement('div');
+      projectile.className = 'projectile';
+      projectile.textContent = fromTeam === 'blue' ? '🔵' : '🔴';
+      
+      const arena = document.querySelector('.arena');
+      arena.appendChild(projectile);
+      
+      if (fromTeam === 'blue') {
+        projectile.style.left = '10%';
+        projectile.style.top = '50%';
+        projectile.style.color = '#2196F3';
+        projectile.style.animation = 'flyBlue 1s linear forwards';
+      } else {
+        projectile.style.right = '10%';
+        projectile.style.top = '50%';
+        projectile.style.color = '#f44336';
+        projectile.style.animation = 'flyRed 1s linear forwards';
+      }
+      
+      setTimeout(() => {
+        if (projectile.parentNode) {
+          arena.removeChild(projectile);
+        }
+      }, 1000);
+    }
+
+    function shakeCastle(team) {
+      const castle = document.getElementById(`${team}-castle`);
+      castle.classList.add('shake');
+      
+      setTimeout(() => {
+        castle.classList.remove('shake');
+      }, 500);
+    }
+
+    function repairCastle(team) {
+      const castle = document.getElementById(`${team}-castle`);
+      castle.classList.add('repair');
+      
+      setTimeout(() => {
+        castle.classList.remove('repair');
+      }, 500);
+    }
+
+    function updateNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      
+      setTimeout(() => {
+        notification.textContent = '';
+      }, 2000);
+    }
+
+    function checkVictory() {
+      if (gameState.blueHealth <= 0) {
+        endGame('red');
+      } else if (gameState.redHealth <= 0) {
+        endGame('blue');
+      }
+    }
+
+    function endGame(winner) {
+      gameState.gameStarted = false;
+      
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+      }
+      
+      disableKeypads(true);
+      
+      const victoryOverlay = document.getElementById('victory-overlay');
+      const victoryMessage = document.getElementById('victory-message');
+      const victoryStats = document.getElementById('victory-stats');
+      
+      if (winner === 'blue') {
+        victoryMessage.textContent = '🎉 Tim Biru Menang! 🎉';
+        victoryMessage.style.color = '#2196F3';
+      } else {
+        victoryMessage.textContent = '🎉 Tim Merah Menang! 🎉';
+        victoryMessage.style.color = '#f44336';
+      }
+      
+      const minutes = Math.floor(gameState.timerSeconds / 60);
+      const seconds = gameState.timerSeconds % 60;
+      
+      victoryStats.textContent = `Waktu: ${minutes}:${seconds.toString().padStart(2, '0')}\nHP Biru: ${gameState.blueHealth}% | HP Merah: ${gameState.redHealth}%`;
+      
+      victoryOverlay.classList.add('active');
+      playSound('win');
+    }
+
+    function backToMenu() {
+      document.getElementById('victory-overlay').classList.remove('active');
+      document.getElementById('game-screen').classList.remove('active');
+      document.getElementById('difficulty-screen').classList.remove('hidden');
+    }
+
+    function confirmHome() {
+      if (confirm('Kembali ke menu utama? Semua progres akan hilang.')) {
+        if (gameState.timerInterval) {
+          clearInterval(gameState.timerInterval);
+        }
+        
+        document.getElementById('game-screen').classList.remove('active');
+        document.getElementById('difficulty-screen').classList.remove('hidden');
+      }
+    }
+
+    // Initialize the game
+    document.addEventListener('DOMContentLoaded', function() {
+      initAudioContext();
+      
+      gameState.blueQuestion = generateQuestion(1);
+      gameState.redQuestion = generateQuestion(1);
+      updateQuestions();
+    });
+
+    document.addEventListener('click', function() {
+      if (gameState.audioContext && gameState.audioContext.state === 'suspended') {
+        gameState.audioContext.resume();
+      }
+    }, { once: true });
+  </script>
+ </body>
+</html>
