@@ -57,7 +57,7 @@
             right: 0;
             bottom: 0;
             background: url('https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/c54f1938b635d6dffc0faebe1df8678dbb391f2c/images/latarbelakang.jpg') center/cover no-repeat;
-            opacity: 0.2;
+            opacity: 0.6; /* Diubah dari 0.2 menjadi 0.6 */
             z-index: 0;
         }
         
@@ -80,6 +80,13 @@
             box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
             border: 3px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer; /* Menambahkan cursor pointer */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3), -10px -10px 20px rgba(255, 255, 255, 0.15);
         }
         
         .profile-info {
@@ -270,7 +277,7 @@
         
         /* Tab Content */
         .tab-content {
-                display: none;
+            display: none;
             padding: 40px 0;
             background-color: #E0E5EC;
             animation: fadeIn 0.5s ease;
@@ -341,6 +348,8 @@
             text-decoration: none;
             display: block;
             color: inherit;
+            /* Added for accessibility */
+            position: relative;
         }
         
         body.dark-mode .content-card {
@@ -823,7 +832,7 @@
                 <i class="fas fa-moon"></i>
             </button>
             <div class="profile-section">
-                <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/c54f1938b635d6dffc0faebe1df8678dbb391f2c/images/fotoprofil.jpg" alt="Fahri, S.Pd" class="profile-image">
+                <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/c54f1938b635d6dffc0faebe1df8678dbb391f2c/images/fotoprofil.jpg" alt="Fahri, S.Pd" class="profile-image" id="profileImage">
                 <div class="profile-info">
                     <h1>Fahri, S.Pd</h1>
                     <div class="profile-description">
@@ -879,39 +888,39 @@
                 <p>Produk yang berkaitan dengan Modul Ajar untuk meningkatkan efektivitas proses belajar mengajar</p>
             </div>
             <div class="content-grid">
-                <a href="https://fahriedtech.github.io/guru/buatmodulajar/" class="content-card" target="_blank" title="">
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/buatmodulajar/">
                     <img src="https://fahriedtech.github.io/images/generatormodulajar.jpg" alt="Generator Modul Ajar SMP" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/buatasesmen/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/buatasesmen/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/generatorasesmen.jpg" alt="Generator Asesmen" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/kodingsd/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/kodingsd/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/generatoridekodingsd.jpg" alt="Generator Ide Koding SD" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/komunikasiguru/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/komunikasiguru/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/generatorkomunikasi.jpg" alt="Asisten AI Komunikasi Guru" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/narasirapot/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/narasirapot/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/generatornarasirapot.jpg" alt="Generator Narasi Rapot" class="card-image">
-                </a>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdq_Zazc0F0wQybyhmFSDgf_7wu5jnvl1Pe6J240rdl7plZNA/viewform?usp=dialog" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://docs.google.com/forms/d/e/1FAIpQLSdq_Zazc0F0wQybyhmFSDgf_7wu5jnvl1Pe6J240rdl7plZNA/viewform?usp=dialog">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/templatesiappakai.jpg" alt="Template Modul Ajar Siap Ajar" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/modulajarsd.jpg" alt="Modul Ajar SD Siap Pakai" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/modulajarsmp.jpg" alt="Modul Ajar SMP Siap Pakai" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/jasamodulajar.jpg" alt="Jasa Buat Modul Ajar Siap Pakai" class="card-image">
-                </a>
-                <a href="https://drive.google.com/drive/mobile/folders/1tRBF51QLdNhtcl0-yUBcYns_kffkA6jI?fbclid=IwVERTSANqzmRleHRuA2FlbQIxMAABHn7Nqf7L_79W9Uy0Ty14u5XCxIPbqO0uUB1TAvqZTwZSghS_3gngC1zshv4h_aem_xco7ylk6kgrX7y9-m9kXJw" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://drive.google.com/drive/mobile/folders/1tRBF51QLdNhtcl0-yUBcYns_kffkA6jI?fbclid=IwVERTSANqzmRleHRuA2FlbQIxMAABHn7Nqf7L_79W9Uy0Ty14u5XCxIPbqO0uUB1TAvqZTwZSghS_3gngC1zshv4h_aem_xco7ylk6kgrX7y9-m9kXJw">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/2fb8a95adc045954dc0449c8190bd718fd005b41/images/modulkodinggratis.jpg" alt="Modul Ajar Koding Gratis" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/modulsdfree/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/modulsdfree/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/2fb8a95adc045954dc0449c8190bd718fd005b41/images/modulsdgratis.jpg" alt="Jasa Buat Modul Ajar SD Siap Pakai" class="card-image">
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -924,24 +933,24 @@
                 <p>Alat bantu mengajar interaktif yang membuat pembelajaran lebih menarik dan efektif</p>
             </div>
             <div class="content-grid">
-                <a href="https://drive.google.com/file/d/18J0k5kKON3QnJNlOPW_DQxOk1j1_0r3N/view?usp=sharing" class="content-card" target="_blank" title="">
+                <div class="content-card" data-link="https://drive.google.com/file/d/18J0k5kKON3QnJNlOPW_DQxOk1j1_0r3N/view?usp=sharing">
                     <img src="https://fahriedtech.github.io/images/kodingtkpaud.jpg" alt="Gratis, Koding jenjang TK PAUD" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/siswa/penjumlahan/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/siswa/penjumlahan/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/penjumlahan.jpg" alt="Program latihan penjumlahan" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/siswa/pengurangan/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/siswa/pengurangan/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/pengurangan.jpg" alt="Program latihan pengurangan" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/siswa/perkalian/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/siswa/perkalian/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/perkalian.jpg" alt="Program latihan perkalian" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/siswa/canva/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/siswa/canva/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/canvasmp.jpg" alt="Canva untuk smp" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/scriptcode/" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/scriptcode/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/generatorscriptcode.jpg" alt="buat skrip kode scratch sederhana untuk anak-anak" class="card-image">
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -954,12 +963,12 @@
                 <p>Aktivitas yang disesuaikan dengan kurikulum nasional terbaru</p>
             </div>
             <div class="content-grid">
-                <a href="https://fahriedtech.github.io/guru/panduankokurikuler/" class="content-card" target="_blank" title="">
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/panduankokurikuler/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/panduankokurikuler.jpg" alt="Panduan Kokurikuler" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/kokurikuler7kaih.jpg" alt="Kokurikuler 7KAIH SD" class="card-image">
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -972,21 +981,21 @@
                 <p>Koleksi ebook pendidikan lengkap untuk mendukung kebutuhan belajar mengajar</p>
             </div>
             <div class="content-grid">
-                <a href="https://fahriedtech.github.io/guru/landingpage/" class="content-card" target="_blank" title="">
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/landingpage/">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/92d8aab7ca736b517a1786d1c40866d0f859ed5a/images/landingpagewithai.jpg" alt="Buat wesite pertama" class="card-image">
-                </a>
-                <a href="https://fahriedtech.github.io/guru/googledocs" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="https://fahriedtech.github.io/guru/googledocs">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/92d8aab7ca736b517a1786d1c40866d0f859ed5a/images/pengolahkata.jpg" alt="Dasar aplikasi pengolah kata" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/ebookcanvaguru.jpg" alt="Guru wajib tau trik canva ini" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/ebookscratchdasar.jpg" alt="Panduan pemrograman untuk pemula menggunakan scratch" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/ebookbkkids.jpg" alt="sikecil ahli solusi - computational thinking sejak dini" class="card-image">
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -999,27 +1008,27 @@
                 <p>Permintaan narasumber pada program pelatihan, bimtek dan webinar untuk meningkatkan kompetensi pendidik</p>
             </div>
             <div class="content-grid">
-                <a href="#" class="content-card" target="_blank" title="">
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/5550a1ac3a72d606058c2f58fd433d08678c1d0a/images/kodingka.jpg" alt="Pelatihan Mapel Koding jenjang SD dan SMP" class="card-image">
-                </a>  
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>  
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/modulajarai.jpg" alt="Membuat modul ajar dengan AI" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/lkpdinteraktif.jpg" alt="Desain LKPD interaktif dengan canva AI" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/websitejadi.jpg" alt="cepat, membuat landing page profesional" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/2a54b2970c15418508d0d667bf94662de67c2974/images/googledocs.jpg" alt="Belajar google docs aplikasi pengolah kata" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/membuatgame.jpg" alt="Pelatihan membuat game untuk siswa dan guru" class="card-image">
-                </a>
-                <a href="#" class="content-card" target="_blank" title="">
+                </div>
+                <div class="content-card" data-link="#">
                     <img src="https://raw.githubusercontent.com/fahriedtech/fahriedtech.github.io/a414cfc946dbcf814c4adc762a886302d8b5f172/images/risettuntas.jpg" alt="baca cepat sumber buku digital menggunakan notebookllm" class="card-image">
-                </a>
+                </div>
             </div>
         </div>
     </div>
@@ -1028,12 +1037,12 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Fahri, S.Pd. Hak Cipta Dilindungi.</p>
-            <!--<div class="social-icons">
-                <a href="#" title=""><i class="fab fa-tiktok"></i></a>
-                <a href="#" title=""><i class="fab fa-facebook"></i></a>
-                <a href="#" title=""><i class="fab fa-x"></i></a>
-                <a href="#" title=""><i class="fab fa-instagram"></i></a>
-            </div>-->
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-x"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
     </footer>
     
@@ -1149,6 +1158,52 @@
         // Prevent context menu on long press (mobile)
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
+        });
+        
+        // Handle content card clicks to open links
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentCards = document.querySelectorAll('.content-card[data-link]');
+            
+            contentCards.forEach(card => {
+                // Add tabindex for accessibility
+                card.setAttribute('tabindex', '0');
+                
+                // Handle click events
+                card.addEventListener('click', function() {
+                    const link = this.getAttribute('data-link');
+                    if (link && link !== '#') {
+                        window.open(link, '_blank');
+                    }
+                });
+                
+                // Handle keyboard events for accessibility
+                card.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const link = this.getAttribute('data-link');
+                        if (link && link !== '#') {
+                            window.open(link, '_blank');
+                        }
+                    }
+                });
+            });
+            
+            // NEW CODE: Handle profile image click
+            const profileImage = document.getElementById('profileImage');
+            if (profileImage) {
+                profileImage.addEventListener('click', function() {
+                    window.open('https://fahriedtech.github.io/', '_blank');
+                });
+                
+                // Add keyboard accessibility for profile image
+                profileImage.setAttribute('tabindex', '0');
+                profileImage.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        window.open('https://fahriedtech.github.io/', '_blank');
+                    }
+                });
+            }
         });
     </script>
 </body>
