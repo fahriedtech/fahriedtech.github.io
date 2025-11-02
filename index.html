@@ -736,7 +736,146 @@
             transition: all 0.5s ease-in-out;
         }
 
-       
+        .ebook-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 100px 0;
+        }
+
+        .ebook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .ebook-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ebook-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .ebook-cover {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .ebook-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .ebook-card:hover .ebook-cover img {
+            transform: scale(1.05);
+        }
+
+        .ebook-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--success-gradient);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .ebook-content {
+            padding: 30px;
+        }
+
+        .ebook-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .ebook-description {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .ebook-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .ebook-features li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            color: var(--text-dark);
+        }
+
+        .ebook-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .ebook-form {
+            margin-top: 20px;
+        }
+
+        .ebook-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .ebook-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .ebook-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-ebook {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-ebook:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
         .gallery-section {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
@@ -1197,7 +1336,7 @@
             .skill-grid,
             .service-grid,
             .gallery-grid,
-            
+            .ebook-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
@@ -1376,7 +1515,37 @@
                 margin-bottom: 50px;
             }
             
+            .ebook-section {
+                padding: 80px 0;
+            }
             
+            .ebook-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                margin-top: 30px;
+            }
+            
+            .ebook-cover {
+                height: 180px;
+            }
+            
+            .ebook-content {
+                padding: 20px;
+            }
+            
+            .ebook-title {
+                font-size: 1.3rem;
+                margin-bottom: 10px;
+            }
+            
+            .ebook-description {
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+            }
+            
+            .ebook-input-group {
+                flex-direction: column;
+            }
             
             .gallery-grid {
                 grid-template-columns: 1fr;
@@ -1505,7 +1674,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#services">Layanan</a>
                     </li>
-                   
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ebook">Ebook</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#gallery">Galeri</a>
                     </li>
@@ -1806,7 +1977,7 @@
         </div>
     </section>
 
-    
+   
 
     <!-- Gallery Section -->
     <section id="gallery" class="gallery-section section">
@@ -1999,6 +2170,7 @@
                                 <li><a href="#home">Beranda</a></li>
                                 <li><a href="#about">Tentang</a></li>
                                 <li><a href="#services">Layanan</a></li>
+                                <li><a href="#ebook">Ebook</a></li>
                                 <li><a href="#gallery">Galeri</a></li>
                                 <li><a href="#contact">Kontak</a></li>
                             </ul>
