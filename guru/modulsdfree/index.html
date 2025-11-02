@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Folder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .folder-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .folder {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .folder:last-child {
+            border-bottom: none;
+        }
+        .folder-icon {
+            margin-right: 15px;
+            color: #4285F4;
+            font-size: 24px;
+        }
+        .folder-content {
+            flex: 1;
+        }
+        .folder-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: black; /* Warna teks diubah menjadi hitam */
+        }
+        .folder-name:hover {
+            text-decoration: none; /* Tidak ada garis bawah saat hover */
+        }
+        .folder-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .subfolder {
+            margin-left: 39px;
+            padding: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="folder-container">
+        <div class="folder">
+            <div class="folder-icon">📁</div>
+            <div class="folder-content">
+                <div class="folder-name">Modul ajar SD GRATIS</div>
+                <div class="folder-description">Kumpulan modul ajar gratis untuk Sekolah Dasar</div>
+            </div>
+        </div>
+        
+        <div class="subfolder">
+            <div class="folder">
+                <div class="folder-icon">📂</div>
+                <div class="folder-content">
+                    <div class="folder-name" onclick="window.open('https://drive.google.com/drive/folders/1Lim4EpO-s00jK88ZQHyzEFWi9MkbJNnI', '_blank')">Kelas 2 SD</div>
+                </div>
+            </div>
+            
+            <div class="folder">
+                <div class="folder-icon">📂</div>
+                <div class="folder-content">
+                    <div class="folder-name" onclick="window.open('https://drive.google.com/drive/folders/1VdRBnI71Ts5sdJiSl1oroM7If4x1sGGG', '_blank')">Kelas 4 SD</div>
+                </div>
+            </div>
+            
+            <div class="folder">
+                <div class="folder-icon">📂</div>
+                <div class="folder-content">
+                    <div class="folder-name" onclick="window.open('https://drive.google.com/drive/folders/1YXGmXS05AO6R14LMH_s4RgC4TWtZfsbB', '_blank')">Kelas 5 SD</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="folder">
+            <div class="folder-icon">📁</div>
+            <div class="folder-content">
+                <div class="folder-name" onclick="window.open('https://drive.google.com/drive/folders/1UYNmbakBoqJKFiseuttz2oTvskNMapOt', '_blank')">LKPD SD GRATIS</div>
+                <div class="folder-description">Lembar Kerja Peserta Didik (LKPD) dan materi ajar untuk jenjang Sekolah Dasar (SD)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
