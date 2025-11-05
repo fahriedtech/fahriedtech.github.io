@@ -302,9 +302,86 @@
         .suggestion-item:not(:last-child) {
             border-bottom: 1px solid #4b5563;
         }
+
+        /* --- STYLE UNTUK IKLAN POPUP --- */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .popup-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.2s;
+        }
+
+        .popup-close:hover {
+            background: #dc2626;
+        }
+
+        .popup-close:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .popup-timer {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
+
+    <!-- Popup Iklan -->
+    <div id="popupOverlay" class="popup-overlay hidden">
+        <div class="popup-content">
+            <button id="popupClose" class="popup-close" disabled title="Tunggu 10 detik">×</button>
+            <img src="/iklan.jpg" alt="Iklan" class="popup-image" id="popupImage">
+            <div class="popup-timer" id="popupTimer">Tutup dalam: 10 detik</div>
+        </div>
+    </div>
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
         <header class="text-center mb-10">
@@ -585,11 +662,80 @@
         const alamatSekolahInput = document.getElementById('alamat-sekolah'); 
         const alurPembelajaranInput = document.getElementById('alur-pembelajaran');
 
+        // --- ELEMENT POPUP IKLAN ---
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupClose = document.getElementById('popupClose');
+        const popupTimer = document.getElementById('popupTimer');
+        const popupImage = document.getElementById('popupImage');
+
         const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent';
         const JSON_SCHEMA = {
             type: "ARRAY",
             items: { type: "STRING" }
         };
+
+        // --- FUNGSI POPUP IKLAN ---
+        let popupCountdown;
+        let popupTimeout;
+
+        function showPopupAd() {
+            // Tampilkan popup
+            popupOverlay.classList.remove('hidden');
+            
+            // Reset timer
+            let seconds = 10;
+            popupClose.disabled = true;
+            popupTimer.textContent = `Tutup dalam: ${seconds} detik`;
+            
+            // Update timer setiap detik
+            popupCountdown = setInterval(() => {
+                seconds--;
+                popupTimer.textContent = `Tutup dalam: ${seconds} detik`;
+                
+                if (seconds <= 0) {
+                    clearInterval(popupCountdown);
+                    popupClose.disabled = false;
+                    popupTimer.textContent = 'Klik X untuk menutup';
+                }
+            }, 1000);
+            
+            // Auto close setelah 30 detik (fallback)
+            popupTimeout = setTimeout(() => {
+                closePopupAd();
+            }, 30000);
+        }
+
+        function closePopupAd() {
+            clearInterval(popupCountdown);
+            clearTimeout(popupTimeout);
+            popupOverlay.classList.add('hidden');
+        }
+
+        // Event listener untuk tombol close
+        popupClose.addEventListener('click', closePopupAd);
+
+        // Tampilkan popup saat halaman dimuat
+        window.addEventListener('load', () => {
+            // Tunggu 1 detik sebelum menampilkan popup
+            setTimeout(showPopupAd, 1000);
+        });
+
+        // Handle error gambar iklan
+        popupImage.addEventListener('error', function() {
+            console.warn('Gambar iklan tidak ditemukan di /iklan.jpg');
+            // Tetap tampilkan popup dengan placeholder
+            this.alt = 'Iklan tidak tersedia';
+            this.style.backgroundColor = '#374151';
+            this.style.padding = '2rem';
+            this.style.color = 'white';
+            this.style.textAlign = 'center';
+            this.style.display = 'flex';
+            this.style.alignItems = 'center';
+            this.style.justifyContent = 'center';
+            this.style.minWidth = '300px';
+            this.style.minHeight = '200px';
+            this.textContent = 'Iklan';
+        });
 
         function populateDropdown(selectElement, options) {
             options.forEach(optionText => {
