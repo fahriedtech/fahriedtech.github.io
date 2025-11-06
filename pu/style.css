@@ -1,0 +1,144 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+}
+
+/* Navigasi Hari */
+.nav-hari {
+    position: sticky;
+    top: 0;
+    background-color: #3f51b5;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.nav-hari button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.nav-hari button:hover, .nav-hari button.active {
+    background-color: #5c6bc0;
+}
+
+/* Kontrol Cepat (Search & Filter) */
+.controls {
+    padding: 20px;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.controls input, .controls select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+/* Tampilan Kartu */
+.card-container {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card-lokasi {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.card-lokasi:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: #3f51b5;
+    color: white;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.tugas-item {
+    border-bottom: 1px dashed #eee;
+    padding: 10px 0;
+}
+
+.tugas-item:last-child {
+    border-bottom: none;
+}
+
+.siswa-nama {
+    font-weight: bold;
+    color: #333;
+}
+
+.siswa-kelas {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Tampilan Admin */
+.admin-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.admin-container input, .admin-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.admin-container button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.admin-container button:hover {
+    background-color: #45a049;
+}
+
+.message {
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.message.success { background-color: #d4edda; color: #155724; }
+.message.error { background-color: #f8d7da; color: #721c24; }
+.message.info { background-color: #cce5ff; color: #004085; }

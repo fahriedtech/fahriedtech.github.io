@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Piket App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="admin">
+    <div class="admin-container" id="loginForm">
+        <h2>🔑 Login Admin</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div class="admin-container" id="controlPanel" style="display: none;">
+        <h2>⚙️ Kontrol Jadwal Piket</h2>
+        <p>Gunakan tombol ini untuk menghapus jadwal lama dan membuat jadwal baru secara acak.</p>
+        <button id="acakJadwalBtn">Acak dan Simpan Jadwal Piket Baru</button>
+        <p style="font-size: 0.8em; color: red; margin-top: 15px;">PERINGATAN: Aksi ini akan menimpa semua data di tab 'JadwalPiket'!</p>
+    </div>
+
+    <div class="admin-container" id="messageContainer">
+        </div>
+    
+    <div style="text-align: center; padding: 20px;">
+        <small><a href="index.html">Kembali ke Dashboard Umum</a></small>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
