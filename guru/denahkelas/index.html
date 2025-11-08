@@ -422,9 +422,51 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Sound controls */
+        .sound-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .sound-toggle {
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sound-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .sound-toggle.muted {
+            background: #f3f4f6;
+        }
+        
+        .sound-toggle.muted svg {
+            color: #9ca3af;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-400 to-cyan-500">
+    <!-- Sound Controls -->
+    <div class="sound-controls">
+        <div id="sound-toggle" class="sound-toggle" onclick="toggleSound()">
+            <svg id="sound-icon" class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6a9 9 0 010 12m-4.5-9.5L12 3v18l-4.5-4.5H4a1 1 0 01-1-1v-7a1 1 0 011-1h3.5z"></path>
+            </svg>
+        </div>
+    </div>
+
     <!-- Auto-save indicator -->
     <div id="auto-save-indicator" class="auto-save-indicator">
         <span class="flex items-center">
@@ -565,6 +607,10 @@
     <script>
         // Storage key
         const STORAGE_KEY = 'denah_kelas_data';
+        const SOUND_SETTING_KEY = 'denah_kelas_sound';
+        
+        // Global sound state
+        let soundEnabled = true;
         
         // Enhanced validation and counter functions
         function validateAndUpdateCounter() {
@@ -686,6 +732,9 @@
                 return;
             }
 
+            // Play shuffle sound
+            playSound('shuffle');
+
             // Show enhanced loading state
             showLoadingState();
             
@@ -726,6 +775,9 @@
                     
                     // Save seating arrangement
                     saveSeatingArrangement(shuffledStudents);
+                    
+                    // Play completion sound
+                    playSound('success');
                     
                     showAlert('Tempat duduk berhasil diacak! 🎉', 'success');
                 }, shuffledStudents.length * 150 + 500);
@@ -769,6 +821,13 @@
             `;
             
             document.body.appendChild(alert);
+            
+            // Play alert sound
+            if (type === 'success') {
+                playSound('notification');
+            } else if (type === 'error') {
+                playSound('error');
+            }
             
             // Show alert
             setTimeout(() => {
@@ -820,6 +879,10 @@
             setTimeout(() => {
                 targetSeat.textContent = studentName;
                 targetSeat.className = 'classroom-seat filled seat-pop';
+                
+                // Play seat placement sound
+                playSound('pop');
+                
                 document.body.removeChild(flyingName);
             }, 900);
         }
@@ -834,9 +897,15 @@
             
             // Clear seating arrangement from storage
             clearSeatingArrangement();
+            
+            // Play reset sound
+            playSound('reset');
         }
 
         function downloadSeatingChart() {
+            // Play download sound
+            playSound('click');
+            
             // Create canvas for download
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -918,6 +987,195 @@
             link.download = 'denah-tempat-duduk.png';
             link.href = canvas.toDataURL();
             link.click();
+        }
+
+        // ==================== SOUND FUNCTIONS ====================
+        
+        // Sound effects using Web Audio API
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                let oscillator, gainNode;
+                
+                switch(type) {
+                    case 'click':
+                        // Short click sound
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+                        
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
+                        
+                    case 'pop':
+                        // Pop sound for seat placement
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.05);
+                        
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
+                        
+                    case 'shuffle':
+                        // Shuffling cards sound
+                        for (let i = 0; i < 5; i++) {
+                            setTimeout(() => {
+                                const osc = audioContext.createOscillator();
+                                const gain = audioContext.createGain();
+                                
+                                osc.connect(gain);
+                                gain.connect(audioContext.destination);
+                                
+                                osc.frequency.setValueAtTime(100 + Math.random() * 200, audioContext.currentTime);
+                                
+                                gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+                                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+                                
+                                osc.start(audioContext.currentTime);
+                                osc.stop(audioContext.currentTime + 0.05);
+                            }, i * 80);
+                        }
+                        break;
+                        
+                    case 'success':
+                        // Success sound
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                        
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.2);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                        break;
+                        
+                    case 'notification':
+                        // Notification sound
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5
+                        oscillator.frequency.setValueAtTime(1046.5, audioContext.currentTime + 0.1); // C6
+                        
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                        
+                    case 'error':
+                        // Error sound
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                        oscillator.frequency.setValueAtTime(150, audioContext.currentTime + 0.1);
+                        oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.2);
+                        
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.2);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.4);
+                        break;
+                        
+                    case 'reset':
+                        // Reset sound
+                        oscillator = audioContext.createOscillator();
+                        gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+                        
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.2);
+                        break;
+                }
+            } catch (error) {
+                console.warn('Web Audio API tidak didukung di browser ini:', error);
+            }
+        }
+        
+        // Toggle sound on/off
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            
+            const soundToggle = document.getElementById('sound-toggle');
+            const soundIcon = document.getElementById('sound-icon');
+            
+            if (soundEnabled) {
+                soundToggle.classList.remove('muted');
+                soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6a9 9 0 010 12m-4.5-9.5L12 3v18l-4.5-4.5H4a1 1 0 01-1-1v-7a1 1 0 011-1h3.5z"></path>';
+                playSound('click');
+            } else {
+                soundToggle.classList.add('muted');
+                soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd" fill-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>';
+            }
+            
+            // Save sound setting
+            localStorage.setItem(SOUND_SETTING_KEY, soundEnabled.toString());
+        }
+        
+        // Load sound setting
+        function loadSoundSetting() {
+            const savedSoundSetting = localStorage.getItem(SOUND_SETTING_KEY);
+            if (savedSoundSetting !== null) {
+                soundEnabled = savedSoundSetting === 'true';
+                
+                const soundToggle = document.getElementById('sound-toggle');
+                const soundIcon = document.getElementById('sound-icon');
+                
+                if (!soundEnabled) {
+                    soundToggle.classList.add('muted');
+                    soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd" fill-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>';
+                }
+            }
         }
 
         // ==================== STORAGE FUNCTIONS ====================
@@ -1039,6 +1297,9 @@
                 validateAndUpdateCounter();
                 resetSeatingChart();
                 
+                // Play delete sound
+                playSound('reset');
+                
                 showAlert('Semua data berhasil dihapus', 'success');
             }
         }
@@ -1075,6 +1336,9 @@
                 console.warn('Penyimpanan browser tidak tersedia. Fitur auto-save tidak akan berfungsi.');
                 showAlert('Penyimpanan browser tidak tersedia. Data tidak akan tersimpan otomatis.', 'warning');
             }
+            
+            // Load sound setting
+            loadSoundSetting();
             
             generateEmptySeats();
             validateAndUpdateCounter();
