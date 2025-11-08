@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengacak Urutan Tampil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .bounce-icon {
+            animation: bounce 2s infinite;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-primary {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-appear {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Alert animations */
+        .alert-slide-in {
+            animation: slideInAlert 0.3s ease-out;
+        }
+
+        @keyframes slideInAlert {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-orange-400 to-red-500">
+    <div class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="text-center mb-6 sm:mb-8">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl sm:text-3xl">🎯</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Pengacak Urutan Tampil</h2>
+                    <p class="text-sm sm:text-base text-gray-600">Tentukan urutan siswa maju ke depan secara acak dan adil untuk presentasi atau tugas</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Input Section -->
+                    <div class="space-y-4 sm:space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-gray-700 font-bold text-sm sm:text-base">Daftar Nama Siswa:</label>
+                                <span id="presentation-counter" class="text-xs sm:text-sm text-orange-600 font-semibold">0 siswa</span>
+                            </div>
+                            <textarea id="presentation-student-list" rows="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-orange-500 focus:outline-none resize-none text-sm sm:text-base" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad Rizki&#10;Siti Nurhaliza&#10;Budi Santoso&#10;Rina Melati&#10;Doni Pratama&#10;Lina Sari&#10;Eko Wijaya&#10;Maya Putri&#10;Andi Kurniawan&#10;Dewi Lestari" oninput="updatePresentationCounter()"></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Mode Pengacakan:</label>
+                                <select id="presentation-mode" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-orange-500 focus:outline-none text-sm sm:text-base transition-colors duration-300" onchange="togglePresentationMode()">
+                                    <option value="all">Semua Siswa Sekaligus</option>
+                                    <option value="one-by-one">Satu per Satu</option>
+                                </select>
+                            </div>
+                            <div id="batch-size-input" class="hidden">
+                                <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah per Batch:</label>
+                                <input type="number" id="batch-size" value="5" min="1" max="10" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-orange-500 focus:outline-none text-sm sm:text-base">
+                            </div>
+                        </div>
+                        
+                        <div class="text-center space-y-3">
+                            <button id="start-presentation-btn" onclick="startPresentationOrder()" class="btn-primary bg-orange-500 hover:bg-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center mx-auto w-full">
+                                <span class="text-xl sm:text-2xl mr-2">🎯</span>
+                                MULAI PENGACAKAN
+                            </button>
+                            <button id="next-student-btn" onclick="getNextStudent()" class="hidden btn-secondary bg-red-500 hover:bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold w-full sm:w-auto">
+                                👆 Siswa Selanjutnya
+                            </button>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="resetPresentationOrder()" class="btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm w-full sm:w-auto">
+                                    🔄 Reset Urutan
+                                </button>
+                                <button id="save-session-btn" onclick="saveSession()" class="btn-secondary bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm w-full sm:w-auto">
+                                    💾 Simpan Sesi
+                                </button>
+                                <button id="load-session-btn" onclick="loadSession()" class="btn-secondary bg-green-500 hover:bg-green-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm w-full sm:w-auto">
+                                    📂 Muat Sesi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Result Section -->
+                    <div class="bg-gray-50 rounded-xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800">Urutan Tampil:</h3>
+                            <button id="copy-order-btn" onclick="copyPresentationOrder()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all opacity-50 cursor-not-allowed w-full sm:w-auto" disabled>
+                                📋 Salin Urutan
+                            </button>
+                        </div>
+                        
+                        <!-- Current Student Display -->
+                        <div id="current-student-display" class="hidden mb-6">
+                            <div class="bg-gradient-to-r from-orange-400 to-red-400 text-white p-4 sm:p-6 rounded-xl text-center">
+                                <div class="text-xs sm:text-sm font-semibold mb-2">GILIRAN SEKARANG:</div>
+                                <div id="current-student-name" class="text-xl sm:text-2xl font-bold mb-2"></div>
+                                <div id="current-student-number" class="text-xs sm:text-sm opacity-90"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order List -->
+                        <div id="presentation-loading" class="hidden text-center py-8">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-gray-600 text-sm sm:text-base">Mengacak urutan...</p>
+                        </div>
+                        
+                        <div id="presentation-result" class="hidden">
+                            <div id="order-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                        </div>
+                        
+                        <!-- Statistics -->
+                        <div id="presentation-stats" class="hidden mt-6 p-3 sm:p-4 bg-orange-50 rounded-lg">
+                            <div class="text-center text-xs sm:text-sm text-orange-700">
+                                <div id="remaining-count" class="font-semibold"></div>
+                                <div id="completed-count" class="text-xs mt-1"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Session Info -->
+                        <div id="session-info" class="hidden mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="text-xs text-blue-700">
+                                <div class="font-semibold">Sesi Tersimpan:</div>
+                                <div id="session-details">Terakhir disimpan: -</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Presentation order variables
+        let presentationStudents = [];
+        let currentStudentIndex = 0;
+        let presentationMode = 'all';
+        let sessionId = null;
+
+        // Session management functions
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function saveSession() {
+            const studentListText = document.getElementById('presentation-student-list').value.trim();
+            const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
+            
+            if (students.length === 0) {
+                showAlert('Tidak ada data untuk disimpan!', 'warning');
+                return;
+            }
+            
+            // Generate session ID if not exists
+            if (!sessionId) {
+                sessionId = generateSessionId();
+            }
+            
+            const sessionData = {
+                id: sessionId,
+                students: students,
+                presentationStudents: presentationStudents,
+                currentStudentIndex: currentStudentIndex,
+                presentationMode: document.getElementById('presentation-mode').value,
+                timestamp: new Date().toISOString(),
+                name: `Sesi ${new Date().toLocaleDateString('id-ID')}`
+            };
+            
+            // Save to localStorage
+            localStorage.setItem(sessionId, JSON.stringify(sessionData));
+            
+            // Update session info
+            updateSessionInfo(sessionData);
+            
+            showAlert('Sesi berhasil disimpan!', 'success');
+        }
+
+        function loadSession() {
+            // Get all saved sessions
+            const sessions = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('session_')) {
+                    try {
+                        const sessionData = JSON.parse(localStorage.getItem(key));
+                        sessions.push(sessionData);
+                    } catch (e) {
+                        console.error('Error parsing session data:', e);
+                    }
+                }
+            }
+            
+            if (sessions.length === 0) {
+                showAlert('Tidak ada sesi yang tersimpan!', 'warning');
+                return;
+            }
+            
+            // Show session selection dialog
+            showSessionSelection(sessions);
+        }
+
+        function showSessionSelection(sessions) {
+            // Create a simple modal for session selection
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Pilih Sesi</h3>
+                    <div class="max-h-64 overflow-y-auto mb-4">
+                        ${sessions.map(session => `
+                            <div class="p-3 border border-gray-200 rounded-lg mb-2 cursor-pointer hover:bg-gray-50" onclick="selectSession('${session.id}')">
+                                <div class="font-semibold">${session.name}</div>
+                                <div class="text-xs text-gray-500">
+                                    ${new Date(session.timestamp).toLocaleString('id-ID')} | 
+                                    ${session.students.length} siswa
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex justify-between">
+                        <button onclick="deleteAllSessions()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                            Hapus Semua
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function selectSession(sessionKey) {
+            try {
+                const sessionData = JSON.parse(localStorage.getItem(sessionKey));
+                
+                if (!sessionData) {
+                    showAlert('Sesi tidak ditemukan!', 'error');
+                    return;
+                }
+                
+                // Load session data
+                sessionId = sessionData.id;
+                document.getElementById('presentation-student-list').value = sessionData.students.join('\n');
+                presentationStudents = sessionData.presentationStudents || [];
+                currentStudentIndex = sessionData.currentStudentIndex || 0;
+                document.getElementById('presentation-mode').value = sessionData.presentationMode || 'all';
+                
+                // Update UI
+                updatePresentationCounter();
+                updateSessionInfo(sessionData);
+                
+                // If there's an active presentation, show it
+                if (presentationStudents.length > 0) {
+                    if (sessionData.presentationMode === 'all') {
+                        displayAllPresentationOrder();
+                    } else {
+                        setupOneByOneMode();
+                    }
+                }
+                
+                // Close modal
+                document.querySelector('.fixed.inset-0').remove();
+                
+                showAlert('Sesi berhasil dimuat!', 'success');
+            } catch (e) {
+                console.error('Error loading session:', e);
+                showAlert('Gagal memuat sesi!', 'error');
+            }
+        }
+
+        function deleteAllSessions() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua sesi yang tersimpan?')) {
+                // Remove all session data from localStorage
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('session_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                
+                // Close modal
+                document.querySelector('.fixed.inset-0').remove();
+                
+                showAlert('Semua sesi berhasil dihapus!', 'success');
+            }
+        }
+
+        function updateSessionInfo(sessionData) {
+            const sessionInfo = document.getElementById('session-info');
+            const sessionDetails = document.getElementById('session-details');
+            
+            if (sessionData) {
+                sessionInfo.classList.remove('hidden');
+                sessionDetails.textContent = `Terakhir disimpan: ${new Date(sessionData.timestamp).toLocaleString('id-ID')} | ${sessionData.students.length} siswa`;
+            } else {
+                sessionInfo.classList.add('hidden');
+            }
+        }
+
+        // Presentation order functions
+        function updatePresentationCounter() {
+            const studentListText = document.getElementById('presentation-student-list').value.trim();
+            const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
+            const counter = document.getElementById('presentation-counter');
+            counter.textContent = `${students.length} siswa`;
+        }
+
+        function togglePresentationMode() {
+            const mode = document.getElementById('presentation-mode').value;
+            const batchSizeInput = document.getElementById('batch-size-input');
+            
+            if (mode === 'batch') {
+                batchSizeInput.classList.remove('hidden');
+            } else {
+                batchSizeInput.classList.add('hidden');
+            }
+            
+            presentationMode = mode;
+        }
+
+        function startPresentationOrder() {
+            const studentListText = document.getElementById('presentation-student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            if (students.length === 0) {
+                showAlert('Daftar siswa tidak boleh kosong!', 'error');
+                return;
+            }
+
+            // Shuffle students
+            presentationStudents = [...students].sort(() => Math.random() - 0.5);
+            currentStudentIndex = 0;
+
+            const mode = document.getElementById('presentation-mode').value;
+
+            // Show loading
+            document.getElementById('presentation-result').classList.add('hidden');
+            document.getElementById('current-student-display').classList.add('hidden');
+            document.getElementById('presentation-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('presentation-loading').classList.add('hidden');
+                
+                if (mode === 'all') {
+                    displayAllPresentationOrder();
+                } else {
+                    setupOneByOneMode();
+                }
+                
+                // Enable copy button
+                const copyBtn = document.getElementById('copy-order-btn');
+                copyBtn.disabled = false;
+                copyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                // Auto-save session
+                saveSession();
+            }, 1000);
+        }
+
+        function displayAllPresentationOrder() {
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = '';
+            
+            presentationStudents.forEach((student, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'flex items-center p-3 bg-white rounded-lg border-2 border-orange-200 transform transition-all hover:scale-102';
+                orderItem.innerHTML = `
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold mr-3 sm:mr-4 text-xs sm:text-base">
+                        ${index + 1}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm sm:text-base">${student}</div>
+                        <div class="text-xs sm:text-sm text-gray-500">Urutan ke-${index + 1}</div>
+                    </div>
+                    <div class="text-orange-500 font-bold text-base sm:text-lg">
+                        ${index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : '📝'}
+                    </div>
+                `;
+                
+                // Add animation delay
+                orderItem.style.opacity = '0';
+                orderItem.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    orderItem.style.transition = 'all 0.5s ease-out';
+                    orderItem.style.opacity = '1';
+                    orderItem.style.transform = 'translateY(0)';
+                }, index * 100);
+                
+                orderList.appendChild(orderItem);
+            });
+            
+            document.getElementById('presentation-result').classList.remove('hidden');
+            document.getElementById('presentation-result').classList.add('result-appear');
+        }
+
+        function setupOneByOneMode() {
+            document.getElementById('start-presentation-btn').classList.add('hidden');
+            document.getElementById('next-student-btn').classList.remove('hidden');
+            document.getElementById('current-student-display').classList.remove('hidden');
+            document.getElementById('presentation-stats').classList.remove('hidden');
+            
+            showCurrentStudent();
+            updatePresentationStats();
+        }
+
+        function getNextStudent() {
+            if (currentStudentIndex < presentationStudents.length) {
+                // Mark current student as completed in the list
+                markStudentCompleted(currentStudentIndex);
+                currentStudentIndex++;
+                
+                if (currentStudentIndex < presentationStudents.length) {
+                    showCurrentStudent();
+                } else {
+                    // All students completed
+                    document.getElementById('current-student-display').innerHTML = `
+                        <div class="bg-gradient-to-r from-green-400 to-blue-400 text-white p-4 sm:p-6 rounded-xl text-center">
+                            <div class="text-xl sm:text-2xl mb-2">🎉</div>
+                            <div class="text-lg sm:text-xl font-bold">Semua Siswa Sudah Tampil!</div>
+                            <div class="text-xs sm:text-sm mt-2 opacity-90">Presentasi selesai</div>
+                        </div>
+                    `;
+                    document.getElementById('next-student-btn').classList.add('hidden');
+                }
+                
+                updatePresentationStats();
+                
+                // Auto-save session after each student
+                saveSession();
+            }
+        }
+
+        function showCurrentStudent() {
+            const currentStudent = presentationStudents[currentStudentIndex];
+            document.getElementById('current-student-name').textContent = currentStudent;
+            document.getElementById('current-student-number').textContent = `Urutan ke-${currentStudentIndex + 1} dari ${presentationStudents.length}`;
+            
+            // Update or create the order list for one-by-one mode
+            updateOneByOneOrderList();
+        }
+
+        function updateOneByOneOrderList() {
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = '';
+            
+            presentationStudents.forEach((student, index) => {
+                const orderItem = document.createElement('div');
+                let statusClass = '';
+                let statusIcon = '';
+                let statusText = '';
+                
+                if (index < currentStudentIndex) {
+                    statusClass = 'bg-green-50 border-green-200';
+                    statusIcon = '✅';
+                    statusText = 'Sudah tampil';
+                } else if (index === currentStudentIndex) {
+                    statusClass = 'bg-orange-50 border-orange-300 ring-2 ring-orange-400';
+                    statusIcon = '👆';
+                    statusText = 'Sedang tampil';
+                } else {
+                    statusClass = 'bg-gray-50 border-gray-200';
+                    statusIcon = '⏳';
+                    statusText = 'Menunggu';
+                }
+                
+                orderItem.className = `flex items-center p-3 rounded-lg border-2 ${statusClass} transition-all`;
+                orderItem.innerHTML = `
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold mr-3 sm:mr-4 text-xs sm:text-base">
+                        ${index + 1}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm sm:text-base">${student}</div>
+                        <div class="text-xs sm:text-sm text-gray-500">${statusText}</div>
+                    </div>
+                    <div class="text-base sm:text-lg">
+                        ${statusIcon}
+                    </div>
+                `;
+                
+                orderList.appendChild(orderItem);
+            });
+            
+            document.getElementById('presentation-result').classList.remove('hidden');
+        }
+
+        function markStudentCompleted(index) {
+            // This function is called when moving to next student
+            // The visual update is handled in updateOneByOneOrderList()
+        }
+
+        function updatePresentationStats() {
+            const remaining = presentationStudents.length - currentStudentIndex;
+            const completed = currentStudentIndex;
+            
+            document.getElementById('remaining-count').textContent = `${remaining} siswa tersisa`;
+            document.getElementById('completed-count').textContent = `${completed} siswa sudah tampil`;
+        }
+
+        function resetPresentationOrder() {
+            presentationStudents = [];
+            currentStudentIndex = 0;
+            
+            document.getElementById('presentation-result').classList.add('hidden');
+            document.getElementById('current-student-display').classList.add('hidden');
+            document.getElementById('presentation-stats').classList.add('hidden');
+            document.getElementById('start-presentation-btn').classList.remove('hidden');
+            document.getElementById('next-student-btn').classList.add('hidden');
+            
+            // Disable copy button
+            const copyBtn = document.getElementById('copy-order-btn');
+            copyBtn.disabled = true;
+            copyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Clear session info
+            document.getElementById('session-info').classList.add('hidden');
+            sessionId = null;
+        }
+
+        function copyPresentationOrder() {
+            if (presentationStudents.length === 0) {
+                showAlert('Belum ada urutan yang dibuat!', 'warning');
+                return;
+            }
+            
+            let result = 'URUTAN TAMPIL SISWA\n';
+            result += '='.repeat(25) + '\n\n';
+            
+            presentationStudents.forEach((student, index) => {
+                const status = index < currentStudentIndex ? ' ✅' : index === currentStudentIndex ? ' 👆' : '';
+                result += `${index + 1}. ${student}${status}\n`;
+            });
+            
+            if (presentationMode === 'one-by-one') {
+                result += `\nStatus: ${currentStudentIndex} dari ${presentationStudents.length} sudah tampil`;
+            }
+            
+            navigator.clipboard.writeText(result).then(() => {
+                showAlert('Urutan tampil berhasil disalin ke clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Gagal menyalin ke clipboard. Silakan salin secara manual.', 'error');
+            });
+        }
+
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alert = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+            
+            alert.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 max-w-sm`;
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                    <span class="text-xs sm:text-sm font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Show alert
+            setTimeout(() => {
+                alert.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Hide alert after 4 seconds
+            setTimeout(() => {
+                alert.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePresentationCounter();
+            
+            // Check if there's a recent session to load
+            const sessions = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('session_')) {
+                    try {
+                        const sessionData = JSON.parse(localStorage.getItem(key));
+                        sessions.push(sessionData);
+                    } catch (e) {
+                        console.error('Error parsing session data:', e);
+                    }
+                }
+            }
+            
+            // Sort sessions by timestamp (newest first)
+            sessions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Load the most recent session
+            if (sessions.length > 0) {
+                const recentSession = sessions[0];
+                updateSessionInfo(recentSession);
+            }
+        });
+    </script>
+</body>
+</html>
