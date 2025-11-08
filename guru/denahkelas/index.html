@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Denah Kelas - Fahri, S.Pd</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes shuffle {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .bounce-icon {
+            animation: bounce 2s infinite;
+        }
+        
+        .shuffle-animation {
+            animation: shuffle 0.5s ease-in-out;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .card-hover:hover .card-icon {
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        .btn-primary {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes flyToSeat {
+            0% {
+                opacity: 1;
+                transform: translateX(0) translateY(0) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateX(var(--fly-x)) translateY(var(--fly-y)) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(var(--fly-x)) translateY(var(--fly-y)) scale(1);
+            }
+        }
+        
+        @keyframes seatPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .page-transition-enter {
+            animation: slideInFromRight 0.6s ease-out forwards;
+        }
+        
+        .page-transition-exit {
+            animation: slideInFromLeft 0.4s ease-in forwards;
+        }
+        
+        .counter-animation {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .icon-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .icon-hover:hover {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .result-appear {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .classroom-seat {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.1;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            color: #6b7280;
+            position: relative;
+            overflow: hidden;
+            padding: 1px;
+        }
+        
+        @media (min-width: 480px) {
+            .classroom-seat {
+                width: 50px;
+                height: 50px;
+                font-size: 8px;
+                padding: 2px;
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .classroom-seat {
+                width: 60px;
+                height: 60px;
+                font-size: 9px;
+                line-height: 1.2;
+                border-radius: 8px;
+                padding: 3px;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .classroom-seat {
+                width: 70px;
+                height: 70px;
+                font-size: 10px;
+                padding: 4px;
+            }
+        }
+        
+        .classroom-seat.filled {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border-color: #93c5fd;
+            color: #1e40af;
+        }
+        
+        .classroom-seat.empty {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            color: #9ca3af;
+        }
+        
+        /* Mobile overflow fix */
+        @media (max-width: 767px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .max-w-7xl, .max-w-6xl, .max-w-4xl {
+                max-width: 100vw;
+                margin-left: auto;
+                margin-right: auto;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .px-4, .px-6, .px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            .sm\:px-6, .sm\:px-8 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            #classroom-grid {
+                max-width: calc(100vw - 2rem);
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            /* Fix for specific generator pages */
+            #tempat-duduk-page .bg-white {
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100vw;
+                border-radius: 1rem;
+            }
+            
+            /* Fix grid layouts on mobile */
+            .grid {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* Fix flex layouts */
+            .flex {
+                flex-wrap: wrap;
+                max-width: 100%;
+            }
+            
+            /* Prevent text overflow */
+            .text-2xl, .text-3xl {
+                word-break: break-word;
+                hyphens: auto;
+            }
+        }
+        
+        .flying-name {
+            position: fixed;
+            z-index: 1000;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .seat-pop {
+            animation: seatPop 0.6s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .card-hover:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-1px) scale(1.01);
+            }
+        }
+
+        /* Alert animations */
+        .alert-slide-in {
+            animation: slideInAlert 0.3s ease-out;
+        }
+
+        @keyframes slideInAlert {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Progress bar animation */
+        .progress-animate {
+            transition: width 0.3s ease-out;
+        }
+
+        /* Auto-save indicator */
+        .auto-save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .auto-save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-400 to-cyan-500">
+    <!-- Auto-save indicator -->
+    <div id="auto-save-indicator" class="auto-save-indicator">
+        <span class="flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Tersimpan otomatis
+        </span>
+    </div>
+
+    <!-- Tempat Duduk Page -->
+    <div id="tempat-duduk-page" class="min-h-screen">
+        <div class="py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-xl">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-2xl sm:text-3xl">🪑</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Generator Denah Kelas</h2>
+                        <p class="text-sm sm:text-base text-gray-600 px-2">Atur tempat duduk siswa secara acak untuk menciptakan dinamika kelas yang baru</p>
+                        <div class="mt-2 text-xs text-blue-600 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Data tersimpan otomatis di browser
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col xl:flex-row gap-6 xl:gap-8">
+                        <!-- Input Section -->
+                        <div class="xl:w-1/2 space-y-4 sm:space-y-6">
+                            <div>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1">
+                                    <label class="block text-gray-700 dark:text-gray-300 font-bold text-sm sm:text-base">Daftar Nama Siswa:</label>
+                                    <div class="flex items-center gap-2">
+                                        <span id="student-counter" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-semibold">0 siswa</span>
+                                        <div id="validation-indicator" class="hidden">
+                                            <span class="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300">⚠️ Perlu perbaikan</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea id="student-list" rows="6" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-blue-500 focus:outline-none resize-none text-sm sm:text-base transition-all" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad Rizki&#10;Siti Nurhaliza&#10;Budi Santoso&#10;Rina Melati&#10;Doni Pratama&#10;Lina Sari&#10;Eko Wijaya&#10;Maya Putri&#10;Andi Kurniawan&#10;Dewi Lestari" oninput="validateAndUpdateCounter(); autoSave()"></textarea>
+                                <div id="input-error" class="hidden mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                <div>
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Baris:</label>
+                                    <input type="number" id="rows" value="5" min="3" max="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-blue-500 focus:outline-none text-sm sm:text-base transition-all" onchange="updateSeatingCapacity(); autoSave()">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Kolom:</label>
+                                    <input type="number" id="cols" value="6" min="4" max="8" class="input-focus w-full border-2 border-gray-300 bg-white text-gray-900 rounded-lg px-3 sm:px-4 py-2 focus:border-blue-500 focus:outline-none text-sm sm:text-base transition-all" onchange="updateSeatingCapacity(); autoSave()">
+                                </div>
+                            </div>
+                            
+                            <div id="capacity-info" class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                <span class="text-blue-700 font-semibold text-sm sm:text-base">Kapasitas: 30 tempat duduk</span>
+                            </div>
+                            
+                            <!-- Enhanced Loading State -->
+                            <div id="seating-loading" class="hidden text-center py-6">
+                                <div class="relative">
+                                    <div class="loading-spinner mx-auto mb-4"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span class="text-2xl animate-bounce">🪑</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 font-medium">Mengacak tempat duduk...</p>
+                                <div class="mt-2 bg-blue-50 rounded-lg p-2">
+                                    <div class="h-2 bg-blue-200 rounded-full overflow-hidden">
+                                        <div id="progress-bar" class="h-full bg-blue-500 rounded-full progress-animate" style="width: 0%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-600 mt-1" id="progress-text">Mempersiapkan...</p>
+                                </div>
+                            </div>
+                            
+                            <div id="seating-controls" class="text-center space-y-3">
+                                <button id="shuffle-btn" onclick="animateSeatingArrangement()" class="btn-primary bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center mx-auto w-full transition-all">
+                                    <span class="text-xl sm:text-2xl mr-2">🎲</span>
+                                    <span id="shuffle-btn-text">ACAK TEMPAT DUDUK</span>
+                                </button>
+                                <div class="flex flex-col sm:flex-row gap-2 justify-center">
+                                    <button onclick="resetSeatingChart()" class="btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                        🔄 Reset Denah
+                                    </button>
+                                    <button onclick="clearAllData()" class="btn-secondary bg-red-500 hover:bg-red-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                        🗑️ Hapus Semua Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Seating Chart Section -->
+                        <div class="xl:w-1/2 bg-gray-50 rounded-xl p-3 sm:p-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Denah Kelas:</h3>
+                                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                    <button id="save-btn" onclick="downloadSeatingChart()" class="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all opacity-50 cursor-not-allowed" disabled>
+                                        💾 Simpan Gambar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Teacher's Desk -->
+                            <div class="mb-4 sm:mb-6">
+                                <div class="bg-amber-100 border-2 border-amber-300 rounded-lg p-2 sm:p-4 text-center">
+                                    <div class="text-amber-800 font-bold text-xs sm:text-lg">👨‍🏫 MEJA GURU</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Seating Grid -->
+                            <div class="overflow-x-auto pb-2">
+                                <div id="classroom-grid" class="grid gap-1 sm:gap-2 justify-center mb-4 min-w-max mx-auto" style="grid-template-columns: repeat(6, 1fr);">
+                                    <!-- Seats will be generated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="flex justify-center space-x-3 sm:space-x-6 text-xs sm:text-sm">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 sm:w-4 sm:h-4 bg-blue-200 border border-blue-300 rounded mr-1 sm:mr-2"></div>
+                                    <span class="text-gray-600">Terisi</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 sm:w-4 sm:h-4 bg-gray-100 border border-gray-300 rounded mr-1 sm:mr-2"></div>
+                                    <span class="text-gray-600">Kosong</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Storage key
+        const STORAGE_KEY = 'denah_kelas_data';
+        
+        // Enhanced validation and counter functions
+        function validateAndUpdateCounter() {
+            const studentListText = document.getElementById('student-list').value.trim();
+            const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
+            const counter = document.getElementById('student-counter');
+            const errorDiv = document.getElementById('input-error');
+            const validationIndicator = document.getElementById('validation-indicator');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            
+            let hasError = false;
+            let errorMessage = '';
+            
+            // Check for empty input
+            if (students.length === 0 && studentListText.length > 0) {
+                hasError = true;
+                errorMessage = 'Daftar siswa tidak boleh kosong atau hanya berisi spasi.';
+            }
+            
+            // Check for duplicate names
+            const duplicates = students.filter((name, index) => students.indexOf(name) !== index);
+            if (duplicates.length > 0) {
+                hasError = true;
+                errorMessage = `Nama duplikat ditemukan: ${[...new Set(duplicates)].join(', ')}`;
+            }
+            
+            // Check for very short names
+            const shortNames = students.filter(name => name.length < 2);
+            if (shortNames.length > 0) {
+                hasError = true;
+                errorMessage = 'Beberapa nama terlalu pendek (minimal 2 karakter).';
+            }
+            
+            // Check capacity
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const capacity = rows * cols;
+            
+            if (students.length > capacity) {
+                hasError = true;
+                errorMessage = `Jumlah siswa (${students.length}) melebihi kapasitas tempat duduk (${capacity}).`;
+            }
+            
+            // Update UI based on validation
+            if (hasError) {
+                counter.className = 'text-xs sm:text-sm text-red-600 font-semibold';
+                counter.textContent = `${students.length} siswa`;
+                errorDiv.textContent = errorMessage;
+                errorDiv.classList.remove('hidden');
+                validationIndicator.classList.remove('hidden');
+                shuffleBtn.disabled = true;
+                shuffleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                counter.className = 'text-xs sm:text-sm text-blue-600 font-semibold';
+                counter.textContent = `${students.length} siswa`;
+                errorDiv.classList.add('hidden');
+                validationIndicator.classList.add('hidden');
+                shuffleBtn.disabled = students.length === 0;
+                if (students.length > 0) {
+                    shuffleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+        
+        // Legacy function for compatibility
+        function updateStudentCounter() {
+            validateAndUpdateCounter();
+        }
+
+        function updateSeatingCapacity() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const capacity = rows * cols;
+            
+            document.getElementById('capacity-info').innerHTML = 
+                `<span class="text-blue-700 dark:text-blue-300 font-semibold text-sm sm:text-base">Kapasitas: ${capacity} tempat duduk</span>`;
+            
+            generateEmptySeats();
+            validateAndUpdateCounter();
+        }
+
+        function generateEmptySeats() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const grid = document.getElementById('classroom-grid');
+            
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            for (let i = 0; i < rows * cols; i++) {
+                const seat = document.createElement('div');
+                seat.className = 'classroom-seat empty';
+                seat.textContent = 'Kosong';
+                seat.id = `seat-${i}`;
+                grid.appendChild(seat);
+            }
+        }
+
+        function animateSeatingArrangement() {
+            const studentListText = document.getElementById('student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const totalSeats = rows * cols;
+
+            // Validate before proceeding
+            if (students.length === 0) {
+                showAlert('Daftar siswa tidak boleh kosong!', 'error');
+                return;
+            }
+
+            if (students.length > totalSeats) {
+                showAlert(`Jumlah siswa (${students.length}) melebihi kapasitas tempat duduk (${totalSeats}). Silakan kurangi jumlah siswa atau tambah tempat duduk.`, 'error');
+                return;
+            }
+
+            // Show enhanced loading state
+            showLoadingState();
+            
+            // Hide controls and show loading
+            document.getElementById('seating-controls').classList.add('hidden');
+            document.getElementById('seating-loading').classList.remove('hidden');
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                updateProgress(progress, 'Mengacak posisi siswa...');
+            }, 100);
+
+            // Shuffle students
+            const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+            
+            setTimeout(() => {
+                clearInterval(progressInterval);
+                updateProgress(100, 'Menyelesaikan...');
+                
+                // Create flying animations
+                shuffledStudents.forEach((student, index) => {
+                    setTimeout(() => {
+                        createFlyingName(student, index);
+                    }, index * 150);
+                });
+
+                // Complete the process
+                setTimeout(() => {
+                    hideLoadingState();
+                    
+                    // Enable save button
+                    const saveBtn = document.getElementById('save-btn');
+                    saveBtn.disabled = false;
+                    saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // Save seating arrangement
+                    saveSeatingArrangement(shuffledStudents);
+                    
+                    showAlert('Tempat duduk berhasil diacak! 🎉', 'success');
+                }, shuffledStudents.length * 150 + 500);
+            }, 1000);
+        }
+
+        function showLoadingState() {
+            const button = document.getElementById('shuffle-btn');
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function hideLoadingState() {
+            document.getElementById('seating-loading').classList.add('hidden');
+            document.getElementById('seating-controls').classList.remove('hidden');
+            
+            const button = document.getElementById('shuffle-btn');
+            button.disabled = false;
+            button.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function updateProgress(percentage, text) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressText) progressText.textContent = text;
+        }
+
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alert = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+            
+            alert.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 max-w-sm`;
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                    <span class="text-xs sm:text-sm font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Show alert
+            setTimeout(() => {
+                alert.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Hide alert after 4 seconds
+            setTimeout(() => {
+                alert.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        function createFlyingName(studentName, seatIndex) {
+            const textarea = document.getElementById('student-list');
+            const targetSeat = document.getElementById(`seat-${seatIndex}`);
+            
+            if (!targetSeat) return;
+
+            // Create flying element
+            const flyingName = document.createElement('div');
+            flyingName.className = 'flying-name';
+            flyingName.textContent = studentName;
+            
+            // Position at textarea
+            const textareaRect = textarea.getBoundingClientRect();
+            flyingName.style.left = textareaRect.left + 'px';
+            flyingName.style.top = textareaRect.top + textareaRect.height / 2 + 'px';
+            
+            document.body.appendChild(flyingName);
+
+            // Calculate target position
+            const seatRect = targetSeat.getBoundingClientRect();
+            const deltaX = seatRect.left + seatRect.width / 2 - textareaRect.left;
+            const deltaY = seatRect.top + seatRect.height / 2 - (textareaRect.top + textareaRect.height / 2);
+
+            // Animate to seat
+            setTimeout(() => {
+                flyingName.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                flyingName.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.8)`;
+                flyingName.style.opacity = '0';
+            }, 100);
+
+            // Update seat and remove flying element
+            setTimeout(() => {
+                targetSeat.textContent = studentName;
+                targetSeat.className = 'classroom-seat filled seat-pop';
+                document.body.removeChild(flyingName);
+            }, 900);
+        }
+
+        function resetSeatingChart() {
+            generateEmptySeats();
+            
+            // Disable save button
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Clear seating arrangement from storage
+            clearSeatingArrangement();
+        }
+
+        function downloadSeatingChart() {
+            // Create canvas for download
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            
+            // Responsive canvas sizing
+            const isMobile = window.innerWidth < 640;
+            const seatSize = isMobile ? 60 : 80;
+            const gap = isMobile ? 10 : 20;
+            
+            canvas.width = cols * (seatSize + gap) + gap;
+            canvas.height = rows * (seatSize + gap) + 150;
+            
+            // Background
+            ctx.fillStyle = '#f9fafb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Title
+            ctx.fillStyle = '#1f2937';
+            ctx.font = isMobile ? 'bold 16px Arial' : 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('DENAH TEMPAT DUDUK KELAS', canvas.width / 2, 30);
+            
+            // Teacher's desk
+            ctx.fillStyle = '#fef3c7';
+            const deskHeight = isMobile ? 30 : 40;
+            ctx.fillRect(gap, 50, canvas.width - (gap * 2), deskHeight);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(gap, 50, canvas.width - (gap * 2), deskHeight);
+            
+            ctx.fillStyle = '#92400e';
+            ctx.font = isMobile ? '12px Arial' : '16px Arial';
+            ctx.fillText('MEJA GURU', canvas.width / 2, 70);
+            
+            // Seats
+            const seats = document.querySelectorAll('.classroom-seat');
+            seats.forEach((seat, index) => {
+                const row = Math.floor(index / cols);
+                const col = index % cols;
+                const x = col * (seatSize + gap) + gap;
+                const y = row * (seatSize + gap) + 110;
+                
+                // Seat background
+                if (seat.classList.contains('filled')) {
+                    ctx.fillStyle = '#dbeafe';
+                    ctx.strokeStyle = '#3b82f6';
+                } else {
+                    ctx.fillStyle = '#f3f4f6';
+                    ctx.strokeStyle = '#d1d5db';
+                }
+                
+                ctx.fillRect(x, y, seatSize, seatSize);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, seatSize, seatSize);
+                
+                // Seat text
+                ctx.fillStyle = seat.classList.contains('filled') ? '#1e40af' : '#9ca3af';
+                ctx.font = isMobile ? '9px Arial' : '11px Arial';
+                ctx.textAlign = 'center';
+                
+                const text = seat.textContent;
+                const words = text.split(' ');
+                const centerX = x + seatSize / 2;
+                const centerY = y + seatSize / 2;
+                
+                if (words.length > 1 && text.length > 10) {
+                    ctx.fillText(words[0], centerX, centerY - 5);
+                    ctx.fillText(words.slice(1).join(' '), centerX, centerY + 8);
+                } else {
+                    ctx.fillText(text, centerX, centerY + 3);
+                }
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = 'denah-tempat-duduk.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // ==================== STORAGE FUNCTIONS ====================
+        
+        // Auto-save function
+        function autoSave() {
+            const data = {
+                studentList: document.getElementById('student-list').value,
+                rows: document.getElementById('rows').value,
+                cols: document.getElementById('cols').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            
+            // Show auto-save indicator
+            showAutoSaveIndicator();
+        }
+        
+        // Save seating arrangement
+        function saveSeatingArrangement(students) {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            
+            // Get current seating arrangement
+            const seats = document.querySelectorAll('.classroom-seat');
+            const seatingArrangement = [];
+            
+            seats.forEach((seat, index) => {
+                if (seat.classList.contains('filled')) {
+                    seatingArrangement.push({
+                        index: index,
+                        student: seat.textContent
+                    });
+                }
+            });
+            
+            data.seatingArrangement = seatingArrangement;
+            data.lastShuffled = new Date().toISOString();
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        // Load saved data
+        function loadSavedData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                // Restore form inputs
+                if (data.studentList) {
+                    document.getElementById('student-list').value = data.studentList;
+                }
+                
+                if (data.rows) {
+                    document.getElementById('rows').value = data.rows;
+                }
+                
+                if (data.cols) {
+                    document.getElementById('cols').value = data.cols;
+                }
+                
+                // Update UI
+                updateSeatingCapacity();
+                validateAndUpdateCounter();
+                
+                // Restore seating arrangement if available
+                if (data.seatingArrangement && data.seatingArrangement.length > 0) {
+                    setTimeout(() => {
+                        restoreSeatingArrangement(data.seatingArrangement);
+                    }, 500);
+                }
+                
+                console.log('Data berhasil dimuat dari penyimpanan browser');
+            }
+        }
+        
+        // Restore seating arrangement
+        function restoreSeatingArrangement(arrangement) {
+            arrangement.forEach(item => {
+                const seat = document.getElementById(`seat-${item.index}`);
+                if (seat) {
+                    seat.textContent = item.student;
+                    seat.className = 'classroom-seat filled';
+                }
+            });
+            
+            // Enable save button if there are filled seats
+            const filledSeats = document.querySelectorAll('.classroom-seat.filled').length;
+            if (filledSeats > 0) {
+                const saveBtn = document.getElementById('save-btn');
+                saveBtn.disabled = false;
+                saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            console.log('Susunan tempat duduk berhasil dipulihkan');
+        }
+        
+        // Clear seating arrangement from storage
+        function clearSeatingArrangement() {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            delete data.seatingArrangement;
+            delete data.lastShuffled;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                
+                // Reset form
+                document.getElementById('student-list').value = '';
+                document.getElementById('rows').value = 5;
+                document.getElementById('cols').value = 6;
+                
+                // Reset UI
+                updateSeatingCapacity();
+                validateAndUpdateCounter();
+                resetSeatingChart();
+                
+                showAlert('Semua data berhasil dihapus', 'success');
+            }
+        }
+        
+        // Show auto-save indicator
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('auto-save-indicator');
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Check storage availability
+        function checkStorageAvailability() {
+            try {
+                const test = 'test';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if localStorage is available
+            if (checkStorageAvailability()) {
+                console.log('Penyimpanan browser tersedia');
+                loadSavedData();
+            } else {
+                console.warn('Penyimpanan browser tidak tersedia. Fitur auto-save tidak akan berfungsi.');
+                showAlert('Penyimpanan browser tidak tersedia. Data tidak akan tersimpan otomatis.', 'warning');
+            }
+            
+            generateEmptySeats();
+            validateAndUpdateCounter();
+        });
+    </script>
+</body>
+</html>
