@@ -169,23 +169,27 @@
             transition: opacity 0.5s ease-in-out;
         }
         
-        .popup-content {
-            background: white;
-            border-radius: 12px;
-            padding: 0;
-            max-width: 90%;
-            max-height: 90%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .popup-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
+/* Ganti kode popup-content yang ada dengan ini */
+.popup-content {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    max-width: min(90vw, 500px); /* Batasi maksimal 500px atau 90% viewport */
+    max-height: min(90vh, 600px); /* Batasi tinggi juga */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    width: auto; /* Biarkan konten menentukan lebar */
+}
+
+.popup-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px; /* Batasi tinggi gambar */
+    object-fit: contain; /* Pastikan gambar tidak terdistorsi */
+    display: block;
+    border-radius: 12px;
+}
         
         .popup-close {
             position: absolute;
@@ -399,7 +403,7 @@
     <div id="popup-ad" class="popup-overlay">
         <div class="popup-content">
             <button id="close-popup" class="popup-close">10</button>
-            <!-- Gambar dari GitHub -->
+          
             <a href="/iklan" target="_blank">
             <img src="/iklan/iklan.jpg" 
                  alt="Iklan Sponsor" 
