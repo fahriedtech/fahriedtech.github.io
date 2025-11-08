@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembagi Kelompok Cerdas - Portal Digital Guru</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                        'display': ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-primary {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-appear {
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Alert animations */
+        .alert-slide-in {
+            animation: slideInAlert 0.3s ease-out;
+        }
+
+        @keyframes slideInAlert {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Sound toggle button */
+        .sound-toggle {
+            transition: all 0.3s ease;
+        }
+        
+        .sound-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+        
+        /* Shuffle animation */
+        @keyframes shuffle {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.05); }
+            50% { transform: rotate(-5deg) scale(1.1); }
+            75% { transform: rotate(3deg) scale(1.05); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        
+        .shuffle-animation {
+            animation: shuffle 0.5s ease-in-out;
+        }
+        
+        /* Success animation */
+        @keyframes success {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-animation {
+            animation: success 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-400 to-teal-500">
+    <div class="min-h-screen py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Sound Toggle Button -->
+            <div class="flex justify-end mb-4">
+                <button id="sound-toggle" class="sound-toggle bg-white bg-opacity-20 text-white p-3 rounded-full shadow-lg">
+                    <span id="sound-icon" class="text-xl">🔊</span>
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="text-center mb-6 sm:mb-8">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                        <span class="text-2xl sm:text-3xl">🧩</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Pembagi Kelompok Cerdas</h2>
+                    <p class="text-sm sm:text-base text-gray-600">Buat kelompok belajar secara acak untuk meningkatkan kerja sama antar siswa</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Input Section -->
+                    <div class="space-y-4 sm:space-y-6">
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Daftar Nama Siswa:</label>
+                            <textarea id="group-student-list" rows="6" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 sm:py-3 focus:border-green-500 focus:outline-none text-sm sm:text-base" placeholder="Masukkan nama siswa, satu nama per baris:&#10;Ahmad&#10;Siti&#10;Budi&#10;Rina&#10;..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Metode Pembagian:</label>
+                            <select id="division-method" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base" onchange="toggleDivisionInput()">
+                                <option value="by-groups">Berdasarkan Jumlah Kelompok</option>
+                                <option value="by-members">Berdasarkan Jumlah Anggota per Kelompok</option>
+                            </select>
+                        </div>
+                        
+                        <div id="group-count-input">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Kelompok:</label>
+                            <input type="number" id="group-count" value="4" min="2" max="10" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base">
+                        </div>
+                        
+                        <div id="members-count-input" class="hidden">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm sm:text-base">Jumlah Anggota per Kelompok:</label>
+                            <input type="number" id="members-count" value="4" min="2" max="8" class="input-focus w-full border-2 border-gray-300 rounded-lg px-3 sm:px-4 py-2 focus:border-green-500 focus:outline-none text-sm sm:text-base">
+                        </div>
+                        
+                        <!-- Sound Effects Controls -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-gray-700 mb-3 text-sm sm:text-base">🎵 Efek Suara:</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="playSound('click')" class="btn-secondary bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-xs">
+                                    🔊 Tes Suara Klik
+                                </button>
+                                <button onclick="playSound('success')" class="btn-secondary bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-xs">
+                                    🎉 Tes Suara Sukses
+                                </button>
+                                <button onclick="playSound('shuffle')" class="btn-secondary bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded text-xs">
+                                    🔄 Tes Suara Acak
+                                </button>
+                                <button onclick="playSound('notification')" class="btn-secondary bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded text-xs">
+                                    📢 Tes Suara Notifikasi
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center space-y-3">
+                            <button onclick="randomizeGroups()" class="btn-primary bg-green-500 hover:bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg flex items-center justify-center mx-auto w-full">
+                                <span id="shuffle-icon" class="text-xl sm:text-2xl mr-2">👥</span>
+                                BAGI KELOMPOK!
+                            </button>
+                            
+                            <!-- Save and Load Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="saveToLocalStorage()" class="btn-secondary bg-blue-500 hover:bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm transition-all w-full">
+                                    💾 Simpan ke Browser
+                                </button>
+                                <button onclick="loadFromLocalStorage()" class="btn-secondary bg-purple-500 hover:bg-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm transition-all w-full">
+                                    📂 Muat dari Browser
+                                </button>
+                            </div>
+                            
+                            <button onclick="clearLocalStorage()" class="btn-secondary bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-lg text-xs sm:text-sm transition-all w-full">
+                                🗑️ Hapus Data Tersimpan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Result Section -->
+                    <div>
+                        <div id="group-loading" class="hidden text-center py-8">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-gray-600 text-sm sm:text-base">Membagi kelompok...</p>
+                        </div>
+                        
+                        <div id="group-result" class="hidden">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Hasil Pembagian Kelompok:</h3>
+                                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                    <button onclick="randomizeGroups()" class="btn-secondary bg-yellow-500 hover:bg-yellow-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                        🔄 Acak Ulang
+                                    </button>
+                                    <button onclick="copyGroupResult()" class="btn-secondary bg-blue-500 hover:bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all">
+                                        📋 Salin Hasil
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="groups-container" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="click-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="success-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="shuffle-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="notification-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <script>
+        // Sound management
+        let soundEnabled = true;
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Initialize audio elements
+        function initAudio() {
+            // Create synthetic sounds using Web Audio API
+            createClickSound();
+            createSuccessSound();
+            createShuffleSound();
+            createNotificationSound();
+        }
+        
+        // Create click sound
+        function createClickSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+        
+        // Create success sound
+        function createSuccessSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+        
+        // Create shuffle sound
+        function createShuffleSound() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Random frequency between 200-800 Hz
+                    const freq = 200 + Math.random() * 600;
+                    oscillator.frequency.value = freq;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.05);
+                }, i * 80);
+            }
+        }
+        
+        // Create notification sound
+        function createNotificationSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime + 0.2); // C5
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.6);
+        }
+        
+        // Play sound function
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            try {
+                switch(type) {
+                    case 'click':
+                        createClickSound();
+                        break;
+                    case 'success':
+                        createSuccessSound();
+                        break;
+                    case 'shuffle':
+                        createShuffleSound();
+                        break;
+                    case 'notification':
+                        createNotificationSound();
+                        break;
+                }
+            } catch (e) {
+                console.log('Error playing sound:', e);
+            }
+        }
+        
+        // Toggle sound
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const soundToggle = document.getElementById('sound-toggle');
+            const soundIcon = document.getElementById('sound-icon');
+            
+            if (soundEnabled) {
+                soundToggle.classList.remove('muted');
+                soundIcon.textContent = '🔊';
+                playSound('click');
+            } else {
+                soundToggle.classList.add('muted');
+                soundIcon.textContent = '🔇';
+            }
+        }
+
+        // Group functions
+        function toggleDivisionInput() {
+            playSound('click');
+            const method = document.getElementById('division-method').value;
+            const groupCountInput = document.getElementById('group-count-input');
+            const membersCountInput = document.getElementById('members-count-input');
+            
+            if (method === 'by-groups') {
+                groupCountInput.classList.remove('hidden');
+                membersCountInput.classList.add('hidden');
+            } else {
+                groupCountInput.classList.add('hidden');
+                membersCountInput.classList.remove('hidden');
+            }
+        }
+
+        function randomizeGroups() {
+            playSound('click');
+            
+            const studentListText = document.getElementById('group-student-list').value.trim();
+            if (!studentListText) {
+                showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
+                return;
+            }
+
+            const students = studentListText.split('\n').filter(name => name.trim() !== '');
+            const method = document.getElementById('division-method').value;
+            
+            let groups = [];
+            
+            // Add shuffle animation to button
+            const shuffleIcon = document.getElementById('shuffle-icon');
+            shuffleIcon.classList.add('shuffle-animation');
+            setTimeout(() => {
+                shuffleIcon.classList.remove('shuffle-animation');
+            }, 500);
+            
+            // Play shuffle sound during processing
+            playSound('shuffle');
+            
+            if (method === 'by-groups') {
+                const groupCount = parseInt(document.getElementById('group-count').value);
+                groups = Array.from({length: groupCount}, () => []);
+                
+                const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+                shuffledStudents.forEach((student, index) => {
+                    groups[index % groupCount].push(student);
+                });
+            } else {
+                const membersPerGroup = parseInt(document.getElementById('members-count').value);
+                const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
+                
+                for (let i = 0; i < shuffledStudents.length; i += membersPerGroup) {
+                    groups.push(shuffledStudents.slice(i, i + membersPerGroup));
+                }
+            }
+
+            // Show loading
+            document.getElementById('group-result').classList.add('hidden');
+            document.getElementById('group-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                displayGroups(groups);
+                document.getElementById('group-loading').classList.add('hidden');
+                const result = document.getElementById('group-result');
+                result.classList.remove('hidden');
+                result.classList.add('result-appear');
+                
+                // Play success sound when results are shown
+                playSound('success');
+                
+                // Add success animation to groups
+                const groupsContainer = document.getElementById('groups-container');
+                groupsContainer.classList.add('success-animation');
+                setTimeout(() => {
+                    groupsContainer.classList.remove('success-animation');
+                }, 500);
+            }, 1500);
+        }
+
+        function displayGroups(groups) {
+            const container = document.getElementById('groups-container');
+            container.innerHTML = '';
+            
+            groups.forEach((group, index) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'bg-green-50 p-4 sm:p-6 rounded-xl border-2 border-green-200 transform transition-all hover:scale-102';
+                groupDiv.style.animationDelay = `${index * 100}ms`;
+                groupDiv.style.opacity = '0';
+                groupDiv.style.transform = 'translateY(20px)';
+                
+                groupDiv.innerHTML = `
+                    <h4 class="font-bold text-green-800 mb-3 sm:mb-4 text-base sm:text-lg flex items-center">
+                        <span class="text-xl sm:text-2xl mr-2">👥</span>
+                        Kelompok ${index + 1} (${group.length} orang)
+                    </h4>
+                    <ul class="space-y-2">
+                        ${group.map((student, idx) => `
+                            <li class="text-gray-700 flex items-center text-sm sm:text-base">
+                                <span class="w-5 h-5 sm:w-6 sm:h-6 bg-green-200 text-green-800 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3">${idx + 1}</span>
+                                ${student}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.appendChild(groupDiv);
+                
+                // Animate each group in sequence
+                setTimeout(() => {
+                    groupDiv.style.transition = 'all 0.5s ease-out';
+                    groupDiv.style.opacity = '1';
+                    groupDiv.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        function copyGroupResult() {
+            playSound('click');
+            
+            const groups = Array.from(document.querySelectorAll('#groups-container > div'));
+            let result = 'HASIL PEMBAGIAN KELOMPOK\n';
+            result += '='.repeat(30) + '\n\n';
+            
+            groups.forEach((groupDiv, index) => {
+                const groupTitle = groupDiv.querySelector('h4').textContent;
+                const members = Array.from(groupDiv.querySelectorAll('li')).map(li => li.textContent.trim());
+                
+                result += `${groupTitle}\n`;
+                members.forEach(member => {
+                    result += `• ${member}\n`;
+                });
+                result += '\n';
+            });
+            
+            navigator.clipboard.writeText(result).then(() => {
+                showAlert('Hasil pembagian kelompok berhasil disalin ke clipboard!', 'success');
+                playSound('notification');
+            }).catch(() => {
+                showAlert('Gagal menyalin ke clipboard. Silakan salin secara manual.', 'error');
+            });
+        }
+
+        // NEW FUNCTIONS FOR LOCAL STORAGE
+        function saveToLocalStorage() {
+            playSound('click');
+            
+            const studentListText = document.getElementById('group-student-list').value.trim();
+            const method = document.getElementById('division-method').value;
+            const groupCount = document.getElementById('group-count').value;
+            const membersCount = document.getElementById('members-count').value;
+            
+            if (!studentListText) {
+                showAlert('Tidak ada data untuk disimpan!', 'warning');
+                return;
+            }
+            
+            const data = {
+                studentList: studentListText,
+                method: method,
+                groupCount: groupCount,
+                membersCount: membersCount,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                localStorage.setItem('groupDividerData', JSON.stringify(data));
+                showAlert('Data berhasil disimpan ke browser!', 'success');
+                playSound('success');
+            } catch (e) {
+                showAlert('Gagal menyimpan data: ' + e.message, 'error');
+            }
+        }
+        
+        function loadFromLocalStorage() {
+            playSound('click');
+            
+            try {
+                const savedData = localStorage.getItem('groupDividerData');
+                if (!savedData) {
+                    showAlert('Tidak ada data tersimpan di browser!', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(savedData);
+                
+                document.getElementById('group-student-list').value = data.studentList;
+                document.getElementById('division-method').value = data.method;
+                document.getElementById('group-count').value = data.groupCount;
+                document.getElementById('members-count').value = data.membersCount;
+                
+                // Update UI based on method
+                toggleDivisionInput();
+                
+                showAlert('Data berhasil dimuat dari browser!', 'success');
+                playSound('notification');
+            } catch (e) {
+                showAlert('Gagal memuat data: ' + e.message, 'error');
+            }
+        }
+        
+        function clearLocalStorage() {
+            playSound('click');
+            
+            try {
+                localStorage.removeItem('groupDividerData');
+                showAlert('Data tersimpan berhasil dihapus!', 'success');
+                playSound('notification');
+            } catch (e) {
+                showAlert('Gagal menghapus data: ' + e.message, 'error');
+            }
+        }
+
+        // Helper function to show alerts
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alert = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
+            
+            alert.className = `fixed top-4 right-4 ${bgColor} text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 max-w-sm`;
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                    <span class="text-xs sm:text-sm font-medium">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Show alert
+            setTimeout(() => {
+                alert.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Hide alert after 4 seconds
+            setTimeout(() => {
+                alert.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize audio
+            initAudio();
+            
+            // Add event listener to sound toggle
+            document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+            
+            // Add click sounds to all buttons
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.id !== 'sound-toggle') {
+                        playSound('click');
+                    }
+                });
+            });
+            
+            // Check if there's saved data and offer to load it
+            try {
+                const savedData = localStorage.getItem('groupDividerData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    const savedDate = new Date(data.timestamp).toLocaleDateString('id-ID');
+                    showAlert(`Data tersimpan tersedia (disimpan pada ${savedDate}). Klik "Muat dari Browser" untuk memuatnya.`, 'info');
+                    playSound('notification');
+                }
+            } catch (e) {
+                console.log('No saved data found or error loading it');
+            }
+        });
+    </script>
+</body>
+</html>
