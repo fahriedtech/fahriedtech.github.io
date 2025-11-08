@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengacak Urutan Tampil</title>
+    <title>Pengacak Urutan Tampil dengan Suara</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -52,6 +52,15 @@
             to {
                 opacity: 1;
                 transform: scale(1);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
             }
         }
         
@@ -143,6 +152,65 @@
                 opacity: 1;
             }
         }
+        
+        .sound-wave {
+            display: inline-block;
+            width: 4px;
+            height: 12px;
+            background: #3b82f6;
+            margin: 0 2px;
+            border-radius: 2px;
+            animation: soundWave 1.2s infinite ease-in-out;
+        }
+        
+        .sound-wave:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .sound-wave:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .sound-wave:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes soundWave {
+            0%, 40%, 100% {
+                transform: scaleY(0.5);
+            }
+            20% {
+                transform: scaleY(1);
+            }
+        }
+        
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #d1d5db;
+            outline: none;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-orange-400 to-red-500">
@@ -155,6 +223,31 @@
                     </div>
                     <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-4">Pengacak Urutan Tampil</h2>
                     <p class="text-sm sm:text-base text-gray-600">Tentukan urutan siswa maju ke depan secara acak dan adil untuk presentasi atau tugas</p>
+                </div>
+                
+                <!-- Sound Controls -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="flex items-center">
+                            <span class="text-blue-700 font-semibold mr-3">🔊 Pengaturan Suara:</span>
+                            <div id="sound-status" class="text-sm text-blue-600">
+                                <span class="sound-wave"></span>
+                                <span class="sound-wave"></span>
+                                <span class="sound-wave"></span>
+                                <span class="sound-wave"></span>
+                                Suara Aktif
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 w-full sm:w-auto">
+                            <button id="toggle-sound" onclick="toggleSound()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition-all">
+                                🔊 Matikan Suara
+                            </button>
+                            <div class="flex items-center space-x-2 w-32">
+                                <span class="text-blue-700 text-sm">Volume:</span>
+                                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="70">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="grid lg:grid-cols-2 gap-6 sm:gap-8">
@@ -253,12 +346,213 @@
         </div>
     </div>
 
+    <!-- Audio Elements -->
+    <audio id="shuffle-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="next-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="complete-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+    
+    <audio id="click-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+    </audio>
+
     <script>
         // Presentation order variables
         let presentationStudents = [];
         let currentStudentIndex = 0;
         let presentationMode = 'all';
         let sessionId = null;
+        
+        // Sound variables
+        let soundEnabled = true;
+        let volume = 0.7;
+
+        // Audio context for generating sounds
+        let audioContext = null;
+
+        // Initialize audio context
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                generateSounds();
+            } catch (e) {
+                console.error('Audio context tidak didukung:', e);
+                soundEnabled = false;
+                updateSoundUI();
+            }
+        }
+
+        // Generate synthetic sounds
+        function generateSounds() {
+            if (!audioContext) return;
+            
+            // Shuffle sound - random beeps
+            generateShuffleSound();
+            
+            // Next student sound - ascending tone
+            generateNextSound();
+            
+            // Complete sound - celebratory chord
+            generateCompleteSound();
+            
+            // Click sound - short beep
+            generateClickSound();
+        }
+
+        function generateShuffleSound() {
+            const duration = 1.5;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Random frequency changes
+            const startTime = audioContext.currentTime;
+            for (let i = 0; i < 8; i++) {
+                const time = startTime + (i * 0.15);
+                oscillator.frequency.setValueAtTime(200 + Math.random() * 600, time);
+            }
+            
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.3, startTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration);
+        }
+
+        function generateNextSound() {
+            const duration = 0.8;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + duration);
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.4, audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function generateCompleteSound() {
+            const duration = 1.2;
+            // Create multiple oscillators for chord
+            const frequencies = [523.25, 659.25, 783.99]; // C, E, G notes
+            
+            frequencies.forEach((freq, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                
+                const delay = index * 0.1;
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime + delay);
+                gainNode.gain.linearRampToValueAtTime(volume * 0.2, audioContext.currentTime + delay + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + delay + duration);
+                
+                oscillator.start(audioContext.currentTime + delay);
+                oscillator.stop(audioContext.currentTime + delay + duration);
+            });
+        }
+
+        function generateClickSound() {
+            const duration = 0.1;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.2, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // Play sound functions
+        function playShuffleSound() {
+            if (!soundEnabled || !audioContext) return;
+            generateShuffleSound();
+        }
+
+        function playNextSound() {
+            if (!soundEnabled || !audioContext) return;
+            generateNextSound();
+        }
+
+        function playCompleteSound() {
+            if (!soundEnabled || !audioContext) return;
+            generateCompleteSound();
+        }
+
+        function playClickSound() {
+            if (!soundEnabled || !audioContext) return;
+            generateClickSound();
+        }
+
+        // Sound control functions
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            updateSoundUI();
+            
+            if (soundEnabled) {
+                playClickSound();
+                showAlert('Suara diaktifkan!', 'success');
+            } else {
+                showAlert('Suara dimatikan!', 'info');
+            }
+            
+            // Save sound preference
+            localStorage.setItem('soundEnabled', soundEnabled);
+        }
+
+        function updateSoundUI() {
+            const soundStatus = document.getElementById('sound-status');
+            const toggleButton = document.getElementById('toggle-sound');
+            
+            if (soundEnabled) {
+                soundStatus.innerHTML = '<span class="sound-wave"></span><span class="sound-wave"></span><span class="sound-wave"></span><span class="sound-wave"></span> Suara Aktif';
+                toggleButton.textContent = '🔊 Matikan Suara';
+                toggleButton.className = 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition-all';
+            } else {
+                soundStatus.innerHTML = '🔇 Suara Dimatikan';
+                toggleButton.textContent = '🔈 Nyalakan Suara';
+                toggleButton.className = 'bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm transition-all';
+            }
+        }
+
+        function updateVolume() {
+            const slider = document.getElementById('volume-slider');
+            volume = slider.value / 100;
+            
+            // Save volume preference
+            localStorage.setItem('soundVolume', volume);
+        }
 
         // Session management functions
         function generateSessionId() {
@@ -266,6 +560,8 @@
         }
 
         function saveSession() {
+            playClickSound();
+            
             const studentListText = document.getElementById('presentation-student-list').value.trim();
             const students = studentListText ? studentListText.split('\n').filter(name => name.trim() !== '') : [];
             
@@ -299,6 +595,8 @@
         }
 
         function loadSession() {
+            playClickSound();
+            
             // Get all saved sessions
             const sessions = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -355,6 +653,8 @@
         }
 
         function selectSession(sessionKey) {
+            playClickSound();
+            
             try {
                 const sessionData = JSON.parse(localStorage.getItem(sessionKey));
                 
@@ -394,6 +694,8 @@
         }
 
         function deleteAllSessions() {
+            playClickSound();
+            
             if (confirm('Apakah Anda yakin ingin menghapus semua sesi yang tersimpan?')) {
                 // Remove all session data from localStorage
                 for (let i = 0; i < localStorage.length; i++) {
@@ -431,6 +733,7 @@
         }
 
         function togglePresentationMode() {
+            playClickSound();
             const mode = document.getElementById('presentation-mode').value;
             const batchSizeInput = document.getElementById('batch-size-input');
             
@@ -444,6 +747,8 @@
         }
 
         function startPresentationOrder() {
+            playClickSound();
+            
             const studentListText = document.getElementById('presentation-student-list').value.trim();
             if (!studentListText) {
                 showAlert('Silakan masukkan daftar nama siswa terlebih dahulu!', 'warning');
@@ -455,6 +760,9 @@
                 showAlert('Daftar siswa tidak boleh kosong!', 'error');
                 return;
             }
+
+            // Play shuffle sound
+            playShuffleSound();
 
             // Shuffle students
             presentationStudents = [...students].sort(() => Math.random() - 0.5);
@@ -533,7 +841,12 @@
         }
 
         function getNextStudent() {
+            playClickSound();
+            
             if (currentStudentIndex < presentationStudents.length) {
+                // Play next student sound
+                playNextSound();
+                
                 // Mark current student as completed in the list
                 markStudentCompleted(currentStudentIndex);
                 currentStudentIndex++;
@@ -541,7 +854,9 @@
                 if (currentStudentIndex < presentationStudents.length) {
                     showCurrentStudent();
                 } else {
-                    // All students completed
+                    // All students completed - play completion sound
+                    playCompleteSound();
+                    
                     document.getElementById('current-student-display').innerHTML = `
                         <div class="bg-gradient-to-r from-green-400 to-blue-400 text-white p-4 sm:p-6 rounded-xl text-center">
                             <div class="text-xl sm:text-2xl mb-2">🎉</div>
@@ -626,6 +941,8 @@
         }
 
         function resetPresentationOrder() {
+            playClickSound();
+            
             presentationStudents = [];
             currentStudentIndex = 0;
             
@@ -646,6 +963,8 @@
         }
 
         function copyPresentationOrder() {
+            playClickSound();
+            
             if (presentationStudents.length === 0) {
                 showAlert('Belum ada urutan yang dibuat!', 'warning');
                 return;
@@ -703,6 +1022,22 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize audio
+            initAudio();
+            
+            // Load sound preferences
+            const savedSoundEnabled = localStorage.getItem('soundEnabled');
+            if (savedSoundEnabled !== null) {
+                soundEnabled = savedSoundEnabled === 'true';
+            }
+            
+            const savedVolume = localStorage.getItem('soundVolume');
+            if (savedVolume !== null) {
+                volume = parseFloat(savedVolume);
+                document.getElementById('volume-slider').value = volume * 100;
+            }
+            
+            updateSoundUI();
             updatePresentationCounter();
             
             // Check if there's a recent session to load
@@ -727,6 +1062,9 @@
                 const recentSession = sessions[0];
                 updateSessionInfo(recentSession);
             }
+            
+            // Add event listener for volume slider
+            document.getElementById('volume-slider').addEventListener('input', updateVolume);
         });
     </script>
 </body>
