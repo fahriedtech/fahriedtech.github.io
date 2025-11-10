@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Acak Piket Kelas</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFD166;
+            --dark-color: #1A535C;
+            --light-color: #F7FFF7;
+            --purple-color: #A663CC;
+            --pink-color: #FF6B9D;
+            --yellow-color: #FFC75F;
+            --green-color: #8FE1A2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f5f7fa;
+        }
+
+        .dark-mode .card {
+            background-color: #2d3436;
+            color: #f5f7fa;
+        }
+
+        .dark-mode .form-control, .dark-mode .form-select {
+            background-color: #3d4447;
+            color: #f5f7fa;
+            border-color: #4a5458;
+        }
+
+        .dark-mode .table {
+            color: #f5f7fa;
+        }
+
+        .dark-mode .modal-content {
+            background-color: #2d3436;
+            color: #f5f7fa;
+        }
+
+        .dark-mode .nav-tabs .nav-link {
+            color: #f5f7fa;
+            border-color: #4a5458;
+        }
+
+        .dark-mode .nav-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--accent-color), var(--yellow-color));
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            border-bottom: none;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 10px 15px;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 10px 20px;
+            font-family: 'Fredoka', sans-serif;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--pink-color));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--green-color), var(--secondary-color));
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--yellow-color), var(--accent-color));
+            color: var(--dark-color);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--secondary-color), var(--purple-color));
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--pink-color), var(--primary-color));
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 10px 10px 0 0;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--dark-color);
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--pink-color));
+            color: white;
+        }
+
+        .dark-mode .nav-tabs .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--pink-color));
+            color: white;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .table tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .day-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .day-monday {
+            background-color: #FFC75F;
+            color: #1A535C;
+        }
+
+        .day-tuesday {
+            background-color: #FF9F1C;
+            color: white;
+        }
+
+        .day-wednesday {
+            background-color: #8FE1A2;
+            color: #1A535C;
+        }
+
+        .day-thursday {
+            background-color: #4ECDC4;
+            color: white;
+        }
+
+        .day-friday {
+            background-color: #A663CC;
+            color: white;
+        }
+
+        .student-checkbox {
+            transform: scale(1.2);
+            margin-right: 8px;
+        }
+
+        .student-name {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .student-name:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .student-name:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .gender-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .male-icon {
+            color: #4A90E2;
+        }
+
+        .female-icon {
+            color: #FF6B9D;
+        }
+
+        .gender-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .gender-male {
+            background-color: rgba(74, 144, 226, 0.2);
+            color: #4A90E2;
+        }
+
+        .gender-female {
+            background-color: rgba(255, 107, 157, 0.2);
+            color: #FF6B9D;
+        }
+
+        .dark-mode .gender-male {
+            background-color: rgba(74, 144, 226, 0.3);
+        }
+
+        .dark-mode .gender-female {
+            background-color: rgba(255, 107, 157, 0.3);
+        }
+
+        .slot-machine {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slot-machine.active {
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .slot-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .slot-item {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--dark-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .slot-item {
+            background: #3d4447;
+            color: #f5f7fa;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: white;
+            color: var(--dark-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--green-color), var(--secondary-color));
+            color: white;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--pink-color), var(--primary-color));
+            color: white;
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, var(--secondary-color), var(--purple-color));
+            color: white;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .history-item {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .class-selector {
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            color: var(--dark-color);
+        }
+
+        .dark-mode .footer {
+            color: #f5f7fa;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .theme-toggle {
+                position: static;
+                margin-top: 10px;
+            }
+        }
+
+        .tab-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            background: rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .student-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: translateX(5px);
+        }
+
+        .dark-mode .student-item {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .dark-mode .student-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .student-item.clickable {
+            cursor: pointer;
+        }
+
+        .student-item.clickable::after {
+            content: '\f021';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .student-item.clickable:hover::after {
+            opacity: 1;
+        }
+
+        .gender-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .gender-badge.male {
+            background-color: rgba(74, 144, 226, 0.15);
+            color: #4A90E2;
+        }
+
+        .gender-badge.female {
+            background-color: rgba(255, 107, 157, 0.15);
+            color: #FF6B9D;
+        }
+
+        .parse-preview {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark-mode .parse-preview {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .parse-preview h6 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .parse-preview .student-item {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .dark-mode .parse-preview .student-item {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .student-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .student-chip {
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .student-chip.male {
+            background-color: rgba(74, 144, 226, 0.15);
+            color: #4A90E2;
+        }
+
+        .student-chip.female {
+            background-color: rgba(255, 107, 157, 0.15);
+            color: #FF6B9D;
+        }
+
+        .dark-mode .student-chip.male {
+            background-color: rgba(74, 144, 226, 0.25);
+        }
+
+        .dark-mode .student-chip.female {
+            background-color: rgba(255, 107, 157, 0.25);
+        }
+
+        .schedule-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark-mode .schedule-info {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .schedule-info p {
+            margin: 0;
+        }
+
+        .distribution-mode {
+            margin-bottom: 15px;
+        }
+
+        .form-check-inline {
+            margin-right: 15px;
+        }
+
+        .moving {
+            animation: moveGender 0.5s ease-in-out;
+        }
+
+        @keyframes moveGender {
+            0% { 
+                opacity: 1; 
+                transform: translateX(0) scale(1);
+            }
+            50% { 
+                opacity: 0.5; 
+                transform: translateX(20px) scale(0.9);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .click-hint {
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .dark-mode .click-hint {
+            color: var(--secondary-color);
+        }
+
+        .attendance-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            background: rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .attendance-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .attendance-item {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .dark-mode .attendance-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .attendance-item .student-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .attendance-item .student-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .attendance-item .action-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .attendance-item .action-btn:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .attendance-item .action-btn.delete {
+            color: var(--pink-color);
+        }
+
+        .attendance-item .action-btn.delete:hover {
+            background-color: rgba(255, 107, 157, 0.1);
+        }
+
+        .attendance-item .action-btn.move {
+            color: var(--secondary-color);
+        }
+
+        .attendance-item .action-btn.move:hover {
+            background-color: rgba(78, 205, 196, 0.1);
+        }
+
+        .attendance-item.moving {
+            animation: moveAttendance 0.5s ease-in-out;
+        }
+
+        @keyframes moveAttendance {
+            0% { 
+                opacity: 1; 
+                transform: translateX(0) scale(1);
+            }
+            50% { 
+                opacity: 0.3; 
+                transform: translateX(20px) scale(0.9);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateX(40px) scale(0.8);
+            }
+        }
+
+        .add-student {
+            display: flex;
+            margin-top: 10px;
+            gap: 5px;
+        }
+
+        .add-student input {
+            flex-grow: 1;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+        }
+
+        .add-student button {
+            border-radius: 8px;
+            padding: 5px 10px;
+        }
+
+        .empty-attendance {
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+
+        .dark-mode .empty-attendance {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <h1><i class="fas fa-broom"></i> Aplikasi Acak Piket Kelas</h1>
+            <p>Sistem penjadwalan piket kelas yang adil dan menyenangkan!</p>
+        </div>
+
+        <!-- Class Selector -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-school"></i> Pilih Kelas
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <select class="form-select" id="classSelector">
+                                <option value="default">Kelas Default</option>
+                            </select>
+                            <button class="btn btn-success" id="addClassBtn">
+                                <i class="fas fa-plus"></i> Tambah Kelas
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-danger float-end" id="removeClassBtn">
+                            <i class="fas fa-trash"></i> Hapus Kelas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Data Siswa dengan Tab -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-users"></i> Data Siswa
+            </div>
+            <div class="card-body">
+                <!-- Tab Navigation -->
+                <ul class="nav nav-tabs" id="studentTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                            <i class="fas fa-users"></i> Siswa Umum
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="separated-tab" data-bs-toggle="tab" data-bs-target="#separated" type="button" role="tab">
+                            <i class="fas fa-venus-mars"></i> Siswa Terpisah
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="studentTabContent">
+                    <!-- Tab 1: Siswa Umum -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h5 class="mb-3"><i class="fas fa-user-graduate"></i> Daftar Semua Siswa</h5>
+                                <textarea class="form-control" id="generalStudents" rows="8" placeholder="Masukkan nama siswa, satu nama per baris atau dipisahkan dengan koma.&#10;Contoh:&#10;Andi L&#10;Siti P&#10;Budi L&#10;Rina P&#10;(L = Laki-laki, P = Perempuan)"></textarea>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-info" id="importGeneralBtn">
+                                        <i class="fas fa-file-import"></i> Import
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" id="parseGeneralBtn">
+                                        <i class="fas fa-magic"></i> Parsing Otomatis
+                                    </button>
+                                    <input type="file" id="generalFileInput" style="display: none;" accept=".txt,.csv,.xlsx,.pdf">
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle"></i> 
+                                            Tambahkan "L" untuk laki-laki atau "P" untuk perempuan di belakang nama (opsional). 
+                                            Jika tidak ditandai, siswa akan dikategorikan otomatis.
+                                        </small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Preview Parsing Results -->
+                                <div class="parse-preview" id="parsePreview" style="display: none;">
+                                    <h6>Hasil Parsing Otomatis:</h6>
+                                    <div class="click-hint">
+                                        <i class="fas fa-hand-pointer"></i> Klik nama untuk memindahkan ke gender lawan
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-2"><strong>Laki-laki:</strong></div>
+                                            <div id="malePreview"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-2"><strong>Perempuan:</strong></div>
+                                            <div id="femalePreview"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Siswa Terpisah -->
+                    <div class="tab-pane fade" id="separated" role="tabpanel">
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="fas fa-male gender-icon male-icon"></i> Siswa Laki-laki</h5>
+                                <textarea class="form-control" id="maleStudents" rows="5" placeholder="Masukkan nama siswa laki-laki, satu nama per baris"></textarea>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-info" id="importMaleBtn">
+                                        <i class="fas fa-file-import"></i> Import
+                                    </button>
+                                    <input type="file" id="maleFileInput" style="display: none;" accept=".txt,.csv,.xlsx,.pdf">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-3"><i class="fas fa-female gender-icon female-icon"></i> Siswa Perempuan</h5>
+                                <textarea class="form-control" id="femaleStudents" rows="5" placeholder="Masukkan nama siswa perempuan, satu nama per baris"></textarea>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-info" id="importFemaleBtn">
+                                        <i class="fas fa-file-import"></i> Import
+                                    </button>
+                                    <input type="file" id="femaleFileInput" style="display: none;" accept=".txt,.csv,.xlsx,.pdf">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-primary" id="saveStudentsBtn">
+                        <i class="fas fa-save"></i> Simpan Data Siswa
+                    </button>
+                    <button class="btn btn-warning" id="clearStudentsBtn">
+                        <i class="fas fa-eraser"></i> Hapus Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Konfigurasi Jadwal -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-calendar-alt"></i> Konfigurasi Jadwal
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="scheduleType" class="form-label">Tipe Jadwal</label>
+                            <select class="form-select" id="scheduleType">
+                                <option value="week">1 Minggu</option>
+                                <option value="weeks">Beberapa Minggu</option>
+                                <option value="month">1 Bulan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="weeksCount" style="display: none;">
+                            <label for="weeksInput" class="form-label">Jumlah Minggu</label>
+                            <input type="number" class="form-control" id="weeksInput" min="2" max="12" value="2">
+                        </div>
+                        
+                        <div class="distribution-mode">
+                            <label class="form-label">Mode Pembagian Siswa:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="distributionMode" id="equalDistribution" value="equal" checked>
+                                <label class="form-check-label" for="equalDistribution">
+                                    <i class="fas fa-balance-scale"></i> Pembagian Rata (Semua Siswa)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="distributionMode" id="minimalDistribution" value="minimal">
+                                <label class="form-check-label" for="minimalDistribution">
+                                    <i class="fas fa-users"></i> Minimal (1 Laki-laki & 1 Perempuan per hari)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Hari Piket</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="mondayCheck" checked>
+                                <label class="form-check-label" for="mondayCheck">
+                                    <span class="day-badge day-monday">Senin</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="tuesdayCheck" checked>
+                                <label class="form-check-label" for="tuesdayCheck">
+                                    <span class="day-badge day-tuesday">Selasa</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="wednesdayCheck" checked>
+                                <label class="form-check-label" for="wednesdayCheck">
+                                    <span class="day-badge day-wednesday">Rabu</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="thursdayCheck" checked>
+                                <label class="form-check-label" for="thursdayCheck">
+                                    <span class="day-badge day-thursday">Kamis</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="fridayCheck" checked>
+                                <label class="form-check-label" for="fridayCheck">
+                                    <span class="day-badge day-friday">Jumat</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="schedule-info" id="scheduleInfo" style="display: none;">
+                    <p><strong>Informasi Pembagian:</strong></p>
+                    <p id="distributionInfo"></p>
+                </div>
+                
+                <button class="btn btn-success" id="generateScheduleBtn">
+                    <i class="fas fa-random"></i> Acak Jadwal Piket
+                </button>
+            </div>
+        </div>
+
+        <!-- Fitur Absen Siswa -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-user-check"></i> Absen Siswa
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mb-3"><i class="fas fa-male gender-icon male-icon"></i> Siswa Laki-laki</h5>
+                        <div class="mb-2">
+                            <button class="btn btn-sm btn-info" id="addMaleStudentBtn">
+                                <i class="fas fa-plus"></i> Tambah Siswa
+                            </button>
+                        </div>
+                        <div id="maleAttendanceList" class="attendance-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3"><i class="fas fa-female gender-icon female-icon"></i> Siswa Perempuan</h5>
+                        <div class="mb-2">
+                            <button class="btn btn-sm btn-info" id="addFemaleStudentBtn">
+                                <i class="fas fa-plus"></i> Tambah Siswa
+                            </button>
+                        </div>
+                        <div id="femaleAttendanceList" class="attendance-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-info" id="selectAllBtn">
+                        <i class="fas fa-check-double"></i> Pilih Semua
+                    </button>
+                    <button class="btn btn-warning" id="deselectAllBtn">
+                        <i class="fas fa-times"></i> Hapus Pilihan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slot Machine Animation -->
+        <div class="card" id="slotMachineCard" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-dice"></i> Sedang Mengacak...
+            </div>
+            <div class="card-body">
+                <div class="slot-machine" id="slotMachine">
+                    <div class="slot-content" id="slotContent">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hasil Jadwal Piket -->
+        <div class="card" id="resultCard" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-clipboard-list"></i> Hasil Jadwal Piket
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="scheduleTable">
+                        <!-- Will be populated dynamically -->
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary" id="regenerateBtn">
+                        <i class="fas fa-redo"></i> Acak Ulang
+                    </button>
+                    <button class="btn btn-success" id="saveResultBtn">
+                        <i class="fas fa-save"></i> Simpan Hasil
+                    </button>
+                    <button class="btn btn-info" id="copyTextBtn">
+                        <i class="fas fa-copy"></i> Salin sebagai Teks
+                    </button>
+                    <button class="btn btn-warning" id="downloadHtmlBtn">
+                        <i class="fas fa-download"></i> Download HTML
+                    </button>
+                    <button class="btn btn-info" id="downloadPdfBtn">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button class="btn btn-success" id="downloadExcelBtn">
+                        <i class="fas fa-file-excel"></i> Download Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Riwayat Piket -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history"></i> Riwayat Piket
+            </div>
+            <div class="card-body">
+                <div id="historyList">
+                    <!-- Will be populated dynamically -->
+                </div>
+                <button class="btn btn-danger mt-3" id="clearHistoryBtn">
+                    <i class="fas fa-trash"></i> Hapus Riwayat
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2025, Pak Fahri Guru SMP Negeri 2 Manggar</p>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <!-- Will be populated dynamically -->
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SheetJS for Excel handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- PDFMake for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script>
+        // Application State
+        let appState = {
+            currentClass: 'default',
+            classes: {
+                default: {
+                    maleStudents: [],
+                    femaleStudents: [],
+                    attendance: {},
+                    history: []
+                }
+            },
+            schedule: [],
+            isDarkMode: false,
+            activeTab: 'general', // Track which tab is active
+            parsedData: {
+                maleStudents: [],
+                femaleStudents: []
+            }
+        };
+
+        // DOM Elements
+        const elements = {
+            themeToggle: document.getElementById('themeToggle'),
+            classSelector: document.getElementById('classSelector'),
+            addClassBtn: document.getElementById('addClassBtn'),
+            removeClassBtn: document.getElementById('removeClassBtn'),
+            // General tab elements
+            generalStudents: document.getElementById('generalStudents'),
+            importGeneralBtn: document.getElementById('importGeneralBtn'),
+            parseGeneralBtn: document.getElementById('parseGeneralBtn'),
+            generalFileInput: document.getElementById('generalFileInput'),
+            parsePreview: document.getElementById('parsePreview'),
+            malePreview: document.getElementById('malePreview'),
+            femalePreview: document.getElementById('femalePreview'),
+            // Separated tab elements
+            maleStudents: document.getElementById('maleStudents'),
+            femaleStudents: document.getElementById('femaleStudents'),
+            importMaleBtn: document.getElementById('importMaleBtn'),
+            importFemaleBtn: document.getElementById('importFemaleBtn'),
+            maleFileInput: document.getElementById('maleFileInput'),
+            femaleFileInput: document.getElementById('femaleFileInput'),
+            // Other elements
+            saveStudentsBtn: document.getElementById('saveStudentsBtn'),
+            clearStudentsBtn: document.getElementById('clearStudentsBtn'),
+            scheduleType: document.getElementById('scheduleType'),
+            weeksCount: document.getElementById('weeksCount'),
+            weeksInput: document.getElementById('weeksInput'),
+            equalDistribution: document.getElementById('equalDistribution'),
+            minimalDistribution: document.getElementById('minimalDistribution'),
+            scheduleInfo: document.getElementById('scheduleInfo'),
+            distributionInfo: document.getElementById('distributionInfo'),
+            mondayCheck: document.getElementById('mondayCheck'),
+            tuesdayCheck: document.getElementById('tuesdayCheck'),
+            wednesdayCheck: document.getElementById('wednesdayCheck'),
+            thursdayCheck: document.getElementById('thursdayCheck'),
+            fridayCheck: document.getElementById('fridayCheck'),
+            generateScheduleBtn: document.getElementById('generateScheduleBtn'),
+            maleAttendanceList: document.getElementById('maleAttendanceList'),
+            femaleAttendanceList: document.getElementById('femaleAttendanceList'),
+            addMaleStudentBtn: document.getElementById('addMaleStudentBtn'),
+            addFemaleStudentBtn: document.getElementById('addFemaleStudentBtn'),
+            selectAllBtn: document.getElementById('selectAllBtn'),
+            deselectAllBtn: document.getElementById('deselectAllBtn'),
+            slotMachineCard: document.getElementById('slotMachineCard'),
+            slotMachine: document.getElementById('slotMachine'),
+            slotContent: document.getElementById('slotContent'),
+            resultCard: document.getElementById('resultCard'),
+            scheduleTable: document.getElementById('scheduleTable'),
+            regenerateBtn: document.getElementById('regenerateBtn'),
+            saveResultBtn: document.getElementById('saveResultBtn'),
+            copyTextBtn: document.getElementById('copyTextBtn'),
+            downloadHtmlBtn: document.getElementById('downloadHtmlBtn'),
+            downloadPdfBtn: document.getElementById('downloadPdfBtn'),
+            downloadExcelBtn: document.getElementById('downloadExcelBtn'),
+            historyList: document.getElementById('historyList'),
+            clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+            notification: document.getElementById('notification')
+        };
+
+        // Initialize Application
+        function initApp() {
+            // Load data from localStorage
+            loadFromLocalStorage();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update UI
+            updateClassSelector();
+            updateStudentInputs();
+            updateAttendanceList();
+            updateHistoryList();
+            
+            // Check for dark mode preference
+            if (appState.isDarkMode) {
+                document.body.classList.add('dark-mode');
+                elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            // Set up tab change listeners
+            document.getElementById('general-tab').addEventListener('shown.bs.tab', function () {
+                appState.activeTab = 'general';
+            });
+
+            document.getElementById('separated-tab').addEventListener('shown.bs.tab', function () {
+                appState.activeTab = 'separated';
+            });
+            
+            // Set up distribution mode listeners
+            elements.equalDistribution.addEventListener('change', updateDistributionInfo);
+            elements.minimalDistribution.addEventListener('change', updateDistributionInfo);
+            elements.scheduleType.addEventListener('change', updateDistributionInfo);
+            elements.weeksInput.addEventListener('input', updateDistributionInfo);
+            elements.mondayCheck.addEventListener('change', updateDistributionInfo);
+            elements.tuesdayCheck.addEventListener('change', updateDistributionInfo);
+            elements.wednesdayCheck.addEventListener('change', updateDistributionInfo);
+            elements.thursdayCheck.addEventListener('change', updateDistributionInfo);
+            elements.fridayCheck.addEventListener('change', updateDistributionInfo);
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Theme toggle
+            elements.themeToggle.addEventListener('click', toggleTheme);
+            
+            // Class management
+            elements.addClassBtn.addEventListener('click', addClass);
+            elements.removeClassBtn.addEventListener('click', removeClass);
+            elements.classSelector.addEventListener('change', switchClass);
+            
+            // Student data - General tab
+            elements.importGeneralBtn.addEventListener('click', () => elements.generalFileInput.click());
+            elements.parseGeneralBtn.addEventListener('click', parseAndPreview);
+            elements.generalFileInput.addEventListener('change', (e) => handleFileImport(e, 'general'));
+            
+            // Student data - Separated tab
+            elements.importMaleBtn.addEventListener('click', () => elements.maleFileInput.click());
+            elements.importFemaleBtn.addEventListener('click', () => elements.femaleFileInput.click());
+            elements.maleFileInput.addEventListener('change', (e) => handleFileImport(e, 'male'));
+            elements.femaleFileInput.addEventListener('change', (e) => handleFileImport(e, 'female'));
+            
+            // Common student actions
+            elements.saveStudentsBtn.addEventListener('click', saveStudents);
+            elements.clearStudentsBtn.addEventListener('click', clearStudents);
+            
+            // Schedule configuration
+            elements.scheduleType.addEventListener('change', toggleWeeksInput);
+            elements.generateScheduleBtn.addEventListener('click', generateSchedule);
+            
+            // Attendance
+            elements.selectAllBtn.addEventListener('click', selectAllAttendance);
+            elements.deselectAllBtn.addEventListener('click', deselectAllAttendance);
+            elements.addMaleStudentBtn.addEventListener('click', () => showAddStudentForm('male'));
+            elements.addFemaleStudentBtn.addEventListener('click', () => showAddStudentForm('female'));
+            
+            // Result actions
+            elements.regenerateBtn.addEventListener('click', generateSchedule);
+            elements.saveResultBtn.addEventListener('click', saveResult);
+            elements.copyTextBtn.addEventListener('click', copyAsText);
+            elements.downloadHtmlBtn.addEventListener('click', downloadAsHtml);
+            elements.downloadPdfBtn.addEventListener('click', downloadAsPdf);
+            elements.downloadExcelBtn.addEventListener('click', downloadAsExcel);
+            
+            // History
+            elements.clearHistoryBtn.addEventListener('click', clearHistory);
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            appState.isDarkMode = !appState.isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            
+            if (appState.isDarkMode) {
+                elements.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                elements.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+            
+            saveToLocalStorage();
+        }
+
+        // Class Management
+        function addClass() {
+            const className = prompt('Masukkan nama kelas baru:');
+            if (className && className.trim() !== '') {
+                if (!appState.classes[className]) {
+                    appState.classes[className] = {
+                        maleStudents: [],
+                        femaleStudents: [],
+                        attendance: {},
+                        history: []
+                    };
+                    saveToLocalStorage();
+                    updateClassSelector();
+                    showNotification(`Kelas "${className}" berhasil ditambahkan`, 'success');
+                } else {
+                    showNotification(`Kelas "${className}" sudah ada`, 'error');
+                }
+            }
+        }
+
+        function removeClass() {
+            if (appState.currentClass === 'default') {
+                showNotification('Kelas default tidak dapat dihapus', 'error');
+                return;
+            }
+            
+            if (confirm(`Apakah Anda yakin ingin menghapus kelas "${appState.currentClass}"?`)) {
+                delete appState.classes[appState.currentClass];
+                appState.currentClass = 'default';
+                saveToLocalStorage();
+                updateClassSelector();
+                updateStudentInputs();
+                updateAttendanceList();
+                updateHistoryList();
+                showNotification('Kelas berhasil dihapus', 'success');
+            }
+        }
+
+        function switchClass() {
+            appState.currentClass = elements.classSelector.value;
+            updateStudentInputs();
+            updateAttendanceList();
+            updateHistoryList();
+            saveToLocalStorage();
+        }
+
+        function updateClassSelector() {
+            elements.classSelector.innerHTML = '';
+            
+            for (const className in appState.classes) {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                if (className === appState.currentClass) {
+                    option.selected = true;
+                }
+                elements.classSelector.appendChild(option);
+            }
+        }
+
+        // Student Data Management
+        function parseAndPreview() {
+            const input = elements.generalStudents.value.trim();
+            if (!input) {
+                showNotification('Masukkan nama siswa terlebih dahulu', 'error');
+                return;
+            }
+            
+            // Parse input
+            const lines = input.split(/[\n,]+/).filter(line => line.trim() !== '');
+            const maleStudents = [];
+            const femaleStudents = [];
+            
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine.endsWith(' L') || trimmedLine.endsWith(' l')) {
+                    maleStudents.push(trimmedLine.replace(/\s+[Ll]$/, ''));
+                } else if (trimmedLine.endsWith(' P') || trimmedLine.endsWith(' p')) {
+                    femaleStudents.push(trimmedLine.replace(/\s+[Pp]$/, ''));
+                } else {
+                    // Auto-detect gender based on common Indonesian names
+                    if (isLikelyMale(trimmedLine)) {
+                        maleStudents.push(trimmedLine);
+                    } else {
+                        femaleStudents.push(trimmedLine);
+                    }
+                }
+            });
+            
+            // Store parsed data
+            appState.parsedData.maleStudents = maleStudents;
+            appState.parsedData.femaleStudents = femaleStudents;
+            
+            // Update preview
+            updateParsePreview();
+            
+            // Show preview
+            elements.parsePreview.style.display = 'block';
+            
+            showNotification('Parsing berhasil! Periksa hasilnya di bawah.', 'success');
+        }
+
+        function isLikelyMale(name) {
+            // Simple heuristic for Indonesian names
+            const maleIndicators = ['andi', 'budi', 'agus', 'eko', 'rudi', 'dedi', 'joko', 'wawan', 'yanto', 'adi', 'bambang', 'fajar', 'rizki', 'bayu', 'arif', 'hendra'];
+            const femaleIndicators = ['siti', 'dewi', 'ratna', 'sri', 'fitri', 'nur', 'indah', 'maya', 'rina', 'sari', 'putri', 'diah', 'wati', 'fitria', 'rahma'];
+            
+            const lowerName = name.toLowerCase();
+            
+            for (const indicator of maleIndicators) {
+                if (lowerName.includes(indicator)) return true;
+            }
+            
+            for (const indicator of femaleIndicators) {
+                if (lowerName.includes(indicator)) return false;
+            }
+            
+            // Default to female if no clear indicators
+            return Math.random() > 0.5;
+        }
+
+        function updateParsePreview() {
+            // Update male preview
+            elements.malePreview.innerHTML = '';
+            appState.parsedData.maleStudents.forEach((student, index) => {
+                const item = document.createElement('div');
+                item.className = 'student-item clickable';
+                item.innerHTML = `
+                    <i class="fas fa-male gender-icon male-icon"></i>
+                    <span>${student}</span>
+                    <span class="gender-badge male">L</span>
+                `;
+                item.addEventListener('click', () => moveStudent(index, 'male'));
+                elements.malePreview.appendChild(item);
+            });
+            
+            // Update female preview
+            elements.femalePreview.innerHTML = '';
+            appState.parsedData.femaleStudents.forEach((student, index) => {
+                const item = document.createElement('div');
+                item.className = 'student-item clickable';
+                item.innerHTML = `
+                    <i class="fas fa-female gender-icon female-icon"></i>
+                    <span>${student}</span>
+                    <span class="gender-badge female">P</span>
+                `;
+                item.addEventListener('click', () => moveStudent(index, 'female'));
+                elements.femalePreview.appendChild(item);
+            });
+        }
+
+        function moveStudent(index, fromGender) {
+            const fromList = fromGender === 'male' ? appState.parsedData.maleStudents : appState.parsedData.femaleStudents;
+            const toList = fromGender === 'male' ? appState.parsedData.femaleStudents : appState.parsedData.maleStudents;
+            
+            // Move student with animation
+            const student = fromList[index];
+            fromList.splice(index, 1);
+            toList.push(student);
+            
+            // Update preview
+            updateParsePreview();
+        }
+
+        function saveStudents() {
+            if (appState.activeTab === 'general') {
+                // Use parsed data if available, otherwise parse again
+                if (appState.parsedData.maleStudents.length > 0 || appState.parsedData.femaleStudents.length > 0) {
+                    appState.classes[appState.currentClass].maleStudents = [...appState.parsedData.maleStudents];
+                    appState.classes[appState.currentClass].femaleStudents = [...appState.parsedData.femaleStudents];
+                } else {
+                    parseAndPreview();
+                    appState.classes[appState.currentClass].maleStudents = [...appState.parsedData.maleStudents];
+                    appState.classes[appState.currentClass].femaleStudents = [...appState.parsedData.femaleStudents];
+                }
+            } else {
+                // Use separated inputs
+                const maleInput = elements.maleStudents.value.trim();
+                const femaleInput = elements.femaleStudents.value.trim();
+                
+                const maleStudents = maleInput ? maleInput.split(/[\n,]+/).map(name => name.trim()).filter(name => name !== '') : [];
+                const femaleStudents = femaleInput ? femaleInput.split(/[\n,]+/).map(name => name.trim()).filter(name => name !== '') : [];
+                
+                appState.classes[appState.currentClass].maleStudents = maleStudents;
+                appState.classes[appState.currentClass].femaleStudents = femaleStudents;
+            }
+            
+            // Update attendance lists
+            updateAttendanceList();
+            
+            // Save to localStorage
+            saveToLocalStorage();
+            
+            // Show notification
+            showNotification('Data siswa berhasil disimpan', 'success');
+        }
+
+        function clearStudents() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data siswa?')) {
+                appState.classes[appState.currentClass].maleStudents = [];
+                appState.classes[appState.currentClass].femaleStudents = [];
+                
+                // Clear inputs
+                elements.generalStudents.value = '';
+                elements.maleStudents.value = '';
+                elements.femaleStudents.value = '';
+                
+                // Clear parsed data
+                appState.parsedData.maleStudents = [];
+                appState.parsedData.femaleStudents = [];
+                
+                // Hide preview
+                elements.parsePreview.style.display = 'none';
+                
+                // Update attendance
+                updateAttendanceList();
+                
+                // Save to localStorage
+                saveToLocalStorage();
+                
+                // Show notification
+                showNotification('Data siswa berhasil dihapus', 'success');
+            }
+        }
+
+        function updateStudentInputs() {
+            const currentClass = appState.classes[appState.currentClass];
+            
+            // Update general input
+            const generalStudents = [
+                ...currentClass.maleStudents.map(name => `${name} L`),
+                ...currentClass.femaleStudents.map(name => `${name} P`)
+            ];
+            elements.generalStudents.value = generalStudents.join('\n');
+            
+            // Update separated inputs
+            elements.maleStudents.value = currentClass.maleStudents.join('\n');
+            elements.femaleStudents.value = currentClass.femaleStudents.join('\n');
+        }
+
+        // File Import
+        function handleFileImport(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                
+                if (type === 'general') {
+                    elements.generalStudents.value = content;
+                    parseAndPreview();
+                } else if (type === 'male') {
+                    elements.maleStudents.value = content;
+                } else if (type === 'female') {
+                    elements.femaleStudents.value = content;
+                }
+                
+                showNotification('File berhasil diimpor', 'success');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Schedule Configuration
+        function toggleWeeksInput() {
+            const scheduleType = elements.scheduleType.value;
+            
+            if (scheduleType === 'weeks') {
+                elements.weeksCount.style.display = 'block';
+            } else {
+                elements.weeksCount.style.display = 'none';
+            }
+            
+            updateDistributionInfo();
+        }
+
+        function updateDistributionInfo() {
+            const scheduleType = elements.scheduleType.value;
+            const weeksCount = scheduleType === 'weeks' ? parseInt(elements.weeksInput.value) : 
+                              scheduleType === 'month' ? 4 : 1;
+            const distributionMode = document.querySelector('input[name="distributionMode"]:checked').value;
+            
+            // Get selected days
+            const selectedDays = [];
+            if (elements.mondayCheck.checked) selectedDays.push('Senin');
+            if (elements.tuesdayCheck.checked) selectedDays.push('Selasa');
+            if (elements.wednesdayCheck.checked) selectedDays.push('Rabu');
+            if (elements.thursdayCheck.checked) selectedDays.push('Kamis');
+            if (elements.fridayCheck.checked) selectedDays.push('Jumat');
+            
+            if (selectedDays.length === 0) {
+                elements.scheduleInfo.style.display = 'none';
+                return;
+            }
+            
+            // Calculate total slots
+            const totalSlots = selectedDays.length * weeksCount;
+            
+            // Get student counts
+            const maleCount = appState.classes[appState.currentClass].maleStudents.length;
+            const femaleCount = appState.classes[appState.currentClass].femaleStudents.length;
+            const totalStudents = maleCount + femaleCount;
+            
+            if (totalStudents === 0) {
+                elements.scheduleInfo.style.display = 'none';
+                return;
+            }
+            
+            // Calculate distribution
+            let info = '';
+            
+            if (distributionMode === 'equal') {
+                const studentsPerSlot = Math.ceil(totalStudents / totalSlots);
+                info = `Total ${totalStudents} siswa akan dibagi rata ke ${totalSlots} slot piket (${weeksCount} minggu, ${selectedDays.length} hari/minggu).<br>`;
+                info += `Setiap slot akan memiliki sekitar ${studentsPerSlot} siswa.`;
+            } else {
+                const malePerSlot = Math.ceil(maleCount / totalSlots);
+                const femalePerSlot = Math.ceil(femaleCount / totalSlots);
+                info = `Minimal 1 siswa laki-laki dan 1 siswa perempuan per hari.<br>`;
+                info += `${maleCount} siswa laki-laki dan ${femaleCount} siswa perempuan akan dibagi ke ${totalSlots} slot piket.`;
+            }
+            
+            elements.distributionInfo.innerHTML = info;
+            elements.scheduleInfo.style.display = 'block';
+        }
+
+        // Attendance Management
+        function updateAttendanceList() {
+            const currentClass = appState.classes[appState.currentClass];
+            
+            // Update male attendance list
+            elements.maleAttendanceList.innerHTML = '';
+            if (currentClass.maleStudents.length === 0) {
+                elements.maleAttendanceList.innerHTML = '<div class="empty-attendance">Belum ada siswa laki-laki</div>';
+            } else {
+                currentClass.maleStudents.forEach((student, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'attendance-item';
+                    item.innerHTML = `
+                        <div class="student-info">
+                            <i class="fas fa-male gender-icon male-icon"></i>
+                            <span>${student}</span>
+                        </div>
+                        <div class="student-actions">
+                            <button class="action-btn delete" data-gender="male" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    elements.maleAttendanceList.appendChild(item);
+                });
+                
+                // Add delete event listeners
+                document.querySelectorAll('#maleAttendanceList .action-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.currentTarget.dataset.index);
+                        removeAttendanceStudent('male', index);
+                    });
+                });
+            }
+            
+            // Update female attendance list
+            elements.femaleAttendanceList.innerHTML = '';
+            if (currentClass.femaleStudents.length === 0) {
+                elements.femaleAttendanceList.innerHTML = '<div class="empty-attendance">Belum ada siswa perempuan</div>';
+            } else {
+                currentClass.femaleStudents.forEach((student, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'attendance-item';
+                    item.innerHTML = `
+                        <div class="student-info">
+                            <i class="fas fa-female gender-icon female-icon"></i>
+                            <span>${student}</span>
+                        </div>
+                        <div class="student-actions">
+                            <button class="action-btn delete" data-gender="female" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    elements.femaleAttendanceList.appendChild(item);
+                });
+                
+                // Add delete event listeners
+                document.querySelectorAll('#femaleAttendanceList .action-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.currentTarget.dataset.index);
+                        removeAttendanceStudent('female', index);
+                    });
+                });
+            }
+        }
+
+        function showAddStudentForm(gender) {
+            const name = prompt(`Masukkan nama siswa ${gender === 'male' ? 'laki-laki' : 'perempuan'}:`);
+            if (name && name.trim() !== '') {
+                if (gender === 'male') {
+                    appState.classes[appState.currentClass].maleStudents.push(name.trim());
+                } else {
+                    appState.classes[appState.currentClass].femaleStudents.push(name.trim());
+                }
+                
+                updateAttendanceList();
+                updateStudentInputs();
+                saveToLocalStorage();
+                showNotification('Siswa berhasil ditambahkan', 'success');
+            }
+        }
+
+        function removeAttendanceStudent(gender, index) {
+            if (confirm('Apakah Anda yakin ingin menghapus siswa ini?')) {
+                if (gender === 'male') {
+                    appState.classes[appState.currentClass].maleStudents.splice(index, 1);
+                } else {
+                    appState.classes[appState.currentClass].femaleStudents.splice(index, 1);
+                }
+                
+                updateAttendanceList();
+                updateStudentInputs();
+                saveToLocalStorage();
+                showNotification('Siswa berhasil dihapus', 'success');
+            }
+        }
+
+        function selectAllAttendance() {
+            // This function would select all students for attendance
+            // Implementation depends on specific attendance requirements
+            showNotification('Semua siswa dipilih', 'info');
+        }
+
+        function deselectAllAttendance() {
+            // This function would deselect all students for attendance
+            // Implementation depends on specific attendance requirements
+            showNotification('Pilihan siswa dihapus', 'info');
+        }
+
+        // Schedule Generation
+        function generateSchedule() {
+            const currentClass = appState.classes[appState.currentClass];
+            const maleStudents = [...currentClass.maleStudents];
+            const femaleStudents = [...currentClass.femaleStudents];
+            
+            if (maleStudents.length === 0 && femaleStudents.length === 0) {
+                showNotification('Tidak ada siswa untuk dijadwalkan', 'error');
+                return;
+            }
+            
+            // Get schedule configuration
+            const scheduleType = elements.scheduleType.value;
+            const weeksCount = scheduleType === 'weeks' ? parseInt(elements.weeksInput.value) : 
+                              scheduleType === 'month' ? 4 : 1;
+            const distributionMode = document.querySelector('input[name="distributionMode"]:checked').value;
+            
+            // Get selected days in fixed order
+            const selectedDays = [];
+            if (elements.mondayCheck.checked) selectedDays.push('Senin');
+            if (elements.tuesdayCheck.checked) selectedDays.push('Selasa');
+            if (elements.wednesdayCheck.checked) selectedDays.push('Rabu');
+            if (elements.thursdayCheck.checked) selectedDays.push('Kamis');
+            if (elements.fridayCheck.checked) selectedDays.push('Jumat');
+            
+            if (selectedDays.length === 0) {
+                showNotification('Pilih setidaknya satu hari untuk piket', 'error');
+                return;
+            }
+            
+            // Show slot machine animation
+            showSlotMachine();
+            
+            // Generate schedule after animation
+            setTimeout(() => {
+                // Shuffle students (only once at the beginning)
+                shuffleArray(maleStudents);
+                shuffleArray(femaleStudents);
+                
+                // Create schedule
+                appState.schedule = [];
+                
+                if (distributionMode === 'equal') {
+                    // Equal distribution mode
+                    generateEqualDistribution(maleStudents, femaleStudents, selectedDays, weeksCount);
+                } else {
+                    // Minimal distribution mode
+                    generateMinimalDistribution(maleStudents, femaleStudents, selectedDays, weeksCount);
+                }
+                
+                // Hide slot machine and show results
+                hideSlotMachine();
+                showScheduleResults();
+                
+                // Save to history
+                saveToHistory();
+                
+                showNotification('Jadwal berhasil dibuat', 'success');
+            }, 2000);
+        }
+
+        function generateEqualDistribution(maleStudents, femaleStudents, selectedDays, weeksCount) {
+            // Combine all students
+            const allStudents = [
+                ...maleStudents.map(name => ({ name, gender: 'male' })),
+                ...femaleStudents.map(name => ({ name, gender: 'female' }))
+            ];
+            
+            // Shuffle combined list
+            shuffleArray(allStudents);
+            
+            // Create schedule with fixed order: Monday to Friday, then repeat
+            let studentIndex = 0;
+            const totalStudents = allStudents.length;
+            
+            for (let week = 1; week <= weeksCount; week++) {
+                for (const day of selectedDays) {
+                    const daySchedule = {
+                        week: week,
+                        day: day,
+                        students: []
+                    };
+                    
+                    // Calculate how many students should be assigned to this day
+                    const remainingDays = (weeksCount - week + 1) * selectedDays.length - 
+                                         (selectedDays.indexOf(day) + 1);
+                    const remainingStudents = totalStudents - studentIndex;
+                    const studentsPerDay = Math.ceil(remainingStudents / (remainingDays + 1));
+                    
+                    // Add students to this day
+                    for (let i = 0; i < studentsPerDay && studentIndex < totalStudents; i++) {
+                        daySchedule.students.push(allStudents[studentIndex]);
+                        studentIndex++;
+                    }
+                    
+                    // If we've run out of students but still have days left,
+                    // start from the beginning to ensure each day has students
+                    if (studentIndex >= totalStudents && daySchedule.students.length === 0) {
+                        studentIndex = 0;
+                        for (let i = 0; i < studentsPerDay && studentIndex < totalStudents; i++) {
+                            daySchedule.students.push(allStudents[studentIndex]);
+                            studentIndex++;
+                        }
+                    }
+                    
+                    appState.schedule.push(daySchedule);
+                }
+            }
+        }
+
+        function generateMinimalDistribution(maleStudents, femaleStudents, selectedDays, weeksCount) {
+            // Create schedule with fixed order: Monday to Friday, then repeat
+            let maleIndex = 0;
+            let femaleIndex = 0;
+            const totalMaleStudents = maleStudents.length;
+            const totalFemaleStudents = femaleStudents.length;
+            
+            // First pass: ensure each day has at least 1 male and 1 female
+            for (let week = 1; week <= weeksCount; week++) {
+                for (const day of selectedDays) {
+                    const daySchedule = {
+                        week: week,
+                        day: day,
+                        students: []
+                    };
+                    
+                    // Add at least 1 male if available
+                    if (totalMaleStudents > 0) {
+                        daySchedule.students.push({
+                            name: maleStudents[maleIndex % totalMaleStudents],
+                            gender: 'male'
+                        });
+                        maleIndex++;
+                    }
+                    
+                    // Add at least 1 female if available
+                    if (totalFemaleStudents > 0) {
+                        daySchedule.students.push({
+                            name: femaleStudents[femaleIndex % totalFemaleStudents],
+                            gender: 'female'
+                        });
+                        femaleIndex++;
+                    }
+                    
+                    appState.schedule.push(daySchedule);
+                }
+            }
+            
+            // Second pass: distribute remaining students evenly
+            let remainingMaleStudents = [...maleStudents];
+            let remainingFemaleStudents = [...femaleStudents];
+            
+            // Remove already assigned students
+            for (let i = 0; i < maleIndex && i < remainingMaleStudents.length; i++) {
+                const indexToRemove = remainingMaleStudents.indexOf(maleStudents[i % totalMaleStudents]);
+                if (indexToRemove !== -1) {
+                    remainingMaleStudents.splice(indexToRemove, 1);
+                }
+            }
+            
+            for (let i = 0; i < femaleIndex && i < remainingFemaleStudents.length; i++) {
+                const indexToRemove = remainingFemaleStudents.indexOf(femaleStudents[i % totalFemaleStudents]);
+                if (indexToRemove !== -1) {
+                    remainingFemaleStudents.splice(indexToRemove, 1);
+                }
+            }
+            
+            // Distribute remaining students in fixed order
+            let dayIndex = 0;
+            
+            // Add remaining male students
+            while (remainingMaleStudents.length > 0) {
+                const student = remainingMaleStudents.shift();
+                appState.schedule[dayIndex % appState.schedule.length].students.push({
+                    name: student,
+                    gender: 'male'
+                });
+                dayIndex++;
+            }
+            
+            // Add remaining female students
+            while (remainingFemaleStudents.length > 0) {
+                const student = remainingFemaleStudents.shift();
+                appState.schedule[dayIndex % appState.schedule.length].students.push({
+                    name: student,
+                    gender: 'female'
+                });
+                dayIndex++;
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function showSlotMachine() {
+            elements.slotMachineCard.style.display = 'block';
+            elements.slotMachine.classList.add('active');
+            
+            // Create random names for animation
+            const currentClass = appState.classes[appState.currentClass];
+            const allStudents = [
+                ...currentClass.maleStudents.map(name => ({ name, gender: 'male' })),
+                ...currentClass.femaleStudents.map(name => ({ name, gender: 'female' }))
+            ];
+            
+            // Update slot content
+            elements.slotContent.innerHTML = '';
+            
+            // Create 3 random students for animation
+            for (let i = 0; i < 3; i++) {
+                const randomStudent = allStudents[Math.floor(Math.random() * allStudents.length)];
+                const slotItem = document.createElement('div');
+                slotItem.className = 'slot-item';
+                slotItem.innerHTML = `
+                    <i class="fas fa-${randomStudent.gender === 'male' ? 'male' : 'female'} gender-icon ${randomStudent.gender === 'male' ? 'male-icon' : 'female-icon'}"></i>
+                    ${randomStudent.name}
+                `;
+                elements.slotContent.appendChild(slotItem);
+            }
+        }
+
+        function hideSlotMachine() {
+            elements.slotMachine.classList.remove('active');
+            elements.slotMachineCard.style.display = 'none';
+        }
+
+        function showScheduleResults() {
+            elements.resultCard.style.display = 'block';
+            
+            // Create table
+            let tableHTML = `
+                <thead>
+                    <tr>
+                        <th>Minggu</th>
+                        <th>Hari</th>
+                        <th>Siswa Piket</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            
+            for (const daySchedule of appState.schedule) {
+                tableHTML += `
+                    <tr>
+                        <td>${daySchedule.week}</td>
+                        <td>${daySchedule.day}</td>
+                        <td>
+                            <div class="student-list">
+                `;
+                
+                for (const student of daySchedule.students) {
+                    tableHTML += `
+                        <div class="student-chip ${student.gender}">
+                            <i class="fas fa-${student.gender === 'male' ? 'male' : 'female'}"></i>
+                            ${student.name}
+                        </div>
+                    `;
+                }
+                
+                tableHTML += `
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            tableHTML += `
+                </tbody>
+            `;
+            
+            elements.scheduleTable.innerHTML = tableHTML;
+        }
+
+        // Result Actions
+        function saveResult() {
+            // Save current schedule to history
+            saveToHistory();
+            showNotification('Jadwal berhasil disimpan ke riwayat', 'success');
+        }
+
+        function copyAsText() {
+            let text = 'JADWAL PIKET KELAS\n';
+            text += '====================\n\n';
+            
+            for (const daySchedule of appState.schedule) {
+                text += `Minggu ${daySchedule.week} - ${daySchedule.day}:\n`;
+                
+                for (const student of daySchedule.students) {
+                    text += `- ${student.name}\n`;
+                }
+                
+                text += '\n';
+            }
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Jadwal berhasil disalin ke clipboard', 'success');
+            }).catch(err => {
+                showNotification('Gagal menyalin jadwal', 'error');
+            });
+        }
+
+        function downloadAsHtml() {
+            let html = `
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Jadwal Piket Kelas</title>
+                    <style>
+                        body {
+                            font-family: 'Fredoka', sans-serif;
+                            padding: 20px;
+                            background-color: #f5f7fa;
+                        }
+                        h1 {
+                            color: #1A535C;
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 12px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #FF6B6B;
+                            color: white;
+                        }
+                        tr:nth-child(even) {
+                            background-color: #f2f2f2;
+                        }
+                        .student-chip {
+                            display: inline-block;
+                            padding: 3px 8px;
+                            border-radius: 15px;
+                            font-size: 0.85rem;
+                            margin-right: 5px;
+                            margin-bottom: 5px;
+                        }
+                        .student-chip.male {
+                            background-color: rgba(74, 144, 226, 0.15);
+                            color: #4A90E2;
+                        }
+                        .student-chip.female {
+                            background-color: rgba(255, 107, 157, 0.15);
+                            color: #FF6B9D;
+                        }
+                        .footer {
+                            text-align: center;
+                            margin-top: 30px;
+                            color: #666;
+                            font-size: 0.9rem;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>JADWAL PIKET KELAS</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Minggu</th>
+                                <th>Hari</th>
+                                <th>Siswa Piket</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            for (const daySchedule of appState.schedule) {
+                html += `
+                    <tr>
+                        <td>${daySchedule.week}</td>
+                        <td>${daySchedule.day}</td>
+                        <td>
+                `;
+                
+                for (const student of daySchedule.students) {
+                    html += `
+                        <span class="student-chip ${student.gender}">
+                            ${student.name}
+                        </span>
+                    `;
+                }
+                
+                html += `
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `
+                        </tbody>
+                    </table>
+                    <div class="footer">
+                        <p>Dibuat pada ${new Date().toLocaleDateString('id-ID')}</p>
+                        <p>&copy; 2025 Aplikasi Acak Piket Kelas</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Create download link
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jadwal-piket-${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Jadwal berhasil diunduh sebagai HTML', 'success');
+        }
+
+        function downloadAsPdf() {
+            // Create document definition
+            const docDefinition = {
+                content: [
+                    { text: 'JADWAL PIKET KELAS', style: 'header' },
+                    { text: '\n' },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['*', '*', '*'],
+                            body: [
+                                ['Minggu', 'Hari', 'Siswa Piket'],
+                                ...appState.schedule.map(daySchedule => [
+                                    daySchedule.week,
+                                    daySchedule.day,
+                                    daySchedule.students.map(s => s.name).join(', ')
+                                ])
+                            ]
+                        }
+                    },
+                    { text: '\n' },
+                    { text: `Dibuat pada ${new Date().toLocaleDateString('id-ID')}`, style: 'footer' }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        alignment: 'center',
+                        margin: [0, 0, 0, 20]
+                    },
+                    footer: {
+                        fontSize: 10,
+                        alignment: 'center',
+                        italics: true
+                    }
+                }
+            };
+            
+            // Generate PDF
+            pdfMake.createPdf(docDefinition).download(`jadwal-piket-${new Date().toISOString().split('T')[0]}.pdf`);
+            
+            showNotification('Jadwal berhasil diunduh sebagai PDF', 'success');
+        }
+
+        function downloadAsExcel() {
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Create worksheet data
+            const wsData = [
+                ['Minggu', 'Hari', 'Siswa Piket']
+            ];
+            
+            for (const daySchedule of appState.schedule) {
+                const studentNames = daySchedule.students.map(s => s.name).join(', ');
+                wsData.push([daySchedule.week, daySchedule.day, studentNames]);
+            }
+            
+            // Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Jadwal Piket');
+            
+            // Generate Excel file
+            XLSX.writeFile(wb, `jadwal-piket-${new Date().toISOString().split('T')[0]}.xlsx`);
+            
+            showNotification('Jadwal berhasil diunduh sebagai Excel', 'success');
+        }
+
+        // History Management
+        function saveToHistory() {
+            const historyItem = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                schedule: [...appState.schedule]
+            };
+            
+            appState.classes[appState.currentClass].history.unshift(historyItem);
+            
+            // Keep only the last 10 history items
+            if (appState.classes[appState.currentClass].history.length > 10) {
+                appState.classes[appState.currentClass].history = appState.classes[appState.currentClass].history.slice(0, 10);
+            }
+            
+            saveToLocalStorage();
+            updateHistoryList();
+        }
+
+        function updateHistoryList() {
+            const history = appState.classes[appState.currentClass].history;
+            
+            if (history.length === 0) {
+                elements.historyList.innerHTML = '<div class="empty-attendance">Belum ada riwayat</div>';
+                return;
+            }
+            
+            elements.historyList.innerHTML = '';
+            
+            history.forEach(item => {
+                const date = new Date(item.date);
+                const dateStr = date.toLocaleDateString('id-ID');
+                const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${dateStr} ${timeStr}</strong>
+                            <div class="text-muted">${item.schedule.length} hari</div>
+                        </div>
+                        <button class="btn btn-sm btn-info load-history-btn" data-id="${item.id}">
+                            <i class="fas fa-eye"></i> Lihat
+                        </button>
+                    </div>
+                `;
+                
+                elements.historyList.appendChild(historyItem);
+            });
+            
+            // Add event listeners to load history buttons
+            document.querySelectorAll('.load-history-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    loadHistoryItem(id);
+                });
+            });
+        }
+
+        function loadHistoryItem(id) {
+            const historyItem = appState.classes[appState.currentClass].history.find(item => item.id === id);
+            
+            if (historyItem) {
+                appState.schedule = [...historyItem.schedule];
+                showScheduleResults();
+                showNotification('Riwayat berhasil dimuat', 'success');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua riwayat?')) {
+                appState.classes[appState.currentClass].history = [];
+                saveToLocalStorage();
+                updateHistoryList();
+                showNotification('Riwayat berhasil dihapus', 'success');
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            elements.notification.textContent = message;
+            elements.notification.className = `notification ${type}`;
+            elements.notification.classList.add('show');
+            
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Local Storage Management
+        function saveToLocalStorage() {
+            localStorage.setItem('piketAppState', JSON.stringify(appState));
+        }
+
+        function loadFromLocalStorage() {
+            const savedState = localStorage.getItem('piketAppState');
+            
+            if (savedState) {
+                try {
+                    const parsedState = JSON.parse(savedState);
+                    appState = { ...appState, ...parsedState };
+                } catch (e) {
+                    console.error('Failed to load app state from localStorage:', e);
+                }
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
