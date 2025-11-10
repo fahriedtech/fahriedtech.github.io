@@ -199,8 +199,7 @@
                             <label for="announcementTarget" class="block text-sm font-medium text-gray-700">Target Penerima</label>
                             <select id="announcementTarget" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
                                 <option value="Semua Orang Tua">Semua Orang Tua</option>
-                                <option value="Siswa Kelas 1-3">Siswa Kelas 1-3 dan Orang Tua</option>
-                                <option value="Siswa Kelas 4-6">Siswa Kelas 4-6 dan Orang Tua</option>
+                                <option value="Siswa Kelas dan Orang Tua">Siswa Kelas dan Orang Tua</option>
                                 <option value="Staf Sekolah">Staf Sekolah</option>
                                 <option value="Komite Sekolah">Komite Sekolah</option>
                             </select>
@@ -234,10 +233,23 @@
 
                     
                     <div>
-                        <label for="announcementAction" class="block text-sm font-medium text-gray-700">Tindakan yang Diharapkan (Call to Action) <span class="text-red-500">*</span></label>
+                        <label for="announcementAction" class="block text-sm font-medium text-gray-700">Tindakan yang Diharapkan (Call to Action) <span class="text-gray-500">(Opsional)</span></label>
                         <textarea id="announcementAction" rows="3" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Konfirmasi kehadiran melalui tautan Google Form: [link] dan Pembayaran paling lambat 10 Desember 2025 ke Wali Kelas."></textarea>
                     </div>
                     
+                    <!-- INPUT BARU: PEMBUAT PESAN -->
+                    <div>
+                        <label for="announcementSender" class="block text-sm font-medium text-gray-700">Pembuat Pesan</label>
+                        <select id="announcementSender" class="mt-1 block w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Kepala Sekolah">Kepala Sekolah</option>
+                            <option value="Guru Kelas" selected>Guru Kelas</option>
+                            <option value="Guru Mapel">Guru Mapel</option>
+                            <option value="Wali Kelas">Wali Kelas</option>
+                            <option value="Manajemen Sekolah">Manajemen Sekolah</option>
+                            <option value="custom">Isi Sendiri</option>
+                        </select>
+                        <input type="text" id="customSenderInput" class="mt-2 hidden w-full rounded-lg border border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" placeholder="Masukkan nama/jabatan pembuat pesan">
+                    </div>
                     
                     <div>
                         <label for="announcementOptionalNotes" class="block text-sm font-medium text-gray-700">Catatan Opsional (Instruksi Tambahan)</label>
@@ -438,6 +450,20 @@
 
             loadApiKey(); // Muat API Key terlebih dahulu
             await initFirebase(); // Kemudian inisialisasi Firebase
+            
+            // Setup event listener untuk pembuat pesan kustom
+            const senderSelect = document.getElementById('announcementSender');
+            const customSenderInput = document.getElementById('customSenderInput');
+            
+            if (senderSelect && customSenderInput) {
+                senderSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customSenderInput.classList.remove('hidden');
+                    } else {
+                        customSenderInput.classList.add('hidden');
+                    }
+                });
+            }
             
             // Buka pop-up iklan setelah semua inisialisasi dengan sedikit penundaan (100ms)
             setTimeout(() => {
@@ -775,9 +801,16 @@
             const tone = document.getElementById('announcementTone').value;
             const format = document.getElementById('announcementFormat').value;
             const optionalNotes = document.getElementById('announcementOptionalNotes').value.trim(); // Dapatkan Catatan Opsional
+            
+            // Mendapatkan pembuat pesan
+            const senderSelect = document.getElementById('announcementSender');
+            let sender = senderSelect.value;
+            if (sender === 'custom') {
+                sender = document.getElementById('customSenderInput').value.trim() || 'Pihak Sekolah';
+            }
 
-            if (!purpose || !action) {
-                document.getElementById('outputText').textContent = "Tujuan Pengumuman dan Tindakan yang Diharapkan wajib diisi untuk membuat pengumuman.";
+            if (!purpose) {
+                document.getElementById('outputText').textContent = "Tujuan Pengumuman wajib diisi untuk membuat pengumuman.";
                 document.getElementById('copyButton').disabled = true;
                 return;
             }
@@ -799,13 +832,14 @@
             2. Target Penerima: ${target}
             3. Nada Resmi: ${tone}
             4. Detail Kunci 5W+1H (Informasi Penting): ${details || '[Tidak ada detail tambahan, fokus pada tujuan dan tindakan yang diharapkan]'}
-            5. Tindakan yang Diharapkan (Call to Action) yang WAJIB dimasukkan: ${action}.
+            5. Tindakan yang Diharapkan (Call to Action) ${action ? `: ${action}` : '(Tidak ada tindakan khusus)'}
+            6. Pembuat Pesan: ${sender}
             
             ${optionalNotes ? `Instruksi Khusus Tambahan: ${optionalNotes}` : ''}
 
             Instruksi Format Output: ${formatInstruction}
 
-            Susun pengumuman ini agar terlihat jelas dan mudah dipahami oleh ${target}.
+            Susun pengumuman ini agar terlihat jelas dan mudah dipahami oleh ${target}. Tandatangani pengumuman dengan nama/jabatan: ${sender}.
             `;
 
             makeApiCall(prompt, 'generateAnnouncementBtn', format, displayInstruction);
