@@ -1,0 +1,321 @@
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #F5A623;
+    --success-color: #7ED321;
+    --danger-color: #D0021B;
+    --background-color: #f4f7f6;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --shadow: 0 4px 8px rgba(0,0,0,0.1);
+    --font-family: 'Poppins', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Login Styles */
+.login-card {
+    background: var(--card-background);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    max-width: 400px;
+    margin: 4rem auto;
+}
+
+.login-card h1 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+#login-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#login-btn:hover {
+    background-color: #357ABD;
+}
+
+/* App Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+header h1 {
+    color: var(--primary-color);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-logout {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Card Styles */
+.card {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.card h2 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Input Section */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.input-controls input, .input-controls select {
+    padding: 0.7rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
+.input-controls button {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Item List (Student & Task) */
+.item-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.item-list li {
+    background-color: #eef7ff;
+    border: 1px solid #cce7ff;
+    padding: 0.5rem 0.8rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: move; /* Indicates draggable */
+}
+
+.item-list li.dragging {
+    opacity: 0.5;
+}
+
+.item-list .gender-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    margin-left: 0.2rem;
+}
+
+.item-list .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--danger-color);
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+/* Schedule Section */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.action-buttons button {
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: white;
+}
+
+#generate-btn { background-color: var(--primary-color); }
+#save-btn { background-color: var(--success-color); }
+#export-btn { background-color: var(--secondary-color); }
+#print-btn { background-color: #555; }
+
+#schedule-container {
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 1rem;
+    min-height: 200px;
+}
+
+#schedule-grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#schedule-grid th, #schedule-grid td {
+    border: 1px solid var(--border-color);
+    padding: 0.8rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+#schedule-grid th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#schedule-grid .task-header {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.dropzone {
+    min-height: 50px;
+    background-color: #fafafa;
+    border: 1px dashed #ccc;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.dropzone.drag-over {
+    background-color: #e0f7fa;
+    border-color: var(--primary-color);
+}
+
+.dropzone .student-pill {
+    background-color: #eef7ff;
+    border: 1px solid #cce7ff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 0.2rem;
+    font-size: 0.9rem;
+    cursor: move;
+}
+
+.placeholder-text {
+    text-align: center;
+    color: #888;
+    padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .input-controls {
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    #schedule-grid {
+        font-size: 0.8rem;
+    }
+    
+    #schedule-grid th, #schedule-grid td {
+        padding: 0.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: white;
+    }
+    
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .no-print, header, .input-section, .action-buttons {
+        display: none !important;
+    }
+
+    .schedule-section {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .schedule-section h2 {
+        display: none;
+    }
+    
+    #schedule-container {
+        border: none;
+        padding: 0;
+    }
+}
