@@ -3,111 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Jadwal Piket Otomatis</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Generator Jadwal Piket (Pembagian Rata)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for drag-and-drop and printing */
+        .draggable {
+            cursor: grab;
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .draggable:hover {
+            transform: scale(1.05);
+        }
+        .draggable:active {
+            cursor: grabbing;
+        }
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        .drop-zone {
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .drag-over {
+            background-color: #dbeafe; /* blue-100 */
+            border-color: #3b82f6; /* blue-500 */
+            transform: scale(1.02);
+        }
+        .student-pill {
+            user-select: none; /* Mencegah teks terpilih saat diseret */
+        }
+        
+        /* Hide non-essential elements when printing */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #schedule-display, #schedule-display * {
+                visibility: visible;
+            }
+            #schedule-display {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
-<body>
-
-    <!-- Container untuk Login -->
-    <div id="login-container" class="container">
-        <div class="login-card">
-            <h1>Generator Jadwal Piket</h1>
-            <p>Silakan login untuk melanjutkan.</p>
-            <button id="login-btn">Login dengan Google</button>
-        </div>
-    </div>
-
-    <!-- Container Utama Aplikasi (Awalnya disembunyikan) -->
-    <div id="app-container" class="container hidden">
-        <header>
-            <h1>Generator Jadwal Piket</h1>
-            <div class="user-info">
-                <span id="user-name"></span>
-                <button id="logout-btn" class="btn-logout">Logout</button>
-            </div>
+<body class="bg-gray-100 font-sans antialiased">
+    <div class="container mx-auto p-4 lg:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800">Generator Jadwal Piket</h1>
+            <p class="text-gray-600">Alat canggih untuk membuat jadwal piket siswa dengan pembagian tugas yang merata dan adil.</p>
         </header>
 
-        <main>
-            <section class="input-section card">
-                <h2>Input Data</h2>
-                <div class="input-group">
-                    <div class="input-controls">
-                        <input type="text" id="student-name" placeholder="Nama Siswa">
-                        <button id="add-student-btn">Tambah Siswa</button>
-                    </div>
-                    <ul id="student-list" class="item-list"></ul>
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Kolom Kiri: Input & Aksi -->
+            <section class="space-y-6">
+                <!-- Input Data Siswa -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Siswa</h2>
+                    <p class="text-sm text-gray-500 mb-2">Masukkan nama siswa per baris. Format: <code>Nama Kelas</code> atau <code>Nama[TAB]Kelas[TAB]L/P</code>.</p>
+                    <textarea id="studentInput" rows="8" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Budi Santoso 7A&#10;Siti Aminah 8B&#10;Ahmad Fadillah&#10;..."></textarea>
+                    <p class="text-xs text-green-600 mt-2 flex items-center">
+                        <svg class="inline-block w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        Data tersimpan otomatis di browser Anda.
+                    </p>
+                    <div id="studentList" class="mt-4 space-y-2"></div>
                 </div>
-                <div class="input-group">
-                    <div class="input-controls">
-                        <input type="text" id="task-name" placeholder="Nama Tugas (contoh: Piket Kelas)">
-                        <select id="task-gender">
-                            <option value="any">Semua Gender</option>
-                            <option value="male">Laki-laki Saja</option>
-                            <option value="female">Perempuan Saja</option>
-                        </select>
-                        <button id="add-task-btn">Tambah Tugas</button>
+
+                <!-- Input Data Tugas -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Tugas</h2>
+                    <p class="text-sm text-gray-500 mb-2">Format: <code>Lokasi - Deskripsi Tugas [prioritas]</code>. Siswa akan dibagi rata ke semua tugas. Prioritas: <code>[L]</code>, <code>[P]</code>, atau kosong untuk semua.</p>
+                    <textarea id="taskInput" rows="6" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ruang TU - Menyapu dan mengepel lantai [L]&#10;Ruang BK - Mengepel lantai [P]&#10;Halaman - Menyapu halaman depan&#10;Ruang Guru - Membersihkan meja guru"></textarea>
+                    <p class="text-xs text-green-600 mt-2 flex items-center">
+                        <svg class="inline-block w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        Data tersimpan otomatis di browser Anda.
+                    </p>
+                </div>
+
+                <!-- Panel Aksi -->
+                <div class="bg-white p-6 rounded-lg shadow-md no-print">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Panel Aksi</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button id="generateBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-semibold">
+                            Buat Jadwal Otomatis
+                        </button>
+                        <button id="saveBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-semibold">
+                            Simpan ke Riwayat
+                        </button>
+                        <button id="historyBtn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors font-semibold">
+                            Buka Riwayat
+                        </button>
+                        <button id="exportCsvBtn" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors font-semibold">
+                            Ekspor ke CSV
+                        </button>
                     </div>
-                    <ul id="task-list" class="item-list"></ul>
+                    <button id="printBtn" class="w-full mt-4 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors font-semibold">
+                        Cetak Jadwal
+                    </button>
                 </div>
             </section>
 
-            <section class="schedule-section card">
-                <h2>Jadwal Piket</h2>
-                <div class="action-buttons">
-                    <button id="generate-btn">Buat Jadwal Otomatis</button>
-                    <button id="save-btn" class="no-print">Simpan ke Cloud</button>
-                    <button id="export-btn" class="no-print">Ekspor ke CSV</button>
-                    <button id="print-btn" class="no-print">Cetak</button>
-                </div>
-                <div id="schedule-container">
-                    <!-- Jadwal akan dirender di sini oleh JavaScript -->
-                    <p class="placeholder-text">Belum ada jadwal. Silakan tambahkan siswa/tugas dan klik "Buat Jadwal Otomatis".</p>
+            <!-- Kolom Kanan: Tampilan Hasil -->
+            <section class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Tampilan Hasil Jadwal</h2>
+                <p class="text-sm text-gray-500 mb-4"><strong>Seret dan lepas</strong> nama siswa untuk menyesuaikan tugas. Prioritas tugas akan diperiksa saat memindahkan siswa.</p>
+                <div id="schedule-display" class="space-y-6">
+                    <!-- Jadwal akan dirender di sini -->
+                    <p class="text-center text-gray-400">Belum ada jadwal. Silakan masukkan data siswa dan tugas, lalu klik "Buat Jadwal Otomatis".</p>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+    <!-- Modal Riwayat -->
+    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 no-print">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Riwayat Jadwal</h3>
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+            </div>
+            <div id="historyList" class="space-y-3">
+                <!-- Riwayat akan dirender di sini -->
+            </div>
+        </div>
+    </div>
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBRCQbJFfUtJblg2M3DT6AG-DkX_IZPjEQ",
-            authDomain: "jadwalpiketumum.firebaseapp.com",
-            projectId: "jadwalpiketumum",
-            storageBucket: "jadwalpiketumum.firebasestorage.app",
-            messagingSenderId: "247334063134",
-            appId: "1:247334063134:web:86d2ee543c8d8fb510f20f"
-        };
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE MANAGEMENT ---
+            const state = {
+                students: [],
+                tasks: [],
+                currentSchedule: [],
+                history: []
+            };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+            // --- DOM ELEMENT REFERENCES ---
+            const studentInputEl = document.getElementById('studentInput');
+            const taskInputEl = document.getElementById('taskInput');
+            const studentListEl = document.getElementById('studentList');
+            const scheduleDisplayEl = document.getElementById('schedule-display');
+            const historyModalEl = document.getElementById('historyModal');
+            const historyListEl = document.getElementById('historyList');
 
-        // Export agar bisa digunakan di app.js
-        window.auth = auth;
-        window.db = db;
-        window.GoogleAuthProvider = GoogleAuthProvider;
-        window.signInWithPopup = signInWithPopup;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.getDoc = getDoc;
-        window.collection = collection;
-        window.writeBatch = writeBatch;
+            const generateBtn = document.getElementById('generateBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const historyBtn = document.getElementById('historyBtn');
+            const exportCsvBtn = document.getElementById('exportCsvBtn');
+            const printBtn = document.getElementById('printBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+
+            // --- LOCAL STORAGE ---
+            const STORAGE_KEY = 'piketAppData';
+            
+            const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            const loadState = () => {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    Object.assign(state, JSON.parse(savedData));
+                    studentInputEl.value = state.students.map(s => `${s.name} ${s.class}`).join('\n');
+                    // Load tasks with the new simpler format
+                    taskInputEl.value = state.tasks.map(t => {
+                        const priorityStr = t.genderConstraint === '-' ? '' : ` [${t.genderConstraint}]`;
+                        return `${t.location} - ${t.name}${priorityStr}`;
+                    }).join('\n');
+                    renderStudentList();
+                }
+            };
+
+            // --- UTILITIES ---
+            const generateId = () => `id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            const guessGender = (name) => {
+                const lowerCaseName = name.toLowerCase().trim();
+                if (lowerCaseName.endsWith('a') || lowerCaseName.endsWith('h') || lowerCaseName.endsWith('i')) {
+                    return 'P';
+                }
+                return 'L'; // Default ke Laki-laki
+            };
+
+            // --- PARSING LOGIC ---
+            const parseStudents = (text) => {
+                const lines = text.trim().split('\n');
+                const newStudents = [];
+                const seenNames = new Set();
+                
+                lines.forEach(line => {
+                    const parts = line.split('\t');
+                    let name, cls, gender;
+                    
+                    if (parts.length === 3) { [name, cls, gender] = parts; }
+                    else if (parts.length === 2) { [name, cls] = parts; gender = guessGender(name); }
+                    else {
+                        const match = line.match(/^(.+?)\s+([A-Z0-9]+)$/);
+                        if (match) { [, name, cls] = match; gender = guessGender(name); }
+                        else { name = line; cls = 'Unknown'; gender = guessGender(name); }
+                    }
+
+                    if (name && !seenNames.has(name)) {
+                        newStudents.push({ id: generateId(), name: name.trim(), class: cls.trim(), gender: gender.trim().toUpperCase() });
+                        seenNames.add(name);
+                    }
+                });
+                
+                state.students = newStudents;
+                renderStudentList();
+                saveState();
+            };
+
+            const guessTaskGender = (description) => {
+                const lowerDesc = description.toLowerCase();
+                const maleKeywords = ['angkat', 'berat', 'bak', 'taman', 'luar', 'sampah', 'mobil', 'pagar', 'halaman', 'lapangan', 'menyapu', 'memotong'];
+                const femaleKeywords = ['dalam', 'rapikan', 'bersihkan', 'meja', 'buku', 'administrasi', 'kecil', 'papan tulis', 'jendela', 'menata', 'mengelap', 'mencuci'];
+                const isMale = maleKeywords.some(keyword => lowerDesc.includes(keyword));
+                const isFemale = femaleKeywords.some(keyword => lowerDesc.includes(keyword));
+                if (isMale && !isFemale) return 'L';
+                if (isFemale && !isMale) return 'P';
+                return '-'; // Netral
+            };
+
+            // --- SIMPLIFIED PARSING (NO CAPACITY) ---
+            const parseTasks = (text) => {
+                const lines = text.trim().split('\n');
+                const newTasks = [];
+                lines.forEach(line => {
+                    // Regex untuk menangkap lokasi, nama tugas, dan prioritas (opsional)
+                    const match = line.match(/^(.+?)\s*-\s*(.+?)\s*(\[([LP\-])\])?\s*$/);
+                    if (match) {
+                        const [, location, taskName, , manualConstraint] = match;
+                        
+                        let genderConstraint;
+                        if (manualConstraint) {
+                            genderConstraint = manualConstraint;
+                        } else {
+                            genderConstraint = guessTaskGender(taskName);
+                        }
+                        
+                        newTasks.push({ 
+                            id: generateId(), 
+                            name: taskName.trim(), 
+                            location: location.trim(), 
+                            genderConstraint: genderConstraint
+                        });
+                    }
+                });
+                state.tasks = newTasks;
+                saveState();
+            };
+            
+            // --- NEW SCHEDULE GENERATION (EQUAL DISTRIBUTION) ---
+            const generateSchedule = () => {
+                if (state.students.length === 0 || state.tasks.length === 0) {
+                    alert('Pastikan data siswa dan tugas sudah diisi.'); return;
+                }
+
+                const assignments = [];
+                const unassignedStudents = [];
+                
+                // Acak urutan siswa untuk keadilan
+                const shuffledStudents = [...state.students].sort(() => Math.random() - 0.5);
+
+                // Untuk setiap siswa, cari tugas yang paling sedikit anggotanya
+                shuffledStudents.forEach(student => {
+                    const eligibleTasks = state.tasks.filter(task => 
+                        task.genderConstraint === '-' || task.genderConstraint === student.gender
+                    );
+
+                    if (eligibleTasks.length === 0) {
+                        unassignedStudents.push(student);
+                        return;
+                    }
+
+                    // Hitung jumlah siswa di setiap tugas yang memenuhi syarat
+                    const taskCounts = eligibleTasks.map(task => {
+                        const count = assignments.filter(a => a.taskId === task.id).length;
+                        return { task, count };
+                    });
+
+                    // Urutkan dari yang paling sedikit anggotanya
+                    taskCounts.sort((a, b) => a.count - b.count);
+
+                    // Ambil tugas dengan anggota paling sedikit
+                    const selectedTask = taskCounts[0].task;
+
+                    assignments.push({
+                        taskId: selectedTask.id, 
+                        taskName: selectedTask.name, 
+                        location: selectedTask.location, 
+                        genderConstraint: selectedTask.genderConstraint,
+                        studentId: student.id, 
+                        studentName: student.name, 
+                        studentClass: student.class, 
+                        studentGender: student.gender
+                    });
+                });
+                
+                state.currentSchedule = assignments;
+                renderSchedule(assignments, unassignedStudents);
+            };
+            
+            // --- RENDERING FUNCTIONS ---
+            const renderStudentList = () => {
+                studentListEl.innerHTML = '';
+                const grouped = { L: [], P: [] };
+                state.students.forEach(s => grouped[s.gender].push(s));
+                ['L', 'P'].forEach(gender => {
+                    const groupEl = document.createElement('div');
+                    groupEl.className = `p-3 rounded-md ${gender === 'L' ? 'bg-blue-50' : 'bg-pink-50'}`;
+                    const titleEl = document.createElement('h4');
+                    titleEl.className = `font-semibold mb-2 ${gender === 'L' ? 'text-blue-700' : 'text-pink-700'}`;
+                    titleEl.textContent = gender === 'L' ? 'Laki-laki' : 'Perempuan';
+                    groupEl.appendChild(titleEl);
+                    grouped[gender].forEach(student => {
+                        const pillEl = document.createElement('span');
+                        pillEl.className = `student-pill inline-block m-1 px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-all ${gender === 'L' ? 'bg-blue-200 text-blue-800 hover:bg-blue-300' : 'bg-pink-200 text-pink-800 hover:bg-pink-300'}`;
+                        pillEl.textContent = `${student.name} (${student.class})`;
+                        pillEl.dataset.studentId = student.id;
+                        pillEl.title = 'Klik untuk mengubah jenis kelamin';
+                        pillEl.addEventListener('click', () => toggleGender(student.id));
+                        groupEl.appendChild(pillEl);
+                    });
+                    studentListEl.appendChild(groupEl);
+                });
+            };
+            
+            const renderSchedule = (assignments, unassignedStudents) => {
+                scheduleDisplayEl.innerHTML = '';
+                if (assignments.length === 0) {
+                    scheduleDisplayEl.innerHTML = '<p class="text-center text-gray-400">Jadwal kosong atau tidak dapat dibuat dengan data saat ini.</p>';
+                    return;
+                }
+
+                const groupedByLocation = assignments.reduce((acc, entry) => {
+                    if (!acc[entry.location]) acc[entry.location] = {};
+                    if (!acc[entry.location][entry.taskId]) acc[entry.location][entry.taskId] = { taskName: entry.taskName, students: [] };
+                    acc[entry.location][entry.taskId].students.push({ studentId: entry.studentId, studentName: entry.studentName, studentClass: entry.studentClass, studentGender: entry.studentGender });
+                    return acc;
+                }, {});
+
+                Object.keys(groupedByLocation).forEach(location => {
+                    const locationCard = document.createElement('div');
+                    locationCard.className = 'border border-gray-200 rounded-lg p-4';
+                    
+                    const locationTitle = document.createElement('h3');
+                    locationTitle.className = 'text-lg font-bold text-gray-700 mb-3 border-b pb-2';
+                    locationTitle.textContent = `Lokasi: ${location}`;
+                    locationCard.appendChild(locationTitle);
+
+                    const tasksInLocation = groupedByLocation[location];
+                    Object.keys(tasksInLocation).forEach(taskId => {
+                        const task = tasksInLocation[taskId];
+                        
+                        const taskEl = document.createElement('div');
+                        taskEl.className = 'drop-zone border-2 border-dashed border-gray-300 rounded-md p-3 mb-2 min-h-[50px]';
+                        taskEl.dataset.taskId = taskId;
+                        
+                        const taskNameEl = document.createElement('span');
+                        taskNameEl.className = 'font-semibold text-gray-600 text-sm';
+                        taskNameEl.textContent = `${task.taskName}: `;
+                        taskEl.appendChild(taskNameEl);
+
+                        task.students.forEach((student, index) => {
+                            const studentPill = document.createElement('span');
+                            studentPill.className = `draggable student-pill inline-block px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.studentGender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
+                            studentPill.textContent = `${student.studentName} (${student.studentClass})`;
+                            studentPill.draggable = true;
+                            studentPill.dataset.studentId = student.studentId;
+                            taskEl.appendChild(studentPill);
+                            
+                            if (index < task.students.length - 1) {
+                                const comma = document.createTextNode(', ');
+                                taskEl.appendChild(comma);
+                            }
+                        });
+                        
+                        locationCard.appendChild(taskEl);
+                    });
+                    scheduleDisplayEl.appendChild(locationCard);
+                });
+
+                if (unassignedStudents.length > 0) {
+                    const unassignedCard = document.createElement('div');
+                    unassignedCard.className = 'mt-6 p-4 bg-yellow-50 border-2 border-dashed border-yellow-300 rounded-lg drop-zone';
+                    unassignedCard.dataset.unassignedZone = 'true';
+                    const unassignedTitle = document.createElement('h3');
+                    unassignedTitle.className = 'text-lg font-bold text-yellow-700 mb-3';
+                    unassignedTitle.textContent = 'Siswa Tersedia (Seret ke sini untuk menghapus tugas)';
+                    unassignedCard.appendChild(unassignedTitle);
+                    unassignedStudents.forEach(student => {
+                        const pill = document.createElement('span');
+                        pill.className = `draggable student-pill inline-block m-1 px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.gender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
+                        pill.textContent = `${student.name} (${student.class})`;
+                        pill.draggable = true;
+                        pill.dataset.studentId = student.id;
+                        unassignedCard.appendChild(pill);
+                    });
+                    scheduleDisplayEl.appendChild(unassignedCard);
+                }
+                setupDragAndDrop();
+            };
+            
+            const renderHistory = () => {
+                historyListEl.innerHTML = '';
+                if (state.history.length === 0) { historyListEl.innerHTML = '<p class="text-center text-gray-500">Belum ada riwayat jadwal yang disimpan.</p>'; return; }
+                state.history.slice().reverse().forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100';
+                    const info = document.createElement('div');
+                    info.innerHTML = `<strong class="text-gray-700">${new Date(item.date).toLocaleString('id-ID')}</strong><br><span class="text-sm text-gray-500">${item.entries.length} tugas terisi</span>`;
+                    historyItem.appendChild(info);
+                    const actions = document.createElement('div');
+                    actions.className = 'space-x-2';
+                    const loadBtn = document.createElement('button'); loadBtn.textContent = 'Muat'; loadBtn.className = 'px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'; loadBtn.onclick = () => loadScheduleFromHistory(item.id);
+                    const deleteBtn = document.createElement('button'); deleteBtn.textContent = 'Hapus'; deleteBtn.className = 'px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm'; deleteBtn.onclick = () => deleteHistory(item.id);
+                    actions.appendChild(loadBtn); actions.appendChild(deleteBtn);
+                    historyItem.appendChild(actions);
+                    historyListEl.appendChild(historyItem);
+                });
+            };
+
+            // --- DRAG AND DROP LOGIC (REVISED, NO CAPACITY CHECK) ---
+            let draggedElement = null;
+
+            const setupDragAndDrop = () => {
+                const draggables = document.querySelectorAll('.draggable');
+                const dropZones = document.querySelectorAll('.drop-zone');
+
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('dragstart', (e) => {
+                        draggedElement = e.target;
+                        e.target.classList.add('dragging');
+                    });
+                    draggable.addEventListener('dragend', (e) => {
+                        e.target.classList.remove('dragging');
+                    });
+                });
+
+                dropZones.forEach(zone => {
+                    zone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        zone.classList.add('drag-over');
+                    });
+                    zone.addEventListener('dragleave', () => {
+                        zone.classList.remove('drag-over');
+                    });
+                    zone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        
+                        if (draggedElement) {
+                            const studentId = draggedElement.dataset.studentId;
+                            const student = state.students.find(s => s.id === studentId);
+
+                            state.currentSchedule = state.currentSchedule.filter(entry => entry.studentId !== studentId);
+
+                            if (zone.dataset.unassignedZone === 'true') {
+                                // Do nothing, student is now unassigned
+                            } else {
+                                const taskId = zone.dataset.taskId;
+                                const task = state.tasks.find(t => t.id === taskId);
+
+                                // HANYA VALIDASI GENDER, TIDAK ADA KAPASITAS
+                                if (task.genderConstraint !== '-' && task.genderConstraint !== student.gender) {
+                                    alert(`Tugas "${task.name}" hanya untuk siswa ${task.genderConstraint === 'L' ? 'Laki-laki' : 'Perempuan'}.`);
+                                    const originalEntry = state.currentSchedule.find(e => e.studentId === studentId);
+                                    if(originalEntry) state.currentSchedule.push(originalEntry);
+                                    return;
+                                }
+                                
+                                const newEntry = {
+                                    taskId: task.id, taskName: task.name, location: task.location, genderConstraint: task.genderConstraint,
+                                    studentId: student.id, studentName: student.name, studentClass: student.class, studentGender: student.gender
+                                };
+                                state.currentSchedule.push(newEntry);
+                            }
+
+                            const assignedStudentIds = state.currentSchedule.map(e => e.studentId);
+                            const unassignedStudents = state.students.filter(s => !assignedStudentIds.includes(s.id));
+                            renderSchedule(state.currentSchedule, unassignedStudents);
+                        }
+                    });
+                });
+            };
+            
+            // --- ACTION HANDLERS ---
+            const toggleGender = (studentId) => {
+                const student = state.students.find(s => s.id === studentId);
+                if (student) { student.gender = student.gender === 'L' ? 'P' : 'L'; renderStudentList(); saveState(); }
+            };
+            const saveToHistory = () => { if (state.currentSchedule.length === 0) { alert('Tidak ada jadwal aktif untuk disimpan.'); return; } const newEntry = { id: generateId(), date: new Date().toISOString(), entries: state.currentSchedule }; state.history.push(newEntry); saveState(); alert('Jadwal berhasil disimpan ke riwayat!'); };
+            const loadScheduleFromHistory = (historyId) => { const historyEntry = state.history.find(h => h.id === historyId); if (historyEntry) { state.currentSchedule = historyEntry.entries; const assignedStudentIds = state.currentSchedule.map(e => e.studentId); const unassignedStudents = state.students.filter(s => !assignedStudentIds.includes(s.id)); renderSchedule(state.currentSchedule, unassignedStudents); historyModalEl.classList.add('hidden'); historyModalEl.classList.remove('flex'); } };
+            const deleteHistory = (historyId) => { if (confirm('Apakah Anda yakin ingin menghapus jadwal ini dari riwayat?')) { state.history = state.history.filter(h => h.id !== historyId); saveState(); renderHistory(); } };
+            const exportToCSV = () => { if (state.currentSchedule.length === 0) { alert('Tidak ada jadwal untuk diekspor.'); return; } const headers = ['Lokasi', 'Tugas', 'Nama Siswa', 'Kelas', 'Jenis Kelamin']; const rows = state.currentSchedule.map(entry => [entry.location, entry.taskName, entry.studentName, entry.studentClass, entry.studentGender]); let csvContent = headers.join(',') + '\n'; rows.forEach(e => { csvContent += e.map(cell => `"${cell}"`).join(',') + '\n'; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); const url = URL.createObjectURL(blob); link.setAttribute('href', url); link.setAttribute('download', `jadwal-piket-${new Date().toISOString().split('T')[0]}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
+            
+            // --- EVENT LISTENERS ---
+            studentInputEl.addEventListener('input', (e) => parseStudents(e.target.value));
+            taskInputEl.addEventListener('input', (e) => parseTasks(e.target.value));
+            generateBtn.addEventListener('click', generateSchedule);
+            saveBtn.addEventListener('click', saveToHistory);
+            historyBtn.addEventListener('click', () => { renderHistory(); historyModalEl.classList.remove('hidden'); historyModalEl.classList.add('flex'); });
+            exportCsvBtn.addEventListener('click', exportToCSV);
+            printBtn.addEventListener('click', () => window.print());
+            closeModalBtn.addEventListener('click', () => { historyModalEl.classList.add('hidden'); historyModalEl.classList.remove('flex'); });
+            
+            // --- INITIALIZATION ---
+            loadState();
+        });
     </script>
-    
-    <!-- Logika Aplikasi -->
-    <script src="app.js"></script>
-
 </body>
 </html>
