@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Jadwal Piket (Pembagian Rata)</title>
+    <title>Generator Jadwal Piket (Versi Akhir)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for drag-and-drop and printing */
@@ -78,7 +78,7 @@
                 <!-- Input Data Tugas -->
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Tugas</h2>
-                    <p class="text-sm text-gray-500 mb-2">Format: <code>Lokasi - Deskripsi Tugas [prioritas]</code>. Siswa akan dibagi rata ke semua tugas. Prioritas: <code>[L]</code>, <code>[P]</code>, atau kosong untuk semua.</p>
+                    <p class="text-sm text-gray-500 mb-2">Format: <code>Lokasi - Deskripsi Tugas [prioritas]</code>. Jika tidak ada [L] atau [P], tugas bisa diisi siapa saja.</p>
                     <textarea id="taskInput" rows="6" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ruang TU - Menyapu dan mengepel lantai [L]&#10;Ruang BK - Mengepel lantai [P]&#10;Halaman - Menyapu halaman depan&#10;Ruang Guru - Membersihkan meja guru"></textarea>
                     <p class="text-xs text-green-600 mt-2 flex items-center">
                         <svg class="inline-block w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
@@ -168,7 +168,6 @@
                 if (savedData) {
                     Object.assign(state, JSON.parse(savedData));
                     studentInputEl.value = state.students.map(s => `${s.name} ${s.class}`).join('\n');
-                    // Load tasks with the new simpler format
                     taskInputEl.value = state.tasks.map(t => {
                         const priorityStr = t.genderConstraint === '-' ? '' : ` [${t.genderConstraint}]`;
                         return `${t.location} - ${t.name}${priorityStr}`;
@@ -217,47 +216,36 @@
                 saveState();
             };
 
-            const guessTaskGender = (description) => {
-                const lowerDesc = description.toLowerCase();
-                const maleKeywords = ['angkat', 'berat', 'bak', 'taman', 'luar', 'sampah', 'mobil', 'pagar', 'halaman', 'lapangan', 'menyapu', 'memotong'];
-                const femaleKeywords = ['dalam', 'rapikan', 'bersihkan', 'meja', 'buku', 'administrasi', 'kecil', 'papan tulis', 'jendela', 'menata', 'mengelap', 'mencuci'];
-                const isMale = maleKeywords.some(keyword => lowerDesc.includes(keyword));
-                const isFemale = femaleKeywords.some(keyword => lowerDesc.includes(keyword));
-                if (isMale && !isFemale) return 'L';
-                if (isFemale && !isMale) return 'P';
-                return '-'; // Netral
-            };
-
-            // --- SIMPLIFIED PARSING (NO CAPACITY) ---
+            // --- FIXED & SIMPLIFIED PARSING FOR TASKS ---
             const parseTasks = (text) => {
                 const lines = text.trim().split('\n');
                 const newTasks = [];
                 lines.forEach(line => {
-                    // Regex untuk menangkap lokasi, nama tugas, dan prioritas (opsional)
-                    const match = line.match(/^(.+?)\s*-\s*(.+?)\s*(\[([LP\-])\])?\s*$/);
-                    if (match) {
-                        const [, location, taskName, , manualConstraint] = match;
-                        
-                        let genderConstraint;
-                        if (manualConstraint) {
-                            genderConstraint = manualConstraint;
-                        } else {
-                            genderConstraint = guessTaskGender(taskName);
-                        }
-                        
-                        newTasks.push({ 
-                            id: generateId(), 
-                            name: taskName.trim(), 
-                            location: location.trim(), 
-                            genderConstraint: genderConstraint
-                        });
+                    const parts = line.split(' - ');
+                    if (parts.length !== 2) return;
+
+                    let [location, taskAndPriority] = parts;
+                    let taskName = taskAndPriority;
+                    let genderConstraint = '-'; // Default to neutral for all tasks
+
+                    const priorityMatch = taskAndPriority.match(/\s*\[([LP\-])\]\s*$/);
+                    if (priorityMatch) {
+                        taskName = taskAndPriority.replace(priorityMatch[0], '').trim();
+                        genderConstraint = priorityMatch[1];
                     }
+                    
+                    newTasks.push({ 
+                        id: generateId(), 
+                        name: taskName.trim(), 
+                        location: location.trim(), 
+                        genderConstraint: genderConstraint
+                    });
                 });
                 state.tasks = newTasks;
                 saveState();
             };
             
-            // --- NEW SCHEDULE GENERATION (EQUAL DISTRIBUTION) ---
+            // --- SCHEDULE GENERATION (EQUAL DISTRIBUTION) ---
             const generateSchedule = () => {
                 if (state.students.length === 0 || state.tasks.length === 0) {
                     alert('Pastikan data siswa dan tugas sudah diisi.'); return;
@@ -266,10 +254,8 @@
                 const assignments = [];
                 const unassignedStudents = [];
                 
-                // Acak urutan siswa untuk keadilan
                 const shuffledStudents = [...state.students].sort(() => Math.random() - 0.5);
 
-                // Untuk setiap siswa, cari tugas yang paling sedikit anggotanya
                 shuffledStudents.forEach(student => {
                     const eligibleTasks = state.tasks.filter(task => 
                         task.genderConstraint === '-' || task.genderConstraint === student.gender
@@ -280,16 +266,13 @@
                         return;
                     }
 
-                    // Hitung jumlah siswa di setiap tugas yang memenuhi syarat
                     const taskCounts = eligibleTasks.map(task => {
                         const count = assignments.filter(a => a.taskId === task.id).length;
                         return { task, count };
                     });
 
-                    // Urutkan dari yang paling sedikit anggotanya
                     taskCounts.sort((a, b) => a.count - b.count);
 
-                    // Ambil tugas dengan anggota paling sedikit
                     const selectedTask = taskCounts[0].task;
 
                     assignments.push({
@@ -428,7 +411,7 @@
                 });
             };
 
-            // --- DRAG AND DROP LOGIC (REVISED, NO CAPACITY CHECK) ---
+            // --- DRAG AND DROP LOGIC ---
             let draggedElement = null;
 
             const setupDragAndDrop = () => {
@@ -469,7 +452,6 @@
                                 const taskId = zone.dataset.taskId;
                                 const task = state.tasks.find(t => t.id === taskId);
 
-                                // HANYA VALIDASI GENDER, TIDAK ADA KAPASITAS
                                 if (task.genderConstraint !== '-' && task.genderConstraint !== student.gender) {
                                     alert(`Tugas "${task.name}" hanya untuk siswa ${task.genderConstraint === 'L' ? 'Laki-laki' : 'Perempuan'}.`);
                                     const originalEntry = state.currentSchedule.find(e => e.studentId === studentId);
