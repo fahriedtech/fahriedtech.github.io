@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Pro</title>
+    <meta name="description" content="Aplikasi Timer dan Stopwatch Serbaguna dengan PWA">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- Theme Color for Android -->
+    <meta name="theme-color" content="#121212">
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>Timer Pro</h1>
+        </header>
+
+        <main>
+            <div class="mode-switcher">
+                <button id="stopwatch-btn" class="active">Stopwatch</button>
+                <button id="timer-btn">Timer</button>
+            </div>
+
+            <!-- Stopwatch Section -->
+            <section id="stopwatch-section" class="active">
+                <div class="display" id="stopwatch-display">00:00.00</div>
+                <div class="controls">
+                    <button id="start-stop-btn">Start</button>
+                    <button id="reset-stopwatch-btn">Reset</button>
+                    <button id="lap-btn">Lap</button>
+                </div>
+                <ul id="laps-list"></ul>
+            </section>
+
+            <!-- Timer Section -->
+            <section id="timer-section">
+                <div class="display" id="timer-display">00:00:00</div>
+                <div class="timer-inputs">
+                    <input type="number" id="timer-hours" placeholder="HH" min="0" max="23">
+                    <input type="number" id="timer-minutes" placeholder="MM" min="0" max="59">
+                    <input type="number" id="timer-seconds" placeholder="SS" min="0" max="59">
+                </div>
+                
+                <div class="warning-settings">
+                    <h3>Pengaturan Peringatan Warna</h3>
+                    <div class="warning-input-group">
+                        <label for="yellow-warning">Kuning (menit):</label>
+                        <input type="number" id="yellow-warning" value="5" min="0" max="59">
+                    </div>
+                    <div class="warning-input-group">
+                        <label for="red-warning">Merah (menit):</label>
+                        <input type="number" id="red-warning" value="2" min="0" max="59">
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="start-timer-btn">Start</button>
+                    <button id="reset-timer-btn">Reset</button>
+                </div>
+                <div class="presets">
+                    <button data-time="60">1m</button>
+                    <button data-time="300">5m</button>
+                    <button data-time="600">10m</button>
+                    <button data-time="1500">25m (Pomodoro)</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
