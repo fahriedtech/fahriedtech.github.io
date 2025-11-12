@@ -33,6 +33,7 @@ let isTimerRunning = false;
 let lapCount = 0;
 let yellowWarningMinutes = 5; // Default value
 let redWarningMinutes = 2;   // Default value
+let currentColorState = 'normal'; // State baru untuk melacak warna
 
 // --- Mode Switching ---
 stopwatchBtn.addEventListener('click', () => switchMode('stopwatch'));
@@ -143,20 +144,35 @@ startTimerBtn.addEventListener('click', () => {
             setTimerDisplay();
         }
         if (timerTime > 0) {
+            // Reset state warna saat timer dimulai
+            currentColorState = 'normal'; 
+            timerDisplay.classList.remove('warning-yellow', 'warning-red');
+
             timerInterval = setInterval(() => {
                 timerTime--;
                 timerDisplay.textContent = formatTimerTime(timerTime);
 
-                // --- LOGIKA PERUBAHAN WARNA (VERSI LEBIH AKURAT) ---
                 const yellowThresholdSeconds = yellowWarningMinutes * 60;
                 const redThresholdSeconds = redWarningMinutes * 60;
-
-                // Hapus kelas warna sebelumnya
-                timerDisplay.classList.remove('warning-yellow', 'warning-red');
-
+                
+                let newColorState = 'normal';
                 if (timerTime <= redThresholdSeconds && timerTime > 0) {
-                    timerDisplay.classList.add('warning-red');
+                    newColorState = 'red';
                 } else if (timerTime <= yellowThresholdSeconds && timerTime > 0) {
+                    newColorState = 'yellow';
+                }
+
+                // Cek apakah ada perubahan warna dan mainkan suara
+                if (newColorState !== currentColorState) {
+                    playWarningSound(); // Mainkan suara peringatan
+                    currentColorState = newColorState; // Perbarui state
+                }
+                
+                // Terapkan kelas CSS berdasarkan state saat ini
+                timerDisplay.classList.remove('warning-yellow', 'warning-red');
+                if (currentColorState === 'red') {
+                    timerDisplay.classList.add('warning-red');
+                } else if (currentColorState === 'yellow') {
                     timerDisplay.classList.add('warning-yellow');
                 }
 
@@ -165,9 +181,9 @@ startTimerBtn.addEventListener('click', () => {
                     isTimerRunning = false;
                     startTimerBtn.textContent = 'Start';
                     timerDisplay.textContent = 'WAKTU HABIS!';
-                    // Hapus kelas warna saat waktu habis
                     timerDisplay.classList.remove('warning-yellow', 'warning-red');
-                    playSound();
+                    currentColorState = 'normal'; // Reset state
+                    playSound(); // Mainkan suara alarm utama
                     showNotification('Timer Selesai', 'Waktu yang Anda atur telah habis.');
                 }
             }, 1000);
@@ -190,7 +206,8 @@ resetTimerBtn.addEventListener('click', () => {
     timerHoursInput.value = '';
     timerMinutesInput.value = '';
     timerSecondsInput.value = '';
-    // Hapus kelas warna saat reset
+    // Reset state dan warna saat tombol reset ditekan
+    currentColorState = 'normal';
     timerDisplay.classList.remove('warning-yellow', 'warning-red');
 });
 
@@ -204,7 +221,8 @@ function showNotification(title, body) {
     }
 }
 
-function playSound() {
+// Fungsi suara untuk peringatan pergantian warna
+function playWarningSound() {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -212,14 +230,44 @@ function playSound() {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
     
-    oscillator.frequency.value = 800;
+    oscillator.frequency.value = 600; // Frekuensi berbeda untuk suara peringatan
     oscillator.type = 'sine';
     
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
     
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+// Fungsi suara untuk alarm utama (3x beep)
+function playSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const beepDuration = 0.15;
+    const pauseDuration = 0.2;
+    const frequency = 800;
+
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+
+            const startTime = audioContext.currentTime;
+            const endTime = startTime + beepDuration;
+
+            gainNode.gain.setValueAtTime(0.3, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, endTime);
+
+            oscillator.start(startTime);
+            oscillator.stop(endTime);
+        }, i * (beepDuration + pauseDuration) * 1000);
+    }
 }
 
 // Inisialisasi
