@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Hitung Mundur Desktop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            width: 100%;
+            position: relative;
+        }
+
+        .timer {
+            font-size: 15vw;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: color 0.5s ease, text-shadow 0.5s ease, opacity 0.3s ease;
+            position: relative;
+        }
+
+        .timer.paused {
+            opacity: 0.7;
+        }
+
+        .timer.warning-yellow {
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
+            animation: pulse-yellow 1s infinite;
+        }
+
+        .timer.warning-red {
+            color: #ff3333;
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.7);
+            animation: pulse-red 0.5s infinite;
+        }
+
+        @keyframes pulse-yellow {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes pulse-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .settings {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(20, 20, 20, 0.9);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .settings.hidden {
+            transform: translateY(100%);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 60px;
+            padding: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 3px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+            border: 1px solid #f44336;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-warning {
+            background-color: #ff9800;
+            border: 1px solid #ff9800;
+        }
+
+        .btn-warning:hover {
+            background-color: #e68900;
+        }
+
+        .floating-settings-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-settings-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .floating-settings-btn.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: rotate(45deg);
+        }
+
+        .gear-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-sound {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .toggle-sound input {
+            cursor: pointer;
+        }
+
+        .time-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .time-input-container input {
+            width: 80px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .digit {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .digit.changed {
+            animation: flip 0.5s ease;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .pause-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3vw;
+            color: rgba(255, 255, 255, 0.7);
+            display: none;
+        }
+
+        .timer-container.paused .pause-indicator {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container" id="timerContainer">
+        <div class="time-input-container" id="timeInputContainer">
+            <input type="number" id="hoursInput" placeholder="Jam" min="0" max="999">
+            <input type="number" id="minutesInput" placeholder="Menit" min="0" max="59">
+            <input type="number" id="secondsInput" placeholder="Detik" min="0" max="59">
+            <button class="btn btn-primary" id="startBtn">Mulai</button>
+        </div>
+        <div class="timer" id="timer">00:00:00</div>
+        <div class="pause-indicator">DIJEDA</div>
+    </div>
+
+    <div class="settings hidden" id="settings">
+        <div class="input-group">
+            <label for="yellowWarning">Peringatan Kuning (menit):</label>
+            <input type="number" id="yellowWarning" min="0" max="999" value="5">
+        </div>
+        <div class="input-group">
+            <label for="redWarning">Peringatan Merah (menit):</label>
+            <input type="number" id="redWarning" min="0" max="999" value="2">
+        </div>
+        <div class="toggle-sound">
+            <input type="checkbox" id="soundEnabled" checked>
+            <label for="soundEnabled">Aktifkan Suara</label>
+        </div>
+        <button class="btn btn-warning" id="pauseBtn">Jeda</button>
+        <button class="btn btn-danger" id="resetBtn">Reset</button>
+    </div>
+
+    <button class="floating-settings-btn" id="floatingSettingsBtn" title="Pengaturan">
+        <svg class="gear-icon" viewBox="0 0 24 24">
+            <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.08-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
+        </svg>
+    </button>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let countdown;
+        let totalSeconds = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let yellowWarningSeconds = 300; // Default 5 menit
+        let redWarningSeconds = 120; // Default 2 menit
+        let soundEnabled = true;
+
+        const timerElement = document.getElementById('timer');
+        const timerContainer = document.getElementById('timerContainer');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const floatingSettingsBtn = document.getElementById('floatingSettingsBtn');
+        const hoursInput = document.getElementById('hoursInput');
+        const minutesInput = document.getElementById('minutesInput');
+        const secondsInput = document.getElementById('secondsInput');
+        const yellowWarningInput = document.getElementById('yellowWarning');
+        const redWarningInput = document.getElementById('redWarning');
+        const soundEnabledCheckbox = document.getElementById('soundEnabled');
+        const timeInputContainer = document.getElementById('timeInputContainer');
+        const settings = document.getElementById('settings');
+        const notification = document.getElementById('notification');
+
+        // Audio context untuk membuat suara
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(frequency, duration) {
+            if (!soundEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playStartSound() {
+            playSound(800, 0.3);
+            setTimeout(() => playSound(1000, 0.3), 100);
+        }
+
+        function playWarningSound(warningType) {
+            if (warningType === 'yellow') {
+                playSound(600, 0.2);
+                setTimeout(() => playSound(600, 0.2), 200);
+            } else if (warningType === 'red') {
+                playSound(400, 0.3);
+                setTimeout(() => playSound(400, 0.3), 100);
+                setTimeout(() => playSound(400, 0.3), 200);
+            }
+        }
+
+        function playEndSound() {
+            playSound(500, 0.5);
+            setTimeout(() => playSound(600, 0.5), 200);
+            setTimeout(() => playSound(700, 0.5), 400);
+            setTimeout(() => playSound(800, 1), 600);
+        }
+
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateTimer() {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            const formattedTime = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            
+            // Animate digit changes
+            const currentDigits = timerElement.textContent.replace(/:/g, '');
+            const newDigits = formattedTime.replace(/:/g, '');
+            
+            let html = '';
+            for (let i = 0; i < newDigits.length; i++) {
+                if (currentDigits[i] !== newDigits[i]) {
+                    html += `<span class="digit changed">${newDigits[i]}</span>`;
+                } else {
+                    html += `<span class="digit">${newDigits[i]}</span>`;
+                }
+                if (i === 1 || i === 3) {
+                    html += ':';
+                }
+            }
+            
+            timerElement.innerHTML = html;
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                const changedDigits = timerElement.querySelectorAll('.digit.changed');
+                changedDigits.forEach(digit => {
+                    digit.classList.remove('changed');
+                });
+            }, 500);
+            
+            // Check for warnings
+            if (totalSeconds <= redWarningSeconds && totalSeconds > 0) {
+                if (!timerElement.classList.contains('warning-red')) {
+                    timerElement.classList.remove('warning-yellow');
+                    timerElement.classList.add('warning-red');
+                    playWarningSound('red');
+                    showNotification('Peringatan Merah!');
+                }
+            } else if (totalSeconds <= yellowWarningSeconds && totalSeconds > 0) {
+                if (!timerElement.classList.contains('warning-yellow')) {
+                    timerElement.classList.add('warning-yellow');
+                    playWarningSound('yellow');
+                    showNotification('Peringatan Kuning!');
+                }
+            } else {
+                timerElement.classList.remove('warning-yellow', 'warning-red');
+            }
+            
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = "WAKTU HABIS!";
+                timerElement.style.fontSize = "10vw"; // Make the "WAKTU HABIS!" text a bit smaller to fit
+                playEndSound();
+                showNotification('Waktu Habis!');
+                isRunning = false;
+                isPaused = false;
+                pauseBtn.textContent = 'Jeda';
+                timerContainer.classList.remove('paused');
+                return;
+            }
+            
+            totalSeconds--;
+        }
+
+        function pad(number) {
+            return number < 10 ? '0' + number : number;
+        }
+
+        function startTimer() {
+            const hours = parseInt(hoursInput.value) || 0;
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                showNotification('Masukkan waktu terlebih dahulu!');
+                return;
+            }
+            
+            totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            timeInputContainer.style.display = 'none';
+            isRunning = true;
+            isPaused = false;
+            
+            // Reset timer display
+            timerElement.style.fontSize = "15vw";
+            timerElement.classList.remove('warning-yellow', 'warning-red');
+            timerContainer.classList.remove('paused');
+            
+            yellowWarningSeconds = parseInt(yellowWarningInput.value) * 60;
+            redWarningSeconds = parseInt(redWarningInput.value) * 60;
+            
+            playStartSound();
+            showNotification('Timer dimulai!');
+            
+            updateTimer();
+            countdown = setInterval(updateTimer, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) {
+                showNotification('Timer belum dimulai!');
+                return;
+            }
+            
+            if (isPaused) {
+                // Resume
+                isPaused = false;
+                pauseBtn.textContent = 'Jeda';
+                timerContainer.classList.remove('paused');
+                countdown = setInterval(updateTimer, 1000);
+                showNotification('Timer dilanjutkan!');
+            } else {
+                // Pause
+                isPaused = true;
+                pauseBtn.textContent = 'Lanjut';
+                timerContainer.classList.add('paused');
+                clearInterval(countdown);
+                showNotification('Timer dijeda!');
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            totalSeconds = 0;
+            isRunning = false;
+            isPaused = false;
+            timerElement.textContent = "00:00:00";
+            timerElement.style.fontSize = "15vw";
+            timerElement.classList.remove('warning-yellow', 'warning-red');
+            timerContainer.classList.remove('paused');
+            timeInputContainer.style.display = 'flex';
+            hoursInput.value = '';
+            minutesInput.value = '';
+            secondsInput.value = '';
+            pauseBtn.textContent = 'Jeda';
+            showNotification('Timer direset!');
+        }
+
+        function toggleSettings() {
+            settings.classList.toggle('hidden');
+            floatingSettingsBtn.classList.toggle('active');
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        floatingSettingsBtn.addEventListener('click', toggleSettings);
+        
+        soundEnabledCheckbox.addEventListener('change', () => {
+            soundEnabled = soundEnabledCheckbox.checked;
+            showNotification(soundEnabled ? 'Suara diaktifkan' : 'Suara dinonaktifkan');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !isRunning) {
+                startTimer();
+            } else if (e.key === 'Escape' && isRunning) {
+                resetTimer();
+            } else if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault(); // Mencegah scroll saat menekan spasi
+                pauseTimer();
+            } else if (e.key === 's' || e.key === 'S') {
+                toggleSettings();
+            }
+        });
+
+        // Initialize
+        timerElement.textContent = "00:00:00";
+    </script>
+</body>
+</html>
