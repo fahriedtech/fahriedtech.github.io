@@ -77,17 +77,23 @@ section.active {
     display: block;
 }
 
+/* --- PERUBAHAN ADA DI SINI --- */
 .display {
-    font-size: 4rem;
-    font-weight: 200;
-    font-family: 'Courier New', Courier, monospace;
-    margin-bottom: 2rem;
-    letter-spacing: 3px;
+    font-family: 'Orbitron', sans-serif;
+    
+    /* Ukuran font yang sepenuhnya responsif */
+    font-size: clamp(2rem, 7vw, 3.5rem); 
+    
+    font-weight: 700;
+    
+    /* Kembali ke margin normal */
+    margin-bottom: 2rem; 
+    
+    letter-spacing: 0;
     color: var(--primary-color);
-    transition: color 0.5s ease; /* Animasi perubahan warna yang halus */
+    transition: color 0.5s ease;
+    word-break: break-word;
 }
-
-/* Tampilan timer lebih besar */
 
 .controls {
     display: flex;
@@ -116,10 +122,6 @@ section.active {
 
 .controls button:active {
     transform: translateY(0);
-}
-
-#lap-btn, #reset-timer-btn, #reset-stopwatch-btn {
-    background-color: #555;
 }
 
 .timer-inputs {
@@ -225,4 +227,51 @@ section.active {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+
+/* ======================================================= */
+/* ===    MEDIA QUERY UNTUK LAYAR SANGAT KECIL (320px)   === */
+/* ======================================================= */
+
+@media (max-width: 380px) {
+    
+    .app-container {
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .display {
+        /* Di layar kecil, font-size clamp yang menentukan */
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+        margin-bottom: 1.5rem;
+    }
+
+    .controls button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .timer-inputs {
+        gap: 0.5rem;
+    }
+    
+    .timer-inputs input {
+        width: 70px;
+        font-size: 1.2rem;
+        padding: 0.4rem;
+    }
+    
+    .warning-settings {
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .warning-input-group label {
+        font-size: 0.8rem;
+    }
 }
