@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pengacak Petugas Upacara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Pustaka untuk mengkonversi HTML ke Gambar (Simpan sebagai Gambar) -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <!-- CSS di-embed di sini -->
+    <style>
+        :root {
+            --primary-color: #007bff; /* Biru Cerah */
+            --secondary-color: #6c757d;
+            --accent-color: #28a745; /* Hijau Sukses */
+            --background-color: #f8f9fa; /* Latar Belakang Sangat Cerah */
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #e9ecef;
+            --male-bg: #d1ecf1; /* Biru Laut Muda */
+            --male-text: #0c5460;
+            --female-bg: #f8d7da; /* Pink Soft */
+            --female-text: #721c24;
+            --loading-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 10px; /* Padding lebih kecil di mobile */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 20px; /* Padding kontainer dikurangi */
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 950px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px; /* Margin dikurangi */
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.8em; /* Ukuran font lebih kecil di mobile */
+        }
+
+        header p {
+            color: var(--secondary-color);
+            margin-top: 5px;
+            font-size: 0.9em; /* Ukuran font lebih kecil */
+            font-weight: 500;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        #name-input {
+            width: 100%;
+            height: 150px; /* Tinggi dikurangi di mobile */
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        #name-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .input-controls {
+            display: flex;
+            gap: 10px; /* Gap dikurangi */
+            margin-top: 15px; 
+            justify-content: flex-end; 
+        }
+
+        /* Gaya Tombol Utama */
+        .btn {
+            padding: 10px 20px; /* Padding tombol dikurangi */
+            border: none;
+            border-radius: 8px; /* Sudut tombol lebih kecil */
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #0056b3;
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 2px 5px rgba(108, 117, 125, 0.2);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background-color: #1e7e34;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3; /* Ukuran spinner disesuaikan */
+            border-top: 3px solid var(--loading-color);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+            display: none;
+        }
+        .ai-btn-content {
+            display: flex;
+            align-items: center;
+        }
+        .ai-btn-content.loading .spinner {
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        /* Gender Management Section */
+        .gender-management-section {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            padding: 15px; /* Padding dikurangi */
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: #ffffff;
+        }
+
+        .gender-management-section h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px; /* Margin dikurangi */
+            font-weight: 700;
+            font-size: 1.2em; /* Ukuran font lebih kecil */
+        }
+
+        .gender-lists-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px; /* Gap dikurangi */
+        }
+        /* Mobile: Gender lists menjadi satu kolom */
+        @media (max-width: 768px) {
+            .gender-lists-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        .gender-list-container {
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .gender-list-container.male-list {
+            background-color: var(--male-bg);
+            border: 1px solid var(--male-text);
+        }
+
+        .gender-list-container.female-list {
+            background-color: var(--female-bg);
+            border: 1px solid var(--female-text);
+        }
+
+        .gender-list-container h4 {
+            margin-top: 0;
+            text-align: center;
+            font-weight: 600;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            border-bottom: 2px dashed rgba(0,0,0,0.1);
+            font-size: 1em;
+        }
+        
+        .gender-list-container.male-list h4 { color: var(--male-text); }
+        .gender-list-container.female-list h4 { color: var(--female-text); }
+
+        .gender-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px; /* Gap tag dikurangi */
+            min-height: 40px;
+        }
+        
+        /* KONTROL BARU UNTUK TATA LETAK LEBIH BAIK */
+        .controls {
+            display: flex;
+            flex-direction: column; /* Stack the rows vertically */
+            gap: 15px; /* Gap between rows/groups */
+            margin: 20px 0;
+            align-items: center; /* Center content horizontally */
+        }
+        
+        .main-controls-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px; /* Batasan lebar untuk tombol utama */
+        }
+
+        .main-controls-row .btn {
+            flex-grow: 1;
+        }
+
+        .add-task-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 500px; /* Batasan lebar untuk input tugas baru */
+        }
+
+        #new-task-input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif;
+            flex-grow: 1;
+        }
+
+        /* Gaya Tabel Hasil */
+        .result-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .result-section h2 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+        
+        .result-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Kontainer Tabel untuk di-capture sebagai gambar */
+        #table-capture-container {
+            background-color: white; /* Penting untuk PNG capture */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        #result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em; /* Ukuran teks tabel lebih kecil */
+        }
+
+        #result-table th, #result-table td {
+            padding: 0;
+            text-align: left;
+        }
+
+        #result-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            padding: 10px; /* Padding lebih kecil */
+            text-transform: uppercase;
+        }
+        
+        #result-table tbody tr {
+             transition: background-color 0.2s ease;
+             border-bottom: 1px solid var(--border-color);
+        }
+
+        #result-table tbody tr:nth-child(even) {
+            background-color: #f6f6f6;
+        }
+        
+        .name-cell {
+            padding: 8px 10px; /* Padding lebih kecil */
+            min-height: 40px;
+            vertical-align: middle;
+        }
+
+        .name-cell.drag-over-name {
+            background-color: var(--male-bg);
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+        }
+
+        .name-tag {
+            display: inline-block;
+            padding: 6px 10px; /* Padding tag lebih kecil */
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: grab;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            user-select: none;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .name-tag:hover {
+            transform: scale(1.03);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        .name-tag[draggable="true"]:hover {
+             cursor: grab;
+        }
+        .gender-list .name-tag {
+            cursor: pointer;
+            box-shadow: none;
+        }
+        .gender-list .name-tag:hover {
+             transform: scale(1.05);
+        }
+
+        .name-tag.male {
+            background-color: var(--male-bg);
+            color: var(--male-text);
+        }
+
+        .name-tag.female {
+            background-color: var(--female-bg);
+            color: var(--female-text);
+        }
+        
+        /* CSS untuk memberikan umpan balik visual saat JS sedang mengacak nama */
+        .shuffling-active {
+            opacity: 0.8;
+            box-shadow: 0 0 5px var(--loading-color);
+            transition: opacity 0.1s; /* Transisi agar pergantian nama lebih halus */
+        }
+        
+        /* CSS Animasi Pop-Up (Zoom-in Memantul) */
+        .pop-in {
+            /* Menerapkan animasi dengan fungsi pemantulan (bounce) */
+            animation: pop-in-animation 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+        }
+
+        @keyframes pop-in-animation {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        /* Akhir CSS Animasi Pop-Up */
+        
+        .penyanyi-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 0;
+        }
+        
+        /* Message Box */
+        #message-box {
+            position: fixed;
+            top: 10px; /* Posisi lebih ke atas di mobile */
+            right: 10px;
+            left: 10px; /* Full width di mobile */
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            text-align: center;
+        }
+
+
+        /* Responsive Design Rules */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 1.6em;
+            }
+            /* Kontrol tombol utama di mobile */
+            .input-controls {
+                flex-direction: column;
+                justify-content: center;
+                gap: 10px;
+            }
+            .btn {
+                width: 100%;
+                padding: 12px;
+            }
+
+            /* Tata letak tombol bawah */
+            .main-controls-row, .add-task-group {
+                flex-direction: column;
+                max-width: none;
+            }
+            .add-task-group {
+                /* Untuk input & tombolnya stack */
+                flex-direction: column;
+            }
+            .add-task-group button {
+                width: 100%;
+            }
+            
+            .result-actions {
+                justify-content: center;
+            }
+            .result-actions .btn {
+                flex-grow: 1;
+            }
+            
+            #result-table th, #result-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="message-box"></div>
+
+    <div class="container">
+        <header>
+            <h1>Aplikasi Pengacak Petugas Upacara</h1>
+            <p></p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <label for="name-input">Daftar Nama Peserta (Satu Nama Per Baris)</label>
+                <textarea id="name-input" placeholder="Contoh:
+Fahri
+Siti Aminah Pratiwi
+Jessica Wulandari
+Rina Permata Sari
+..."></textarea>
+                <div class="input-controls">
+                    <!-- Tombol utama untuk memproses data dan memicu logika AI (gender separation) -->
+                    <button id="ai-gender-btn" class="btn btn-primary">
+                        <div class="ai-btn-content" id="ai-btn-content">
+                            <span class="spinner"></span>Proses Data
+                        </div>
+                    </button>
+                </div>
+            </section>
+            
+            <section id="gender-management-section" class="gender-management-section">
+                <h3>Manajemen Gender Hasil Prediksi (Klik nama untuk beralih secara manual)</h3>
+                <div class="gender-lists-container">
+                    <div class="gender-list-container male-list">
+                        <h4>👨 Laki-laki</h4>
+                        <div id="male-list" class="gender-list"></div>
+                    </div>
+                    <div class="gender-list-container female-list">
+                        <h4>👩 Perempuan</h4>
+                        <div id="female-list" class="gender-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KONTROL DIPERBARUI UNTUK MEMASTIKAN TATA LETAK YANG JELAS -->
+            <div class="controls">
+                <div class="main-controls-row">
+                    <button id="acak-btn" class="btn btn-primary">🎲 Acak Petugas Sekarang</button>
+                    <button id="reset-btn" class="btn btn-secondary">🔄 Reset Aplikasi</button>
+                </div>
+                <div class="add-task-group">
+                    <input type="text" id="new-task-input" placeholder="Tambahkan Tugas Baru (bebas gender)...">
+                    <button id="add-task-btn" class="btn btn-secondary">➕ Tambah</button>
+                </div>
+            </div>
+
+            <section id="result-section" class="result-section" style="display: none;">
+                <h2>Hasil Pengacakan (Seret Nama untuk Koreksi Petugas)</h2>
+                
+                <div class="result-actions">
+                    <button id="copy-btn" class="btn btn-secondary">📋 Salin Hasil</button>
+                    <!-- Tombol baru untuk menyimpan sebagai gambar -->
+                    <button id="save-image-btn" class="btn btn-success">🖼️ Simpan</button>
+                </div>
+
+                <!-- Kontainer di sekitar tabel untuk proses capture gambar -->
+                <div id="table-capture-container">
+                    <table id="result-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">TUGAS</th>
+                                <th style="width: 70%;">NAMA PETUGAS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Hasil akan dimasukkan di sini oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (Wajib untuk Autentikasi) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // Variabel global dari lingkungan Canvas (Wajib digunakan)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app;
+        let auth;
+
+        if (firebaseConfig) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            
+            // Otentikasi
+            if (initialAuthToken) {
+                signInWithCustomToken(auth, initialAuthToken).catch(e => console.error("Firebase Auth Error with custom token:", e));
+            } else {
+                signInAnonymously(auth).catch(e => console.error("Firebase Auth Error anonymous:", e));
+            }
+        }
+        
+        window.firebaseAuth = auth;
+    </script>
+
+    <!-- JavaScript Aplikasi Utama -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            if (typeof __firebase_config === 'undefined') {
+                console.warn("Firebase config is missing. Authentication setup skipped.");
+            }
+            
+            // --- KONSTANTA DAN ELEMEN DOM ---
+            const nameInput = document.getElementById('name-input');
+            const newTaskInput = document.getElementById('new-task-input');
+            const acakBtn = document.getElementById('acak-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const resultSection = document.getElementById('result-section');
+            const genderSection = document.getElementById('gender-management-section');
+            const resultTableBody = document.querySelector('#result-table tbody');
+            const copyBtn = document.getElementById('copy-btn');
+            const saveImageBtn = document.getElementById('save-image-btn'); // Tombol baru
+            const tableCaptureContainer = document.getElementById('table-capture-container'); // Kontainer untuk capture
+            const maleListContainer = document.getElementById('male-list');
+            const femaleListContainer = document.getElementById('female-list');
+            const aiGenderBtn = document.getElementById('ai-gender-btn');
+            const aiBtnContent = document.getElementById('ai-btn-content');
+            const messageBox = document.getElementById('message-box');
+
+            // --- DEFINISI TUGAS UTAMA DENGAN SYARAT GENDER BARU (Update V2) ---
+            let daftarTugasUtama = [
+                { task: "Pemimpin Upacara", constraint: "male" },
+                { task: "Penggerek Bendera", constraint: "unisex_group" },
+                { task: "Pembawa Baki", constraint: "unisex_group" },
+                { task: "Pengibar Bendera", constraint: "unisex_group" },
+                { task: "Komandan Kompi 1", constraint: "male" },
+                { task: "Komandan Kompi 2", constraint: "male" },
+                { task: "Komandan Kompi 3", constraint: "male" },
+                { task: "Pembaca UUD 1945", constraint: "any" },
+                { task: "Pembawa Teks Pancasila", constraint: "any" },
+                { task: "Pembaca Janji Siswa", constraint: "any" },
+                { task: "Pemimpin Doa", constraint: "male" },
+                { task: "Ajudan", constraint: "male" }, 
+                { task: "Pembaca Susunan Upacara", constraint: "female" },
+                { task: "Dirigen", constraint: "female" }
+            ];
+            
+            const namaTugasPenyanyi = "Penyanyi (Siswa Lain)";
+            let allStudentNames = []; 
+            let draggedElement = null;
+            // Array untuk menyimpan ID interval pengacakan (shuffling)
+            let shuffleIntervals = []; 
+            
+            // --- FUNGSI UTILITAS ---
+
+            function showMessage(text, duration = 3000) {
+                messageBox.textContent = text;
+                messageBox.style.opacity = 1;
+                setTimeout(() => {
+                    messageBox.style.opacity = 0;
+                }, duration);
+            }
+
+            function shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            function createNameTag(name, gender, isDraggable = true) {
+                const span = document.createElement('span');
+                // Gender 'any' harus dikonversi ke 'male' atau 'female' jika diketahui saat runtime
+                const actualGenderClass = (gender === 'any' || gender === 'shuffling') ? 'male' : gender; 
+                span.className = `name-tag ${actualGenderClass}`;
+                span.textContent = name;
+                span.dataset.gender = gender;
+                if (isDraggable) {
+                    span.draggable = true;
+                }
+                return span;
+            }
+
+            function populateGenderLists() {
+                maleListContainer.innerHTML = '';
+                femaleListContainer.innerHTML = '';
+                
+                allStudentNames.forEach(student => {
+                    // Pastikan tag yang dipindahkan ke daftar gender memiliki kelas gender yang benar
+                    const tag = createNameTag(student.name, student.gender, false); 
+                    if (student.gender === 'female') {
+                        femaleListContainer.appendChild(tag);
+                    } else {
+                        maleListContainer.appendChild(tag);
+                    }
+                });
+            }
+            
+            // --- LOGIKA AI KLASIFIKASI DENGAN GEMINI API ---
+
+            async function callGeminiApiWithRetry(payload, maxRetries = 3) {
+                const apiKey = "AIzaSyCB_a45Xkk99HOJsQrI2UFtYjTK_FqqjOY"; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                
+                for (let attempt = 0; attempt < maxRetries; attempt++) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 429 && attempt < maxRetries - 1) {
+                                const delay = Math.pow(2, attempt) * 1000;
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                                continue;
+                            }
+                            throw new Error(`API call failed with status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        const candidate = result.candidates?.[0];
+
+                        if (candidate && candidate.content?.parts?.[0]?.text) {
+                            const jsonText = candidate.content.parts[0].text;
+                            return JSON.parse(jsonText);
+                        }
+                        throw new Error("Invalid response structure from Gemini API.");
+
+                    } catch (error) {
+                        console.error(`Attempt ${attempt + 1} failed:`, error.message);
+                        if (attempt === maxRetries - 1) throw error;
+                    }
+                }
+            }
+
+            async function updateGenderListsFromInput() {
+                const rawNames = nameInput.value.split('\n').map(name => name.trim()).filter(name => name !== '');
+                
+                if (rawNames.length === 0) {
+                    showMessage('🚨 Masukkan daftar nama sebelum memproses.', 4000);
+                    return;
+                }
+
+                aiGenderBtn.disabled = true;
+                aiBtnContent.classList.add('loading');
+
+                const userQuery = `Daftar nama lengkap yang harus Anda klasifikasikan ke dalam gender 'male' atau 'female' adalah: ${rawNames.join('; ')}. Mohon klasifikasikan berdasarkan pengetahuan Anda tentang nama-nama di Indonesia, termasuk nama suku dan gelar.`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: {
+                        parts: [{ text: "Anda adalah klasifikator gender nama canggih. Analisis nama lengkap Indonesia yang diberikan dan klasifikasikan ke dalam gender 'male' atau 'female'. Hanya berikan respons dalam format JSON sesuai skema yang diminta, jangan ada teks tambahan." }]
+                    },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "name": { "type": "STRING", "description": "Nama lengkap peserta." },
+                                    "gender": { "type": "STRING", "enum": ["male", "female"], "description": "Hasil klasifikasi gender: 'male' atau 'female'." }
+                                },
+                                "propertyOrdering": ["name", "gender"]
+                            }
+                        }
+                    }
+                };
+
+                try {
+                    const parsedResponse = await callGeminiApiWithRetry(payload);
+                    
+                    if (Array.isArray(parsedResponse)) {
+                        allStudentNames = parsedResponse.filter(s => s.name && (s.gender === 'male' || s.gender === 'female'));
+                        populateGenderLists();
+                        showMessage(`✅ ${allStudentNames.length} nama berhasil diklasifikasikan oleh AI. Koreksi manual di bawah jika ada kesalahan.`, 5000);
+                    } else {
+                        throw new Error("Respon AI tidak valid atau kosong.");
+                    }
+
+                } catch (e) {
+                    console.error('Gemini Classification Error:', e);
+                    showMessage('❌ Gagal mengklasifikasikan data. Coba lagi atau periksa format nama.', 6000);
+                    // Fallback to manual list update
+                    allStudentNames = rawNames.map(name => ({ name, gender: 'male' }));
+                    populateGenderLists();
+                    showMessage('⚠️ Gagal AI: Semua nama ditetapkan ke Laki-laki sebagai fallback. Harap koreksi manual!', 7000);
+                } finally {
+                    aiGenderBtn.disabled = false;
+                    aiBtnContent.classList.remove('loading');
+                }
+            }
+            
+            // --- FUNGSI UTAMA PENGACAKAN DENGAN SYARAT KETAT ---
+
+            function generateTableStructure() {
+                resultTableBody.innerHTML = '';
+                // Pool of all student objects for shuffling
+                const fullStudentPool = allStudentNames; 
+                
+                // Clear any existing intervals
+                shuffleIntervals.forEach(clearInterval);
+                shuffleIntervals = [];
+
+                daftarTugasUtama.forEach(item => {
+                    const row = document.createElement('tr');
+                    const taskCell = document.createElement('td');
+                    taskCell.textContent = item.task;
+                    taskCell.style.fontWeight = 'bold'; 
+
+                    const nameCell = document.createElement('td');
+                    nameCell.className = 'name-cell';
+                    
+                    // Tag untuk animasi pengacakan (shuffling)
+                    const placeholderTag = createNameTag('Mengacak...', 'shuffling', true);
+                    placeholderTag.classList.add('shuffling-active');
+                    nameCell.appendChild(placeholderTag);
+
+                    // Mulai interval penggantian nama yang terlihat (visible shuffling)
+                    const shuffleId = setInterval(() => {
+                        if (fullStudentPool.length === 0) return;
+                        
+                        // Pilih siswa acak dari seluruh pool
+                        const randomNameIndex = Math.floor(Math.random() * fullStudentPool.length);
+                        const randomStudent = fullStudentPool[randomNameIndex];
+                        
+                        // Perbarui teks dan kelas untuk simulasi pengacakan
+                        placeholderTag.textContent = randomStudent.name;
+                        
+                        // Hapus kelas gender lama dan tambahkan kelas gender baru
+                        placeholderTag.classList.remove('male', 'female');
+                        placeholderTag.classList.add(randomStudent.gender);
+                        placeholderTag.classList.add('shuffling-active'); // Pastikan kelas aktif tetap ada
+                        placeholderTag.dataset.gender = randomStudent.gender;
+
+                    }, 120); // Interval 120ms (0.12 detik) - cukup lambat untuk terlihat
+
+                    shuffleIntervals.push(shuffleId);
+
+                    row.appendChild(taskCell);
+                    row.appendChild(nameCell);
+                    resultTableBody.appendChild(row);
+                });
+                
+                // Tambahkan baris Penyanyi/Siswa Lain (sementara kosong)
+                const penyanyiRow = document.createElement('tr');
+                const penyanyiTaskCell = document.createElement('td');
+                penyanyiTaskCell.textContent = namaTugasPenyanyi;
+                
+                const penyanyiNameCell = document.createElement('td');
+                const penyanyiListContainer = document.createElement('div');
+                penyanyiListContainer.className = 'penyanyi-list';
+                penyanyiListContainer.dataset.task = 'penyanyi';
+                
+                penyanyiNameCell.appendChild(penyanyiListContainer);
+                penyanyiRow.appendChild(penyanyiTaskCell);
+                penyanyiRow.appendChild(penyanyiNameCell);
+                resultTableBody.appendChild(penyanyiRow);
+                
+                resultSection.style.display = 'block';
+            }
+
+            function assignFinalResults(assignedTasks, penyanyiNames) {
+                // Hentikan semua interval shuffling
+                shuffleIntervals.forEach(clearInterval);
+                shuffleIntervals = [];
+                
+                const rows = resultTableBody.querySelectorAll('tr');
+                
+                // TUGAS UTAMA
+                daftarTugasUtama.forEach((item, index) => {
+                    const tugas = item.task;
+                    const nameCell = rows[index].querySelector('td.name-cell');
+                    const assignment = assignedTasks[tugas];
+                    
+                    if (nameCell && assignment) {
+                        nameCell.innerHTML = ''; // Hapus tag placeholder/animasi
+                        const finalTag = createNameTag(assignment.name, assignment.gender, true);
+                        finalTag.classList.add('pop-in'); // Memicu animasi pop-up
+                        nameCell.appendChild(finalTag);
+                    }
+                });
+
+                // TUGAS PENYANYI
+                const penyanyiListContainer = resultTableBody.querySelector('.penyanyi-list');
+                if (penyanyiListContainer) {
+                    penyanyiListContainer.innerHTML = '';
+                    penyanyiNames.forEach(({ name, gender }) => {
+                        const finalTag = createNameTag(name, gender, true);
+                        finalTag.classList.add('pop-in'); // Memicu animasi pop-up
+                        penyanyiListContainer.appendChild(finalTag);
+                    });
+                }
+                
+                acakBtn.disabled = false;
+                showMessage('Pengacakan cerdas berhasil dilakukan sesuai semua syarat gender!', 4000);
+            }
+
+            function processAcakLogic() {
+                // 1. Siapkan Kolam Nama Terpisah (dan diacak)
+                let malePool = shuffle(allStudentNames.filter(s => s.gender === 'male'));
+                let femalePool = shuffle(allStudentNames.filter(s => s.gender === 'female'));
+                
+                const assignedTasks = {};
+                const tasksList = [...daftarTugasUtama]; // Daftar tugas dengan constraint
+
+                // Hitung kebutuhan minimum berdasarkan daftar baru
+                const fixedMaleCount = tasksList.filter(t => t.constraint === 'male').length; 
+                const fixedFemaleCount = tasksList.filter(t => t.constraint === 'female').length; 
+                const benderaGroupSize = tasksList.filter(t => t.constraint === 'unisex_group').length; 
+
+                const totalRequired = fixedMaleCount + fixedFemaleCount + benderaGroupSize + tasksList.filter(t => t.constraint === 'any').length;
+
+                if (malePool.length < fixedMaleCount || femalePool.length < fixedFemaleCount || allStudentNames.length < totalRequired) {
+                    let errorMessage = `🚨 GAGAL MENGACAK: `;
+                    if (allStudentNames.length < totalRequired) errorMessage += `Jumlah total siswa (${allStudentNames.length}) kurang dari total tugas (${totalRequired}). `;
+                    if (malePool.length < fixedMaleCount) errorMessage += `Kekurangan Laki-laki (Dibutuhkan min ${fixedMaleCount}, Tersedia ${malePool.length}). `;
+                    if (femalePool.length < fixedFemaleCount) errorMessage += `Kekurangan Perempuan (Dibutuhkan min ${fixedFemaleCount}, Tersedia ${femalePool.length}).`;
+                    
+                    showMessage(errorMessage, 10000);
+                    acakBtn.disabled = false;
+                    resultTableBody.innerHTML = '';
+                    // Bersihkan interval yang mungkin sudah terlanjur dibuat
+                    shuffleIntervals.forEach(clearInterval);
+                    shuffleIntervals = [];
+                    return;
+                }
+
+                // 2. Tetapkan Peran dengan Gender Tetap (Fixed Roles)
+                const maleRoles = tasksList.filter(t => t.constraint === 'male');
+                maleRoles.forEach(role => {
+                    assignedTasks[role.task] = malePool.pop();
+                });
+
+                const femaleRoles = tasksList.filter(t => t.constraint === 'female');
+                femaleRoles.forEach(role => {
+                    assignedTasks[role.task] = femalePool.pop();
+                });
+
+                // 3. Tetapkan Peran Unisex Group (Bendera Group)
+                const benderaTasks = tasksList.filter(t => t.constraint === 'unisex_group'); 
+                let benderaPool;
+
+                const maleAvailable = malePool.length;
+                const femaleAvailable = femalePool.length;
+
+                if ((Math.random() < 0.5 && maleAvailable >= benderaGroupSize) || (maleAvailable >= benderaGroupSize && femaleAvailable < benderaGroupSize)) {
+                    benderaPool = malePool;
+                } 
+                else if (femaleAvailable >= benderaGroupSize) {
+                    benderaPool = femalePool;
+                } 
+                else if (maleAvailable >= benderaGroupSize) {
+                    benderaPool = malePool;
+                } else {
+                    showMessage('🚨 GAGAL MENGACAK: Tidak cukup siswa (min 3) untuk Kelompok Bendera.', 7000);
+                    acakBtn.disabled = false;
+                    resultTableBody.innerHTML = '';
+                    shuffleIntervals.forEach(clearInterval);
+                    shuffleIntervals = [];
+                    return;
+                }
+                
+                benderaTasks.forEach(role => {
+                    assignedTasks[role.task] = benderaPool.pop();
+                });
+
+                // 4. Tetapkan Peran Fleksibel ('any')
+                const anyRoles = tasksList.filter(t => t.constraint === 'any');
+                
+                const remainingPool = shuffle([...malePool, ...femalePool]);
+
+                if (remainingPool.length < anyRoles.length) {
+                    showMessage('🚨 GAGAL MENGACAK: Setelah mengisi peran wajib, tidak cukup siswa untuk mengisi peran bebas yang tersisa.', 7000);
+                    acakBtn.disabled = false;
+                    resultTableBody.innerHTML = '';
+                    shuffleIntervals.forEach(clearInterval);
+                    shuffleIntervals = [];
+                    return;
+                }
+
+                anyRoles.forEach(role => {
+                    assignedTasks[role.task] = remainingPool.pop();
+                });
+
+                // 5. Final Compilation (Penyanyi List)
+                const allAssignedNames = new Set(Object.values(assignedTasks).map(a => a.name));
+                const penyanyiNames = allStudentNames.filter(student => !allAssignedNames.has(student.name));
+                
+                // Kirim hasil untuk ditampilkan setelah animasi
+                setTimeout(() => {
+                    assignFinalResults(assignedTasks, penyanyiNames);
+                }, 2500); // Durasi animasi 2.5 detik (selama nama shuffling)
+            }
+
+            function handleAcak() {
+                if (allStudentNames.length === 0) {
+                    showMessage('🚨 GAGAL MENGACAK: Belum ada data yang diproses. Klik "AI Proses Data..." terlebih dahulu.', 4000);
+                    return;
+                }
+                
+                acakBtn.disabled = true; // Nonaktifkan tombol saat proses
+                generateTableStructure(); // Tampilkan kerangka tabel dengan animasi shuffling
+                processAcakLogic(); // Jalankan logika pengacakan
+            }
+
+            function handleReset() {
+                nameInput.value = '';
+                resultSection.style.display = 'none';
+                resultTableBody.innerHTML = '';
+                allStudentNames = [];
+                populateGenderLists();
+                shuffleIntervals.forEach(clearInterval); // Bersihkan interval
+                shuffleIntervals = [];
+                // Reset daftar tugas ke kondisi awal (penting)
+                daftarTugasUtama = [
+                    { task: "Pemimpin Upacara", constraint: "male" },
+                    { task: "Penggerek Bendera", constraint: "unisex_group" },
+                    { task: "Pembawa Baki", constraint: "unisex_group" },
+                    { task: "Pengibar Bendera", constraint: "unisex_group" },
+                    { task: "Komandan Kompi 1", constraint: "male" },
+                    { task: "Komandan Kompi 2", constraint: "male" },
+                    { task: "Komandan Kompi 3", constraint: "male" },
+                    { task: "Pembaca UUD 1945", constraint: "any" },
+                    { task: "Pembawa Teks Pancasila", constraint: "any" },
+                    { task: "Pembaca Janji Siswa", constraint: "any" },
+                    { task: "Pemimpin Doa", constraint: "male" },
+                    { task: "Ajudan", constraint: "male" },
+                    { task: "Pembaca Susunan Upacara", constraint: "female" },
+                    { task: "Dirigen", constraint: "female" }
+                ];
+                showMessage('Aplikasi berhasil di-reset.', 3000);
+            }
+
+            function handleAddTask() {
+                const taskName = newTaskInput.value.trim();
+                if (taskName) {
+                    // Tugas baru ditambahkan sebagai 'any' (bebas gender)
+                    daftarTugasUtama.push({ task: taskName, constraint: "any" });
+                    newTaskInput.value = '';
+                    showMessage(`Tugas "${taskName}" berhasil ditambahkan (Bebas Gender)!`, 3000);
+                } else {
+                    showMessage('Nama tugas tidak boleh kosong.', 3000);
+                }
+            }
+            
+            // --- TOGGLE GENDER MANUAL (Klik Nama di List Manajemen) ---
+            function handleToggleGender(e) {
+                if (!e.target.classList.contains('name-tag') || e.target.closest('.result-section')) return;
+                
+                const tag = e.target;
+                const studentName = tag.textContent;
+                const student = allStudentNames.find(s => s.name === studentName);
+                
+                if(!student) return;
+
+                const currentGender = student.gender;
+                const newGender = (currentGender === 'male') ? 'female' : 'male';
+                student.gender = newGender; 
+
+                // Perbarui kelas dan dataset pada tag
+                tag.classList.remove(currentGender);
+                tag.classList.add(newGender);
+                tag.dataset.gender = newGender;
+                
+                if (newGender === 'female') {
+                    femaleListContainer.appendChild(tag);
+                } else {
+                    maleListContainer.appendChild(tag);
+                }
+                
+                if (resultSection.style.display !== 'none') {
+                    // Panggil acak ulang agar penugasan merefleksikan koreksi gender
+                    handleAcak();
+                }
+                showMessage(`Gender ${studentName} diubah ke ${newGender === 'male' ? 'Laki-laki' : 'Perempuan'} (Manual).`, 3000);
+            }
+            
+            // --- FUNGSI SALIN HASIL ---
+            
+            async function handleCopy() {
+                let resultText = "=== HASIL PENGACAKAN PETUGAS UPACARA ===\n";
+                const rows = resultTableBody.querySelectorAll('tr');
+                
+                rows.forEach(row => {
+                    if (row.cells.length > 0) {
+                        const tugas = row.cells[0].textContent.padEnd(25, ' ');
+                        // Mengambil nama dari name-tag, termasuk nama Penyanyi
+                        const names = Array.from(row.querySelectorAll('.name-tag')).map(tag => tag.textContent).join(', ');
+                        
+                        // Hanya tambahkan baris jika ada nama yang ditugaskan (atau jika itu baris Penyanyi)
+                        if (names.length > 0 || row.cells[0].textContent === namaTugasPenyanyi) {
+                             resultText += `${tugas}: ${names}\n`;
+                        }
+                    }
+                });
+
+                try {
+                    // Gunakan Clipboard API modern jika tersedia
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(resultText);
+                    } else {
+                        // Fallback lama (yang diminta oleh constraint)
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = resultText;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                    }
+
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✅ Tersalin!';
+                    copyBtn.classList.remove('btn-secondary');
+                    copyBtn.classList.add('btn-success');
+                    
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                        copyBtn.classList.remove('btn-success');
+                        copyBtn.classList.add('btn-secondary');
+                    },2000);
+                } catch (err) {
+                    console.error('Gagal menyalin teks:', err);
+                    showMessage('❌ Gagal menyalin. Silakan salin manual.', 4000);
+                }
+            }
+            
+            // --- FUNGSI SIMPAN SEBAGAI GAMBAR ---
+            
+            function handleSaveImage() {
+                if (resultSection.style.display === 'none') {
+                    showMessage('🚨 Belum ada hasil pengacakan untuk disimpan!', 4000);
+                    return;
+                }
+                
+                saveImageBtn.disabled = true;
+                const originalText = saveImageBtn.textContent;
+                saveImageBtn.textContent = '⏳ Memproses...';
+
+                // Gunakan html2canvas untuk menangkap kontainer tabel
+                html2canvas(tableCaptureContainer, { 
+                    scale: 2, // Meningkatkan kualitas gambar
+                    useCORS: true 
+                }).then(canvas => {
+                    // Konversi kanvas menjadi URL data PNG
+                    const imageURL = canvas.toDataURL('image/png');
+                    
+                    // Buat link download
+                    const a = document.createElement('a');
+                    a.href = imageURL;
+                    a.download = 'Hasil_Petugas_Upacara_' + new Date().toISOString().slice(0, 10) + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    showMessage('✅ Hasil berhasil disimpan sebagai gambar PNG.', 3000);
+
+                }).catch(err => {
+                    console.error('Gagal membuat gambar:', err);
+                    showMessage('❌ Gagal membuat gambar. Coba lagi.', 5000);
+                }).finally(() => {
+                    saveImageBtn.textContent = originalText;
+                    saveImageBtn.disabled = false;
+                });
+            }
+
+            // --- DRAG N DROP (TETAP SAMA) ---
+            
+            function handleDragStart(e) {
+                if (e.target.classList.contains('name-tag')) {
+                    draggedElement = e.target;
+                    draggedElement.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                }
+            }
+
+            function handleDragEnd(e) {
+                if(draggedElement) {
+                    draggedElement.classList.remove('dragging');
+                }
+                document.querySelectorAll('.drag-over-name').forEach(elem => {
+                    elem.classList.remove('drag-over-name');
+                });
+                draggedElement = null;
+            }
+
+            function handleDragOver(e) {
+                if (e.preventDefault) e.preventDefault();
+                document.querySelectorAll('.drag-over-name').forEach(elem => {
+                    elem.classList.remove('drag-over-name');
+                });
+                
+                const targetCell = e.target.closest('td.name-cell, .penyanyi-list');
+                if (targetCell) {
+                    targetCell.classList.add('drag-over-name');
+                }
+                return false;
+            }
+
+            function handleDrop(e) {
+                if (e.stopPropagation) e.stopPropagation();
+                e.preventDefault();
+                
+                const targetCell = e.target.closest('td.name-cell, .penyanyi-list');
+                
+                if (targetCell && draggedElement) {
+                    const draggedName = draggedElement.textContent;
+                    const draggedGender = draggedElement.dataset.gender;
+
+                    if (targetCell.classList.contains('name-cell')) {
+                        const targetNameTag = targetCell.querySelector('.name-tag');
+                        
+                        if (targetNameTag) {
+                            const targetName = targetNameTag.textContent;
+                            const targetGender = targetNameTag.dataset.gender;
+                            const penyanyiList = resultTableBody.querySelector('.penyanyi-list');
+                            
+                            // Tukar Nama dan Gender
+                            targetNameTag.textContent = draggedName;
+                            targetNameTag.classList.remove(targetGender);
+                            targetNameTag.classList.add(draggedGender);
+                            targetNameTag.dataset.gender = draggedGender;
+                            
+                            // Pindahkan petugas lama ke daftar penyanyi
+                            penyanyiList.appendChild(createNameTag(targetName, targetGender, true));
+                            showMessage(`Tukar petugas: ${draggedName} menggantikan ${targetName}.`, 3000);
+                        } else {
+                            // Pindahkan petugas baru ke tugas
+                            targetCell.appendChild(createNameTag(draggedName, draggedGender, true));
+                            showMessage(`Petugas ditugaskan: ${draggedName}.`, 3000);
+                        }
+                    } else if (targetCell.classList.contains('penyanyi-list')) {
+                        // Pindahkan petugas ke daftar penyanyi
+                        targetCell.appendChild(createNameTag(draggedName, draggedGender, true));
+                        showMessage(`Petugas dipindahkan ke daftar Penyanyi: ${draggedName}.`, 3000);
+                    }
+
+                    draggedElement.remove();
+                    targetCell.classList.remove('drag-over-name');
+                }
+                return false;
+            }
+
+            // --- INISIALISASI DAN EVENT LISTENERS ---
+            aiGenderBtn.addEventListener('click', updateGenderListsFromInput);
+            acakBtn.addEventListener('click', handleAcak);
+            resetBtn.addEventListener('click', handleReset);
+            addTaskBtn.addEventListener('click', handleAddTask);
+            copyBtn.addEventListener('click', handleCopy);
+            saveImageBtn.addEventListener('click', handleSaveImage); // Event listener baru
+            
+            genderSection.addEventListener('click', handleToggleGender); 
+            
+            resultTableBody.addEventListener('dragstart', handleDragStart);
+            resultTableBody.addEventListener('dragend', handleDragEnd);
+            resultTableBody.addEventListener('dragover', handleDragOver);
+            resultTableBody.addEventListener('drop', handleDrop);
+
+        });
+    </script>
+</body>
+</html>
