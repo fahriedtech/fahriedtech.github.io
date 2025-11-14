@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Scratch - Konser Interaktif 2</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .mission-sheet {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 4px solid #4f46e5;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            padding: 30px;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .content {
+            padding: 30px;
+            line-height: 1.7;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #4f46e5;
+            background: #f8fafc;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+        }
+
+        .section h2 {
+            color: #1e293b;
+            margin-top: 0;
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: #4f46e5;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .blocks-list {
+            background: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        .block-item {
+            background: #4f46e5;
+            color: white;
+            padding: 12px 18px;
+            margin: 8px 0;
+            border-radius: 25px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-weight: 500;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-right: 10px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .block-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+
+        .events-block {
+            background: #f59e0b;
+        }
+
+        .looks-block {
+            background: #7c3aed;
+        }
+
+        .sound-block {
+            background: #ec4899;
+        }
+
+        .challenge-list {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .challenge-list ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .challenge-list li {
+            margin: 12px 0;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .target-box {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 600;
+            margin: 25px 0;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .bonus-section {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 3px solid #f59e0b;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .bonus-section h2 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .tips-section {
+            background: linear-gradient(45deg, #06b6d4, #0891b2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 3px solid #06b6d4;
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .tips-section h2 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin: 0 5px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 40px 0;
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #4f46e5;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        }
+
+        .divider::before {
+            left: calc(50% - 150px);
+        }
+
+        .divider::after {
+            right: calc(50% - 150px);
+        }
+
+        .checklist-section {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 12px 24px rgba(30, 41, 59, 0.4);
+        }
+
+        .checklist-section h3 {
+            color: #fbbf24;
+            margin-top: 0;
+            font-size: 1.6em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .checklist-section p {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .checklist-container {
+            margin: 25px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 12px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .checklist-item:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateX(8px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .checklist-item.bonus-task {
+            background: linear-gradient(45deg, rgba(251,191,36,0.15), rgba(245,158,11,0.15));
+            border: 2px solid #fbbf24;
+        }
+
+        .checklist-item.bonus-task:hover {
+            background: linear-gradient(45deg, rgba(251,191,36,0.25), rgba(245,158,11,0.25));
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: #10b981;
+            transform: scale(1.3);
+            transition: transform 0.2s ease;
+        }
+
+        .checkbox:hover {
+            transform: scale(1.4);
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            font-size: 1.05em;
+            line-height: 1.5;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            margin: 30px 0 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #fbbf24;
+            font-size: 1.15em;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes celebration {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .celebrate {
+            animation: celebration 0.6s ease-in-out;
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .checkbox:checked {
+            animation: checkmark 0.4s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .checklist-item {
+                padding: 15px;
+                margin: 12px 0;
+            }
+            
+            .checklist-item label {
+                font-size: 1em;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mission-sheet">
+        <div class="header">
+            <h1>🪼 Misi 3: Konser Interaktif! 🪼</h1>
+        </div>
+
+        <div class="content">
+
+
+            <div class="section">
+                <h2>🎯 Tujuan Misi:</h2>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li style="margin: 10px 0; font-weight: 500;">Membuat sprite yang dapat <strong>merespons input keyboard</strong></li>
+                    <li style="margin: 10px 0; font-weight: 500;">Menggunakan blok <strong>Events</strong> untuk mendeteksi interaksi pengguna</li>
+                    <li style="margin: 10px 0; font-weight: 500;">Membuat sprite yang dapat <strong>merespons suara keras</strong> dari mikrofon</li>
+
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>🎤 Blok Ajaib Hari Ini:</h2>
+                
+                <h3>🔹 Dari Peristiwa (Events):</h3>
+                <div class="blocks-list">
+                    <div class="block-item events-block">when [space] key pressed</div>
+                    <p>→ Memulai aksi saat tombol tertentu di keyboard ditekan.</p>
+                    
+                    <div class="block-item events-block">when backdrop switches to [backdrop]</div>
+                    <p>→ Sprite akan bereaksi saat latar panggung berubah.</p>
+                    
+                    <div class="block-item events-block">when loudness > (10)</div>
+                    <p>→ Sprite bisa merespons suara keras dari mikrofon/alat perekam (seperti tepuk tangan).</p>
+                </div>
+
+                <h3>🔹 Ditambah blok sebelumnya untuk mendukung cerita:</h3>
+                <div class="blocks-list">
+                    <div class="block-item looks-block">say "..." for (2) seconds</div>
+                    <div class="block-item looks-block">switch costume to [costume]</div>
+                    <div class="block-item looks-block">switch backdrop to [backdrop]</div>
+                    <span style="margin: 0 10px;">Dari <strong>Looks</strong></span><br><br>
+                    <div class="block-item sound-block">start sound (Singer2)</div>
+                    <span style="margin: 0 10px;">Dari <strong>Sound</strong> atau suara lain</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎬 Tantangan Sutradara:</h2>
+                <p>Aturlah script agar sprite-mu bisa tampil layaknya bintang konser:</p>
+                
+                <div class="challenge-list">
+                    <ol>
+                        <li><strong>Saat Tombol Spasi Ditekan:</strong><br>
+                        • Sprite akan berkata <strong>"Yuk, bernyanyi!"</strong><br>
+                        • Kostumnya berganti menjadi <strong>jellyfish-d</strong><br>
+                        • Latar panggung berubah menjadi <strong>underwater 2</strong></li>
+                        
+                        <li><strong>Saat Latar Berubah:</strong><br>
+                        • Ketika latar panggung telah berganti ke <strong>underwater 2</strong>, sprite akan memainkan suara <strong>singer2</strong></li>
+                        
+                        <li><strong>Saat Ada Suara Keras dari Pengguna:</strong><br>
+                        • Sprite akan terus-menerus "mendengarkan" suara dari mikrofon<br>
+                        • Jika mendeteksi suara keras (misalnya, <strong>loudness > 60</strong>), sprite akan memainkan suara <strong>cheer</strong></li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="target-box">
+                <h2>🎯 Target:</h2>
+                <p>Sprite-mu bisa bereaksi berbeda sesuai <strong>interaksi atau input yang kamu berikan</strong> (keyboard atau suara), membuat konser terasa hidup dan interaktif.</p>
+            </div>
+
+            <div class="bonus-section">
+                <h2>🎁 Tantangan Bonus:</h2>
+                <p>Kamu bisa menambahkan beberapa blok when [key] pressed untuk tombol-tombol huruf yang berbeda (misalnya A, S, D, F). Atur agar setiap tombol memainkan suara alat musik yang unik, seolah-olah Anda sedang memainkan piano atau drum.</p>
+            </div>
+
+            <div class="tips-section">
+                <h2>🌟 Tips:</h2>
+                <p>Buat sprite-mu tepat di tengah-tengah sebelum bernyanyi</p>
+            </div>
+
+            <div class="checklist-section">
+                <h3>✅ Checklist Misi:</h3>
+                <p>Centang setiap tugas yang sudah kamu selesaikan!</p>
+                
+                <div class="checklist-container">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="task1" class="checkbox">
+                        <label for="task1">Sprite berkata "Yuk, bernyanyi!" saat tombol spasi ditekan</label>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="task2" class="checkbox">
+                        <label for="task2">Sprite berganti kostum ke jellyfish-d saat tombol spasi ditekan</label>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="task3" class="checkbox">
+                        <label for="task3">Latar panggung berubah ke underwater 2 saat tombol spasi ditekan</label>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="task4" class="checkbox">
+                        <label for="task4">Sprite memainkan suara singer2 saat latar berubah ke underwater 2</label>
+                    </div>
+                    
+                    <div class="checklist-item">
+                        <input type="checkbox" id="task5" class="checkbox">
+                        <label for="task5">Sprite merespons suara keras (loudness > 60) dengan memainkan suara cheer</label>
+                    </div>
+                    
+                    <div class="checklist-item bonus-task">
+                        <input type="checkbox" id="bonus" class="checkbox">
+                        <label for="bonus">🎁 BONUS: Menambahkan tombol A, S, D, F untuk memainkan suara alat musik berbeda</label>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Progress: 0/6 tugas selesai</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Checklist functionality with smooth animations
+        const checkboxes = document.querySelectorAll('.checkbox');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const checklistSection = document.querySelector('.checklist-section');
+        const totalTasks = checkboxes.length;
+
+        function updateProgress() {
+            const checkedCount = document.querySelectorAll('.checkbox:checked').length;
+            const percentage = (checkedCount / totalTasks) * 100;
+            
+            // Smooth progress bar animation
+            setTimeout(() => {
+                progressFill.style.width = percentage + '%';
+            }, 100);
+            
+            progressText.textContent = `Progress: ${checkedCount}/${totalTasks} tugas selesai`;
+            
+            // Celebration effect when all tasks are completed
+            if (checkedCount === totalTasks) {
+                setTimeout(() => {
+                    progressText.textContent = '🎉 Selamat! Semua misi telah selesai! 🎉';
+                    progressText.style.color = '#fbbf24';
+                    progressText.style.fontSize = '1.3em';
+                    
+                    // Add celebration animation
+                    checklistSection.classList.add('celebrate');
+                    progressFill.style.background = 'linear-gradient(45deg, #fbbf24, #f59e0b)';
+                    
+                    // Remove celebration class after animation
+                    setTimeout(() => {
+                        checklistSection.classList.remove('celebrate');
+                    }, 600);
+                }, 300);
+            } else {
+                // Reset styles if not all completed
+                progressText.style.fontSize = '1.15em';
+                progressFill.style.background = 'linear-gradient(45deg, #10b981, #34d399)';
+            }
+        }
+
+        // Add event listeners to all checkboxes with enhanced feedback
+        checkboxes.forEach((checkbox, index) => {
+            checkbox.addEventListener('change', function() {
+                // Add a small delay for visual feedback
+                if (this.checked) {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        this.parentElement.style.transform = '';
+                    }, 200);
+                }
+                
+                // Update progress with slight delay for smooth animation
+                setTimeout(updateProgress, 150);
+            });
+        });
+
+        // Initialize progress
+        updateProgress();
+
+        // Add smooth scroll behavior for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'986202cac524b593',t:'MTc1OTA0OTYxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

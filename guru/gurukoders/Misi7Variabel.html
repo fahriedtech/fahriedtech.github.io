@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKD Misi 7: Variabel di Scratch - Kuis Perkalian 1 Digit</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+
+        .mission-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid;
+        }
+
+        .tujuan {
+            background: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+
+        .cerita {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .blok-table {
+            background: #f3e5f5;
+            border-left-color: #9c27b0;
+        }
+
+        .tantangan {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .target {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+
+        .bonus {
+            background: #f1f8e9;
+            border-left-color: #8bc34a;
+        }
+
+        .tips {
+            background: #fce4ec;
+            border-left-color: #e91e63;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #6c5ce7;
+            color: white;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .checklist {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .checklist h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 15px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #4caf50;
+        }
+
+        .checkbox-item.completed {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .scratch-block {
+            background: #4c97ff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 2px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .variable-block {
+            background: #ff8c1a;
+        }
+
+        .control-block {
+            background: #ffab19;
+        }
+
+        .sound-block {
+            background: #cf63cf;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.6em;
+                line-height: 1.2;
+            }
+            
+            .mission-badge {
+                font-size: 0.9em;
+                padding: 6px 12px;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .section h2 {
+                font-size: 1.2em;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .icon {
+                font-size: 1.1em;
+            }
+            
+            table {
+                font-size: 0.8em;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+                min-width: 120px;
+            }
+            
+            .scratch-block {
+                font-size: 0.75em;
+                padding: 3px 6px;
+                display: inline-block;
+                word-break: break-all;
+                white-space: normal;
+            }
+            
+            .checkbox-item {
+                padding: 10px;
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .checkbox-item input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                margin-top: 2px;
+                flex-shrink: 0;
+            }
+            
+            .checkbox-item label {
+                font-size: 0.95em;
+                line-height: 1.4;
+            }
+            
+            .checklist {
+                padding: 20px 15px;
+            }
+            
+            .progress-text {
+                font-size: 0.9em;
+            }
+            
+            ul {
+                padding-left: 15px;
+            }
+            
+            li {
+                font-size: 0.95em;
+                margin: 6px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .section {
+                padding: 12px;
+            }
+            
+            .content {
+                padding: 10px;
+            }
+            
+            table {
+                font-size: 0.75em;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+                min-width: 100px;
+            }
+            
+            .scratch-block {
+                font-size: 0.7em;
+                padding: 2px 4px;
+                margin: 1px;
+            }
+            
+            .section h2 {
+                font-size: 1.1em;
+            }
+            
+            .checkbox-item {
+                padding: 8px;
+            }
+            
+            .checklist {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Misi 7: Variabel di Scratch</h1>
+            <div class="mission-badge">Kuis Perkalian 1 Digit</div>
+        </div>
+
+        <div class="content">
+            <div class="section tujuan">
+                <h2><span class="icon">🎯</span>Tujuan Misi</h2>
+                <p>Setelah mengikuti misi ini, peserta didik mampu:</p>
+                <ul>
+                    <li>Menerapkan <span class="highlight">variabel</span> untuk menyimpan dan menghitung <strong>skor total</strong></li>
+                    <li>Menampilkan <span class="highlight">skor akhir</span> di akhir kuis</li>
+                </ul>
+            </div>
+
+            <div class="section cerita">
+                <h2><span class="icon">📖</span>Cerita Pembuka</h2>
+                <p><em>"Selamat! Kamu telah menyelesaikan hingga misi ke 6 Basic Scratch. Sekarang saatnya menguji kemampuanmu menggunakan variabel untuk menghitung skor di kuis perkalian 1 digit ini!"</em></p>
+            </div>
+
+            <div class="section blok-table">
+                <h2><span class="icon">🧩</span>Blok yang Mungkin Kamu Butuhkan</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Palet Blok</th>
+                            <th>Blok</th>
+                            <th>Fungsi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Variabel</strong></td>
+                            <td><span class="scratch-block variable-block">set [Skor v] to 0</span></td>
+                            <td>Mengatur nilai awal variabel Skor</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><span class="scratch-block variable-block">change [Skor v] by 1</span></td>
+                            <td>Menambah nilai variabel saat jawaban benar</td>
+                        </tr>
+                        <tr>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section tantangan">
+                <h2><span class="icon">⚡</span>Tantangan</h2>
+                <p>Buat variabel <strong>Skor</strong>,</p>
+                <p>Jika jawaban benar, <span class="highlight">Skor bertambah 1</span>. Jika salah, tampilkan jawaban yang benar.</p>
+            </div>
+
+            <div class="section target">
+                <h2><span class="icon">🎯</span>Target</h2>
+                <p><strong>Menerapkan variabel untuk skor total</strong>.</p>
+            </div>
+
+            <div class="section bonus">
+                <h2><span class="icon">🌟</span>Tantangan Bonus</h2>
+                <ul>
+                    <li>Tambahkan <span class="scratch-block sound-block">suara latar</span> selama kuis berjalan</li>
+                    <li>Pastikan <span class="highlight">skor ditampilkan di akhir kuis</span></li>
+                </ul>
+            </div>
+
+            <div class="section tips">
+                <h2><span class="icon">💡</span>Tips</h2>
+                <ul>
+                    <li>Gunakan blok <span class="scratch-block variable-block">set</span> untuk mengatur nilai awal variabel</li>
+                    <li>Gunakan <span class="scratch-block variable-block">change</span> untuk menambah skor ketika jawaban benar</li>
+                    
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h2><span class="icon">✅</span>Ceklist Misi</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Progress: 0/2 (0%)</div>
+                
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check1" onchange="updateProgress()">
+                    <label for="check1">Skor berubah saat jawaban benar</label>
+                </div>
+                
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check2" onchange="updateProgress()">
+                    <label for="check2">Skor akhir ditampilkan di akhir kuis</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const checkboxItems = document.querySelectorAll('.checkbox-item');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            let completed = 0;
+            const total = checkboxes.length;
+            
+            checkboxes.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    completed++;
+                    checkboxItems[index].classList.add('completed');
+                } else {
+                    checkboxItems[index].classList.remove('completed');
+                }
+            });
+            
+            const percentage = Math.round((completed / total) * 100);
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = `Progress: ${completed}/${total} (${percentage}%)`;
+            
+            if (completed === total) {
+                setTimeout(() => {
+                    alert('🎉 Selamat! Kamu telah menyelesaikan semua checklist misi! Variabel Scratch sudah kamu kuasai!');
+                }, 500);
+            }
+        }
+
+        // Initialize progress on page load
+        updateProgress();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9863f9319464ca88',t:'MTc1OTA3MDE5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
