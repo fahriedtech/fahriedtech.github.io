@@ -248,10 +248,10 @@
                 &times;
             </button>
             <!-- Ad Image -->
+            <!-- Gambar sekarang memiliki event listener terpisah untuk membuka tab baru -->
             <img id="ad-image" src="/iklan/iklan.jpg" alt="Iklan Sponsor" 
                  class="block w-full h-auto shadow-none rounded-none" 
-                 style="max-height: 90vh; object-fit: contain;" 
-                 onclick="window.open('/iklan', '_self'); document.getElementById('ad-modal').classList.add('hidden');">
+                 style="max-height: 90vh; object-fit: contain;">
         </div>
     </div>
 
@@ -280,6 +280,12 @@
                 adImage.src = 'https://placehold.co/600x400/10b981/ffffff?text=Iklan+Sponsor+Karya+Anda';
             };
 
+            // Event listener untuk klik gambar: membuka tab baru, tidak menutup modal
+            adImage.addEventListener('click', function() {
+                window.open('/iklan', '_blank');
+            });
+
+
             // 2. Set timeout 5 detik
             setTimeout(() => {
                 // 3. Aktifkan tombol tutup setelah 5 detik dan ubah tampilannya
@@ -288,7 +294,7 @@
                 closeButton.classList.add('cursor-pointer', 'hover:bg-opacity-75', 'bg-red-600', 'shadow-xl');
             }, 5000);
 
-            // 4. Handle klik tombol tutup
+            // 4. Handle klik tombol tutup (hanya bisa diklik jika enabled)
             closeButton.addEventListener('click', () => {
                 if (!closeButton.disabled) {
                     adModal.classList.add('hidden');
