@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi Konsekuensi Edukatif (KE)</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.png" type="image/png">
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -57,6 +59,21 @@
             justify-content: center;
             align-items: center;
             z-index: 1000; /* Z-index tinggi agar muncul di atas semua konten */
+            padding: 1rem; /* Padding untuk mobile view */
+        }
+
+        /* Responsive Ad Content */
+        #ad-content {
+             /* Pastikan modal iklan responsif dan tidak terlalu besar di mobile */
+            max-width: 90%; 
+            max-height: 90%;
+        }
+        #ad-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 90vh; /* Batasi tinggi gambar iklan */
+            object-fit: contain;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -231,7 +248,10 @@
                 &times;
             </button>
             <!-- Ad Image -->
-            <img id="ad-image" src="/iklan/iklan.jpg" alt="Iklan Sponsor" class="block w-full h-auto shadow-none rounded-none" style="max-height: 90vh; object-fit: contain;">
+            <img id="ad-image" src="/iklan/iklan.jpg" alt="Iklan Sponsor" 
+                 class="block w-full h-auto shadow-none rounded-none" 
+                 style="max-height: 90vh; object-fit: contain;" 
+                 onclick="window.open('/iklan', '_self'); document.getElementById('ad-modal').classList.add('hidden');">
         </div>
     </div>
 
@@ -256,7 +276,8 @@
             // Optional: Error handler untuk gambar iklan (menggunakan placeholder)
             adImage.onerror = function() {
                 console.error("Error loading ad image from /iklan/iklan.jpg. Using a placeholder.");
-                adImage.src = 'https://placehold.co/400x400/10b981/ffffff?text=Iklan+Sponsor';
+                // Menggunakan URL placeholder yang responsif
+                adImage.src = 'https://placehold.co/600x400/10b981/ffffff?text=Iklan+Sponsor+Karya+Anda';
             };
 
             // 2. Set timeout 5 detik
@@ -264,7 +285,7 @@
                 // 3. Aktifkan tombol tutup setelah 5 detik dan ubah tampilannya
                 closeButton.disabled = false;
                 closeButton.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-900', 'bg-opacity-50');
-                closeButton.classList.add('cursor-pointer', 'hover:bg-opacity-75', 'bg-red-600');
+                closeButton.classList.add('cursor-pointer', 'hover:bg-opacity-75', 'bg-red-600', 'shadow-xl');
             }, 5000);
 
             // 4. Handle klik tombol tutup
