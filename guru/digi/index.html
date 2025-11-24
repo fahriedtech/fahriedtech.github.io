@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengimbasan Digitalisasi Pembelajaran</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Kode CSS Internal -->
+    <style>
+        /* --- Variabel & Gaya Umum --- */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #004494;
+            --accent-color: #ffc107;
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --header-bg: #ffffff;
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* --- Header & Navigasi Tab --- */
+        .header {
+            background-color: var(--header-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-button {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: none;
+            padding: 20px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            background-color: rgba(0, 86, 179, 0.05);
+        }
+
+        .tab-button.active {
+            color: var(--accent-color);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--accent-color);
+        }
+        
+        /* --- Konten Tab --- */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* --- Style untuk Tab 1 (Judul/Halaman Utama) - YANG DIPERBARUI --- */
+        #tab1 {
+            position: relative; /* Diperlukan untuk ::before pseudo-element */
+            text-align: center;
+            padding: 80px 20px;
+            color: #fff;
+            min-height: 100vh; /* Mengisi seluruh tinggi layar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Menyembunyikan bagian background yang keluar dari animasi */
+        }
+
+        /* Latar Belakang Animasi */
+        #tab1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 86, 179, 0.7), rgba(0, 68, 148, 0.85)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070') no-repeat center center/cover;
+            z-index: -1; /* Menempatkan background di belakang konten */
+            animation: backgroundZoom 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundZoom {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.1); /* Memperbesar background secara perlahan */
+            }
+        }
+
+        /* Kotak Konten dengan Efek Kaca (Glassmorphism) */
+        .hero-content-box {
+            background: rgba(255, 255, 255, 0.1); /* Latar belakang transparan */
+            backdrop-filter: blur(8px); /* Efek blur pada latar belakang */
+            -webkit-backdrop-filter: blur(8px); /* Untuk browser WebKit (Safari) */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 700px;
+            animation: fadeInUp 1.2s ease-out; /* Animasi masuk untuk konten */
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #tab1 h1 {
+            font-size: 3.5rem;
+            font-weight: 800; /* Font lebih tebal */
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        #tab1 .accent-line {
+            width: 100px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 20px auto; /* Posisikan di tengah */
+            border-radius: 2px;
+        }
+
+        #tab1 .collaborators {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff; /* Warna putih untuk kontras */
+            margin-top: 10px;
+        }
+
+        /* --- Wrapper untuk Iframe (Responsif) --- */
+        .embed-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* Rasio aspek 16:9 */
+            height: 0;
+            overflow: hidden;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-color: #eee;
+        }
+
+        .embed-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .tab-button {
+                padding: 15px 20px;
+                font-size: 0.9rem;
+            }
+
+            #tab1 h1 {
+                font-size: 2.5rem;
+            }
+
+            #tab1 .collaborators {
+                font-size: 1.2rem;
+            }
+
+            .hero-content-box {
+                padding: 30px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header dengan Navigasi Tab -->
+    <header class="header">
+        <nav class="tab-navigation">
+            <button class="tab-button active" onclick="openTab(event, 'tab1')"><i class="fas fa-home"></i> Pengimbasan</button>
+            <button class="tab-button" onclick="openTab(event, 'tab2')"><i class="fas fa-tools"></i> Instalasi & Konfigurasi</button>
+            <button class="tab-button" onclick="openTab(event, 'tab3')"><i class="fas fa-shield-alt"></i> Perawatan & Troubleshooting</button>
+            <button class="tab-button" onclick="openTab(event, 'tab4')"><i class="fas fa-video"></i> Video Tutorial</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Tab 1: Judul/Halaman Utama -->
+        <div id="tab1" class="tab-content active">
+            <div class="hero-content-box">
+                <h1>Pengimbasan Digitalisasi Pembelajaran SMP</h1>
+                <div class="accent-line"></div>
+                <p class="collaborators">Kolaborasi Oleh: <br>Fahri, S.Pd. dan Novia Larosa, S.Pd.</p>
+            </div>
+        </div>
+
+        <!-- Tab 2: Presentasi Instalasi -->
+        <div id="tab2" class="tab-content">
+            <div class="embed-wrapper">
+                <iframe src="https://docs.google.com/presentation/d/1HnQG828r09Bo8VrzKAD8ch0H0cLgmX5-OPIWwiJvvuU/embed"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab 3: Presentasi Perawatan -->
+        <div id="tab3" class="tab-content">
+            <div class="embed-wrapper">
+                <iframe src="https://docs.google.com/presentation/d/1ZybXxnOKDqjLWLpO8HIALH667Rvj-btENPPKqqm1Hrs/embed"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab 4: Video Tutorial YouTube -->
+        <div id="tab4" class="tab-content">
+            <div class="embed-wrapper">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLRnEYzlXJ1lEib9L-BEb9F6Bh2W0365_m" allowfullscreen></iframe>
+            </div>
+        </div>
+    </main>
+
+    <!-- Kode JavaScript Internal -->
+    <script>
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Sembunyikan semua elemen dengan class="tab-content"
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Hapus class "active" dari semua tombol tab
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Tampilkan tab spesifik yang diklik, dan tambahkan class "active" ke tombol yang membukanya
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>
