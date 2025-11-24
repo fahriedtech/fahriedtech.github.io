@@ -17,8 +17,8 @@
     <style>
         /* --- Variabel & Gaya Umum --- */
         :root {
-            --primary-color: #0056b3;
-            --secondary-color: #004494;
+            --primary-color: #3432c7;
+            --secondary-color: #2826a6;
             --accent-color: #ffc107;
             --text-color: #333;
             --bg-color: #f4f7f6;
@@ -69,7 +69,7 @@
         }
 
         .tab-button:hover {
-            background-color: rgba(0, 86, 179, 0.05);
+            background-color: rgba(52, 50, 199, 0.05);
         }
 
         .tab-button.active {
@@ -102,17 +102,17 @@
             to { opacity: 1; }
         }
         
-        /* --- Style untuk Tab 1 (Judul/Halaman Utama) - YANG DIPERBARUI --- */
+        /* --- Style untuk Tab 1 (Judul/Halaman Utama) --- */
         #tab1 {
-            position: relative; /* Diperlukan untuk ::before pseudo-element */
+            position: relative;
             text-align: center;
             padding: 80px 20px;
             color: #fff;
-            min-height: 100vh; /* Mengisi seluruh tinggi layar */
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Menyembunyikan bagian background yang keluar dari animasi */
+            overflow: hidden;
         }
 
         /* Latar Belakang Animasi */
@@ -123,70 +123,79 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 86, 179, 0.7), rgba(0, 68, 148, 0.85)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070') no-repeat center center/cover;
-            z-index: -1; /* Menempatkan background di belakang konten */
+            background: linear-gradient(rgba(52, 50, 199, 0.8), rgba(40, 38, 166, 0.9)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070') no-repeat center center/cover;
+            z-index: -2;
             animation: backgroundZoom 20s ease-in-out infinite alternate;
         }
 
         @keyframes backgroundZoom {
-            from {
-                transform: scale(1);
-            }
-            to {
-                transform: scale(1.1); /* Memperbesar background secara perlahan */
-            }
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* Kontainer untuk Partikel Bergerak */
+        #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            display: block;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        @keyframes animateParticles {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
 
         /* Kotak Konten dengan Efek Kaca (Glassmorphism) */
         .hero-content-box {
-            background: rgba(255, 255, 255, 0.1); /* Latar belakang transparan */
-            backdrop-filter: blur(8px); /* Efek blur pada latar belakang */
-            -webkit-backdrop-filter: blur(8px); /* Untuk browser WebKit (Safari) */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             max-width: 700px;
-            animation: fadeInUp 1.2s ease-out; /* Animasi masuk untuk konten */
+            animation: fadeInUp 1.2s ease-out;
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         #tab1 h1 {
             font-size: 3.5rem;
-            font-weight: 800; /* Font lebih tebal */
+            font-weight: 800;
             margin-bottom: 15px;
             line-height: 1.2;
         }
 
+        /* Gaya garis aksen disesuaikan */
         #tab1 .accent-line {
             width: 100px;
             height: 4px;
             background-color: var(--accent-color);
-            margin: 20px auto; /* Posisikan di tengah */
+            margin: 20px auto 0; /* Margin bawah dihapus */
             border-radius: 2px;
-        }
-
-        #tab1 .collaborators {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #fff; /* Warna putih untuk kontras */
-            margin-top: 10px;
         }
 
         /* --- Wrapper untuk Iframe (Responsif) --- */
         .embed-wrapper {
             position: relative;
-            padding-bottom: 56.25%; /* Rasio aspek 16:9 */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
             max-width: 1200px;
@@ -216,10 +225,6 @@
                 font-size: 2.5rem;
             }
 
-            #tab1 .collaborators {
-                font-size: 1.2rem;
-            }
-
             .hero-content-box {
                 padding: 30px;
                 margin: 20px;
@@ -242,10 +247,11 @@
     <main>
         <!-- Tab 1: Judul/Halaman Utama -->
         <div id="tab1" class="tab-content active">
+            <div id="particles-container"></div>
             <div class="hero-content-box">
                 <h1>Pengimbasan Digitalisasi Pembelajaran SMP</h1>
                 <div class="accent-line"></div>
-                <p class="collaborators">Kolaborasi Oleh: <br>Fahri, S.Pd. dan Novia Larosa, S.Pd.</p>
+                <!-- TULISAN KOLABORATOR TELAH DIHAPUS -->
             </div>
         </div>
 
@@ -277,22 +283,45 @@
             // Declare all variables
             var i, tabcontent, tablinks;
 
-            // Sembunyikan semua elemen dengan class="tab-content"
+            // Get all elements with class="tab-content" and hide them
             tabcontent = document.getElementsByClassName("tab-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
 
-            // Hapus class "active" dari semua tombol tab
+            // Get all elements with class="tab-button" and remove the class "active"
             tablinks = document.getElementsByClassName("tab-button");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
 
-            // Tampilkan tab spesifik yang diklik, dan tambahkan class "active" ke tombol yang membukanya
+            // Show the specific tab content
             document.getElementById(tabName).style.display = "block";
+            
+            // Add the "active" class to the button that opened the tab
             evt.currentTarget.className += " active";
         }
+        
+        // --- Kode JavaScript untuk Membuat Partikel Bergerak ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles-container');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('span');
+                particle.classList.add('particle');
+                const size = Math.random() * 15 + 5;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`;
+                particle.style.borderRadius = '50%';
+                const animDuration = Math.random() * 20 + 10;
+                const animDelay = Math.random() * 5;
+                particle.style.animation = `animateParticles ${animDuration}s linear ${animDelay}s infinite`;
+                particlesContainer.appendChild(particle);
+            }
+        });
     </script>
 </body>
 </html>
