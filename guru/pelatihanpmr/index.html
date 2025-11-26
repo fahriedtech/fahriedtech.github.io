@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siklus Pelatihan PMR - SMP N 2 Manggar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #e63946; /* Warna khas PMI */
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+            display: flex; /* Menggunakan flexbox untuk tata letak tab */
+            flex-wrap: wrap; /* Memungkinkan tab untuk pindah baris jika tidak muat */
+        }
+        .tab button {
+            background-color: inherit;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            flex-grow: 1; /* Membuat tab memiliki lebar yang sama */
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #e63946;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            animation: fadeEffect 1s; /* Animasi fade-in */
+        }
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        h2 {
+            color: #e63946;
+        }
+        h3 {
+            color: #457b9d;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: '🔹 ';
+            padding-left: 20px;
+        }
+        .contoh-box {
+            background-color: #f8f9fa;
+            border-left: 5px solid #457b9d;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .contoh-box h3 {
+            margin-top: 0;
+            border-bottom: none;
+        }
+        .month-info {
+            font-style: italic;
+            color: #555;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        /* Media Query untuk Tampilan Mobile */
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .tab {
+                flex-direction: column; /* Menyusun tab secara vertikal */
+            }
+            .tab button {
+                padding: 12px 10px;
+                font-size: 14px;
+                border-bottom: 1px solid #ccc; /* Menambah pembatas antar tab */
+            }
+            .tab button:last-child {
+                border-bottom: none;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Siklus Pelatihan Palang Merah Remaja (PMR)</h1>
+        <p class="subtitle">SMP N 2 Manggar<br>Tahun Ajaran 2026/2027</p>
+
+        <!-- Tab Navigation -->
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'Kuartal1')">Kuartal 1 (Jul-Sep)</button>
+            <button class="tablinks" onclick="openTab(event, 'Kuartal2')">Kuartal 2 (Okt-Des)</button>
+            <button class="tablinks" onclick="openTab(event, 'Kuartal3')">Kuartal 3 (Jan-Mar)</button>
+            <button class="tablinks" onclick="openTab(event, 'Kuartal4')">Kuartal 4 (Apr-Jun)</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="Kuartal1" class="tabcontent" style="display:block;">
+            <h2>Bulan 1-3: Fondasi, Rekrutmen & Orientasi</h2>
+            <p class="month-info"><strong>Perkiraan Bulan:</strong> Juli 2026 - September 2026</p>
+            <p>Awal tahun ajaran dimulai dengan proses rekrutmen untuk menarik calon relawan baru, diikuti dengan orientasi dan pembentukan karakter awal melalui kegiatan bersama.</p>
+            
+            <h3>Bulan 1 (Juli): Rekrutmen Anggota Baru</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Tim pengurus lama dilatih kembali mengenai teknik wawancara dan cara mempromosikan PMR.</li>
+                <li><strong>Kegiatan:</strong> Pembuatan materi promosi (poster, video, spanduk). Pendaftaran terbuka di seluruh kelas 7 & 8. Proses seleksi (tes tertulis dan wawancara). Pengumuman dan penerimaan anggota baru.</li>
+                <li><strong>Metode:</strong> Presentasi ke kelas, booth promosi, dan wawancara.</li>
+            </ul>
+
+            <h3>Bulan 2 (Agustus): Orientasi & Dasar-Dasar PMR</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Pengenalan Sejarah dan 7 Prinsip Gerakan Palang Merah dan Bulan Sabit Merah Internasional. Struktur organisasi PMR di sekolah.</li>
+                <li><strong>Kegiatan:</strong> Permainan ice-breaking dan "Kenali PMR" untuk anggota baru. Sesi curah pendapat tentang arti kemanusiaan. Pembagian kelompok/regu.</li>
+                <li><strong>Metode:</strong> Peer approach (anggota lama mendampingi anggota baru), diskusi kelompok kecil.</li>
+            </ul>
+
+            <h3>Bulan 3 (September): Kepemimpinan & Kerjasama Tim</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Dasar-dasar Kepemimpinan (komunikasi efektif, public speaking, dan manajemen tugas).</li>
+                <li><strong>Kegiatan:</strong> Outbound sederhana, games kerjasama tim untuk memperkuat ikatan, dan praktik memimpin diskusi mini di setiap regu.</li>
+                <li><strong>Metode:</strong> Simulasi, role-play, dan tugas kelompok.</li>
+            </ul>
+        </div>
+
+        <div id="Kuartal2" class="tabcontent">
+            <h2>Bulan 4-6: Menguatkan Keterampilan Hidup Sehat</h2>
+            <p class="month-info"><strong>Perkiraan Bulan:</strong> Oktober 2026 - Desember 2026</p>
+            <p>Fokus pada penguatan keterampilan praktis yang dapat diterapkan dalam kehidupan sehari-hari, terutama terkait kesehatan pribadi dan lingkungan sekitar.</p>
+
+            <h3>Bulan 4 (Oktober): Pertolongan Pertama (PP) Dasar</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Penilaian Tempat Kejadian Perkara (TKP) dan TPP (Tindakan Pertolongan Pertama). Prinsip Cek, Panggil, Bantu. Penanganan mimisan, luka lecet, dan gigitan serangga.</li>
+                <li><strong>Kegiatan:</strong> Demonstrasi oleh pelatih senior, praktik berpasangan, dan studi kasus sederhana.</li>
+                <li><strong>Metode:</strong> Demonstrasi dan praktik langsung.</li>
+            </ul>
+
+            <h3>Bulan 5 (November): Pertolongan Pertama Lanjutan</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Teknik Balut dan Bidai, Penanganan Luka Sayat dan Tusuk, Pingsan, dan Luka Bakar ringan.</li>
+                <li><strong>Kegiatan:</strong> Praktik balut dan bidai berpasangan. Role-play penanganan korban pingsan.</li>
+                <li><strong>Metode:</strong> Praktik langsung dengan menggunakan perban dan bidai.</li>
+            </ul>
+
+            <h3>Bulan 6 (Desember): Sanitasi & Kesiapsiagaan Bencana</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Pentingnya Cuci Tangan Pakai Sabun (CTPS), pengelolaan sampah. Pengenalan jenis-jenis bencana dan teknik evakuasi dasar.</li>
+                <li><strong>Kegiatan:</strong> Kampanye CTPS di sekolah. Membuat peta evakuasi sederhana untuk ruang kelas.</li>
+                <li><strong>Metode:</strong> Diskusi interaktif, pembuatan media kampanye, dan pemetaan partisipatif.</li>
+            </ul>
+        </div>
+
+        <div id="Kuartal3" class="tabcontent">
+            <h2>Bulan 7-9: Menerapkan Pengetahuan dalam Aksi Nyata</h2>
+            <p class="month-info"><strong>Perkiraan Bulan:</strong> Januari 2027 - Maret 2027</p>
+            <p>Fokus pada aplikasi semua materi yang telah dipelajari melalui simulasi komprehensif yang menghubungkan satu materi dengan lainnya (metode Jaring Laba-Laba).</p>
+
+            <h3>Bulan 7 (Januari): Simulasi Kecelakaan Umum</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Penanganan tersengat listrik, benda asing di tenggorokan, dan sesak napas.</li>
+                <li><strong>Kegiatan:</strong> Simulasi kecelakaan di laboratorium kimia atau di kantin. Anggota PMR berbagi peran: penolong, koordinator, komunikator.</li>
+                <li><strong>Metode:</strong> Simulasi besar (mok-up) dengan evaluasi pasca-kegiatan.</li>
+            </ul>
+
+            <h3>Bulan 8 (Februari): Donor Darah & Kesiapsiagaan Gempa</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Sosialisasi pentingnya donor darah, syarat dan prosedurnya. Teknik "Drop, Cover, and Hold On" saat gempa.</li>
+                <li><strong>Kegiatan:</strong> Mendampingi PMI dalam kegiatan donor darah di sekolah (tugas registrasi, menjaga ketenangan pendonor). Simulasi gempa mendadak di sekolah.</li>
+                <li><strong>Metode:</strong> Observasi lapangan, simulasi mendadak.</li>
+            </ul>
+            
+            <div class="contoh-box">
+                <h3>Contoh Aplikasi "Jaring Laba-Laba": Penanganan saat Kegiatan Olahraga Sekolah</h3>
+                <p>Skenario ini menghubungkan semua materi dalam satu kegiatan yang realistis:</p>
+                <ul>
+                    <li><strong>Pertolongan Pertama:</strong> Seorang atlet jatuh dan mengalami keseleo (memerlukan balut dan bidai), yang lain pingsan karena kelelahan dan dehidrasi.</li>
+                    <li><strong>Kepemimpinan:</strong> Ketua regu PMR membagi tugas: dua orang menangani korban keseleo, dua lagi menangani korban pingsan, satu orang berkoordinasi dengan guru pembina dan panitia.</li>
+                    <li><strong>Sanitasi & Kesehatan:</strong> Tim PMR menyediakan air minum bersih, mengingatkan teman-teman untuk tetap terhidrasi, dan menjaga area posko pertolongan tetap bersih.</li>
+                    <li><strong>Kesehatan Remaja:</strong> Sebelum acara, PMR membuat infografis tentang pentingnya pemanasan dan pendinginan untuk mencegah cedera.</li>
+                    <li><strong>Gerakan Kepalangmerahan:</strong> PMR membantu semua atlet tanpa memandang tim atau kelas, menunjukkan prinsip <em>impartiality</em> (kesamaan).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="Kuartal4" class="tabcontent">
+            <h2>Bulan 10-12: Evaluasi, Pengabdian & Regenerasi</h2>
+            <p class="month-info"><strong>Perkiraan Bulan:</strong> April 2027 - Juni 2027</p>
+            <p>Fokus pada penerapan keterampilan untuk membantu masyarakat, evaluasi komprehensif satu tahun kepengurusan, dan yang terpenting: perencanaan dan persiapan untuk regenerasi dan rekrutmen tahun berikutnya.</p>
+
+            <h3>Bulan 10 (April): Aksi Nyata di Masyarakat</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Perencanaan aksi sosial (membuat proposal, anggaran, dan evaluasi).</li>
+                <li><strong>Kegiatan:</strong> Melaksanakan aksi sosial pilihan: Posyandu Remaja, kampanye anti-jentik di lingkungan RT/RW, atau mengajar PP Dasar di sekolah dasar terdekat.</li>
+                <li><strong>Metode:</strong> Project-based learning, pengabdian masyarakat.</li>
+            </ul>
+
+            <h3>Bulan 11 (Mei): Evaluasi Tahunan & Perencanaan Rekrutmen</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Teknik evaluasi program dan perencanaan strategis.</li>
+                <li><strong>Kegiatan:</strong> Uji kompetensi tahunan (tes tertulis dan praktik). Rapat evaluasi besar-besaran: apa yang berhasil dan apa yang perlu diperbaiki. Menganalisis keberhasilan rekrutmen tahun lalu. Menetapkan target dan strategi rekrutmen untuk tahun ajaran 2027/2028.</li>
+                <li><strong>Metode:</strong> Asesmen komprehensif, diskusi reflektif, dan workshop perencanaan.</li>
+            </ul>
+
+            <h3>Bulan 12 (Juni): Persiapan Rekrutmen & Pelantikan</h3>
+            <ul>
+                <li><strong>Pelatihan:</strong> Penyusunan jadwal dan pembagian tugas tim rekrutmen baru.</li>
+                <li><strong>Kegiatan:</strong> Finalisasi materi promosi untuk rekrutmen Juli. Penyusunan laporan pertanggungjawaban (LPJ) pengurus lama. Malam apresiasi dan pelantikan pengurus baru.</li>
+                <li><strong>Metode:</strong> Workshop, penulisan LPJ, dan upacara pelantikan.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Sembunyikan semua konten tab
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            // Hapus kelas 'active' dari semua tombol tab
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            // Tampilkan tab yang diklik dan tambahkan kelas 'active'
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+</body>
+</html>
