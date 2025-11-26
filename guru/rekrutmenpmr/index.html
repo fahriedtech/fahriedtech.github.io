@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siklus Perekrutan PMR Madya 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .accordion-content { transition: max-height 0.3s ease-out, padding 0.3s ease; max-height: 0; overflow: hidden; }
+        .accordion-content.active { max-height: 1000px; }
+        .rotate-icon { transition: transform 0.3s ease; }
+        .rotate-icon.active { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Header / Hero Section -->
+    <header class="bg-red-700 text-white shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 pattern-dots"></div> <!-- Decorative pattern placeholder -->
+        <div class="container mx-auto px-6 py-12 relative z-10 text-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-4">Siklus Perekrutan PMR Madya</h1>
+            <p class="text-red-100 text-lg md:text-xl font-light">Tahun Ajaran 2026/2027 • Jenjang SMP/MTs</p>
+            <div class="mt-6 inline-block bg-white text-red-700 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                Target: Usia 12 - 15 Tahun
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-10 max-w-4xl">
+
+        <!-- Video Section -->
+        <!-- Update: Menambahkan h-64 dan md:h-96 untuk memaksa tinggi video muncul jika aspect-video gagal -->
+        <div class="mb-10 rounded-xl overflow-hidden shadow-lg bg-black">
+             <iframe class="w-full h-64 md:h-96 aspect-video" src="https://www.youtube.com/embed/mYhwtWyv7OE" title="Video PMR Madya" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <!-- Intro Card -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-10 border-l-4 border-red-600">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Mengapa PMR Madya?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Perekrutan ini bertujuan untuk menjaga regenerasi relawan muda. Waktu pelaksanaan nasional difokuskan pada bulan <strong>Juli hingga Agustus</strong>. Berikut adalah jadwal detail dan langkah-langkah strategis untuk tahun 2026.
+            </p>
+        </div>
+
+        <!-- Timeline / Accordion Section -->
+        <div class="space-y-4">
+            
+            <!-- Step 1: Perencanaan -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden group">
+                <button onclick="toggleAccordion('step1')" class="w-full flex items-center justify-between p-5 bg-white hover:bg-red-50 transition-colors duration-200">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="bg-red-100 text-red-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0">01</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">Perencanaan & Persiapan</h3>
+                            <p class="text-sm text-red-600 font-medium">Mei - Juni 2026</p>
+                        </div>
+                    </div>
+                    <svg id="icon-step1" class="w-6 h-6 text-gray-400 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="step1" class="accordion-content bg-slate-50 px-5 text-gray-600">
+                    <div class="py-4 border-t border-gray-100">
+                        <ul class="space-y-3 list-disc list-inside">
+                            <li><strong>Pembentukan Panitia:</strong> Membentuk tim kerja yang terdiri dari Pembina, Pengurus PMR kelas 8 & 9, serta alumni (jika ada).</li>
+                            <li><strong>Inventarisasi:</strong> Mengecek kelengkapan unit (jika unit baru, urus surat ke PMI Cabang).</li>
+                            <li><strong>Materi Promosi:</strong> Membuat poster digital, spanduk, dan video teaser kegiatan seru PMR.</li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+                            <strong>Tips:</strong> "Berpromosilah Setiap Saat." Mulai posting kegiatan seru di media sosial sekolah sebelum liburan semester genap berakhir.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Promosi & Demo -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <button onclick="toggleAccordion('step2')" class="w-full flex items-center justify-between p-5 bg-white hover:bg-red-50 transition-colors duration-200">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="bg-red-100 text-red-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0">02</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">Promosi & Demo Ekskul</h3>
+                            <p class="text-sm text-red-600 font-medium">13 - 18 Juli 2026 (MPLS)</p>
+                        </div>
+                    </div>
+                    <svg id="icon-step2" class="w-6 h-6 text-gray-400 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="step2" class="accordion-content bg-slate-50 px-5 text-gray-600">
+                    <div class="py-4 border-t border-gray-100">
+                        <p class="mb-3">Momentum terbaik saat Masa Pengenalan Lingkungan Sekolah (MPLS) siswa baru.</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">📅</span> 
+                                <span><strong>13-15 Juli:</strong> Kampanye visual (Poster di mading, Banner di gerbang sekolah).</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">🎭</span> 
+                                <span><strong>16-18 Juli:</strong> Demo Pertolongan Pertama atau Tandu Darurat di lapangan sekolah. Buat simulasi yang dramatis namun edukatif.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">🤝</span> 
+                                <span><strong>Metode Kontak Personal:</strong> Ajak relawan senior untuk mendekati siswa baru secara personal (networking).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Perekrutan & Administrasi -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <button onclick="toggleAccordion('step3')" class="w-full flex items-center justify-between p-5 bg-white hover:bg-red-50 transition-colors duration-200">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="bg-red-100 text-red-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0">03</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">Pendaftaran & Administrasi</h3>
+                            <p class="text-sm text-red-600 font-medium">20 - 31 Juli 2026</p>
+                        </div>
+                    </div>
+                    <svg id="icon-step3" class="w-6 h-6 text-gray-400 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="step3" class="accordion-content bg-slate-50 px-5 text-gray-600">
+                    <div class="py-4 border-t border-gray-100">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Syarat Calon Anggota:</h4>
+                                <ul class="list-disc list-inside text-sm space-y-1">
+                                    <li>Siswa aktif SMP/MTs (Usia 12-15 thn).</li>
+                                    <li>Mengisi Formulir Pendaftaran.</li>
+                                    <li>Mendapat izin orang tua.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Kelengkapan Foto:</h4>
+                                <ul class="list-disc list-inside text-sm space-y-1">
+                                    <li>Ukuran 2x3 sebanyak 4 lembar.</li>
+                                    <li>Digunakan untuk: Buku Induk, Data PMI Cabang, dan KTA.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-sm text-gray-500 italic">
+                            *Jika unit baru, pastikan minimal terkumpul 7 calon anggota untuk pengajuan ke PMI Cabang.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Orientasi -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <button onclick="toggleAccordion('step4')" class="w-full flex items-center justify-between p-5 bg-white hover:bg-red-50 transition-colors duration-200">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="bg-red-100 text-red-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0">04</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">Orientasi Kepalangmerahan</h3>
+                            <p class="text-sm text-red-600 font-medium">Minggu ke-1 Agustus 2026</p>
+                        </div>
+                    </div>
+                    <svg id="icon-step4" class="w-6 h-6 text-gray-400 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="step4" class="accordion-content bg-slate-50 px-5 text-gray-600">
+                    <div class="py-4 border-t border-gray-100">
+                        <p class="font-semibold text-gray-800">Wajib Durasi: 4 x 45 Menit</p>
+                        <p class="text-sm text-gray-500 mb-3">Estimasi Tanggal: Sabtu, 8 Agustus 2026</p>
+                        
+                        <div class="bg-white p-3 rounded border border-gray-200">
+                            <h5 class="text-sm font-bold text-red-700 mb-2">Materi Wajib:</h5>
+                            <ol class="list-decimal list-inside text-sm space-y-1">
+                                <li>Sejarah Gerakan Palang Merah & Bulan Sabit Merah.</li>
+                                <li>7 Prinsip Dasar.</li>
+                                <li>Pengenalan Organisasi PMR & Tri Bakti PMR.</li>
+                                <li>Fun Games / Team Building.</li>
+                            </ol>
+                        </div>
+                        <p class="mt-3 text-sm">Ini adalah tahap "menyiram bibit" agar calon anggota memahami nilai kemanusiaan sebelum dilantik.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Pelantikan -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <button onclick="toggleAccordion('step5')" class="w-full flex items-center justify-between p-5 bg-white hover:bg-red-50 transition-colors duration-200">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="bg-red-100 text-red-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0">05</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">Pendataan & Pelantikan</h3>
+                            <p class="text-sm text-red-600 font-medium">Akhir Agustus 2026</p>
+                        </div>
+                    </div>
+                    <svg id="icon-step5" class="w-6 h-6 text-gray-400 rotate-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="step5" class="accordion-content bg-slate-50 px-5 text-gray-600">
+                    <div class="py-4 border-t border-gray-100">
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <div class="bg-blue-100 text-blue-600 p-1 rounded">📋</div>
+                                <div>
+                                    <strong>Pendataan ke Cabang:</strong> Pembina menyerahkan data anggota yang telah lulus orientasi ke PMI Cabang setempat.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="bg-green-100 text-green-600 p-1 rounded">🧣</div>
+                                <div>
+                                    <strong>Upacara Pelantikan:</strong> Dilakukan oleh perwakilan PMI Cabang (misal: penyematan slayer kuning PMR Madya).
+                                    <br><span class="text-xs text-gray-500">Estimasi: Sabtu, 29 Agustus 2026.</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="bg-purple-100 text-purple-600 p-1 rounded">🆔</div>
+                                <div>
+                                    <strong>Penerbitan KTA:</strong> Anggota resmi mendapatkan Kartu Tanda Anggota.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Analogi Pohon Section -->
+        <div class="mt-12 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-8 border border-green-100 relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold text-green-800 mb-4 flex items-center gap-2">
+                    🌱 Filosofi "Menanam Pohon"
+                </h2>
+                <div class="grid md:grid-cols-3 gap-6 text-sm">
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Promosi</strong>
+                        <p>Menyebarkan kabar manfaat pohon untuk menarik perhatian.</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Perekrutan Unit</strong>
+                        <p>Mempersiapkan tanah/lahan yang subur (Sekolah terdaftar resmi).</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Seleksi Anggota</strong>
+                        <p>Memilih bibit-bibit terbaik yang siap tumbuh.</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Orientasi</strong>
+                        <p>Penyiraman dan pemupukan pertama (Pengetahuan dasar).</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Pelantikan</strong>
+                        <p>Pemberian label resmi pada pohon (Pengakuan anggota).</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-lg backdrop-blur-sm">
+                        <strong class="text-green-700 block mb-1">Hak & Kewajiban</strong>
+                        <p>Merawat pohon agar berbuah (Tri Bakti PMR).</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Background element -->
+            <div class="absolute -bottom-10 -right-10 text-9xl opacity-10 grayscale hover:grayscale-0 transition duration-700">🌳</div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="mt-10 text-center">
+            <p class="text-gray-600 mb-4">Siap untuk tahun ajaran baru?</p>
+            <button class="bg-red-700 hover:bg-red-800 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">
+                Unduh Formulir Pendaftaran Unit
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-6 mt-10">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2025/2026 Palang Merah Remaja - Inter Arma Caritas</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleAccordion(id) {
+            // Get content and icon
+            const content = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            
+            // Check if currently active
+            const isActive = content.classList.contains('active');
+
+            // Close all first (accordion behavior)
+            const allContents = document.querySelectorAll('.accordion-content');
+            const allIcons = document.querySelectorAll('.rotate-icon');
+            
+            allContents.forEach(el => {
+                el.classList.remove('active');
+                el.style.paddingTop = '0';
+                el.style.paddingBottom = '0';
+            });
+            allIcons.forEach(el => el.classList.remove('active'));
+
+            // If it wasn't active, open it
+            if (!isActive) {
+                content.classList.add('active');
+                content.style.paddingTop = '1.25rem'; // p-5 equivalent
+                content.style.paddingBottom = '1.25rem';
+                icon.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
