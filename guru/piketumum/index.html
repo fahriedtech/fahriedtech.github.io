@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Jadwal Piket (Versi Akhir)</title>
+    <title>Generator Jadwal Piket (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for drag-and-drop and printing */
@@ -61,9 +61,7 @@
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Kolom Kiri: Input & Aksi -->
             <section class="space-y-6">
-                <!-- Input Data Siswa -->
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Siswa</h2>
                     <p class="text-sm text-gray-500 mb-2">Masukkan nama siswa per baris. Format: <code>Nama Kelas</code> atau <code>Nama[TAB]Kelas[TAB]L/P</code>.</p>
@@ -75,7 +73,6 @@
                     <div id="studentList" class="mt-4 space-y-2"></div>
                 </div>
 
-                <!-- Input Data Tugas -->
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Tugas</h2>
                     <p class="text-sm text-gray-500 mb-2">Format: <code>Lokasi - Deskripsi Tugas [prioritas]</code>. Jika tidak ada [L] atau [P], tugas bisa diisi siapa saja.</p>
@@ -86,7 +83,6 @@
                     </p>
                 </div>
 
-                <!-- Panel Aksi -->
                 <div class="bg-white p-6 rounded-lg shadow-md no-print">
                     <h2 class="text-xl font-semibold mb-4 text-gray-700">Panel Aksi</h2>
                     <div class="grid grid-cols-2 gap-4">
@@ -109,19 +105,16 @@
                 </div>
             </section>
 
-            <!-- Kolom Kanan: Tampilan Hasil -->
             <section class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-4 text-gray-700">Tampilan Hasil Jadwal</h2>
                 <p class="text-sm text-gray-500 mb-4"><strong>Seret dan lepas</strong> nama siswa untuk menyesuaikan tugas. Prioritas tugas akan diperiksa saat memindahkan siswa.</p>
                 <div id="schedule-display" class="space-y-6">
-                    <!-- Jadwal akan dirender di sini -->
                     <p class="text-center text-gray-400">Belum ada jadwal. Silakan masukkan data siswa dan tugas, lalu klik "Buat Jadwal Otomatis".</p>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Modal Riwayat -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 no-print">
         <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
@@ -129,8 +122,7 @@
                 <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
             </div>
             <div id="historyList" class="space-y-3">
-                <!-- Riwayat akan dirender di sini -->
-            </div>
+                </div>
         </div>
     </div>
 
@@ -173,6 +165,12 @@
                         return `${t.location} - ${t.name}${priorityStr}`;
                     }).join('\n');
                     renderStudentList();
+                    // Jika ada data tasks, coba render jadwal terakhir yang tersimpan meskipun kosong
+                    if (state.tasks.length > 0) {
+                        const assignedIds = state.currentSchedule.map(x => x.studentId);
+                        const unassigned = state.students.filter(s => !assignedIds.includes(s.id));
+                        renderSchedule(state.currentSchedule, unassigned);
+                    }
                 }
             };
 
@@ -216,7 +214,6 @@
                 saveState();
             };
 
-            // --- FIXED & SIMPLIFIED PARSING FOR TASKS ---
             const parseTasks = (text) => {
                 const lines = text.trim().split('\n');
                 const newTasks = [];
@@ -316,20 +313,45 @@
                 });
             };
             
+            // --- UPDATED: RENDER SCHEDULE TO KEEP EMPTY TASKS ---
             const renderSchedule = (assignments, unassignedStudents) => {
                 scheduleDisplayEl.innerHTML = '';
-                if (assignments.length === 0) {
-                    scheduleDisplayEl.innerHTML = '<p class="text-center text-gray-400">Jadwal kosong atau tidak dapat dibuat dengan data saat ini.</p>';
+                
+                // Cek apakah ada master data tasks, bukan assignments
+                if (state.tasks.length === 0) {
+                    scheduleDisplayEl.innerHTML = '<p class="text-center text-gray-400">Belum ada tugas yang didefinisikan.</p>';
                     return;
                 }
 
-                const groupedByLocation = assignments.reduce((acc, entry) => {
-                    if (!acc[entry.location]) acc[entry.location] = {};
-                    if (!acc[entry.location][entry.taskId]) acc[entry.location][entry.taskId] = { taskName: entry.taskName, students: [] };
-                    acc[entry.location][entry.taskId].students.push({ studentId: entry.studentId, studentName: entry.studentName, studentClass: entry.studentClass, studentGender: entry.studentGender });
-                    return acc;
-                }, {});
+                // 1. MEMBANGUN STRUKTUR BERDASARKAN SEMUA TUGAS (MASTER DATA)
+                // Ini memastikan tugas tetap muncul meskipun tidak ada siswa yang ditugaskan
+                const groupedByLocation = {};
 
+                // Inisialisasi semua lokasi dan tugas dari state.tasks
+                state.tasks.forEach(task => {
+                    if (!groupedByLocation[task.location]) {
+                        groupedByLocation[task.location] = {};
+                    }
+                    groupedByLocation[task.location][task.id] = {
+                        taskName: task.name,
+                        genderConstraint: task.genderConstraint,
+                        students: [] // Mulai dengan array kosong
+                    };
+                });
+
+                // 2. MENGISI DATA SISWA DARI ASSIGNMENTS (JIKA ADA)
+                assignments.forEach(entry => {
+                    if (groupedByLocation[entry.location] && groupedByLocation[entry.location][entry.taskId]) {
+                        groupedByLocation[entry.location][entry.taskId].students.push({
+                            studentId: entry.studentId,
+                            studentName: entry.studentName,
+                            studentClass: entry.studentClass,
+                            studentGender: entry.studentGender
+                        });
+                    }
+                });
+
+                // 3. RENDER TAMPILAN
                 Object.keys(groupedByLocation).forEach(location => {
                     const locationCard = document.createElement('div');
                     locationCard.className = 'border border-gray-200 rounded-lg p-4';
@@ -344,33 +366,55 @@
                         const task = tasksInLocation[taskId];
                         
                         const taskEl = document.createElement('div');
-                        taskEl.className = 'drop-zone border-2 border-dashed border-gray-300 rounded-md p-3 mb-2 min-h-[50px]';
+                        taskEl.className = 'drop-zone border-2 border-dashed border-gray-300 rounded-md p-3 mb-2 min-h-[50px] transition-colors';
                         taskEl.dataset.taskId = taskId;
                         
-                        const taskNameEl = document.createElement('span');
-                        taskNameEl.className = 'font-semibold text-gray-600 text-sm';
-                        taskNameEl.textContent = `${task.taskName}: `;
-                        taskEl.appendChild(taskNameEl);
-
-                        task.students.forEach((student, index) => {
-                            const studentPill = document.createElement('span');
-                            studentPill.className = `draggable student-pill inline-block px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.studentGender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
-                            studentPill.textContent = `${student.studentName} (${student.studentClass})`;
-                            studentPill.draggable = true;
-                            studentPill.dataset.studentId = student.studentId;
-                            taskEl.appendChild(studentPill);
-                            
-                            if (index < task.students.length - 1) {
-                                const comma = document.createTextNode(', ');
-                                taskEl.appendChild(comma);
-                            }
-                        });
+                        // Header Tugas
+                        const headerContainer = document.createElement('div');
+                        headerContainer.className = 'mb-2';
                         
+                        const taskNameEl = document.createElement('span');
+                        taskNameEl.className = 'font-semibold text-gray-700 text-sm';
+                        taskNameEl.textContent = `${task.taskName}`;
+                        
+                        // Badge Gender (opsional, untuk info visual)
+                        if (task.genderConstraint !== '-') {
+                            const genderBadge = document.createElement('span');
+                            genderBadge.className = `ml-2 text-xs px-1.5 py-0.5 rounded ${task.genderConstraint === 'L' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`;
+                            genderBadge.textContent = task.genderConstraint === 'L' ? 'L' : 'P';
+                            taskNameEl.appendChild(genderBadge);
+                        }
+                        
+                        headerContainer.appendChild(taskNameEl);
+                        taskEl.appendChild(headerContainer);
+
+                        // Container untuk siswa (agar rapi)
+                        const studentsContainer = document.createElement('div');
+                        studentsContainer.className = 'flex flex-wrap gap-2';
+
+                        if (task.students.length === 0) {
+                            const emptyMsg = document.createElement('span');
+                            emptyMsg.className = 'text-gray-400 text-xs italic pointer-events-none';
+                            emptyMsg.textContent = '(Seret siswa ke sini)';
+                            studentsContainer.appendChild(emptyMsg);
+                        } else {
+                            task.students.forEach((student) => {
+                                const studentPill = document.createElement('span');
+                                studentPill.className = `draggable student-pill px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.studentGender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
+                                studentPill.textContent = `${student.studentName}`;
+                                studentPill.draggable = true;
+                                studentPill.dataset.studentId = student.studentId;
+                                studentsContainer.appendChild(studentPill);
+                            });
+                        }
+                        
+                        taskEl.appendChild(studentsContainer);
                         locationCard.appendChild(taskEl);
                     });
                     scheduleDisplayEl.appendChild(locationCard);
                 });
 
+                // Area Unassigned
                 if (unassignedStudents.length > 0) {
                     const unassignedCard = document.createElement('div');
                     unassignedCard.className = 'mt-6 p-4 bg-yellow-50 border-2 border-dashed border-yellow-300 rounded-lg drop-zone';
@@ -379,14 +423,19 @@
                     unassignedTitle.className = 'text-lg font-bold text-yellow-700 mb-3';
                     unassignedTitle.textContent = 'Siswa Tersedia (Seret ke sini untuk menghapus tugas)';
                     unassignedCard.appendChild(unassignedTitle);
+                    
+                    const container = document.createElement('div');
+                    container.className = 'flex flex-wrap gap-2';
+                    
                     unassignedStudents.forEach(student => {
                         const pill = document.createElement('span');
-                        pill.className = `draggable student-pill inline-block m-1 px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.gender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
-                        pill.textContent = `${student.name} (${student.class})`;
+                        pill.className = `draggable student-pill px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.gender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
+                        pill.textContent = `${student.name}`;
                         pill.draggable = true;
                         pill.dataset.studentId = student.id;
-                        unassignedCard.appendChild(pill);
+                        container.appendChild(pill);
                     });
+                    unassignedCard.appendChild(container);
                     scheduleDisplayEl.appendChild(unassignedCard);
                 }
                 setupDragAndDrop();
@@ -444,26 +493,29 @@
                             const studentId = draggedElement.dataset.studentId;
                             const student = state.students.find(s => s.id === studentId);
 
+                            // Hapus siswa dari jadwal lama (apapun posisinya)
                             state.currentSchedule = state.currentSchedule.filter(entry => entry.studentId !== studentId);
 
                             if (zone.dataset.unassignedZone === 'true') {
-                                // Do nothing, student is now unassigned
+                                // Jika didrop ke zona 'Siswa Tersedia', biarkan assignment kosong
                             } else {
                                 const taskId = zone.dataset.taskId;
                                 const task = state.tasks.find(t => t.id === taskId);
 
                                 if (task.genderConstraint !== '-' && task.genderConstraint !== student.gender) {
                                     alert(`Tugas "${task.name}" hanya untuk siswa ${task.genderConstraint === 'L' ? 'Laki-laki' : 'Perempuan'}.`);
-                                    const originalEntry = state.currentSchedule.find(e => e.studentId === studentId);
-                                    if(originalEntry) state.currentSchedule.push(originalEntry);
-                                    return;
+                                    // Kembalikan ke posisi semula jika melanggar aturan (opsional, tapi lebih baik dirender ulang)
+                                    // Di sini kita biarkan dia menjadi unassigned dulu lalu user bisa assign ulang yang benar, 
+                                    // atau kita reload posisi lama. Untuk UX sederhana, kita render ulang.
+                                    // renderSchedule akan dipanggil di bawah.
+                                } else {
+                                    // Tambahkan assignment baru
+                                    const newEntry = {
+                                        taskId: task.id, taskName: task.name, location: task.location, genderConstraint: task.genderConstraint,
+                                        studentId: student.id, studentName: student.name, studentClass: student.class, studentGender: student.gender
+                                    };
+                                    state.currentSchedule.push(newEntry);
                                 }
-                                
-                                const newEntry = {
-                                    taskId: task.id, taskName: task.name, location: task.location, genderConstraint: task.genderConstraint,
-                                    studentId: student.id, studentName: student.name, studentClass: student.class, studentGender: student.gender
-                                };
-                                state.currentSchedule.push(newEntry);
                             }
 
                             const assignedStudentIds = state.currentSchedule.map(e => e.studentId);
