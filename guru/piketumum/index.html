@@ -2,553 +2,424 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Jadwal Piket (Fixed)</title>
-    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jadwal Piket AI - v4.5 Anti-Crash</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <style>
-        /* Custom styles for drag-and-drop and printing */
-        .draggable {
-            cursor: grab;
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-        .draggable:hover {
-            transform: scale(1.05);
-        }
-        .draggable:active {
-            cursor: grabbing;
-        }
-        .dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
-        }
-        .drop-zone {
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-        .drag-over {
-            background-color: #dbeafe; /* blue-100 */
-            border-color: #3b82f6; /* blue-500 */
-            transform: scale(1.02);
-        }
-        .student-pill {
-            user-select: none; /* Mencegah teks terpilih saat diseret */
-        }
-        
-        /* Hide non-essential elements when printing */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #schedule-display, #schedule-display * {
-                visibility: visible;
-            }
-            #schedule-display {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
+        /* --- STYLES --- */
+        .draggable-item { cursor: grab; touch-action: manipulation; user-select: none; transition: transform 0.1s; }
+        .draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+        .item-selected { background-color: #fef08a !important; border-color: #eab308 !important; transform: scale(1.02); z-index: 50; }
+        .drop-zone { transition: background-color 0.2s; min-height: 80px; }
+        .zone-highlight { background-color: #eff6ff !important; border: 2px dashed #3b82f6 !important; }
+        @media print { .no-print { display: none !important; } body { background: white; } #schedule-print-area { box-shadow: none; border: none; } }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
-    <div class="container mx-auto p-4 lg:p-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl font-bold text-gray-800">Generator Jadwal Piket</h1>
-            <p class="text-gray-600">Alat canggih untuk membuat jadwal piket siswa dengan pembagian tugas yang merata dan adil.</p>
+<body class="bg-gray-50 font-sans text-gray-800 pb-20">
+
+    <div class="max-w-7xl mx-auto p-4 lg:p-8">
+        
+        <header class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">
+                    ✨ Generator Piket AI <span class="text-[10px] bg-green-600 text-white px-2 py-1 rounded-full">v4.5 Robust</span>
+                </h1>
+                <p class="text-xs text-gray-500">Pembersih Respon Cerdas Aktif</p>
+            </div>
+            <button onclick="resetApp()" class="no-print text-xs bg-red-100 text-red-600 px-3 py-2 rounded border border-red-200">
+                ⚠️ Reset Total
+            </button>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <section class="space-y-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Siswa</h2>
-                    <p class="text-sm text-gray-500 mb-2">Masukkan nama siswa per baris. Format: <code>Nama Kelas</code> atau <code>Nama[TAB]Kelas[TAB]L/P</code>.</p>
-                    <textarea id="studentInput" rows="8" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Budi Santoso 7A&#10;Siti Aminah 8B&#10;Ahmad Fadillah&#10;..."></textarea>
-                    <p class="text-xs text-green-600 mt-2 flex items-center">
-                        <svg class="inline-block w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                        Data tersimpan otomatis di browser Anda.
-                    </p>
-                    <div id="studentList" class="mt-4 space-y-2"></div>
-                </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- INPUTS -->
+            <div class="lg:col-span-4 space-y-5 no-print order-2 lg:order-1">
+                
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="font-bold text-gray-700 mb-2">1. Data Siswa & API</h2>
+                    
+                    <!-- API KEY -->
+                    <details class="mb-3 bg-gray-50 border rounded text-xs">
+                        <summary class="p-2 cursor-pointer font-bold text-gray-500">🔑 API Key (Klik)</summary>
+                        <div class="p-2 border-t">
+                            <input type="password" id="apiKeyInput" class="w-full p-2 border rounded" placeholder="Tempel API Key...">
+                            <button id="btnTest" class="mt-2 w-full bg-gray-700 text-white py-1 rounded">Tes Koneksi</button>
+                        </div>
+                    </details>
 
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Input Data Tugas</h2>
-                    <p class="text-sm text-gray-500 mb-2">Format: <code>Lokasi - Deskripsi Tugas [prioritas]</code>. Jika tidak ada [L] atau [P], tugas bisa diisi siapa saja.</p>
-                    <textarea id="taskInput" rows="6" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ruang TU - Menyapu dan mengepel lantai [L]&#10;Ruang BK - Mengepel lantai [P]&#10;Halaman - Menyapu halaman depan&#10;Ruang Guru - Membersihkan meja guru"></textarea>
-                    <p class="text-xs text-green-600 mt-2 flex items-center">
-                        <svg class="inline-block w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                        Data tersimpan otomatis di browser Anda.
-                    </p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md no-print">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Panel Aksi</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button id="generateBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-semibold">
-                            Buat Jadwal Otomatis
-                        </button>
-                        <button id="saveBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-semibold">
-                            Simpan ke Riwayat
-                        </button>
-                        <button id="historyBtn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors font-semibold">
-                            Buka Riwayat
-                        </button>
-                        <button id="exportCsvBtn" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors font-semibold">
-                            Ekspor ke CSV
-                        </button>
-                    </div>
-                    <button id="printBtn" class="w-full mt-4 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors font-semibold">
-                        Cetak Jadwal
+                    <textarea id="studentInput" rows="6" class="w-full text-sm p-3 border rounded mb-2" placeholder="Masukkan nama siswa per baris..."></textarea>
+                    
+                    <button id="btnGender" class="w-full bg-blue-600 text-white py-3 rounded-lg text-sm font-bold hover:bg-blue-700 shadow-md">
+                        ✨ Deteksi Gender (AI)
                     </button>
+                    
+                    <div id="previewList" class="mt-2 flex flex-wrap gap-1 max-h-32 overflow-y-auto"></div>
                 </div>
-            </section>
 
-            <section class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-semibold mb-4 text-gray-700">Tampilan Hasil Jadwal</h2>
-                <p class="text-sm text-gray-500 mb-4"><strong>Seret dan lepas</strong> nama siswa untuk menyesuaikan tugas. Prioritas tugas akan diperiksa saat memindahkan siswa.</p>
-                <div id="schedule-display" class="space-y-6">
-                    <p class="text-center text-gray-400">Belum ada jadwal. Silakan masukkan data siswa dan tugas, lalu klik "Buat Jadwal Otomatis".</p>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="font-bold text-gray-700">2. Data Tugas</h2>
+                        <button id="btnTask" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border font-bold">💡 Saran AI</button>
+                    </div>
+                    <textarea id="taskInput" rows="5" class="w-full text-sm p-3 border rounded" placeholder="Isi tugas..."></textarea>
                 </div>
-            </section>
-        </main>
-    </div>
 
-    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 no-print">
-        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800">Riwayat Jadwal</h3>
-                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                    <button id="btnGen" class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black shadow-lg mb-2">🎲 Acak Jadwal</button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="btnImg" class="bg-indigo-50 text-indigo-700 py-2 rounded text-xs font-bold border border-indigo-200">📸 Simpan</button>
+                        <button onclick="window.print()" class="bg-gray-50 text-gray-700 py-2 rounded text-xs font-bold border border-gray-200">🖨️ Cetak</button>
+                    </div>
+                </div>
             </div>
-            <div id="historyList" class="space-y-3">
+
+            <!-- RESULTS -->
+            <div class="lg:col-span-8 space-y-4 order-1 lg:order-2">
+                <div class="sticky top-2 z-40 bg-white p-4 rounded-xl shadow-sm border border-gray-200 no-print">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase">🏦 Bank Siswa (Unassigned)</h3>
+                    <div id="bankZone" class="drop-zone flex flex-wrap gap-2 mt-2 min-h-[50px] bg-gray-50 rounded p-2 border-2 border-dashed border-gray-300"></div>
                 </div>
+
+                <div id="printArea" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 min-h-[500px]">
+                    <div class="flex justify-between items-end border-b pb-4 mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">JADWAL PIKET KELAS</h2>
+                            <p class="text-xs text-gray-500 mt-1" id="dateDisplay">-</p>
+                        </div>
+                    </div>
+                    <div id="scheduleGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p class="text-center text-gray-400 col-span-full py-10">Belum ada jadwal.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- STATE MANAGEMENT ---
-            const state = {
-                students: [],
-                tasks: [],
-                currentSchedule: [],
-                history: []
-            };
-
-            // --- DOM ELEMENT REFERENCES ---
-            const studentInputEl = document.getElementById('studentInput');
-            const taskInputEl = document.getElementById('taskInput');
-            const studentListEl = document.getElementById('studentList');
-            const scheduleDisplayEl = document.getElementById('schedule-display');
-            const historyModalEl = document.getElementById('historyModal');
-            const historyListEl = document.getElementById('historyList');
-
-            const generateBtn = document.getElementById('generateBtn');
-            const saveBtn = document.getElementById('saveBtn');
-            const historyBtn = document.getElementById('historyBtn');
-            const exportCsvBtn = document.getElementById('exportCsvBtn');
-            const printBtn = document.getElementById('printBtn');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-
-            // --- LOCAL STORAGE ---
-            const STORAGE_KEY = 'piketAppData';
             
-            const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            const loadState = () => {
-                const savedData = localStorage.getItem(STORAGE_KEY);
-                if (savedData) {
-                    Object.assign(state, JSON.parse(savedData));
-                    studentInputEl.value = state.students.map(s => `${s.name} ${s.class}`).join('\n');
-                    taskInputEl.value = state.tasks.map(t => {
-                        const priorityStr = t.genderConstraint === '-' ? '' : ` [${t.genderConstraint}]`;
-                        return `${t.location} - ${t.name}${priorityStr}`;
-                    }).join('\n');
-                    renderStudentList();
-                    // Jika ada data tasks, coba render jadwal terakhir yang tersimpan meskipun kosong
-                    if (state.tasks.length > 0) {
-                        const assignedIds = state.currentSchedule.map(x => x.studentId);
-                        const unassigned = state.students.filter(s => !assignedIds.includes(s.id));
-                        renderSchedule(state.currentSchedule, unassigned);
+            // --- DATA ---
+            let data = { students: [], tasks: [], assignments: [] };
+            const DEFAULT_KEY = "AIzaSyD7T0khO8G9HQBKS2YQH3ZIKCUfCWw3jdQ"; // Public fallback
+            
+            // --- DOM ---
+            const el = {
+                students: document.getElementById('studentInput'),
+                tasks: document.getElementById('taskInput'),
+                key: document.getElementById('apiKeyInput'),
+                preview: document.getElementById('previewList'),
+                grid: document.getElementById('scheduleGrid'),
+                bank: document.getElementById('bankZone'),
+                date: document.getElementById('dateDisplay'),
+                print: document.getElementById('printArea'),
+                // Btns
+                btnGender: document.getElementById('btnGender'),
+                btnTask: document.getElementById('btnTask'),
+                btnGen: document.getElementById('btnGen'),
+                btnTest: document.getElementById('btnTest'),
+                btnImg: document.getElementById('btnImg')
+            };
+
+            el.date.innerText = `Update: ${new Date().toLocaleDateString('id-ID')}`;
+
+            // --- CORE UTILS ---
+            const uid = () => Math.random().toString(36).substr(2, 9);
+            const save = () => localStorage.setItem('piket_v45', JSON.stringify(data));
+            const getKey = () => el.key.value.trim() || DEFAULT_KEY;
+
+            // FUNGSI PEMBERSIH JSON (RAHASIA AGAR TIDAK CRASH)
+            const cleanAndParseJSON = (text) => {
+                try {
+                    // 1. Coba parse langsung
+                    return JSON.parse(text);
+                } catch (e) {
+                    // 2. Jika gagal, cari kurung kurawal pertama { dan terakhir }
+                    const start = text.indexOf('{');
+                    const end = text.lastIndexOf('}');
+                    if (start !== -1 && end !== -1) {
+                        try {
+                            const jsonStr = text.substring(start, end + 1);
+                            return JSON.parse(jsonStr);
+                        } catch (e2) { return null; }
                     }
+                    return null;
                 }
             };
 
-            // --- UTILITIES ---
-            const generateId = () => `id-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            // --- PARSING ---
+            const parse = () => {
+                // Students
+                const sLines = el.students.value.split('\n');
+                const sMap = new Map(data.students.map(s => [s.name, s]));
+                data.students = sLines.filter(l => l.trim()).map(line => {
+                    const name = line.trim();
+                    const ex = sMap.get(name);
+                    return { id: ex ? ex.id : uid(), name: name, gender: ex ? ex.gender : '?' };
+                });
 
-            const guessGender = (name) => {
-                const lowerCaseName = name.toLowerCase().trim();
-                if (lowerCaseName.endsWith('a') || lowerCaseName.endsWith('h') || lowerCaseName.endsWith('i')) {
-                    return 'P';
-                }
-                return 'L'; // Default ke Laki-laki
-            };
-
-            // --- PARSING LOGIC ---
-            const parseStudents = (text) => {
-                const lines = text.trim().split('\n');
-                const newStudents = [];
-                const seenNames = new Set();
-                
-                lines.forEach(line => {
-                    const parts = line.split('\t');
-                    let name, cls, gender;
+                // Tasks
+                const tLines = el.tasks.value.split('\n');
+                data.tasks = tLines.filter(l => l.includes('-')).map(line => {
+                    const [loc, ...rest] = line.split('-');
+                    let name = rest.join('-').trim();
+                    let cons = '-';
+                    if(name.includes('[L]')) { cons = 'L'; name = name.replace('[L]', '').trim(); }
+                    if(name.includes('[P]')) { cons = 'P'; name = name.replace('[P]', '').trim(); }
                     
-                    if (parts.length === 3) { [name, cls, gender] = parts; }
-                    else if (parts.length === 2) { [name, cls] = parts; gender = guessGender(name); }
-                    else {
-                        const match = line.match(/^(.+?)\s+([A-Z0-9]+)$/);
-                        if (match) { [, name, cls] = match; gender = guessGender(name); }
-                        else { name = line; cls = 'Unknown'; gender = guessGender(name); }
-                    }
-
-                    if (name && !seenNames.has(name)) {
-                        newStudents.push({ id: generateId(), name: name.trim(), class: cls.trim(), gender: gender.trim().toUpperCase() });
-                        seenNames.add(name);
-                    }
+                    const ex = data.tasks.find(t => t.location === loc.trim() && t.name === name);
+                    return { id: ex ? ex.id : uid(), location: loc.trim(), name: name, constraint: cons };
                 });
-                
-                state.students = newStudents;
-                renderStudentList();
-                saveState();
+
+                // Assignments
+                data.assignments = data.assignments.filter(a => 
+                    data.students.find(s => s.id === a.sid) && data.tasks.find(t => t.id === a.tid)
+                );
+
+                render();
+                save();
             };
 
-            const parseTasks = (text) => {
-                const lines = text.trim().split('\n');
-                const newTasks = [];
-                lines.forEach(line => {
-                    const parts = line.split(' - ');
-                    if (parts.length !== 2) return;
+            // --- AI LOGIC (ROBUST) ---
+            
+            // 1. TEST KONEKSI
+            el.btnTest.addEventListener('click', async () => {
+                el.btnTest.innerText = "⏳ Cek...";
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${getKey()}`, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] })
+                    });
+                    const j = await res.json();
+                    if(j.error) throw new Error(j.error.message);
+                    alert("✅ Koneksi Sukses! API Key Berfungsi.");
+                } catch(e) {
+                    alert("❌ Koneksi Gagal:\n" + e.message);
+                } finally { el.btnTest.innerText = "Tes Koneksi"; }
+            });
 
-                    let [location, taskAndPriority] = parts;
-                    let taskName = taskAndPriority;
-                    let genderConstraint = '-'; // Default to neutral for all tasks
+            // 2. GENDER
+            el.btnGender.addEventListener('click', async () => {
+                parse();
+                if(data.students.length === 0) return alert("Ketik nama siswa dulu.");
+                
+                el.btnGender.disabled = true;
+                el.btnGender.innerText = "⏳ Menghubungi AI...";
 
-                    const priorityMatch = taskAndPriority.match(/\s*\[([LP\-])\]\s*$/);
-                    if (priorityMatch) {
-                        taskName = taskAndPriority.replace(priorityMatch[0], '').trim();
-                        genderConstraint = priorityMatch[1];
-                    }
+                try {
+                    const names = data.students.map(s => s.name);
+                    const prompt = `OUTPUT JSON ONLY. Classify gender (L/P) for: ${JSON.stringify(names)}. Format: {"Budi":"L", "Siti":"P"}. NO MARKDOWN.`;
                     
-                    newTasks.push({ 
-                        id: generateId(), 
-                        name: taskName.trim(), 
-                        location: location.trim(), 
-                        genderConstraint: genderConstraint
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${getKey()}`, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
-                });
-                state.tasks = newTasks;
-                saveState();
-            };
-            
-            // --- SCHEDULE GENERATION (EQUAL DISTRIBUTION) ---
-            const generateSchedule = () => {
-                if (state.students.length === 0 || state.tasks.length === 0) {
-                    alert('Pastikan data siswa dan tugas sudah diisi.'); return;
+                    
+                    const j = await res.json();
+                    if(j.error) throw new Error(j.error.message);
+                    
+                    const raw = j.candidates[0].content.parts[0].text;
+                    const map = cleanAndParseJSON(raw); // PEMBERSIH JSON BERAKSI
+
+                    if(!map) throw new Error("Gagal membaca jawaban AI (Format rusak).");
+
+                    let count = 0;
+                    data.students.forEach(s => {
+                        if(map[s.name]) { s.gender = map[s.name]; count++; }
+                    });
+                    
+                    alert(`Sukses! ${count} siswa terdeteksi.`);
+                    render(); save();
+
+                } catch(e) {
+                    alert("GAGAL: " + e.message);
+                } finally {
+                    el.btnGender.disabled = false;
+                    el.btnGender.innerText = "✨ Deteksi Gender (AI)";
                 }
+            });
 
-                const assignments = [];
-                const unassignedStudents = [];
-                
-                const shuffledStudents = [...state.students].sort(() => Math.random() - 0.5);
+            // 3. TASKS
+            el.btnTask.addEventListener('click', async () => {
+                el.btnTask.disabled = true;
+                el.btnTask.innerText = "⏳...";
 
-                shuffledStudents.forEach(student => {
-                    const eligibleTasks = state.tasks.filter(task => 
-                        task.genderConstraint === '-' || task.genderConstraint === student.gender
-                    );
-
-                    if (eligibleTasks.length === 0) {
-                        unassignedStudents.push(student);
-                        return;
-                    }
-
-                    const taskCounts = eligibleTasks.map(task => {
-                        const count = assignments.filter(a => a.taskId === task.id).length;
-                        return { task, count };
+                try {
+                    const prompt = "List 20 tugas piket sekolah Indonesia. Format per baris: LOKASI - TUGAS [L/P]. Jangan pakai tabel/nomor. Contoh: Kelas - Sapu [P]";
+                    
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${getKey()}`, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
+                    
+                    const j = await res.json();
+                    if(j.error) throw new Error(j.error.message);
+                    
+                    let text = j.candidates[0].content.parts[0].text;
+                    // Bersihkan format aneh
+                    text = text.replace(/\*/g, '').replace(/`/g, '');
+                    
+                    if(el.tasks.value) el.tasks.value += '\n' + text;
+                    else el.tasks.value = text;
+                    
+                    parse();
 
-                    taskCounts.sort((a, b) => a.count - b.count);
-
-                    const selectedTask = taskCounts[0].task;
-
-                    assignments.push({
-                        taskId: selectedTask.id, 
-                        taskName: selectedTask.name, 
-                        location: selectedTask.location, 
-                        genderConstraint: selectedTask.genderConstraint,
-                        studentId: student.id, 
-                        studentName: student.name, 
-                        studentClass: student.class, 
-                        studentGender: student.gender
-                    });
-                });
-                
-                state.currentSchedule = assignments;
-                renderSchedule(assignments, unassignedStudents);
-            };
-            
-            // --- RENDERING FUNCTIONS ---
-            const renderStudentList = () => {
-                studentListEl.innerHTML = '';
-                const grouped = { L: [], P: [] };
-                state.students.forEach(s => grouped[s.gender].push(s));
-                ['L', 'P'].forEach(gender => {
-                    const groupEl = document.createElement('div');
-                    groupEl.className = `p-3 rounded-md ${gender === 'L' ? 'bg-blue-50' : 'bg-pink-50'}`;
-                    const titleEl = document.createElement('h4');
-                    titleEl.className = `font-semibold mb-2 ${gender === 'L' ? 'text-blue-700' : 'text-pink-700'}`;
-                    titleEl.textContent = gender === 'L' ? 'Laki-laki' : 'Perempuan';
-                    groupEl.appendChild(titleEl);
-                    grouped[gender].forEach(student => {
-                        const pillEl = document.createElement('span');
-                        pillEl.className = `student-pill inline-block m-1 px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-all ${gender === 'L' ? 'bg-blue-200 text-blue-800 hover:bg-blue-300' : 'bg-pink-200 text-pink-800 hover:bg-pink-300'}`;
-                        pillEl.textContent = `${student.name} (${student.class})`;
-                        pillEl.dataset.studentId = student.id;
-                        pillEl.title = 'Klik untuk mengubah jenis kelamin';
-                        pillEl.addEventListener('click', () => toggleGender(student.id));
-                        groupEl.appendChild(pillEl);
-                    });
-                    studentListEl.appendChild(groupEl);
-                });
-            };
-            
-            // --- UPDATED: RENDER SCHEDULE TO KEEP EMPTY TASKS ---
-            const renderSchedule = (assignments, unassignedStudents) => {
-                scheduleDisplayEl.innerHTML = '';
-                
-                // Cek apakah ada master data tasks, bukan assignments
-                if (state.tasks.length === 0) {
-                    scheduleDisplayEl.innerHTML = '<p class="text-center text-gray-400">Belum ada tugas yang didefinisikan.</p>';
-                    return;
+                } catch(e) {
+                    alert("GAGAL: " + e.message);
+                } finally {
+                    el.btnTask.disabled = false;
+                    el.btnTask.innerText = "💡 Saran AI";
                 }
+            });
 
-                // 1. MEMBANGUN STRUKTUR BERDASARKAN SEMUA TUGAS (MASTER DATA)
-                // Ini memastikan tugas tetap muncul meskipun tidak ada siswa yang ditugaskan
-                const groupedByLocation = {};
+            // --- SCHEDULING ---
+            el.btnGen.addEventListener('click', () => {
+                parse();
+                if(data.tasks.length === 0) return alert("Isi tugas dulu.");
+                
+                const available = data.students.filter(s => s.gender !== '?');
+                data.assignments = [];
+                available.sort(() => Math.random() - 0.5);
 
-                // Inisialisasi semua lokasi dan tugas dari state.tasks
-                state.tasks.forEach(task => {
-                    if (!groupedByLocation[task.location]) {
-                        groupedByLocation[task.location] = {};
+                const getLoad = (tid) => data.assignments.filter(a => a.tid === tid).length;
+
+                available.forEach(s => {
+                    // Filter tasks: Gender cocok ATAU tugas netral
+                    let candidates = data.tasks.filter(t => t.constraint === '-' || t.constraint === s.gender);
+                    
+                    if(candidates.length > 0) {
+                        // Pilih yang paling sepi
+                        candidates.sort((a, b) => getLoad(a.id) - getLoad(b.id));
+                        data.assignments.push({ sid: s.id, tid: candidates[0].id });
                     }
-                    groupedByLocation[task.location][task.id] = {
-                        taskName: task.name,
-                        genderConstraint: task.genderConstraint,
-                        students: [] // Mulai dengan array kosong
-                    };
+                });
+                render(); save();
+            });
+
+            // --- RENDER ---
+            function render() {
+                // Preview
+                el.preview.innerHTML = '';
+                data.students.forEach(s => {
+                    const c = s.gender === 'L' ? 'bg-blue-100 text-blue-800' : s.gender === 'P' ? 'bg-pink-100 text-pink-800' : 'bg-gray-200';
+                    el.preview.innerHTML += `<span class="text-[10px] px-2 py-1 rounded ${c}">${s.name} (${s.gender})</span>`;
                 });
 
-                // 2. MENGISI DATA SISWA DARI ASSIGNMENTS (JIKA ADA)
-                assignments.forEach(entry => {
-                    if (groupedByLocation[entry.location] && groupedByLocation[entry.location][entry.taskId]) {
-                        groupedByLocation[entry.location][entry.taskId].students.push({
-                            studentId: entry.studentId,
-                            studentName: entry.studentName,
-                            studentClass: entry.studentClass,
-                            studentGender: entry.studentGender
+                // Bank & Grid
+                el.bank.innerHTML = '';
+                el.grid.innerHTML = '';
+
+                const unassigned = data.students.filter(s => !data.assignments.find(a => a.sid === s.id));
+                unassigned.forEach(s => el.bank.appendChild(createPill(s)));
+
+                const locs = [...new Set(data.tasks.map(t => t.location))];
+                if(locs.length === 0) el.grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">Tugas kosong.</p>';
+
+                locs.forEach(loc => {
+                    const div = document.createElement('div');
+                    div.className = 'col-span-full mt-2';
+                    div.innerHTML = `<h3 class="font-bold border-b pb-1 mb-2">${loc}</h3>`;
+                    el.grid.appendChild(div);
+
+                    data.tasks.filter(t => t.location === loc).forEach(t => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border rounded p-3 break-inside-avoid';
+                        const badge = t.constraint !== '-' ? `<span class="text-xs font-bold text-gray-500">[${t.constraint}]</span>` : '';
+                        card.innerHTML = `<div class="flex justify-between mb-2 text-sm font-semibold"><span>${t.name}</span>${badge}</div>`;
+                        
+                        const zone = document.createElement('div');
+                        zone.className = 'drop-zone bg-gray-50 rounded border-dashed border-2 p-2 flex flex-wrap gap-2';
+                        zone.dataset.tid = t.id;
+
+                        data.assignments.filter(a => a.tid === t.id).forEach(a => {
+                            const s = data.students.find(x => x.id === a.sid);
+                            if(s) zone.appendChild(createPill(s));
                         });
+                        card.appendChild(zone);
+                        el.grid.appendChild(card);
+                    });
+                });
+            }
+
+            // --- DRAG & DROP + CLICK ---
+            let selId = null; 
+            let dragId = null;
+
+            function createPill(s) {
+                const d = document.createElement('div');
+                const c = s.gender === 'L' ? 'bg-blue-100 text-blue-800' : s.gender === 'P' ? 'bg-pink-100 text-pink-800' : 'bg-gray-200';
+                d.className = `draggable-item text-xs font-bold px-3 py-2 rounded shadow-sm cursor-pointer ${c}`;
+                d.innerText = s.name;
+                d.draggable = true;
+                
+                // Click
+                d.onclick = (e) => {
+                    e.stopPropagation();
+                    if(selId === s.id) { selId = null; document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected')); }
+                    else {
+                        selId = s.id;
+                        document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected'));
+                        d.classList.add('item-selected');
                     }
-                });
+                };
+                
+                // Drag
+                d.ondragstart = () => { dragId = s.id; };
+                return d;
+            }
 
-                // 3. RENDER TAMPILAN
-                Object.keys(groupedByLocation).forEach(location => {
-                    const locationCard = document.createElement('div');
-                    locationCard.className = 'border border-gray-200 rounded-lg p-4';
-                    
-                    const locationTitle = document.createElement('h3');
-                    locationTitle.className = 'text-lg font-bold text-gray-700 mb-3 border-b pb-2';
-                    locationTitle.textContent = `Lokasi: ${location}`;
-                    locationCard.appendChild(locationTitle);
-
-                    const tasksInLocation = groupedByLocation[location];
-                    Object.keys(tasksInLocation).forEach(taskId => {
-                        const task = tasksInLocation[taskId];
-                        
-                        const taskEl = document.createElement('div');
-                        taskEl.className = 'drop-zone border-2 border-dashed border-gray-300 rounded-md p-3 mb-2 min-h-[50px] transition-colors';
-                        taskEl.dataset.taskId = taskId;
-                        
-                        // Header Tugas
-                        const headerContainer = document.createElement('div');
-                        headerContainer.className = 'mb-2';
-                        
-                        const taskNameEl = document.createElement('span');
-                        taskNameEl.className = 'font-semibold text-gray-700 text-sm';
-                        taskNameEl.textContent = `${task.taskName}`;
-                        
-                        // Badge Gender (opsional, untuk info visual)
-                        if (task.genderConstraint !== '-') {
-                            const genderBadge = document.createElement('span');
-                            genderBadge.className = `ml-2 text-xs px-1.5 py-0.5 rounded ${task.genderConstraint === 'L' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`;
-                            genderBadge.textContent = task.genderConstraint === 'L' ? 'L' : 'P';
-                            taskNameEl.appendChild(genderBadge);
-                        }
-                        
-                        headerContainer.appendChild(taskNameEl);
-                        taskEl.appendChild(headerContainer);
-
-                        // Container untuk siswa (agar rapi)
-                        const studentsContainer = document.createElement('div');
-                        studentsContainer.className = 'flex flex-wrap gap-2';
-
-                        if (task.students.length === 0) {
-                            const emptyMsg = document.createElement('span');
-                            emptyMsg.className = 'text-gray-400 text-xs italic pointer-events-none';
-                            emptyMsg.textContent = '(Seret siswa ke sini)';
-                            studentsContainer.appendChild(emptyMsg);
-                        } else {
-                            task.students.forEach((student) => {
-                                const studentPill = document.createElement('span');
-                                studentPill.className = `draggable student-pill px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.studentGender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
-                                studentPill.textContent = `${student.studentName}`;
-                                studentPill.draggable = true;
-                                studentPill.dataset.studentId = student.studentId;
-                                studentsContainer.appendChild(studentPill);
-                            });
-                        }
-                        
-                        taskEl.appendChild(studentsContainer);
-                        locationCard.appendChild(taskEl);
-                    });
-                    scheduleDisplayEl.appendChild(locationCard);
-                });
-
-                // Area Unassigned
-                if (unassignedStudents.length > 0) {
-                    const unassignedCard = document.createElement('div');
-                    unassignedCard.className = 'mt-6 p-4 bg-yellow-50 border-2 border-dashed border-yellow-300 rounded-lg drop-zone';
-                    unassignedCard.dataset.unassignedZone = 'true';
-                    const unassignedTitle = document.createElement('h3');
-                    unassignedTitle.className = 'text-lg font-bold text-yellow-700 mb-3';
-                    unassignedTitle.textContent = 'Siswa Tersedia (Seret ke sini untuk menghapus tugas)';
-                    unassignedCard.appendChild(unassignedTitle);
-                    
-                    const container = document.createElement('div');
-                    container.className = 'flex flex-wrap gap-2';
-                    
-                    unassignedStudents.forEach(student => {
-                        const pill = document.createElement('span');
-                        pill.className = `draggable student-pill px-3 py-1 rounded-full text-sm font-medium cursor-move ${student.gender === 'L' ? 'bg-blue-200 text-blue-800' : 'bg-pink-200 text-pink-800'}`;
-                        pill.textContent = `${student.name}`;
-                        pill.draggable = true;
-                        pill.dataset.studentId = student.id;
-                        container.appendChild(pill);
-                    });
-                    unassignedCard.appendChild(container);
-                    scheduleDisplayEl.appendChild(unassignedCard);
+            // Move Logic
+            const move = (sid, tid) => {
+                const s = data.students.find(x => x.id === sid);
+                const t = tid ? data.tasks.find(x => x.id === tid) : null;
+                
+                if(t && t.constraint !== '-' && t.constraint !== s.gender) {
+                    return alert(`Gagal: Tugas khusus ${t.constraint}, Siswa ${s.gender}`);
                 }
-                setupDragAndDrop();
+
+                data.assignments = data.assignments.filter(a => a.sid !== sid);
+                if(tid) data.assignments.push({ sid: sid, tid: tid });
+                
+                selId = null; dragId = null;
+                document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected'));
+                render(); save();
             };
+
+            // Global Listeners
+            document.addEventListener('click', (e) => {
+                const z = e.target.closest('.drop-zone');
+                if(z && selId) move(selId, z.dataset.tid);
+            });
+            document.addEventListener('dragover', e => e.preventDefault());
+            document.addEventListener('drop', e => {
+                const z = e.target.closest('.drop-zone');
+                if(z && dragId) { e.preventDefault(); move(dragId, z.dataset.tid); }
+            });
+
+            // Utils
+            window.resetApp = () => { if(confirm("Hapus semua?")) { localStorage.removeItem('piket_v45'); location.reload(); } };
             
-            const renderHistory = () => {
-                historyListEl.innerHTML = '';
-                if (state.history.length === 0) { historyListEl.innerHTML = '<p class="text-center text-gray-500">Belum ada riwayat jadwal yang disimpan.</p>'; return; }
-                state.history.slice().reverse().forEach(item => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100';
-                    const info = document.createElement('div');
-                    info.innerHTML = `<strong class="text-gray-700">${new Date(item.date).toLocaleString('id-ID')}</strong><br><span class="text-sm text-gray-500">${item.entries.length} tugas terisi</span>`;
-                    historyItem.appendChild(info);
-                    const actions = document.createElement('div');
-                    actions.className = 'space-x-2';
-                    const loadBtn = document.createElement('button'); loadBtn.textContent = 'Muat'; loadBtn.className = 'px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'; loadBtn.onclick = () => loadScheduleFromHistory(item.id);
-                    const deleteBtn = document.createElement('button'); deleteBtn.textContent = 'Hapus'; deleteBtn.className = 'px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm'; deleteBtn.onclick = () => deleteHistory(item.id);
-                    actions.appendChild(loadBtn); actions.appendChild(deleteBtn);
-                    historyItem.appendChild(actions);
-                    historyListEl.appendChild(historyItem);
+            el.btnImg.onclick = () => {
+                html2canvas(el.print, { scale: 2 }).then(c => {
+                    const a = document.createElement('a'); a.download = 'jadwal.jpg'; a.href = c.toDataURL(); a.click();
                 });
             };
 
-            // --- DRAG AND DROP LOGIC ---
-            let draggedElement = null;
+            el.students.addEventListener('input', parse);
+            el.tasks.addEventListener('input', parse);
+            el.key.addEventListener('input', () => localStorage.setItem('my_key', el.key.value));
 
-            const setupDragAndDrop = () => {
-                const draggables = document.querySelectorAll('.draggable');
-                const dropZones = document.querySelectorAll('.drop-zone');
-
-                draggables.forEach(draggable => {
-                    draggable.addEventListener('dragstart', (e) => {
-                        draggedElement = e.target;
-                        e.target.classList.add('dragging');
-                    });
-                    draggable.addEventListener('dragend', (e) => {
-                        e.target.classList.remove('dragging');
-                    });
-                });
-
-                dropZones.forEach(zone => {
-                    zone.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        zone.classList.add('drag-over');
-                    });
-                    zone.addEventListener('dragleave', () => {
-                        zone.classList.remove('drag-over');
-                    });
-                    zone.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        zone.classList.remove('drag-over');
-                        
-                        if (draggedElement) {
-                            const studentId = draggedElement.dataset.studentId;
-                            const student = state.students.find(s => s.id === studentId);
-
-                            // Hapus siswa dari jadwal lama (apapun posisinya)
-                            state.currentSchedule = state.currentSchedule.filter(entry => entry.studentId !== studentId);
-
-                            if (zone.dataset.unassignedZone === 'true') {
-                                // Jika didrop ke zona 'Siswa Tersedia', biarkan assignment kosong
-                            } else {
-                                const taskId = zone.dataset.taskId;
-                                const task = state.tasks.find(t => t.id === taskId);
-
-                                if (task.genderConstraint !== '-' && task.genderConstraint !== student.gender) {
-                                    alert(`Tugas "${task.name}" hanya untuk siswa ${task.genderConstraint === 'L' ? 'Laki-laki' : 'Perempuan'}.`);
-                                    // Kembalikan ke posisi semula jika melanggar aturan (opsional, tapi lebih baik dirender ulang)
-                                    // Di sini kita biarkan dia menjadi unassigned dulu lalu user bisa assign ulang yang benar, 
-                                    // atau kita reload posisi lama. Untuk UX sederhana, kita render ulang.
-                                    // renderSchedule akan dipanggil di bawah.
-                                } else {
-                                    // Tambahkan assignment baru
-                                    const newEntry = {
-                                        taskId: task.id, taskName: task.name, location: task.location, genderConstraint: task.genderConstraint,
-                                        studentId: student.id, studentName: student.name, studentClass: student.class, studentGender: student.gender
-                                    };
-                                    state.currentSchedule.push(newEntry);
-                                }
-                            }
-
-                            const assignedStudentIds = state.currentSchedule.map(e => e.studentId);
-                            const unassignedStudents = state.students.filter(s => !assignedStudentIds.includes(s.id));
-                            renderSchedule(state.currentSchedule, unassignedStudents);
-                        }
-                    });
-                });
-            };
-            
-            // --- ACTION HANDLERS ---
-            const toggleGender = (studentId) => {
-                const student = state.students.find(s => s.id === studentId);
-                if (student) { student.gender = student.gender === 'L' ? 'P' : 'L'; renderStudentList(); saveState(); }
-            };
-            const saveToHistory = () => { if (state.currentSchedule.length === 0) { alert('Tidak ada jadwal aktif untuk disimpan.'); return; } const newEntry = { id: generateId(), date: new Date().toISOString(), entries: state.currentSchedule }; state.history.push(newEntry); saveState(); alert('Jadwal berhasil disimpan ke riwayat!'); };
-            const loadScheduleFromHistory = (historyId) => { const historyEntry = state.history.find(h => h.id === historyId); if (historyEntry) { state.currentSchedule = historyEntry.entries; const assignedStudentIds = state.currentSchedule.map(e => e.studentId); const unassignedStudents = state.students.filter(s => !assignedStudentIds.includes(s.id)); renderSchedule(state.currentSchedule, unassignedStudents); historyModalEl.classList.add('hidden'); historyModalEl.classList.remove('flex'); } };
-            const deleteHistory = (historyId) => { if (confirm('Apakah Anda yakin ingin menghapus jadwal ini dari riwayat?')) { state.history = state.history.filter(h => h.id !== historyId); saveState(); renderHistory(); } };
-            const exportToCSV = () => { if (state.currentSchedule.length === 0) { alert('Tidak ada jadwal untuk diekspor.'); return; } const headers = ['Lokasi', 'Tugas', 'Nama Siswa', 'Kelas', 'Jenis Kelamin']; const rows = state.currentSchedule.map(entry => [entry.location, entry.taskName, entry.studentName, entry.studentClass, entry.studentGender]); let csvContent = headers.join(',') + '\n'; rows.forEach(e => { csvContent += e.map(cell => `"${cell}"`).join(',') + '\n'; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); const url = URL.createObjectURL(blob); link.setAttribute('href', url); link.setAttribute('download', `jadwal-piket-${new Date().toISOString().split('T')[0]}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
-            
-            // --- EVENT LISTENERS ---
-            studentInputEl.addEventListener('input', (e) => parseStudents(e.target.value));
-            taskInputEl.addEventListener('input', (e) => parseTasks(e.target.value));
-            generateBtn.addEventListener('click', generateSchedule);
-            saveBtn.addEventListener('click', saveToHistory);
-            historyBtn.addEventListener('click', () => { renderHistory(); historyModalEl.classList.remove('hidden'); historyModalEl.classList.add('flex'); });
-            exportCsvBtn.addEventListener('click', exportToCSV);
-            printBtn.addEventListener('click', () => window.print());
-            closeModalBtn.addEventListener('click', () => { historyModalEl.classList.add('hidden'); historyModalEl.classList.remove('flex'); });
-            
-            // --- INITIALIZATION ---
-            loadState();
+            // Load
+            if(localStorage.getItem('my_key')) el.key.value = localStorage.getItem('my_key');
+            if(localStorage.getItem('piket_v45')) {
+                data = JSON.parse(localStorage.getItem('piket_v45'));
+                el.students.value = data.students.map(s => s.name).join('\n');
+                el.tasks.value = data.tasks.map(t => `${t.location}-${t.name}${t.constraint!=='-'?' ['+t.constraint+']':''}`).join('\n');
+                render();
+            }
         });
     </script>
 </body>
