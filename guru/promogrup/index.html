@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Promo AI Generator</title>
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbar for Chat */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+        }
+        
+        /* Checkbox Toggle Style */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #68D391;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4F46E5;
+        }
+
+        /* Animation for loading dots */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .dot-animate { animation: bounce 1s infinite; }
+        .dot-animate:nth-child(2) { animation-delay: 0.1s; }
+        .dot-animate:nth-child(3) { animation-delay: 0.2s; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 text-slate-800">
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- === KOLOM KIRI: INPUT === -->
+        <div class="flex flex-col gap-6">
+            
+            <!-- Header & Product Form -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h1 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="text-indigo-600 fill-indigo-100"></i> AI Promo Gen v5
+                    </h1>
+                    <button onclick="handleReset()" class="text-slate-400 hover:text-red-500 transition-colors text-sm flex items-center gap-1">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reset
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Product Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Produk</label>
+                        <input type="text" id="productName" placeholder="Contoh: Paket Wisata Bromo, Desain Logo" 
+                            class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    </div>
+
+                    <!-- Pricing Section -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-3">
+                           <label class="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
+                             <i data-lucide="tag" class="w-3.5 h-3.5"></i> Pengaturan Harga
+                           </label>
+                           
+                           <!-- Checkbox "Harga Mulai Dari" -->
+                           <label class="flex items-center gap-2 cursor-pointer select-none">
+                              <div class="relative inline-block w-9 h-5 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="isStartingPrice" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer top-[2px] left-[2px] transition-all duration-300"/>
+                                <label for="isStartingPrice" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-300"></label>
+                              </div>
+                              <span id="labelStartingPrice" class="text-xs font-medium text-slate-500">Harga Mulai Dari</span>
+                           </label>
+                        </div>
+        
+                        <div class="grid grid-cols-2 gap-4">
+                          <div>
+                            <label id="lblPriceNormal" class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Harga Normal</label>
+                            <input type="number" id="price" placeholder="150000" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                          </div>
+                          <div>
+                            <label id="lblPricePromo" class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Harga Promo</label>
+                            <input type="number" id="promoPrice" placeholder="99000" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                          </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kontak / Link</label>
+                        <div class="relative">
+                            <div class="absolute left-3 top-3.5 text-slate-400">
+                                <i data-lucide="phone" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" id="contact" placeholder="0812-xxxx / Link Shopee" 
+                                class="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Settings -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2 text-sm uppercase border-b pb-2">
+                    <i data-lucide="user" class="w-4 h-4"></i> Konfigurasi AI
+                </h3>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div>
+                          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target Pasar</label>
+                          <input type="text" id="targetAudience" placeholder="Ibu Rumah Tangga, Gamers..." value="Umum"
+                            class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                        </div>
+                        <div>
+                          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Gaya Bahasa</label>
+                          <select id="tone" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                            <option value="Persuasif & Hype">Persuasif & Hype</option>
+                            <option value="Santai & Akrab">Santai & Akrab (Gaul)</option>
+                            <option value="Elegan & Mewah">Elegan & Mewah</option>
+                            <option value="Storytelling">Storytelling (Soft Selling)</option>
+                            <option value="To The Point">To The Point (Singkat)</option>
+                            <option value="Emosional">Emosional</option>
+                          </select>
+                        </div>
+                    </div>
+
+                    <!-- Moment Selector -->
+                    <div>
+                         <label class="block text-xs font-bold text-indigo-600 uppercase mb-1 flex items-center gap-1">
+                           <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Momen Spesial (Opsional)
+                         </label>
+                         <select id="moment" class="w-full p-2.5 bg-indigo-50 border border-indigo-200 text-indigo-900 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-medium">
+                            <option value="Tidak Ada">Tidak Ada</option>
+                            <option value="Ramadhan / Puasa">Ramadhan / Puasa</option>
+                            <option value="Lebaran / Idul Fitri">Lebaran / Idul Fitri</option>
+                            <option value="Natal & Tahun Baru">Natal & Tahun Baru</option>
+                            <option value="Promo Tanggal Kembar">Promo Tanggal Kembar (8.8, 9.9)</option>
+                            <option value="Gajian / Payday Sale">Gajian / Payday Sale</option>
+                            <option value="Imlek">Imlek</option>
+                            <option value="17 Agustus">Hari Kemerdekaan</option>
+                            <option value="Back to School">Back to School</option>
+                          </select>
+                    </div>
+
+                    <!-- Length Selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-2">
+                          <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Panjang Teks
+                        </label>
+                        <div class="grid grid-cols-3 gap-2" id="lengthContainer">
+                            <button onclick="setLength('short', this)" class="length-btn active p-2 rounded-lg text-xs font-medium border transition-all bg-slate-800 text-white border-slate-800">
+                                Singkat <br/><span class="text-[10px] text-slate-300 font-normal">(< 50 kata)</span>
+                            </button>
+                            <button onclick="setLength('medium', this)" class="length-btn p-2 rounded-lg text-xs font-medium border transition-all bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                                Sedang <br/><span class="text-[10px] opacity-70 font-normal">(~100 kata)</span>
+                            </button>
+                            <button onclick="setLength('long', this)" class="length-btn p-2 rounded-lg text-xs font-medium border transition-all bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                                Panjang <br/><span class="text-[10px] opacity-70 font-normal">(> 200 kata)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMsg" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg flex items-center gap-2">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span id="errorText">Error</span>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="btnGenerate" onclick="generateWithAI()" class="w-full py-3 mt-2 rounded-xl font-bold text-white shadow-md flex items-center justify-center gap-2 transition-all transform active:scale-95 bg-indigo-600 hover:bg-indigo-700">
+                        <i data-lucide="sparkles" class="w-4 h-4 fill-white"></i> BUAT TEKS PROMOSI
+                    </button>
+                    
+                    <button id="btnLoading" class="hidden w-full py-3 mt-2 rounded-xl font-bold text-white shadow-md flex items-center justify-center gap-2 bg-indigo-400 cursor-not-allowed" disabled>
+                        <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i> Memproses...
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- === KOLOM KANAN: PREVIEW === -->
+        <div class="flex flex-col h-full gap-4">
+           <!-- WA Preview Container -->
+           <div class="bg-[#E5DDD5] rounded-xl shadow-lg overflow-hidden flex flex-col h-[500px] border border-slate-300 relative">
+            <!-- Header -->
+            <div class="bg-[#008069] px-4 py-3 text-white flex items-center gap-3 shadow-md z-10">
+              <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                <i data-lucide="smartphone" class="w-4 h-4"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-bold text-sm leading-tight">Grup Jualan Laris</p>
+                <p class="text-[10px] text-green-100 opacity-90 truncate w-40">Anda, +62 812..., +62 856...</p>
+              </div>
+            </div>
+
+            <!-- Chat Body -->
+            <div class="flex-1 p-4 overflow-y-auto bg-[#e5ddd5] custom-scrollbar flex flex-col" 
+                 style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: soft-light;">
+              
+              <div class="self-center bg-[#E1F3FB] text-slate-600 text-[10px] px-2 py-1 rounded-lg shadow-sm mb-4 font-medium uppercase tracking-wide opacity-90">
+                Hari Ini
+              </div>
+
+              <!-- Chat Bubble -->
+              <div id="chatBubble" class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[95%] self-start relative text-[13.5px] leading-relaxed text-[#111b21] transition-opacity duration-300">
+                <!-- Content will be injected here -->
+                <div id="previewContent">
+                    Halo! 👋<br>
+                    Saya adalah asisten AI Anda.<br><br>
+                    Sekarang tersedia fitur <b>"Harga Mulai Dari"</b> untuk produk jasa atau bervariasi.<br>
+                    Coba isi data dan klik <b>"Generate"</b>! 🚀
+                </div>
+                
+                <div class="text-[10px] text-slate-400 text-right mt-1 flex justify-end items-center gap-1">
+                  <span id="timeString">10:00</span>
+                </div>
+              </div>
+
+              <!-- Loading Indicator (Hidden by default) -->
+              <div id="chatLoading" class="hidden bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[100px] self-start mt-2">
+                 <div class="flex gap-1 items-center py-1 px-1">
+                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full dot-animate"></div>
+                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full dot-animate"></div>
+                    <div class="w-1.5 h-1.5 bg-slate-400 rounded-full dot-animate"></div>
+                 </div>
+              </div>
+
+            </div>
+
+            <!-- Fake Input -->
+            <div class="bg-[#F0F2F5] px-2 py-2 flex items-center gap-2">
+               <div class="bg-white flex-1 py-2 px-4 rounded-full text-slate-300 text-sm border border-white">
+                  Ketik pesan
+               </div>
+               <div class="bg-[#008069] p-2 rounded-full text-white shadow-sm">
+                 <i data-lucide="send" class="w-4 h-4"></i>
+               </div>
+            </div>
+          </div>
+
+          <!-- Action Area -->
+          <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-2">
+             <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-500 uppercase">Hasil Text</span>
+                <button id="btnCopy" onclick="handleCopy()" class="px-4 py-2 rounded-lg text-white font-bold text-xs shadow-sm transition-all flex items-center gap-2 bg-slate-800 hover:bg-slate-900 hover:-translate-y-0.5">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> <span id="copyText">Salin Teks</span>
+                </button>
+             </div>
+             <textarea id="finalOutput" 
+               class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-600 h-24 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+               oninput="updatePreviewFromTextarea()"></textarea>
+          </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- SETUP ---
+        const apiKey = "AIzaSyAZRYJdAMXNgJX05G6D_5PVMrwdNRJ3Veg"; // System will inject this in some environments, or leave empty
+        let currentLength = 'short';
+        
+        // Initialize Icons
+        lucide.createIcons();
+        
+        // Initialize Time
+        document.getElementById('timeString').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Initial Text
+        document.getElementById('finalOutput').value = `Halo! 👋\nSaya adalah asisten AI Anda.\n\nSekarang tersedia fitur *"Harga Mulai Dari"* untuk produk jasa atau bervariasi.\nCoba isi data dan klik *"Generate"*! 🚀`;
+
+        // --- EVENT LISTENERS FOR CHECKBOX ---
+        document.getElementById('isStartingPrice').addEventListener('change', function() {
+            const isChecked = this.checked;
+            const label = document.getElementById('labelStartingPrice');
+            const lblNormal = document.getElementById('lblPriceNormal');
+            const lblPromo = document.getElementById('lblPricePromo');
+            const inputPrice = document.getElementById('price');
+            const inputPromo = document.getElementById('promoPrice');
+
+            if (isChecked) {
+                label.classList.remove('text-slate-500');
+                label.classList.add('text-indigo-600');
+                lblNormal.textContent = 'Mulai Dari (Normal)';
+                lblPromo.textContent = 'Mulai Dari (Promo)';
+            } else {
+                label.classList.add('text-slate-500');
+                label.classList.remove('text-indigo-600');
+                lblNormal.textContent = 'Harga Normal';
+                lblPromo.textContent = 'Harga Promo';
+            }
+        });
+
+        // --- HELPER FUNCTIONS ---
+        function formatRupiah(number) {
+            if (!number) return '';
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        }
+
+        function setLength(type, btnElement) {
+            currentLength = type;
+            // Reset styles for all buttons
+            document.querySelectorAll('.length-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white', 'border-slate-800', 'active');
+                btn.classList.add('bg-white', 'border-slate-200', 'text-slate-600');
+                // Fix inner span
+                const span = btn.querySelector('span');
+                if(span) {
+                    span.classList.remove('text-slate-300');
+                    span.classList.add('opacity-70');
+                }
+            });
+            
+            // Set style for active
+            btnElement.classList.remove('bg-white', 'border-slate-200', 'text-slate-600');
+            btnElement.classList.add('bg-slate-800', 'text-white', 'border-slate-800', 'active');
+             const span = btnElement.querySelector('span');
+            if(span) {
+                span.classList.remove('opacity-70');
+                span.classList.add('text-slate-300');
+            }
+        }
+
+        function renderPreview(text) {
+            let formatted = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\*(.*?)\*/g, '<b>$1</b>')
+                .replace(/_(.*?)_/g, '<i>$1</i>')
+                .replace(/~(.*?)~/g, '<strike>$1</strike>')
+                .replace(/\n/g, '<br/>');
+            document.getElementById('previewContent').innerHTML = formatted;
+        }
+
+        function updatePreviewFromTextarea() {
+            const val = document.getElementById('finalOutput').value;
+            renderPreview(val);
+        }
+
+        // --- AI GENERATION ---
+        async function generateWithAI() {
+            const productName = document.getElementById('productName').value;
+            const price = document.getElementById('price').value;
+            const promoPrice = document.getElementById('promoPrice').value;
+            const contact = document.getElementById('contact').value;
+            const targetAudience = document.getElementById('targetAudience').value;
+            const tone = document.getElementById('tone').value;
+            const moment = document.getElementById('moment').value;
+            const isStartingPrice = document.getElementById('isStartingPrice').checked;
+
+            const errorContainer = document.getElementById('errorMsg');
+
+            if (!productName) {
+                errorContainer.classList.remove('hidden');
+                document.getElementById('errorText').textContent = "Nama produk wajib diisi!";
+                return;
+            } else {
+                errorContainer.classList.add('hidden');
+            }
+
+            // UI Loading State
+            document.getElementById('btnGenerate').classList.add('hidden');
+            document.getElementById('btnLoading').classList.remove('hidden');
+            document.getElementById('chatBubble').style.opacity = '0.5';
+            document.getElementById('chatLoading').classList.remove('hidden');
+
+            const finalPrice = price ? formatRupiah(price) : 'Hubungi Admin';
+            const finalPromo = promoPrice ? formatRupiah(promoPrice) : null;
+            
+            let lengthInstruction = "";
+            if (currentLength === 'short') lengthInstruction = "Buat teks SANGAT SINGKAT dan PADAT. Maksimal 50 kata. Langsung ke inti penawaran.";
+            if (currentLength === 'medium') lengthInstruction = "Buat teks dengan panjang SEDANG (sekitar 100-150 kata). Jelaskan manfaat utama dengan seimbang.";
+            if (currentLength === 'long') lengthInstruction = "Buat teks PANJANG dan MENDETAIL (minimal 200 kata). Gunakan teknik storytelling atau penjelasan fitur yang lengkap.";
+
+            const prompt = `
+              Bertindaklah sebagai Copywriter Profesional khusus Marketing WhatsApp di Indonesia.
+              
+              Detail Produk:
+              - Nama Produk: ${productName}
+              - Harga Normal: ${finalPrice}
+              ${finalPromo ? `- Harga Promo: ${finalPromo} (Tekankan diskon ini!)` : ''}
+              - Tipe Harga: ${isStartingPrice ? 'HARGA MULAI DARI (Starting Price/Estimasi)' : 'Harga Pas (Fixed)'}
+              - Kontak/Link: ${contact || '[Link/Kontak]'}
+              
+              Konteks Kampanye:
+              - Target Audiens: ${targetAudience}
+              - Gaya Bahasa: ${tone}
+              - Momen/Event Spesial: ${moment !== 'Tidak Ada' ? moment : '-'}
+              - Panjang Teks: ${lengthInstruction}
+              
+              ATURAN KHUSUS & FORMATTING:
+              1. ${moment !== 'Tidak Ada' ? `KARENA INI MOMEN **${moment}**, WAJIB gunakan salam pembuka, ucapan, atau referensi yang relevan.` : ''}
+              2. ${isStartingPrice ? 'KARENA INI HARGA "MULAI DARI", pastikan penulisan harga menggunakan kata "Mulai dari", "Start from", atau "Hanya dari" di depan angka nominal.' : ''}
+              3. Gunakan formatting WhatsApp: *tebal* untuk headline, _miring_ untuk penekanan, ~coret~ untuk harga lama.
+              4. Gunakan emoji yang menarik (🔥, ✨, 🚀, dll).
+              5. Call to Action (CTA) wajib ada di akhir.
+              6. JANGAN gunakan markdown bold (**), gunakan format WA (*).
+              7. Langsung berikan hasil teks promosinya saja.
+            `;
+
+            try {
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    }
+                );
+
+                if (!response.ok) throw new Error("Gagal menghubungi AI");
+
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (aiText) {
+                    document.getElementById('finalOutput').value = aiText;
+                    renderPreview(aiText);
+                    document.getElementById('timeString').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                } else {
+                    throw new Error("Tidak ada respons dari AI");
+                }
+
+            } catch (error) {
+                console.error(error);
+                errorContainer.classList.remove('hidden');
+                document.getElementById('errorText').textContent = "Maaf, AI sedang sibuk. Coba lagi.";
+            } finally {
+                // UI Finished State
+                document.getElementById('btnGenerate').classList.remove('hidden');
+                document.getElementById('btnLoading').classList.add('hidden');
+                document.getElementById('chatBubble').style.opacity = '1';
+                document.getElementById('chatLoading').classList.add('hidden');
+            }
+        }
+
+        // --- ACTIONS ---
+        function handleCopy() {
+            const textToCopy = document.getElementById('finalOutput').value;
+            const btn = document.getElementById('btnCopy');
+            const span = document.getElementById('copyText');
+            const icon = btn.querySelector('i'); // Get icon element
+
+            // Create temporary textarea
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                // Success UI
+                btn.classList.remove('bg-slate-800');
+                btn.classList.add('bg-green-600');
+                span.textContent = 'Tersalin! ✅';
+            } catch (err) {
+                span.textContent = 'Gagal ❌';
+            }
+
+            document.body.removeChild(textArea);
+
+            // Reset UI after 2 sec
+            setTimeout(() => {
+                btn.classList.add('bg-slate-800');
+                btn.classList.remove('bg-green-600');
+                span.textContent = 'Salin Teks';
+                // Note: Lucide icons replace <i> tags with SVGs, so we don't need to re-add class
+            }, 2000);
+        }
+
+        function handleReset() {
+            document.getElementById('productName').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('promoPrice').value = '';
+            document.getElementById('contact').value = '';
+            document.getElementById('targetAudience').value = 'Umum';
+            document.getElementById('finalOutput').value = '';
+            document.getElementById('previewContent').innerHTML = '';
+            
+            // Reset Checkbox
+            document.getElementById('isStartingPrice').checked = false;
+            document.getElementById('isStartingPrice').dispatchEvent(new Event('change'));
+
+            // Reset Length
+            setLength('short', document.querySelector('.length-btn')); // Select first button
+            
+            document.getElementById('errorMsg').classList.add('hidden');
+        }
+
+    </script>
+</body>
+</html>
