@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Classmeeting Manager Pro Fix</title>
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+        
+        /* Drag & Chip Styles */
+        .student-chip { 
+            transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s; 
+            cursor: grab; user-select: none; 
+        }
+        .student-chip:active { cursor: grabbing; }
+        .student-chip.dragging { opacity: 0.5; border: 2px dashed #9ca3af; }
+        
+        .student-chip.selected {
+            background-color: #dbeafe !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+            z-index: 20; transform: scale(1.02);
+        }
+
+        /* Drop Zones */
+        .drop-zone { transition: background-color 0.2s; position: relative; }
+        .drop-zone.over { background-color: #f0fdf4 !important; border-color: #22c55e !important; }
+        .drop-zone.waiting-for-drop {
+            background-color: #ecfdf5; border: 2px dashed #10b981; cursor: pointer;
+        }
+
+        .loader { width: 16px; height: 16px; border: 2px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #export-header { display: none; }
+        
+        /* Export Styling */
+        .exporting .student-chip {
+            height: auto !important; min-height: auto !important;
+            padding-bottom: 8px !important; padding-top: 8px !important;
+            align-items: flex-start !important;
+        }
+        .exporting .student-chip span {
+            line-height: 1.5 !important; padding-bottom: 4px !important;
+            display: inline-block !important;
+        }
+
+        /* Modal Transition */
+        .modal { transition: opacity 0.25s ease; }
+        body.modal-open { overflow: hidden; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-24 md:pb-0">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-600 text-white p-1.5 rounded shadow-sm text-sm">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg text-slate-800 leading-none block">ClassMgr</span>
+                    <span class="text-[0.6rem] text-indigo-600 font-bold tracking-wider">PRO EDITION</span>
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                <button onclick="openSettings()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg border border-slate-200 transition active:scale-95 flex items-center gap-2" title="Pengaturan Lomba">
+                    <i class="fa-solid fa-gear"></i> <span class="hidden sm:inline">Atur Lomba</span>
+                </button>
+                <div class="w-px h-8 bg-slate-200 mx-1"></div>
+                <button onclick="saveAsImage()" id="btn-save" class="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg shadow-sm active:scale-95 transition flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Simpan</span>
+                </button>
+                <button onclick="confirmAction('clear')" class="text-xs font-medium bg-red-50 text-red-600 px-3 py-2 rounded-lg border border-red-100 active:bg-red-100" title="Hapus Semua Data">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 w-full">
+        
+        <!-- Control Bar -->
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 mb-4 flex flex-wrap gap-2 items-center justify-between no-export">
+            <div class="flex items-center gap-2">
+                 <button onclick="toggleInput()" class="text-xs font-medium bg-slate-100 text-slate-600 px-3 py-2 rounded-lg border border-slate-200 active:bg-slate-200">
+                    <i class="fa-solid fa-pen-to-square"></i> Input Nama
+                </button>
+            </div>
+            
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="confirmAction('reset')" class="flex-1 sm:flex-none text-xs font-bold bg-orange-100 hover:bg-orange-200 text-orange-700 px-4 py-2 rounded-lg border border-orange-200 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-rotate-left"></i> Reset ke Pool
+                </button>
+
+                <button onclick="reshuffleAll()" class="flex-1 sm:flex-none text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-md shadow-indigo-200 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shuffle"></i> Acak Posisi
+                </button>
+            </div>
+        </div>
+        
+        <div class="md:hidden bg-blue-50 text-blue-700 px-3 py-2 rounded-lg mb-4 text-xs flex items-center border border-blue-100 no-export">
+            <i class="fa-solid fa-circle-info mr-2"></i>
+            <span>Ketuk nama siswa, lalu ketuk kotak tujuan.</span>
+        </div>
+
+        <div id="capture-area" class="flex flex-col lg:flex-row gap-4 h-full bg-slate-50 p-2 rounded-xl">
+            
+            <!-- Header Export -->
+            <div id="export-header" class="w-full text-center py-4 bg-white border-b-2 border-indigo-600 mb-4 rounded-t-lg">
+                <h1 class="text-2xl font-bold text-slate-800">HASIL PEMBAGIAN TIM</h1>
+                <p class="text-xs text-slate-400 mt-1" id="export-date"></p>
+            </div>
+
+            <!-- SECTION 1: Input & Pool -->
+            <div class="w-full lg:w-1/3 flex flex-col gap-4">
+                
+                <div id="input-panel" class="hidden bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-export">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-sm">Input Nama</h3>
+                        <button onclick="toggleInput()" class="text-slate-400"><i class="fa-solid fa-chevron-up"></i></button>
+                    </div>
+                    <textarea id="bulk-input" rows="4" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm mb-3 bg-slate-50" placeholder="Contoh:&#10;Rizky&#10;Siti"></textarea>
+                    <button onclick="processWithGemini()" id="btn-ai" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-3 py-2.5 rounded-lg shadow-sm text-sm font-medium flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Sort (Gender)
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden max-h-[40vh] lg:max-h-[600px]">
+                    <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex justify-between items-center sticky top-0 z-10">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pool / Cadangan</span>
+                        <span id="pool-count" class="text-xs font-bold bg-white border border-slate-300 px-2 py-0.5 rounded-full text-slate-600">0</span>
+                    </div>
+                    <div id="student-pool" 
+                         class="drop-zone flex-1 p-2 overflow-y-auto bg-slate-100/50 min-h-[120px] relative" 
+                         onclick="handleZoneClick(event, 'student-pool')" 
+                         ondrop="drop(event)" 
+                         ondragover="allowDrop(event)"
+                         ondragleave="leaveDrop(event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Lomba Grid -->
+            <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-3" id="competition-grid">
+               <!-- Grid Generated by JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Konfirmasi Umum -->
+    <div id="confirm-modal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all scale-95">
+            <div class="p-6 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2" id="modal-title">Konfirmasi</h3>
+                <p class="text-sm text-gray-500 mb-6" id="modal-desc">Apakah Anda yakin?</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeModal('confirm-modal')" class="w-full px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">Batal</button>
+                    <button id="modal-confirm-btn" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-sm">Ya, Lakukan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pengaturan Lomba (Settings) -->
+    <div id="settings-modal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-slate-500"></i> Pengaturan Classmeeting
+                </h3>
+                <button onclick="closeModal('settings-modal')" class="text-slate-400 hover:text-red-500">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 bg-slate-50/50">
+                
+                <!-- List Kategori -->
+                <div id="settings-list" class="space-y-3">
+                    <!-- Item akan di-render JS -->
+                </div>
+
+                <!-- Tombol Tambah -->
+                <button onclick="addNewCategoryRow()" class="mt-4 w-full py-2 border-2 border-dashed border-indigo-300 text-indigo-600 rounded-lg hover:bg-indigo-50 font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Kategori Baru
+                </button>
+            </div>
+
+            <div class="p-4 border-t border-gray-200 bg-white flex justify-end gap-3">
+                <button onclick="closeModal('settings-modal')" class="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg">Batal</button>
+                <button onclick="saveSettings()" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-md">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-sm pointer-events-none"></div>
+
+    <script>
+        const apiKey = "AIzaSyAZRYJdAMXNgJX05G6D_5PVMrwdNRJ3Veg"; 
+        let studentIdCounter = 0;
+        let selectedStudentId = null;
+
+        // --- KONFIGURASI DEFAULT & STATE ---
+        const defaultCategories = [
+            { id: 'nyanyi-lk', title: 'Menyanyi (Lk)', icon: 'fa-microphone', color: 'pink', limit: 1, gender: 'lk', active: true },
+            { id: 'nyanyi-pr', title: 'Menyanyi (Pr)', icon: 'fa-microphone', color: 'pink', limit: 1, gender: 'pr', active: true },
+            { id: 'futsal-lk', title: 'Futsal (Lk)', icon: 'fa-futbol', color: 'emerald', limit: 7, gender: 'lk', active: true },
+            { id: 'basket-pr', title: 'Basket (Pr)', icon: 'fa-basketball', color: 'orange', limit: 5, gender: 'pr', active: true },
+            { id: 'ml-lk', title: 'Mobile Legend (Lk)', icon: 'fa-gamepad', color: 'purple', limit: 5, gender: 'lk', active: true },
+            { id: 'ml-pr', title: 'Mobile Legend (Pr)', icon: 'fa-gamepad', color: 'purple', limit: 5, gender: 'pr', active: true }
+        ];
+
+        let categories = JSON.parse(JSON.stringify(defaultCategories)); // Deep copy
+
+        // --- LOCAL STORAGE HANDLING ---
+        function loadState() {
+            const savedConfig = localStorage.getItem('classmgr_config');
+            const savedStudents = localStorage.getItem('classmgr_students');
+
+            if (savedConfig) {
+                try {
+                    categories = JSON.parse(savedConfig);
+                } catch(e) { console.error("Error loading config", e); }
+            }
+
+            renderCategories();
+
+            if (savedStudents) {
+                try {
+                    const students = JSON.parse(savedStudents);
+                    // Reset pool dulu
+                    document.getElementById('student-pool').innerHTML = '';
+                    
+                    students.forEach(s => {
+                        // Pastikan zona tujuan ada, kalau tidak masuk pool
+                        let target = document.getElementById(s.zoneId);
+                        if (!target && s.zoneId !== 'student-pool') target = document.getElementById('student-pool');
+                        
+                        createStudentChip(s.name, target ? target.id : 'student-pool', s.gender);
+                    });
+                } catch(e) { console.error("Error loading students", e); }
+            }
+        }
+
+        function saveState() {
+            // 1. Save Config
+            localStorage.setItem('classmgr_config', JSON.stringify(categories));
+
+            // 2. Save Students
+            const students = [];
+            document.querySelectorAll('.student-chip').forEach(chip => {
+                const name = chip.querySelector('[data-name-span="true"]').innerText;
+                const gender = chip.dataset.gender;
+                const zoneId = chip.parentElement.id;
+                students.push({ name, gender, zoneId });
+            });
+            localStorage.setItem('classmgr_students', JSON.stringify(students));
+        }
+
+        // --- RENDER GRID KATEGORI ---
+        function renderCategories() {
+            const grid = document.getElementById('competition-grid');
+            grid.innerHTML = ''; 
+
+            categories.forEach(cat => {
+                if (!cat.active) return; // Skip inactive
+
+                let colorClass = '';
+                if(cat.color === 'pink') colorClass = 'text-pink-600 bg-pink-50 border-pink-100';
+                else if(cat.color === 'emerald') colorClass = 'text-emerald-600 bg-emerald-50 border-emerald-100';
+                else if(cat.color === 'purple') colorClass = 'text-purple-600 bg-purple-50 border-purple-100';
+                else if(cat.color === 'blue') colorClass = 'text-blue-600 bg-blue-50 border-blue-100';
+                else if(cat.color === 'orange') colorClass = 'text-orange-600 bg-orange-50 border-orange-100';
+                else colorClass = 'text-slate-600 bg-slate-50 border-slate-100'; 
+
+                // FIX: Menambah padding-y (py-3) dan leading-relaxed pada title agar tidak terpotong
+                const html = `
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="px-3 py-3 border-b ${colorClass} flex justify-between items-center">
+                            <span class="font-bold text-sm text-slate-700 flex items-center truncate leading-relaxed pb-0.5">
+                                <i class="fa-solid ${cat.icon} mr-2 opacity-75"></i> ${cat.title}
+                            </span>
+                            <span class="count-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/80 border border-slate-200 text-slate-600" id="count-${cat.id}">0/${cat.limit}</span>
+                        </div>
+                        <div class="drop-zone p-2 flex-1 bg-white min-h-[100px] relative transition-all" 
+                                id="${cat.id}" 
+                                data-max="${cat.limit}" 
+                                data-gender="${cat.gender}" 
+                                onclick="handleZoneClick(event, '${cat.id}')" 
+                                ondrop="drop(event)" 
+                                ondragover="allowDrop(event)"
+                                ondragleave="leaveDrop(event)">
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- SETTINGS MODAL LOGIC ---
+        function openSettings() {
+            const list = document.getElementById('settings-list');
+            list.innerHTML = '';
+            
+            categories.forEach((cat, index) => {
+                const row = document.createElement('div');
+                row.className = "bg-white p-3 border border-gray-200 rounded-lg shadow-sm flex flex-col sm:flex-row gap-3 items-start sm:items-center";
+                row.innerHTML = `
+                    <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-12 gap-2">
+                        <div class="sm:col-span-4">
+                            <label class="text-[10px] text-gray-400 block mb-0.5">Nama Lomba</label>
+                            <input type="text" value="${cat.title}" data-field="title" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="text-[10px] text-gray-400 block mb-0.5">Limit</label>
+                            <input type="number" value="${cat.limit}" data-field="limit" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="text-[10px] text-gray-400 block mb-0.5">Gender</label>
+                            <select data-field="gender" class="w-full text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                                <option value="lk" ${cat.gender === 'lk' ? 'selected' : ''}>Laki-laki</option>
+                                <option value="pr" ${cat.gender === 'pr' ? 'selected' : ''}>Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="text-[10px] text-gray-400 block mb-0.5">Warna</label>
+                            <select data-field="color" class="w-full text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                                <option value="pink" ${cat.color === 'pink' ? 'selected' : ''}>Pink</option>
+                                <option value="emerald" ${cat.color === 'emerald' ? 'selected' : ''}>Hijau</option>
+                                <option value="purple" ${cat.color === 'purple' ? 'selected' : ''}>Ungu</option>
+                                <option value="blue" ${cat.color === 'blue' ? 'selected' : ''}>Biru</option>
+                                <option value="orange" ${cat.color === 'orange' ? 'selected' : ''}>Oranye</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 border-l pl-3 border-gray-200 h-full">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" data-field="active" ${cat.active ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded">
+                            <span class="text-xs font-semibold text-slate-600">Aktif</span>
+                        </label>
+                        <button onclick="deleteCategory(${index})" class="text-red-400 hover:text-red-600 ml-2" title="Hapus Permanen">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" data-field="id" value="${cat.id}">
+                    <input type="hidden" data-field="icon" value="${cat.icon}">
+                `;
+                list.appendChild(row);
+            });
+
+            openModal('settings-modal');
+        }
+
+        function addNewCategoryRow() {
+            const list = document.getElementById('settings-list');
+            const newId = 'cat-' + Date.now();
+            const row = document.createElement('div');
+            row.className = "bg-white p-3 border-2 border-indigo-100 rounded-lg shadow-sm flex flex-col sm:flex-row gap-3 items-start sm:items-center animate-pulse-once";
+            row.innerHTML = `
+                 <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <div class="sm:col-span-4">
+                        <label class="text-[10px] text-gray-400 block mb-0.5">Nama Lomba Baru</label>
+                        <input type="text" value="Lomba Baru" data-field="title" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:border-indigo-500 outline-none font-bold">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="text-[10px] text-gray-400 block mb-0.5">Limit</label>
+                        <input type="number" value="1" data-field="limit" class="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:border-indigo-500 outline-none">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="text-[10px] text-gray-400 block mb-0.5">Gender</label>
+                        <select data-field="gender" class="w-full text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                            <option value="lk">Laki-laki</option>
+                            <option value="pr">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="text-[10px] text-gray-400 block mb-0.5">Warna</label>
+                        <select data-field="color" class="w-full text-sm border border-gray-300 rounded px-2 py-1 bg-white">
+                            <option value="blue" selected>Biru</option>
+                            <option value="pink">Pink</option>
+                            <option value="emerald">Hijau</option>
+                            <option value="purple">Ungu</option>
+                            <option value="orange">Oranye</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 border-l pl-3 border-gray-200 h-full">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" data-field="active" checked class="w-4 h-4 text-indigo-600 rounded">
+                        <span class="text-xs font-semibold text-slate-600">Aktif</span>
+                    </label>
+                     <button onclick="this.closest('div.bg-white').remove()" class="text-red-400 hover:text-red-600 ml-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <input type="hidden" data-field="id" value="${newId}">
+                <input type="hidden" data-field="icon" value="fa-trophy">
+            `;
+            list.appendChild(row);
+            row.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteCategory(index) {
+            if(confirm("Hapus kategori ini? Data siswa di dalamnya akan pindah ke Pool.")) {
+                // Di UI setting hanya hapus row, update real dilakukan saat Save
+                const rows = document.getElementById('settings-list').children;
+                if(rows[index]) rows[index].remove();
+            }
+        }
+
+        function saveSettings() {
+            const list = document.getElementById('settings-list');
+            const rows = list.querySelectorAll(':scope > div');
+            const newCategories = [];
+
+            rows.forEach(row => {
+                const id = row.querySelector('[data-field="id"]').value;
+                const title = row.querySelector('[data-field="title"]').value;
+                const limit = parseInt(row.querySelector('[data-field="limit"]').value) || 1;
+                const gender = row.querySelector('[data-field="gender"]').value;
+                const color = row.querySelector('[data-field="color"]').value;
+                const active = row.querySelector('[data-field="active"]').checked;
+                const icon = row.querySelector('[data-field="icon"]').value;
+
+                newCategories.push({ id, title, limit, gender, color, active, icon });
+            });
+
+            // Handle siswa di kategori yang dinonaktifkan atau dihapus
+            // Cek kategori lama vs baru
+            const oldIds = categories.map(c => c.id);
+            const newIds = newCategories.map(c => c.id);
+            const activeNewIds = newCategories.filter(c => c.active).map(c => c.id);
+
+            // Pindahkan siswa jika kategorinya dihapus atau tidak aktif
+            document.querySelectorAll('.student-chip').forEach(chip => {
+                const currentZoneId = chip.parentElement.id;
+                if (currentZoneId === 'student-pool') return;
+
+                // Jika zona sekarang tidak ada di daftar baru yang aktif, pindah ke pool
+                if (!activeNewIds.includes(currentZoneId)) {
+                    document.getElementById('student-pool').appendChild(chip);
+                }
+            });
+
+            categories = newCategories;
+            saveState(); // Save current DOM state
+            renderCategories(); // Buat grid baru
+            loadState(); // Restore students to grid
+            
+            closeModal('settings-modal');
+            showToast("Pengaturan disimpan!", "success");
+        }
+
+
+        // --- INIT & CORE LOGIC ---
+        
+        // Panggil saat load page
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+        });
+
+        // --- MANAJEMEN DATA ---
+
+        function createStudentChip(name, targetId, gender) {
+            studentIdCounter++;
+            const container = document.getElementById(targetId);
+            const chip = document.createElement('div');
+            
+            const isPr = gender === 'pr';
+            const bgClass = isPr ? 'bg-pink-50 border-pink-200' : 'bg-blue-50 border-blue-200';
+            const textClass = isPr ? 'text-pink-800' : 'text-blue-800';
+            const icon = isPr ? 'fa-person-dress text-pink-500' : 'fa-person text-blue-500';
+
+            chip.className = `student-chip border ${bgClass} ${textClass} px-3 py-3 mb-2 rounded-lg shadow-sm flex justify-between items-center text-sm font-medium select-none`;
+            chip.id = `student-${studentIdCounter}`;
+            chip.dataset.gender = gender;
+            chip.draggable = true; 
+            
+            chip.ondragstart = (e) => { 
+                e.dataTransfer.setData("text", chip.id);
+                e.dataTransfer.effectAllowed = "move";
+                chip.classList.add('dragging');
+                if (selectedStudentId) deselectAll(); 
+            };
+            chip.ondragend = (e) => {
+                chip.classList.remove('dragging');
+                document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('over'));
+            };
+            chip.onclick = (e) => handleChipClick(e, chip.id);
+
+            chip.innerHTML = `
+                <div class="flex items-center gap-2 overflow-hidden pointer-events-none w-full flex-1">
+                    <i class="fa-solid ${icon} text-xs w-4 text-center flex-shrink-0 mt-0.5"></i>
+                    <span class="truncate max-w-[140px] block" data-name-span="true">${name}</span>
+                </div>
+                <button onclick="removeStudent('${chip.id}', event)" class="w-8 h-8 flex-shrink-0 flex items-center justify-center text-slate-400 hover:text-red-500 rounded-full hover:bg-red-50 transition ml-1" title="Hapus/Kembalikan">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            `;
+            
+            if(container) container.appendChild(chip);
+            updateCounts();
+            saveState(); // Auto-save
+        }
+
+        // --- INTERAKSI (Drag & Tap) ---
+        function handleChipClick(e, clickedId) {
+            e.stopPropagation(); 
+            if (selectedStudentId && selectedStudentId !== clickedId) {
+                const selectedChip = document.getElementById(selectedStudentId);
+                const clickedChip = document.getElementById(clickedId);
+                if (selectedChip.parentElement.id !== clickedChip.parentElement.id) {
+                    moveToZone(selectedChip, clickedChip.parentElement.id);
+                    return;
+                }
+            }
+            if (selectedStudentId === clickedId) {
+                deselectAll();
+            } else {
+                deselectAll(); 
+                selectedStudentId = clickedId;
+                const el = document.getElementById(clickedId);
+                el.classList.add('selected');
+                document.querySelectorAll('.drop-zone').forEach(z => {
+                    if(z.id !== el.parentElement.id) z.classList.add('waiting-for-drop');
+                });
+                if (navigator.vibrate) navigator.vibrate(50);
+            }
+        }
+
+        function handleZoneClick(e, zoneId) {
+            if (!selectedStudentId) return;
+            const chip = document.getElementById(selectedStudentId);
+            if (chip.parentElement.id === zoneId) { deselectAll(); return; }
+            moveToZone(chip, zoneId);
+        }
+
+        function moveToZone(chip, zoneId) {
+            const zone = document.getElementById(zoneId);
+            if (!zone || !chip) return;
+            if (zoneId !== 'student-pool') {
+                const count = Array.from(zone.children).filter(c => c.classList.contains('student-chip')).length;
+                if(count >= parseInt(zone.dataset.max)) { showToast("Slot Penuh!", "error"); return; }
+            }
+            chip.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                zone.appendChild(chip);
+                chip.style.transform = '';
+                deselectAll();
+                updateCounts();
+                saveState(); // Auto-save
+                showToast("Berhasil dipindah", "success");
+            }, 50);
+        }
+
+        function deselectAll() {
+            selectedStudentId = null;
+            document.querySelectorAll('.student-chip').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('waiting-for-drop'));
+        }
+
+        function allowDrop(ev) { ev.preventDefault(); const zone = ev.target.closest('.drop-zone'); if(zone) zone.classList.add('over'); }
+        function leaveDrop(ev) { const zone = ev.target.closest('.drop-zone'); if(zone) zone.classList.remove('over'); }
+        function drop(ev) {
+            ev.preventDefault();
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('over'));
+            const data = ev.dataTransfer.getData("text");
+            const chip = document.getElementById(data);
+            if(!chip) return;
+            const zone = ev.target.closest('.drop-zone');
+            if(!zone) return;
+            if (zone.id !== 'student-pool') {
+                const count = Array.from(zone.children).filter(c => c.classList.contains('student-chip')).length;
+                if(count >= parseInt(zone.dataset.max)) return showToast("Slot Penuh!", "error");
+            }
+            zone.appendChild(chip);
+            updateCounts();
+            saveState(); // Auto-save
+        }
+
+        // --- MODAL UTILS ---
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden', 'pointer-events-none');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            document.body.classList.add('modal-open');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden', 'pointer-events-none');
+                document.body.classList.remove('modal-open');
+                currentAction = null;
+            }, 250);
+        }
+
+        let currentAction = null;
+        function confirmAction(actionType) {
+            const title = document.getElementById('modal-title');
+            const desc = document.getElementById('modal-desc');
+            const btn = document.getElementById('modal-confirm-btn');
+
+            currentAction = actionType;
+            openModal('confirm-modal');
+
+            if (actionType === 'reset') {
+                title.innerText = "Reset ke Pool?";
+                desc.innerText = "Semua siswa akan kembali ke kotak cadangan.";
+                btn.className = "w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium shadow-sm";
+            } else if (actionType === 'clear') {
+                title.innerText = "Hapus Semua Data?";
+                desc.innerText = "Semua nama siswa akan dihapus permanen.";
+                btn.className = "w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium shadow-sm";
+            }
+            
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', executeAction);
+        }
+
+        function executeAction() {
+            if (currentAction === 'reset') {
+                const allChips = document.querySelectorAll('.student-chip');
+                const pool = document.getElementById('student-pool');
+                allChips.forEach(chip => pool.appendChild(chip));
+                showToast("Semua siswa dikembalikan ke Pool", "default");
+            } else if (currentAction === 'clear') {
+                document.querySelectorAll('.student-chip').forEach(c => c.remove());
+                showToast("Semua data dihapus", "default");
+            }
+            updateCounts();
+            saveState(); // Auto-save
+            closeModal('confirm-modal');
+        }
+
+        // --- SAVE IMAGE ---
+        function saveAsImage() {
+            deselectAll();
+            const btn = document.getElementById('btn-save');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="loader"></span> Saving...`;
+            btn.disabled = true;
+
+            const captureArea = document.getElementById('capture-area');
+            const exportHeader = document.getElementById('export-header');
+            const noExportElements = document.querySelectorAll('.no-export');
+            
+            exportHeader.style.display = 'block';
+            document.getElementById('export-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            noExportElements.forEach(el => el.style.display = 'none');
+            captureArea.classList.add('exporting');
+            
+            const textSpans = document.querySelectorAll('[data-name-span="true"]');
+            textSpans.forEach(span => {
+                span.classList.remove('truncate', 'max-w-[140px]');
+                span.classList.add('whitespace-normal', 'break-words', 'text-xs');
+                span.style.display = 'inline-block';
+            });
+
+            const originalBg = captureArea.style.backgroundColor;
+            captureArea.style.backgroundColor = '#ffffff';
+
+            html2canvas(captureArea, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Tim-Classmeeting-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast("Gambar tersimpan!", "success");
+            }).finally(() => {
+                exportHeader.style.display = 'none';
+                captureArea.classList.remove('exporting');
+                noExportElements.forEach(el => el.style.display = '');
+                if(window.innerWidth < 768) document.getElementById('input-panel').classList.add('hidden');
+                captureArea.style.backgroundColor = originalBg;
+                textSpans.forEach(span => {
+                    span.classList.add('truncate', 'max-w-[140px]');
+                    span.classList.remove('whitespace-normal', 'break-words', 'text-xs');
+                    span.style.display = '';
+                });
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        // --- DYNAMIC PRIORITY ---
+        function getPriorityList(gender) {
+            return categories.filter(cat => cat.gender === gender && cat.active).map(cat => cat.id);
+        }
+
+        function reshuffleAll() {
+            const allChips = Array.from(document.querySelectorAll('.student-chip'));
+            if(allChips.length === 0) return showToast("Data kosong", "error");
+
+            showToast("Mengacak posisi...", "default");
+            allChips.forEach(chip => chip.remove());
+            for (let i = allChips.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allChips[i], allChips[j]] = [allChips[j], allChips[i]];
+            }
+
+            allChips.forEach(chip => {
+                const gender = chip.dataset.gender;
+                let placed = false;
+                const priority = getPriorityList(gender);
+                for (let zoneId of priority) {
+                    const zone = document.getElementById(zoneId);
+                    if (zone && zone.children.length < parseInt(zone.dataset.max)) {
+                        zone.appendChild(chip);
+                        placed = true;
+                        break;
+                    }
+                }
+                if (!placed) document.getElementById('student-pool').appendChild(chip);
+            });
+            updateCounts(); 
+            saveState(); // Auto-save
+            showToast(`Selesai diacak!`, "success");
+        }
+
+        function distributeStudentNew(name, gender) {
+            const priority = getPriorityList(gender);
+            let placed = false;
+            for (let id of priority) {
+                const zone = document.getElementById(id);
+                if (zone && zone.children.length < parseInt(zone.dataset.max)) {
+                    createStudentChip(name, id, gender);
+                    placed = true;
+                    break;
+                }
+            }
+            if (!placed) createStudentChip(name, 'student-pool', gender);
+        }
+
+        function removeStudent(id, e) {
+            if(e) e.stopPropagation();
+            const chip = document.getElementById(id);
+            if(chip.parentElement.id !== 'student-pool') {
+                document.getElementById('student-pool').appendChild(chip);
+            } else {
+                chip.remove();
+            }
+            deselectAll(); updateCounts();
+            saveState(); // Auto-save
+        }
+
+        function updateCounts() {
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                const count = z.querySelectorAll('.student-chip').length;
+                if(z.id === 'student-pool') {
+                    document.getElementById('pool-count').innerText = count;
+                    return;
+                }
+                const max = z.dataset.max;
+                const badge = document.getElementById(`count-${z.id}`);
+                badge.innerText = `${count}/${max}`;
+                if(count >= max) {
+                    badge.classList.remove('bg-white/80', 'text-slate-600');
+                    badge.classList.add('bg-green-500', 'text-white', 'border-transparent');
+                } else {
+                    badge.classList.add('bg-white/80', 'text-slate-600');
+                    badge.classList.remove('bg-green-500', 'text-white', 'border-transparent');
+                }
+            });
+        }
+
+        function toggleInput() { document.getElementById('input-panel').classList.toggle('hidden'); }
+        function getNamesFromInput() { return document.getElementById('bulk-input').value.split('\n').map(n => n.trim()).filter(n => n !== ''); }
+
+        async function processWithGemini() {
+            const names = getNamesFromInput();
+            if (names.length === 0) return showToast("Input kosong!", "error");
+
+            const btn = document.getElementById('btn-ai');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<span class="loader"></span>`;
+            btn.disabled = true;
+
+            try {
+                const promptText = `Daftar nama: ${names.join(", ")}. Tugas: Tentukan gender (lk/pr). Output JSON murni: [{"name":"X","gender":"lk/pr"}]`;
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+                if (!response.ok) throw new Error("API Error");
+                const result = await response.json();
+                const jsonStr = result.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+                const data = JSON.parse(jsonStr);
+
+                data.forEach(item => distributeStudentNew(item.name, item.gender));
+                document.getElementById('bulk-input').value = '';
+                showToast(`Data diproses!`, 'success');
+                if(window.innerWidth < 768) document.getElementById('input-panel').classList.add('hidden');
+            } catch (e) {
+                console.error(e);
+                names.forEach(n => createStudentChip(n, 'student-pool', 'lk'));
+                showToast("AI Gagal, manual mode", "warning");
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        function showToast(msg, type) {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-slate-800';
+            el.className = `${bg} text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium text-center toast-enter pointer-events-auto`;
+            el.innerText = msg;
+            container.appendChild(el);
+            setTimeout(() => { el.classList.add('toast-exit'); setTimeout(() => el.remove(), 300); }, 2000);
+        }
+    </script>
+</body>
+</html>
