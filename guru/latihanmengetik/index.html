@@ -1,0 +1,510 @@
+<!-- Chosen Palette: Warm Neutrals (bg-gray-50, accent-blue-600) -->
+<!-- Application Structure Plan: Tata letak diperbarui menjadi lebih terstruktur. Bagian atas adalah Dashboard Metrik. Bagian tengah adalah Area Mengetik Utama. Bagian bawah dibagi menjadi dua kartu: satu untuk memilih teks bawaan (Preset) dan satu lagi fitur baru Generator Teks AI menggunakan Gemini API. Ini memisahkan fungsi "Latihan" dan "Persiapan". -->
+<!-- Visualization & Content Choices: 1) Generator AI: Menambahkan input dan tombol untuk memanggil API Gemini, dengan indikator loading. 2) Metrik & Chart: Tetap dipertahankan untuk umpan balik performa. 3) Typing Area: Disederhanakan untuk fokus maksimal. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Single file HTML. -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Mengetik AI - Gemini Powered</title>
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet">
+    <style>
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .correct { color: #16a34a; }
+        .incorrect { color: #dc2626; background-color: #fecaca; border-radius: 2px; }
+        .current { background-color: #e5e7eb; border-bottom: 2px solid #3b82f6; }
+        .disabled-input { cursor: not-allowed; opacity: 0.6; }
+        
+        /* Spinner untuk loading AI */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-container-custom {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-inter text-gray-800 p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Ketik<span class="text-blue-600">Cepat</span> AI</h1>
+                <p class="text-sm text-gray-500 mt-1">Latihan mengetik cerdas bertenaga Gemini 2.5 Flash</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-4">
+                 <div class="text-center px-4">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">WPM</p>
+                    <p id="wpm" class="text-3xl font-bold text-blue-600">0</p>
+                 </div>
+                 <div class="text-center px-4 border-l border-gray-200">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">Akurasi</p>
+                    <p id="accuracy" class="text-3xl font-bold text-green-600">100%</p>
+                 </div>
+                 <div class="text-center px-4 border-l border-gray-200">
+                    <p class="text-xs text-gray-400 uppercase font-semibold">Waktu</p>
+                    <p id="timer" class="text-3xl font-bold text-gray-600">0</p>
+                 </div>
+            </div>
+        </header>
+
+        <!-- Main Typing Area -->
+        <main class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 relative overflow-hidden">
+            <!-- Text Display -->
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6 h-48 overflow-y-auto leading-loose text-lg font-mono relative shadow-inner" id="typing-text-display">
+                <!-- Text will be injected here -->
+            </div>
+            
+            <!-- Input & Controls -->
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <input type="text" id="text-input" 
+                    class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all disabled-input font-mono" 
+                    placeholder="Ketik teks di sini untuk memulai..." disabled autocomplete="off">
+                
+                <button id="restart-btn" class="w-full md:w-auto whitespace-nowrap bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 px-8 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                    <span>&#8635;</span> Ulangi
+                </button>
+            </div>
+        </main>
+
+        <!-- Tools Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- AI Generator Section -->
+            <section class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">✨</span>
+                    <h2 class="text-xl font-bold">Buat Teks dengan AI</h2>
+                </div>
+                <p class="text-blue-100 text-sm mb-4">Gunakan Gemini 2.5 Flash untuk membuat paragraf latihan unik berdasarkan topik pilihan Anda.</p>
+                
+                <div class="space-y-3">
+                    <input type="text" id="ai-topic-input" 
+                        class="w-full p-3 rounded-lg border-none text-gray-900 focus:ring-2 focus:ring-blue-300" 
+                        placeholder="Masukkan topik (misal: Hutan Hujan, Koding, Kopi)...">
+                    
+                    <button id="generate-btn" class="w-full bg-white/20 hover:bg-white/30 text-white border border-white/40 font-semibold py-3 px-4 rounded-lg transition-all flex justify-center items-center gap-2">
+                        <span id="gen-btn-text">Buat Teks Baru</span>
+                        <div id="gen-spinner" class="spinner hidden"></div>
+                    </button>
+                    <p id="ai-error-msg" class="text-red-200 text-xs hidden mt-2 bg-red-900/50 p-2 rounded"></p>
+                </div>
+            </section>
+
+            <!-- Text Selector Section -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex flex-col">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Pilih Teks Tersedia</h3>
+                <div id="text-selector" class="flex flex-wrap gap-2 content-start overflow-y-auto max-h-[180px]">
+                    <!-- Buttons generated via JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Results Section (Hidden by default) -->
+        <div id="results-section" class="hidden bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-blue-100">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Analisis Performa</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <p class="text-gray-500 text-xs uppercase font-bold">WPM Akhir</p>
+                    <p id="final-wpm" class="text-3xl font-black text-blue-600">0</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <p class="text-gray-500 text-xs uppercase font-bold">Akurasi</p>
+                    <p id="final-acc" class="text-3xl font-black text-green-600">0%</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <p class="text-gray-500 text-xs uppercase font-bold">Kesalahan</p>
+                    <p id="final-errors" class="text-3xl font-black text-red-500">0</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-xl">
+                    <p class="text-gray-500 text-xs uppercase font-bold">CPM</p>
+                    <p id="final-cpm" class="text-3xl font-black text-indigo-600">0</p>
+                </div>
+            </div>
+
+            <div class="chart-container-custom">
+                <canvas id="wpm-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // API Configuration
+        const apiKey = ""; // Disuntikkan oleh runtime
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+
+        // State & Data
+        const defaultTexts = [
+            "Pemanasan global adalah peningkatan suhu rata-rata atmosfer, laut, dan daratan Bumi. Dampak utamanya termasuk kenaikan permukaan laut dan perubahan pola cuaca ekstrem.",
+            "Kecerdasan buatan atau Artificial Intelligence adalah simulasi proses kecerdasan manusia oleh sistem komputer. Proses ini mencakup pembelajaran, penalaran, dan koreksi diri.",
+            "Hutan hujan tropis memiliki keanekaragaman hayati yang sangat tinggi. Mereka sering disebut sebagai paru-paru dunia karena menghasilkan oksigen yang sangat dibutuhkan.",
+            "Dalam pemrograman, algoritma adalah serangkaian instruksi logis untuk menyelesaikan masalah tertentu. Efisiensi algoritma sangat mempengaruhi kinerja aplikasi."
+        ];
+        
+        let typingTexts = [...defaultTexts];
+        let currentTextIndex = 0;
+        let targetText = typingTexts[0];
+        
+        let timer = 0;
+        let isRunning = false;
+        let timerInterval;
+        let keystrokeData = []; // {time, wpm}
+        let wpmChartInstance = null;
+
+        // Elements
+        const displayEl = document.getElementById('typing-text-display');
+        const inputEl = document.getElementById('text-input');
+        const restartBtn = document.getElementById('restart-btn');
+        const wpmEl = document.getElementById('wpm');
+        const accEl = document.getElementById('accuracy');
+        const timerEl = document.getElementById('timer');
+        const selectorContainer = document.getElementById('text-selector');
+        
+        const resultsSection = document.getElementById('results-section');
+        const finalWpmEl = document.getElementById('final-wpm');
+        const finalAccEl = document.getElementById('final-acc');
+        const finalErrEl = document.getElementById('final-errors');
+        const finalCpmEl = document.getElementById('final-cpm');
+        const chartCtx = document.getElementById('wpm-chart').getContext('2d');
+
+        // AI Elements
+        const aiTopicInput = document.getElementById('ai-topic-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const genBtnText = document.getElementById('gen-btn-text');
+        const genSpinner = document.getElementById('gen-spinner');
+        const aiErrorMsg = document.getElementById('ai-error-msg');
+
+        // --- Core Logic ---
+
+        function init() {
+            renderSelector();
+            resetTest(0);
+            initChart();
+        }
+
+        function renderText(inputText = "") {
+            const targetChars = targetText.split('');
+            let html = '';
+            let correctCount = 0;
+            const totalTyped = inputText.length;
+
+            targetChars.forEach((char, index) => {
+                let className = 'text-gray-400';
+                
+                if (index < totalTyped) {
+                    if (char === inputText[index]) {
+                        className = 'correct';
+                        correctCount++;
+                    } else {
+                        className = 'incorrect';
+                    }
+                }
+                
+                if (index === totalTyped && isRunning) {
+                    className += ' current';
+                } else if (index === 0 && totalTyped === 0 && !isRunning) {
+                     className += ' border-b-2 border-blue-400'; // Cursor indicator at start
+                }
+
+                html += `<span class="${className}">${char}</span>`;
+            });
+            displayEl.innerHTML = html;
+
+            // Auto scroll to current word
+            if (isRunning) {
+                const currentSpan = displayEl.children[totalTyped];
+                if (currentSpan) {
+                    currentSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                updateLiveMetrics(totalTyped, correctCount);
+                if (totalTyped === targetText.length) {
+                    finishTest();
+                }
+            }
+        }
+
+        function updateLiveMetrics(typedLen, correctLen) {
+            const minutes = timer / 60;
+            const words = typedLen / 5;
+            const wpm = minutes > 0 ? Math.round(words / minutes) : 0;
+            const acc = typedLen > 0 ? Math.round((correctLen / typedLen) * 100) : 100;
+
+            wpmEl.textContent = wpm;
+            accEl.textContent = `${acc}%`;
+
+            // Record data for chart every 2 seconds
+            if (timer % 2 === 0 && timer > 0) {
+                keystrokeData.push({ time: timer, wpm: wpm });
+            }
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            inputEl.disabled = false;
+            inputEl.focus();
+            resultsSection.classList.add('hidden');
+            keystrokeData = [{time: 0, wpm: 0}];
+
+            timerInterval = setInterval(() => {
+                timer++;
+                timerEl.textContent = timer;
+                
+                // Recalculate every second just in case user stops typing
+                const val = inputEl.value;
+                const correct = val.split('').filter((c,i) => c === targetText[i]).length;
+                updateLiveMetrics(val.length, correct);
+            }, 1000);
+        }
+
+        function resetTest(idx = currentTextIndex) {
+            clearInterval(timerInterval);
+            currentTextIndex = idx;
+            targetText = typingTexts[currentTextIndex];
+            timer = 0;
+            isRunning = false;
+            keystrokeData = [];
+            
+            inputEl.value = '';
+            inputEl.disabled = false;
+            inputEl.focus(); // Auto focus on reset
+            
+            timerEl.textContent = '0';
+            wpmEl.textContent = '0';
+            accEl.textContent = '100%';
+            
+            resultsSection.classList.add('hidden');
+            renderText();
+            highlightSelector(idx);
+        }
+
+        function finishTest() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            inputEl.disabled = true;
+
+            const val = inputEl.value;
+            const correctCount = val.split('').filter((c,i) => c === targetText[i]).length;
+            const errors = val.length - correctCount;
+            const wpm = Math.round((val.length / 5) / (timer / 60));
+            const acc = Math.round((correctCount / val.length) * 100);
+            const cpm = Math.round(val.length / (timer / 60));
+
+            finalWpmEl.textContent = isFinite(wpm) ? wpm : 0;
+            finalAccEl.textContent = `${isNaN(acc) ? 0 : acc}%`;
+            finalErrEl.textContent = errors;
+            finalCpmEl.textContent = isFinite(cpm) ? cpm : 0;
+
+            updateChart();
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Chart Logic ---
+
+        function initChart() {
+            if (wpmChartInstance) wpmChartInstance.destroy();
+            
+            wpmChartInstance = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Kecepatan (WPM)',
+                        data: [],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'WPM' } },
+                        x: { title: { display: true, text: 'Waktu (detik)' } }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            // Add final point
+            const lastTime = timer;
+            const lastWpm = parseInt(finalWpmEl.textContent);
+            keystrokeData.push({ time: lastTime, wpm: lastWpm });
+
+            wpmChartInstance.data.labels = keystrokeData.map(d => d.time);
+            wpmChartInstance.data.datasets[0].data = keystrokeData.map(d => d.wpm);
+            wpmChartInstance.update();
+        }
+
+        // --- Selector Logic ---
+
+        function renderSelector() {
+            selectorContainer.innerHTML = '';
+            typingTexts.forEach((text, i) => {
+                const btn = document.createElement('button');
+                const isCustom = i >= defaultTexts.length;
+                const label = isCustom ? `✨ Custom ${i - defaultTexts.length + 1}` : `Teks ${i + 1}`;
+                
+                btn.className = `px-3 py-2 text-sm rounded-lg border transition-colors text-left truncate w-full md:w-auto md:max-w-[200px] ${
+                    i === currentTextIndex 
+                    ? 'bg-blue-600 text-white border-blue-600' 
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`;
+                btn.textContent = `${label}: ${text.substring(0, 20)}...`;
+                btn.onclick = () => resetTest(i);
+                selectorContainer.appendChild(btn);
+            });
+        }
+
+        function highlightSelector(idx) {
+            const btns = selectorContainer.querySelectorAll('button');
+            btns.forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = 'px-3 py-2 text-sm rounded-lg border transition-colors text-left truncate w-full md:w-auto md:max-w-[200px] bg-blue-600 text-white border-blue-600';
+                } else {
+                    btn.className = 'px-3 py-2 text-sm rounded-lg border transition-colors text-left truncate w-full md:w-auto md:max-w-[200px] bg-white text-gray-600 border-gray-200 hover:bg-gray-50';
+                }
+            });
+        }
+
+        // --- Gemini API Logic ---
+
+        async function generateTextWithAI() {
+            const topic = aiTopicInput.value.trim();
+            if (!topic) {
+                showError('Silakan masukkan topik terlebih dahulu.');
+                return;
+            }
+
+            setLoading(true);
+            showError(''); // Clear errors
+
+            const prompt = `Buatlah sebuah paragraf pendek (sekitar 3-4 kalimat) dalam Bahasa Indonesia yang informatif, menarik, dan edukatif untuk latihan mengetik. Topiknya adalah: "${topic}". Gunakan tata bahasa formal yang baik. Jangan gunakan judul atau poin-poin, langsung paragraf teks saja.`;
+
+            try {
+                const generatedText = await callGeminiAPI(prompt);
+                if (generatedText) {
+                    typingTexts.push(generatedText);
+                    renderSelector();
+                    // Auto select the new text
+                    resetTest(typingTexts.length - 1);
+                    aiTopicInput.value = ''; // Clear input
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } catch (err) {
+                console.error(err);
+                showError('Gagal membuat teks. Silakan coba lagi.');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function callGeminiAPI(userPrompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }]
+            };
+
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                } catch (e) {
+                    if (i === 4) throw e;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        // --- UI Helpers ---
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                generateBtn.disabled = true;
+                genBtnText.textContent = 'Membuat...';
+                genSpinner.classList.remove('hidden');
+            } else {
+                generateBtn.disabled = false;
+                genBtnText.textContent = 'Buat Teks Baru';
+                genSpinner.classList.add('hidden');
+            }
+        }
+
+        function showError(msg) {
+            if (msg) {
+                aiErrorMsg.textContent = msg;
+                aiErrorMsg.classList.remove('hidden');
+            } else {
+                aiErrorMsg.classList.add('hidden');
+            }
+        }
+
+        // --- Event Listeners ---
+
+        inputEl.addEventListener('input', (e) => {
+            if (!isRunning && e.target.value.length === 1) startTimer();
+            renderText(e.target.value);
+        });
+
+        // Prevent pasting
+        inputEl.addEventListener('paste', (e) => {
+            e.preventDefault();
+            alert("Copy-paste tidak diperbolehkan dalam latihan ini!");
+        });
+
+        restartBtn.addEventListener('click', () => resetTest());
+        
+        generateBtn.addEventListener('click', generateTextWithAI);
+        
+        aiTopicInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateTextWithAI();
+        });
+
+        // Start
+        window.onload = init;
+
+    </script>
+</body>
+</html>
