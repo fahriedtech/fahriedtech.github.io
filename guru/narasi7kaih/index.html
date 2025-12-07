@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Narasi Siswa Hebat</title>
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom styles for transitions if needed */
+        .transition-height {
+            transition: max-height 0.3s ease-in-out;
+        }
+        /* Hide scrollbar for textarea but allow scrolling */
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: #c7c7c7; 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #a0a0a0; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen p-4">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- HEADER -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="brain-circuit" class="text-indigo-600"></i>
+                    Generator Narasi Siswa Hebat
+                </h1>
+                <p class="text-gray-500 text-sm">Analisis Jurnal Harian & Dashboard Perkembangan</p>
+            </div>
+            
+            <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+                <button id="btn-mode-offline" class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-white shadow-sm text-indigo-700 flex items-center gap-2">
+                    <i data-lucide="zap" size="16"></i> <span>Cepat (Offline)</span>
+                </button>
+                <button id="btn-mode-ai" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-gray-500 hover:text-gray-700 flex items-center gap-2">
+                    <i data-lucide="sparkles" size="16"></i> <span>AI Generatif</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- API KEY ACCORDION (Hidden by default) -->
+        <div id="api-key-container" class="bg-indigo-50 border border-indigo-100 rounded-xl overflow-hidden transition-all duration-300 hidden">
+            <button id="btn-accordion-toggle" class="w-full flex justify-between items-center p-3 hover:bg-indigo-100 transition-colors text-left">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span class="text-xs font-bold text-indigo-800 flex items-center gap-1">
+                        <i data-lucide="key" size="14"></i> Konfigurasi API Key (Gemini)
+                    </span>
+                    <span id="key-status-badge" class="text-[10px] text-indigo-500 bg-white/50 px-2 py-0.5 rounded-full border border-indigo-100">
+                        Menggunakan Default Key
+                    </span>
+                </div>
+                <i id="accordion-icon" data-lucide="chevron-down" class="text-indigo-600 transition-transform duration-300"></i>
+            </button>
+
+            <div id="accordion-content" class="hidden p-4 bg-white border-t border-indigo-100">
+                <div class="flex flex-col gap-2">
+                    <div class="flex gap-2">
+                        <input type="password" id="input-api-key" placeholder="Tempel API Key di sini..." class="w-full p-2 text-sm border border-indigo-200 rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50">
+                        <button id="btn-reset-key" class="whitespace-nowrap px-3 py-2 bg-white border border-indigo-200 text-indigo-600 rounded hover:bg-indigo-50 text-xs flex items-center gap-1" title="Kembalikan ke Default Key">
+                            <i data-lucide="rotate-ccw" size="12"></i> Reset
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-indigo-600">
+                        *Default Key (Gemini 2.5 Flash) sudah terisi otomatis. Anda tidak perlu mengubahnya kecuali ingin menggunakan kuota key pribadi.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- LEFT COLUMN: INPUT -->
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">Data Jurnal / Dashboard</label>
+                        <input type="text" id="input-student-name" placeholder="Nama Siswa (Opsional)" class="text-xs border border-gray-300 rounded px-2 py-1 outline-none focus:border-indigo-500">
+                    </div>
+                    
+                    <textarea id="input-text" class="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-xs font-mono leading-relaxed resize-none" placeholder="Tempel data di sini...&#10;&#10;Contoh:&#10;✅ Ceklis: 4/9&#10;...&#10;ATAU Dashboard:&#10;Riwayat Jurnal Terbaru&#10;aje (aje@jurnal.com)&#10;..."></textarea>
+
+                    <div id="error-msg" class="hidden mt-2 text-xs text-red-600 bg-red-50 p-2 rounded flex items-center gap-2">
+                        <i data-lucide="alert-circle" size="14"></i> <span id="error-text"></span>
+                    </div>
+                    
+                    <button id="btn-analyze" class="mt-4 w-full py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all font-medium text-white shadow-md bg-gray-800 hover:bg-gray-900">
+                        <i data-lucide="refresh-cw" size="18" id="btn-icon"></i> 
+                        <span id="btn-text">Analisis Cepat</span>
+                    </button>
+                </div>
+
+                <!-- VERIFICATION PANEL -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-sm uppercase tracking-wider text-gray-500 flex justify-between">
+                        <span id="detection-title">Deteksi Data</span>
+                    </h3>
+                    
+                    <!-- Summary Stats (Hidden by default) -->
+                    <div id="summary-stats" class="grid grid-cols-3 gap-2 mb-4 hidden">
+                        <div class="bg-gray-50 p-2 rounded text-center">
+                            <div class="text-xs text-gray-500">Total Hari</div>
+                            <div class="font-bold text-gray-800" id="stat-total">0</div>
+                        </div>
+                        <div class="bg-green-50 p-2 rounded text-center">
+                            <div class="text-xs text-green-600">Sempurna</div>
+                            <div class="font-bold text-green-700" id="stat-perfect">0</div>
+                        </div>
+                        <div class="bg-indigo-50 p-2 rounded text-center">
+                            <div class="text-xs text-indigo-600">Rata-rata</div>
+                            <div class="font-bold text-indigo-700" id="stat-avg">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Habits Container -->
+                    <div id="habits-container" class="space-y-3">
+                        <!-- Habits will be injected here by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: OUTPUT -->
+            <div class="bg-white p-6 rounded-xl shadow-sm h-full flex flex-col border border-gray-200">
+                <div class="flex justify-between items-center mb-4 border-b pb-4">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-lg font-bold text-gray-800">Hasil Narasi</h2>
+                        <span id="ai-badge" class="hidden text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">AI Generated</span>
+                    </div>
+                    <button id="btn-copy" class="hidden text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1.5 px-3 rounded flex items-center gap-2 transition-colors">
+                        <i data-lucide="clipboard" size="16"></i> Salin
+                    </button>
+                </div>
+                
+                <div id="output-container" class="bg-gray-50 p-5 rounded-lg border border-gray-200 flex-grow overflow-auto animate-in fade-in h-[500px]">
+                     <!-- Empty State -->
+                    <div id="empty-state" class="h-full flex flex-col items-center justify-center text-gray-400">
+                        <i data-lucide="sparkles" size="48" class="mb-3 opacity-20"></i>
+                        <p class="text-sm text-center font-medium">Hasil analisis akan muncul di sini</p>
+                        <p class="text-xs text-center mt-1 opacity-70">Gunakan tombol "Analisis" di sebelah kiri</p>
+                    </div>
+                    <!-- Result Text -->
+                    <pre id="output-text" class="hidden whitespace-pre-wrap font-sans text-sm text-gray-700 leading-relaxed"></pre>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t text-center">
+                    <p id="model-info" class="text-[10px] text-gray-400">
+                        Menggunakan Algoritma Lokal (Rule-Based)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- CONFIG & STATE ---
+        const DEFAULT_API_KEY = "AIzaSyDFi8XCPhqNDGnz9OWywx1EmSHgzCseZqY";
+        let state = {
+            useGenAI: false,
+            apiKey: DEFAULT_API_KEY,
+            inputText: '',
+            studentName: '',
+            mode: 'daily', // 'daily' or 'summary'
+            isLoading: false,
+            isKeyExpanded: false,
+            habits: {
+                sholatShubuh: false, sholatDzuhurAshar: false, sholatMaghribIsya: false,
+                doa: false, doaEsok: false,
+                makanSehat: false, olahraga: false,
+                belajar: false,
+                bangunPagi: false, tidurCepat: false,
+                bermasyarakat: false
+            },
+            stats: { average: 0, totalEntries: 0, perfectDays: 0 }
+        };
+
+        // --- DIMENSIONS DATA ---
+        const dimensions = {
+            keimanan: { 
+                title: "Keimanan & Ketakwaan", 
+                icon: "heart", 
+                color: "text-purple-600",
+                items: ['sholatShubuh', 'sholatDzuhurAshar', 'sholatMaghribIsya', 'doa', 'doaEsok'] 
+            },
+            kewargaan: { 
+                title: "Kewargaan (Global/Lokal)", 
+                icon: "users", 
+                color: "text-blue-600",
+                items: ['bermasyarakat'] 
+            },
+            penalaran: { 
+                title: "Penalaran Kritis", 
+                icon: "book-open", 
+                color: "text-yellow-600",
+                items: ['belajar'] 
+            },
+            kemandirian: { 
+                title: "Kemandirian (Disiplin Diri)", 
+                icon: "sun", 
+                color: "text-orange-600",
+                items: ['bangunPagi', 'tidurCepat'] 
+            },
+            kesehatan: { 
+                title: "Kesehatan (Fisik & Mental)", 
+                icon: "activity", 
+                color: "text-green-600",
+                items: ['olahraga', 'makanSehat'] 
+            }
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderHabitsUI();
+            
+            // Set default key in input
+            document.getElementById('input-api-key').value = DEFAULT_API_KEY;
+        });
+
+        // --- DOM ELEMENTS ---
+        const els = {
+            btnModeOffline: document.getElementById('btn-mode-offline'),
+            btnModeAI: document.getElementById('btn-mode-ai'),
+            apiKeyContainer: document.getElementById('api-key-container'),
+            btnAccordion: document.getElementById('btn-accordion-toggle'),
+            accordionContent: document.getElementById('accordion-content'),
+            accordionIcon: document.getElementById('accordion-icon'),
+            inputKey: document.getElementById('input-api-key'),
+            btnResetKey: document.getElementById('btn-reset-key'),
+            keyBadge: document.getElementById('key-status-badge'),
+            
+            inputName: document.getElementById('input-student-name'),
+            inputText: document.getElementById('input-text'),
+            btnAnalyze: document.getElementById('btn-analyze'),
+            btnIcon: document.getElementById('btn-icon'),
+            btnText: document.getElementById('btn-text'),
+            errorMsg: document.getElementById('error-msg'),
+            errorText: document.getElementById('error-text'),
+            
+            detectionTitle: document.getElementById('detection-title'),
+            summaryStats: document.getElementById('summary-stats'),
+            statTotal: document.getElementById('stat-total'),
+            statPerfect: document.getElementById('stat-perfect'),
+            statAvg: document.getElementById('stat-avg'),
+            habitsContainer: document.getElementById('habits-container'),
+            
+            aiBadge: document.getElementById('ai-badge'),
+            btnCopy: document.getElementById('btn-copy'),
+            emptyState: document.getElementById('empty-state'),
+            outputText: document.getElementById('output-text'),
+            modelInfo: document.getElementById('model-info')
+        };
+
+        // --- EVENT LISTENERS ---
+        els.btnModeOffline.addEventListener('click', () => setModeAI(false));
+        els.btnModeAI.addEventListener('click', () => setModeAI(true));
+        
+        els.btnAccordion.addEventListener('click', toggleAccordion);
+        els.btnResetKey.addEventListener('click', () => {
+            state.apiKey = DEFAULT_API_KEY;
+            els.inputKey.value = DEFAULT_API_KEY;
+            updateKeyBadge();
+        });
+        els.inputKey.addEventListener('input', (e) => {
+            state.apiKey = e.target.value;
+            updateKeyBadge();
+        });
+
+        els.btnAnalyze.addEventListener('click', handleAnalyze);
+        els.btnCopy.addEventListener('click', copyToClipboard);
+
+        els.inputName.addEventListener('input', (e) => state.studentName = e.target.value);
+        els.inputText.addEventListener('input', (e) => state.inputText = e.target.value);
+
+        // --- FUNCTIONS ---
+
+        function setModeAI(enabled) {
+            state.useGenAI = enabled;
+            
+            // Toggle UI Buttons
+            if (enabled) {
+                els.btnModeOffline.className = "px-4 py-2 rounded-md text-sm font-medium transition-all text-gray-500 hover:text-gray-700 flex items-center gap-2";
+                els.btnModeAI.className = "px-4 py-2 rounded-md text-sm font-medium transition-all bg-indigo-600 shadow-sm text-white flex items-center gap-2";
+                els.apiKeyContainer.classList.remove('hidden');
+                
+                // Button Style
+                els.btnAnalyze.className = "mt-4 w-full py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all font-medium text-white shadow-md bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700";
+                els.btnText.textContent = "Analisis dengan AI";
+                els.btnIcon.setAttribute('data-lucide', 'sparkles');
+                
+                els.detectionTitle.textContent = "Deteksi Data (Mode AI Aktif)";
+                els.modelInfo.textContent = "Menggunakan model Google Gemini 2.5 Flash";
+            } else {
+                els.btnModeOffline.className = "px-4 py-2 rounded-md text-sm font-medium transition-all bg-white shadow-sm text-indigo-700 flex items-center gap-2";
+                els.btnModeAI.className = "px-4 py-2 rounded-md text-sm font-medium transition-all text-gray-500 hover:text-gray-700 flex items-center gap-2";
+                els.apiKeyContainer.classList.add('hidden');
+                
+                // Button Style
+                els.btnAnalyze.className = "mt-4 w-full py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all font-medium text-white shadow-md bg-gray-800 hover:bg-gray-900";
+                els.btnText.textContent = "Analisis Cepat";
+                els.btnIcon.setAttribute('data-lucide', 'refresh-cw');
+
+                els.detectionTitle.textContent = "Deteksi Data";
+                els.modelInfo.textContent = "Menggunakan Algoritma Lokal (Rule-Based)";
+            }
+            lucide.createIcons();
+        }
+
+        function toggleAccordion() {
+            state.isKeyExpanded = !state.isKeyExpanded;
+            if (state.isKeyExpanded) {
+                els.accordionContent.classList.remove('hidden');
+                els.accordionIcon.style.transform = "rotate(180deg)";
+            } else {
+                els.accordionContent.classList.add('hidden');
+                els.accordionIcon.style.transform = "rotate(0deg)";
+            }
+        }
+
+        function updateKeyBadge() {
+            if (state.apiKey === DEFAULT_API_KEY) {
+                els.keyBadge.textContent = "Menggunakan Default Key";
+            } else {
+                els.keyBadge.textContent = "Menggunakan Custom Key";
+            }
+        }
+
+        function renderHabitsUI() {
+            els.habitsContainer.innerHTML = '';
+            
+            for (const [key, dim] of Object.entries(dimensions)) {
+                const habitRow = document.createElement('div');
+                habitRow.className = "flex items-start gap-3 p-2 hover:bg-gray-50 rounded transition-colors";
+                
+                // Build pills HTML
+                let pillsHtml = '';
+                dim.items.forEach(item => {
+                    const isChecked = state.habits[item];
+                    const bgClass = isChecked ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-400 border-gray-200';
+                    const label = item.replace(/([A-Z])/g, ' $1').toLowerCase();
+                    pillsHtml += `<span class="text-[10px] px-2 py-0.5 rounded-full border ${bgClass} mr-1 mb-1 inline-block">${label}</span>`;
+                });
+
+                habitRow.innerHTML = `
+                    <div class="mt-1 ${dim.color}"><i data-lucide="${dim.icon}" size="16"></i></div>
+                    <div class="flex-grow">
+                        <p class="text-xs font-bold text-gray-700 mb-1">${dim.title}</p>
+                        <div class="flex flex-wrap">${pillsHtml}</div>
+                    </div>
+                `;
+                els.habitsContainer.appendChild(habitRow);
+            }
+            lucide.createIcons();
+        }
+
+        function handleAnalyze() {
+            if (state.useGenAI) {
+                analyzeWithAI();
+            } else {
+                analyzeLocal();
+            }
+        }
+
+        // --- CORE LOGIC (ANALYSIS) ---
+
+        function analyzeLocal() {
+            const text = state.inputText.toLowerCase();
+            const newHabits = { ...state.habits };
+            
+            // Auto-detect Name
+            if (!state.studentName) {
+                const nameMatch = state.inputText.match(/^([a-zA-Z0-9]+)\s\(/m) || state.inputText.match(/Siswa:\s*([a-zA-Z0-9]+)/);
+                if (nameMatch) {
+                    state.studentName = nameMatch[1];
+                    els.inputName.value = state.studentName;
+                }
+            }
+
+            // Reset Habits
+            Object.keys(newHabits).forEach(k => newHabits[k] = false);
+
+            // Detect Mode
+            const isBulk = state.inputText.includes('Riwayat Jurnal') || state.inputText.includes('Rata-rata Nilai') || (state.inputText.match(/✅ Ceklis:/g) || []).length > 1;
+            state.mode = isBulk ? 'summary' : 'daily';
+
+            if (isBulk) {
+                // Bulk Logic
+                const avgMatch = state.inputText.match(/Rata-rata Nilai\s*([\d.]+)/i);
+                const average = avgMatch ? parseFloat(avgMatch[1]) : 0;
+                const entriesCount = (state.inputText.match(/Pengiriman ke-/g) || []).length;
+                const perfectCount = (state.inputText.match(/✅ Ceklis:\s*9\/9/g) || []).length;
+                
+                state.stats = { average, totalEntries: entriesCount, perfectDays: perfectCount };
+                
+                // Habits visual check
+                Object.keys(newHabits).forEach(k => newHabits[k] = average >= 8.0);
+            } else {
+                // Daily Logic
+                if (text.includes('shubuh') && !text.includes('❌')) newHabits.sholatShubuh = true;
+                if (text.includes('dzuhur') || text.includes('ashar')) newHabits.sholatDzuhurAshar = true;
+                if (text.includes('maghrib') || text.includes('isya')) newHabits.sholatMaghribIsya = true;
+                if ((text.includes('doa') && !text.includes('doa hari esok')) || text.includes('📝 doa: 1/1')) newHabits.doa = true;
+                if (text.includes('doa hari esok')) newHabits.doaEsok = true;
+                if (text.includes('makan sehat') || text.includes('bergizi')) newHabits.makanSehat = true;
+                if (text.includes('olahraga')) newHabits.olahraga = true;
+                if (text.includes('belajar')) newHabits.belajar = true;
+                if (text.includes('bangun pagi')) newHabits.bangunPagi = true;
+                if (text.includes('tidur cepat')) newHabits.tidurCepat = true;
+                if (text.includes('bermasyarakat')) newHabits.bermasyarakat = true;
+            }
+
+            state.habits = newHabits;
+            
+            // Update UI
+            updateStatsUI();
+            renderHabitsUI();
+            generateLocalNarrative();
+        }
+
+        function updateStatsUI() {
+            if (state.mode === 'summary' && state.stats.totalEntries > 0) {
+                els.summaryStats.classList.remove('hidden');
+                els.statTotal.textContent = state.stats.totalEntries;
+                els.statPerfect.textContent = state.stats.perfectDays;
+                els.statAvg.textContent = state.stats.average;
+            } else {
+                els.summaryStats.classList.add('hidden');
+            }
+        }
+
+        function getRandomPhrase(phrases) {
+            return phrases[Math.floor(Math.random() * phrases.length)];
+        }
+
+        function generateLocalNarrative() {
+            const sName = state.studentName || "Ananda";
+            let text = "";
+            const currentHabits = state.habits;
+
+            if (state.mode === 'summary') {
+                const { average, totalEntries } = state.stats;
+                text += `Laporan Perkembangan Karakter\nNama: ${sName}\nPeriode: ${totalEntries} Hari Terakhir (Rata-rata: ${average})\n\n`;
+                
+                text += `1. Dimensi Keimanan & Ketakwaan:\n${average > 8.5 ? "Sangat konsisten menjaga sholat 5 waktu." : "Cukup baik, perlu peningkatan kedisiplinan sholat."}\n\n`;
+                text += `2. Dimensi Kewargaan:\nTerpantau aktif dan peduli lingkungan sekitar.\n\n`;
+                text += `3. Dimensi Penalaran Kritis:\nSemangat belajar rutin terjaga dengan baik.\n\n`;
+                text += `4. Dimensi Kemandirian:\n${average > 9 ? "Sangat disiplin mengatur waktu istirahat." : "Pola tidur sudah terbentuk, pertahankan."}\n\n`;
+                text += `5. Dimensi Kesehatan:\nMenjaga fisik dengan baik melalui makan sehat dan olahraga.\n\n`;
+                
+                text += `Kesimpulan:\n${getRandomPhrase(["Luar biasa!", "Kerja bagus!", "Hebat!"])} ${sName}, pencapaian rata-rata ${average} menunjukkan keseriusanmu. Pertahankan kebiasaan baik ini dan jadilah inspirasi! 🚀`;
+            } else {
+                text += `Laporan Harian Siswa Hebat\nNama: ${sName}\n\n`;
+                
+                // 1. Keimanan Logic (Detailed)
+                const ibadahCount = dimensions.keimanan.items.filter(k => currentHabits[k]).length;
+                let ibadahMsg = "";
+                if (ibadahCount === 5) ibadahMsg = "Alhamdulillah, ibadah hari ini sangat lengkap dan terjaga.";
+                else if (ibadahCount >= 3) ibadahMsg = "Ibadah sudah berjalan cukup baik, mari sempurnakan yang terlewat esok hari.";
+                else if (ibadahCount > 0) ibadahMsg = "Alhamdulillah sudah ada ibadah yang terlaksana, namun masih banyak yang bolong. Yuk ditingkatkan!";
+                else ibadahMsg = "Ibadah hari ini tampaknya belum terlaksana. Mari kita mulai perbaiki hubungan dengan Tuhan mulai besok ya.";
+                text += `1. Dimensi Keimanan & Ketakwaan:\n${ibadahMsg}\n\n`;
+
+                // 2. Kewargaan Logic
+                text += `2. Dimensi Kewargaan:\n${currentHabits.bermasyarakat ? "Interaksi sosial yang sangat positif hari ini." : "Belum terlihat aktivitas sosial/bermasyarakat. Jangan lupa menyapa orang sekitar ya!"}\n\n`;
+                
+                // 3. Belajar Logic
+                text += `3. Dimensi Penalaran Kritis:\n${currentHabits.belajar ? "Hebat, telah meluangkan waktu untuk belajar mandiri." : "Belum ada catatan belajar hari ini. Luangkan waktu membaca buku walau sebentar."}\n\n`;
+                
+                // 4. Kemandirian Logic (Partial)
+                let mandiriMsg = "";
+                if (currentHabits.bangunPagi && currentHabits.tidurCepat) mandiriMsg = "Disiplin tidur dan bangun pagi yang patut dicontoh. Luar biasa!";
+                else if (currentHabits.bangunPagi) mandiriMsg = "Bagus sudah bangun pagi, tapi usahakan tidur lebih cepat ya agar tidak mengantuk.";
+                else if (currentHabits.tidurCepat) mandiriMsg = "Tidur sudah tepat waktu, tinggal biasakan bangun lebih pagi lagi.";
+                else mandiriMsg = "Pola tidur perlu diperbaiki. Ayo kurangi begadang agar bisa bangun pagi dengan segar.";
+                text += `4. Dimensi Kemandirian:\n${mandiriMsg}\n\n`;
+
+                // 5. Kesehatan Logic (Partial - Budi Case)
+                let sehatMsg = "";
+                if (currentHabits.olahraga && currentHabits.makanSehat) sehatMsg = "Luar biasa! Paket lengkap sehat: rajin olahraga dan makan bergizi.";
+                else if (currentHabits.olahraga) sehatMsg = "Semangat olahraganya mantap! Jangan lupa imbangi juga dengan makan makanan bergizi ya.";
+                else if (currentHabits.makanSehat) sehatMsg = "Bagus sudah menjaga asupan makan, tapi tubuh juga butuh gerak. Yuk olahraga sedikit!";
+                else sehatMsg = "Kesehatan fisik perlu perhatian. Jangan lupa sempatkan gerak badan dan makan sehat.";
+                text += `5. Dimensi Kesehatan:\n${sehatMsg}\n\n`;
+
+                text += `Kesimpulan:\n${getRandomPhrase(["Tetap semangat!", "Jangan menyerah!", "Ayo bangkit!"])} ${sName}, setiap hari adalah kesempatan baru. Tingkatkan poin-poin yang masih kosong dan pertahankan hal baik yang sudah dilakukan! 👋🇮🇩`;
+            }
+            
+            displayNarrative(text, false);
+        }
+
+        // --- AI LOGIC ---
+
+        async function analyzeWithAI() {
+            const activeKey = state.apiKey.trim();
+            
+            if (!activeKey) {
+                showError("API Key Kosong. Gunakan key default atau masukkan milik Anda.");
+                if (!state.isKeyExpanded) toggleAccordion();
+                return;
+            }
+
+            hideError();
+            setLoading(true);
+            displayNarrative("🤖 Sedang berdiskusi dengan AI (Gemini 2.5) untuk menyusun kalimat terbaik... Mohon tunggu...", true);
+
+            try {
+                const prompt = `
+                    Bertindaklah sebagai evaluator pendidikan karakter untuk siswa SMP di Indonesia.
+                    Tugas: Analisis data mentah jurnal harian/dashboard berikut dan buat laporan narasi evaluasi.
+                    
+                    DATA SISWA:
+                    ${state.inputText}
+                    
+                    NAMA SISWA (Jika ada di data): ${state.studentName || "Siswa"}
+                    
+                    INSTRUKSI OUTPUT:
+                    Buat narasi yang hangat, personal, memotivasi, dan tidak kaku (seperti guru yang ramah namun berwibawa).
+                    
+                    STRUKTUR WAJIB (Jangan gunakan markdown bold/italic yang berlebihan):
+                    1. Judul Laporan (Misal: Laporan Harian / Rapor Perkembangan).
+                    2. Rincian 5 Dimensi Profil Pelajar Pancasila:
+                       - Keimanan & Ketakwaan (Analisis Sholat, Doa) -> Jika ada isi doa di teks, komentari isinya dengan apresiasi.
+                       - Kewargaan (Analisis Bermasyarakat)
+                       - Penalaran Kritis (Analisis Belajar)
+                       - Kemandirian (Analisis Bangun Pagi, Tidur Cepat)
+                       - Kesehatan (Analisis Olahraga, Makan Sehat)
+                    3. Satu paragraf kesimpulan di akhir yang merangkum progress secara positif dan memberi semangat.
+                    
+                    Gunakan Bahasa Indonesia yang baik, sopan, dan natural.
+                `;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) throw new Error(data.error.message);
+                if (!data.candidates || !data.candidates[0].content) throw new Error("Tidak ada respon dari AI.");
+
+                const aiText = data.candidates[0].content.parts[0].text;
+                
+                // We still run local analysis to update UI verification pills
+                analyzeLocal(); 
+                
+                // Overwrite narrative with AI result
+                displayNarrative(aiText, true);
+
+            } catch (err) {
+                showError("Gagal menghubungi AI: " + err.message);
+                displayNarrative("Maaf, terjadi kesalahan saat menghubungi AI. Silakan cek API Key atau koneksi internet.", false);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // --- HELPERS ---
+
+        function displayNarrative(text, isAI) {
+            els.emptyState.classList.add('hidden');
+            els.outputText.classList.remove('hidden');
+            els.outputText.textContent = text;
+            els.btnCopy.classList.remove('hidden');
+            
+            if (isAI) els.aiBadge.classList.remove('hidden');
+            else els.aiBadge.classList.add('hidden');
+        }
+
+        function setLoading(isLoading) {
+            state.isLoading = isLoading;
+            els.btnAnalyze.disabled = isLoading;
+            if (isLoading) {
+                els.btnIcon.classList.add('animate-spin');
+            } else {
+                els.btnIcon.classList.remove('animate-spin');
+            }
+        }
+
+        function showError(msg) {
+            els.errorMsg.classList.remove('hidden');
+            els.errorText.textContent = msg;
+        }
+
+        function hideError() {
+            els.errorMsg.classList.add('hidden');
+        }
+
+        function copyToClipboard() {
+            const text = els.outputText.textContent;
+            if (!text) return;
+            
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('Narasi berhasil disalin!');
+        }
+
+    </script>
+</body>
+</html>
