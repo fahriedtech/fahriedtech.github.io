@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coloring Book Prompt Architect V10 (Optimized)</title>
     <title>Coloring Book Architect V10.2 (With Crayon Preview)</title>
-    <link rel="icon" href="/images/favicon.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,6 +16,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 4px; }
@@ -33,15 +34,16 @@
 </head>
 <body class="bg-black text-gray-200 min-h-screen selection:bg-indigo-500 selection:text-white">
 
+    <!-- Main Container -->
     <div class="max-w-5xl mx-auto p-4 md:p-8">
         
         <!-- Header -->
         <header class="mb-10 border-b border-gray-800 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2">
-                    <span class="text-indigo-500">B/W</span> Coloring Architect <span class="text-xs bg-orange-600 text-white px-2 py-1 rounded ml-2">V10.2 (CRAYON MODE)</span>
+                    <span class="text-indigo-500">B/W</span> Coloring Architect <span class="text-xs bg-green-800 text-white px-2 py-1 rounded ml-2">V10.1 (OPTIMIZED)</span>
                 </h1>
-                <p class="text-gray-400 text-sm md:text-base">Generator Prompt Lengkap: Line Art + Negative + Crayon Preview.</p>
+                <p class="text-gray-400 text-sm md:text-base">Generator Prompt JSON Stabil untuk Model Gemini Image / Midjourney.</p>
             </div>
             <div class="px-3 py-1 rounded border border-gray-800 bg-gray-900 text-xs font-mono text-gray-500">
                 Powered by Gemini 2.5
@@ -50,9 +52,10 @@
 
         <!-- Warning Section -->
         <div class="bg-yellow-900/20 rounded-xl p-4 mb-8 border-l-4 border-yellow-500 text-yellow-200">
-             <h4 class="font-bold mb-1 flex items-center gap-2"><i class="fas fa-info-circle"></i> FITUR BARU: PREVIEW WARNA</h4>
-             <p class="text-sm">Kini menyertakan prompt khusus untuk menghasilkan versi berwarna (Gaya Crayon/Gradasi) sebagai referensi.</p>
+             <h4 class="font-bold mb-1 flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> TARGET MODEL: NANO BANANA / IMAGE PREVIEW</h4>
+             <p class="text-sm">Prompt ini dikonfigurasi secara agresif untuk mencegah shading dan warna pada model gambar cepat.</p>
         </div>
+
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
@@ -96,6 +99,7 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Rasio Aspek & Cetak</label>
                         <div class="grid grid-cols-2 gap-2">
+                            <!-- Standard Art Ratios -->
                             <button onclick="selectRatio(this, '--ar 2:3')" class="ratio-btn active-ratio p-3 border border-indigo-500 bg-indigo-900/30 text-white rounded text-center text-xs transition">
                                 <span class="font-bold">Portrait Art</span>
                                 <span class="text-[10px] opacity-60">2:3 (Poster)</span>
@@ -104,6 +108,8 @@
                                 <span class="font-bold">Square</span>
                                 <span class="text-[10px] opacity-60">1:1 (IG/Feed)</span>
                             </button>
+                            
+                            <!-- Print Specific Ratios -->
                             <button onclick="selectRatio(this, '--ar 297:210')" class="ratio-btn p-3 border border-gray-700 bg-gray-800 text-gray-400 rounded text-center text-xs hover:bg-gray-700 transition relative overflow-hidden">
                                 <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-bl"></div>
                                 <span class="font-bold">A4 Landscape</span>
@@ -117,35 +123,40 @@
                     </div>
 
                     <button id="generateBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-lg transition-all transform active:scale-95 shadow-lg shadow-indigo-900/50 flex justify-center items-center gap-2 mt-4">
-                        <span>Generate Prompts</span>
+                        <span>Generate Prompt JSON</span>
                         <i class="fas fa-magic"></i>
                     </button>
                 </div>
                 
+                <!-- Status/Error Box -->
                 <div id="statusBox" class="hidden p-4 rounded-lg text-sm border"></div>
             </div>
 
             <!-- Output Section -->
             <div class="lg:col-span-2 space-y-6">
                 
+                <!-- Result Container -->
                 <div class="glass p-1 rounded-xl h-full min-h-[400px] flex flex-col relative overflow-hidden">
                     
+                    <!-- Loading State -->
                     <div id="loadingOverlay" class="hidden absolute inset-0 bg-black/80 z-20 flex flex-col items-center justify-center backdrop-blur-sm">
                         <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p class="text-indigo-400 font-mono animate-pulse">Meracik prompt line art & crayon...</p>
+                        <p class="text-indigo-400 font-mono animate-pulse">Menghasilkan prompt dengan LLM...</p>
                     </div>
 
+                    <!-- Empty State -->
                     <div id="emptyState" class="flex-1 flex flex-col items-center justify-center text-gray-600 p-10 text-center">
-                        <i class="fas fa-palette text-4xl mb-4 opacity-50"></i>
-                        <p>Siap menghasilkan Prompt Line Art + Prompt Crayon Preview.</p>
+                        <i class="fas fa-microchip text-4xl mb-4 opacity-50"></i>
+                        <p>Masukkan subjek dan klik Generate untuk membuat instruksi AI.</p>
                     </div>
 
+                    <!-- Content State -->
                     <div id="resultContent" class="hidden p-6 space-y-6">
                         
-                        <!-- 1. Positive Prompt (Line Art) -->
+                        <!-- Positive Prompt -->
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-green-400 uppercase tracking-wider">1. Line Art Prompt (B/W)</span>
+                                <span class="text-xs font-bold text-green-400 uppercase tracking-wider">Positive Prompt</span>
                                 <div class="flex gap-2">
                                     <span id="ratioBadge" class="text-[10px] uppercase bg-gray-800 px-2 py-0.5 rounded text-indigo-400 border border-indigo-900/30">--ar</span>
                                     <button onclick="copyText('positiveOutput')" class="text-xs text-gray-400 hover:text-white transition flex items-center gap-1">
@@ -153,38 +164,26 @@
                                     </button>
                                 </div>
                             </div>
-                            <textarea id="positiveOutput" readonly class="w-full h-24 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mono text-green-100 focus:outline-none resize-none"></textarea>
-                        </div>
-
-                        <!-- 2. Crayon Preview Prompt (NEW) -->
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-orange-400 uppercase tracking-wider">2. Crayon Style Prompt (Color)</span>
-                                <button onclick="copyText('coloredOutput')" class="text-xs text-gray-400 hover:text-white transition flex items-center gap-1">
-                                    <i class="fas fa-copy"></i> Copy
-                                </button>
-                            </div>
                             <div class="relative group">
-                                <textarea id="coloredOutput" readonly class="w-full h-24 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mono text-orange-100 focus:outline-none resize-none"></textarea>
-                                <div class="absolute bottom-2 right-2 text-[10px] text-orange-500/50 italic">Gunakan tanpa Negative Prompt agresif</div>
+                                <textarea id="positiveOutput" readonly class="w-full h-32 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mono text-green-100 focus:outline-none resize-none"></textarea>
                             </div>
                         </div>
 
-                        <!-- 3. Negative Prompt -->
+                        <!-- Negative Prompt -->
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-red-400 uppercase tracking-wider">3. Negative Prompt (Untuk Box 1)</span>
+                                <span class="text-xs font-bold text-red-400 uppercase tracking-wider">Negative Prompt (AGRESIF)</span>
                                 <button onclick="copyText('negativeOutput')" class="text-xs text-gray-400 hover:text-white transition flex items-center gap-1">
                                     <i class="fas fa-copy"></i> Copy
                                 </button>
                             </div>
-                            <textarea id="negativeOutput" readonly class="w-full h-20 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mono text-red-100 focus:outline-none resize-none"></textarea>
+                            <textarea id="negativeOutput" readonly class="w-full h-24 bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm mono text-red-100 focus:outline-none resize-none"></textarea>
                         </div>
 
-                        <!-- Advice -->
-                        <div class="bg-gray-800/50 rounded-lg p-3 border-l-2 border-gray-600">
-                            <h4 class="text-gray-400 text-xs font-bold uppercase mb-1">Catatan Sistem</h4>
-                            <p id="adviceOutput" class="text-xs text-gray-400"></p>
+                        <!-- Technical Advice -->
+                        <div class="bg-indigo-900/20 rounded-lg p-4 border-l-2 border-indigo-500">
+                            <h4 class="text-indigo-400 text-xs font-bold uppercase mb-1">Analisis Teknis</h4>
+                            <p id="adviceOutput" class="text-sm text-gray-300"></p>
                         </div>
 
                     </div>
@@ -196,9 +195,9 @@
     <script>
         // State
         let currentRatio = '--ar 2:3';
-        const apiKey = "AIzaSyAZRYJdAMXNgJX05G6D_5PVMrwdNRJ3Veg"; // API Key disuntikkan oleh environment
+        const apiKey = "AIzaSyAsTrBKZYMnYabQv3XXCXM3XBAmZXItja0"; // Disuntikkan oleh environment
         const llmModelName = "gemini-2.5-flash-preview-09-2025"; 
-        const targetImageModel = "Gemini 2.5 Flash Image Preview";
+        const targetImageModel = "Gemini 2.5 Flash Image Preview (Nano Banana)";
 
         // UI Handlers
         function selectRatio(btn, ratio) {
@@ -246,11 +245,7 @@
             document.execCommand('copy');
             
             const originalBg = el.style.backgroundColor;
-            // Visual feedback colors based on ID
-            if(elementId === 'positiveOutput') el.style.backgroundColor = '#064e3b';
-            else if(elementId === 'coloredOutput') el.style.backgroundColor = '#7c2d12';
-            else el.style.backgroundColor = '#7f1d1d';
-
+            el.style.backgroundColor = '#312e81'; 
             setTimeout(() => {
                 el.style.backgroundColor = '';
             }, 200);
@@ -273,36 +268,37 @@
             document.getElementById('statusBox').classList.add('hidden');
 
             try {
-                // Construct System Prompt Update for Color Version
+                // Construct System Prompt for JSON output (V10)
                 const systemPrompt = `
-                Anda adalah Insinyur Prompt AI. Tugas Anda menghasilkan JSON berisi 3 komponen prompt untuk model gambar.
+                Anda adalah Insinyur Prompt AI ahli yang berspesialisasi dalam Halaman Buku Mewarnai.
+                Anda menggunakan model LLM untuk menghasilkan prompt Teks, yang ditujukan untuk model Generasi Gambar Cepat: ${targetImageModel}.
+
+                DEFINISI LOGIKA GAYA:
+                1. "Toddler Simple": VERY THICK uniform lines, low detail, NO background, large shapes, "sticker style", bold outlines.
+                2. "Early Intermediate": THICK uniform lines, moderate detail level, multiple distinct objects, simple full background (e.g., sun, clouds), focus on large fillable areas.
+                3. "Late Intermediate": MEDIUM uniform lines, storybook style, moderate detail and complexity, balanced line density, full background.
+                4. "Advanced Detailed": Thin/Fine lines, high detail, complex textures (fur, leaves, scales), full atmospheric scene, intricate patterns.
+                5. "Mandala": Abstract, geometric, symmetrical, repetitive patterns, crisp lines.
+
+                ATURAN KRITIS (WAJIB DIIKUTI):
+                1. Output HARUS berupa JSON yang valid saja.
+                2. 'positive_prompt' harus selalu mencakup: "black and white line art", "coloring book page", "white background", "no shading", "clean lines".
+                3. 'positive_prompt' harus MENYESUAIKAN deskripsi visual berdasarkan Logika Gaya yang dipilih.
+                4. 'negative_prompt' HARUS AGRESIF untuk mencegah hasil seperti foto. Keywords: "grayscale", "shading", "colors", "3d", "realistic photo", "blurry", "text", "watermark", "deep shadows", "low contrast", "crayon texture", "filled colors", "noise", "gradients".
+                5. 'technical_advice' jelaskan singkat kenapa prompt ini dioptimalkan untuk gaya tersebut.
                 
-                INPUT: Subjek: "${subject}", Gaya: "${style}".
-
-                TUGAS ANDA MENGHASILKAN 3 PROMPT DALAM JSON:
-
-                1. 'positive_prompt' (UNTUK LINE ART):
-                   - Focus: "black and white line art", "coloring book page", "white background", "no shading".
-                   - Sesuaikan detail garis berdasarkan Gaya (Toddler = Bold lines, Advanced = Fine lines).
-
-                2. 'colored_preview_prompt' (UNTUK WARNA CRAYON):
-                   - Gunakan subjek yang SAMA PERSIS.
-                   - Focus: "colored with wax crayons", "childlike masterpiece", "vibrant colors", "soft wax texture", "rough paper texture", "crayon gradation", "blended colors".
-                   - Jangan gunakan kata "line art". Ini harus terlihat seperti hasil jadi yang sudah diwarnai.
-
-                3. 'negative_prompt' (UNTUK LINE ART):
-                   - Agresif: "grayscale", "shading", "colors", "3d", "realistic photo", "blurry", "text", "watermark", "deep shadows", "low contrast".
-
-                Format Output JSON (Wajib):
+                Format Output JSON:
                 {
                     "positive_prompt": "string",
-                    "colored_preview_prompt": "string",
                     "negative_prompt": "string",
                     "technical_advice": "string"
                 }
                 `;
 
-                const userMessage = `Buat prompt untuk: ${subject}. Gaya: ${style}. Rasio: ${currentRatio}`;
+                const userMessage = `Buat prompt buku mewarnai untuk Subjek: "${subject}". 
+                Gaya/Level Target: ${style}. 
+                Rasio Aspek: ${currentRatio}.`;
+
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${llmModelName}:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -323,17 +319,13 @@
                 const jsonText = data.candidates[0].content.parts[0].text;
                 const parsedResult = JSON.parse(jsonText);
 
-                // Helper to append AR
-                const appendAR = (text) => {
-                    if (!text.includes('--ar') && !text.includes(currentRatio)) {
-                        return text + " " + currentRatio;
-                    }
-                    return text;
-                };
+                // Populate UI & OPTIMISASI: Paksa tempel Ratio jika LLM lupa
+                let finalPositive = parsedResult.positive_prompt;
+                if (!finalPositive.includes(currentRatio) && !finalPositive.includes('--ar')) {
+                    finalPositive += " " + currentRatio;
+                }
 
-                // Populate UI
-                document.getElementById('positiveOutput').value = appendAR(parsedResult.positive_prompt);
-                document.getElementById('coloredOutput').value = appendAR(parsedResult.colored_preview_prompt); // Add AR to color prompt too
+                document.getElementById('positiveOutput').value = finalPositive;
                 document.getElementById('negativeOutput').value = parsedResult.negative_prompt;
                 document.getElementById('adviceOutput').textContent = parsedResult.technical_advice;
                 document.getElementById('ratioBadge').textContent = currentRatio;
