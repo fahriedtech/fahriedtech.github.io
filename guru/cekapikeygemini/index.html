@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek API Key Gemini 2.5 Flash</title>
+  <link rel="icon" href="/images/favicon.png" type="image/png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 md:p-8">
+
+    <div class="max-w-xl w-full space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <div class="inline-flex items-center justify-center p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg shadow-blue-500/20 mb-4">
+                <i data-lucide="key" class="w-8 h-8 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+                Gemini 2.5 API Checker
+            </h1>
+            <p class="text-slate-400">
+                Verifikasi status dan validitas kunci API Gemini Flash 2.5 Anda.
+            </p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-2xl p-6 shadow-xl">
+            <div class="space-y-4">
+                <label class="block text-sm font-medium text-slate-300">
+                    Masukkan API Key Google AI Studio
+                </label>
+                
+                <div class="relative group">
+                    <input
+                        type="password"
+                        id="apiKeyInput"
+                        placeholder="AIzaSy..."
+                        class="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 pr-12 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono"
+                    />
+                    <button
+                        id="toggleVisibilityBtn"
+                        class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 transition-colors"
+                        type="button"
+                    >
+                        <i data-lucide="eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+
+                <button
+                    id="checkBtn"
+                    class="w-full py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+                >
+                    <i data-lucide="shield-check" class="w-5 h-5 btn-icon"></i>
+                    <span id="btnText">Periksa API Key</span>
+                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin hidden" id="loadingIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Area (Hidden by default) -->
+        <div id="resultArea" class="hidden rounded-2xl border p-6 animate-fade-in transition-colors duration-300">
+            <div class="flex items-start gap-4">
+                <!-- Status Icon -->
+                <div id="statusIconContainer" class="p-2 rounded-full shrink-0">
+                    <!-- Icon injected by JS -->
+                </div>
+                
+                <div class="space-y-1 w-full">
+                    <h3 id="resultTitle" class="font-bold text-lg">
+                        <!-- Title injected by JS -->
+                    </h3>
+                    
+                    <p id="resultDesc" class="text-slate-400 text-sm">
+                        <!-- Description injected by JS -->
+                    </p>
+
+                    <!-- Metrics (Success Only) -->
+                    <div id="metricsArea" class="hidden flex gap-4 mt-4 py-3 border-t border-emerald-500/20">
+                        <div class="flex items-center gap-2 text-sm text-slate-300">
+                            <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i>
+                            <span>Latency: <span id="latencyValue" class="font-mono font-bold text-white">0ms</span></span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-300">
+                            <i data-lucide="terminal" class="w-4 h-4 text-purple-400"></i>
+                            <span>Model: <span class="font-mono text-white">flash-2.5</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Error Info (Error Only) -->
+                    <div id="errorDetails" class="hidden mt-4 p-3 bg-red-950/50 rounded-lg border border-red-900/50 overflow-hidden">
+                        <p id="errorMessage" class="text-xs font-mono text-red-300 break-words">
+                            <!-- Error message injected by JS -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-xs text-slate-600">
+            <p>Aplikasi ini tidak menyimpan API Key Anda.</p>
+            <p>Permintaan dikirim langsung ke server Google.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // DOM Elements
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const toggleVisibilityBtn = document.getElementById('toggleVisibilityBtn');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const checkBtn = document.getElementById('checkBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.querySelector('.btn-icon');
+        const loadingIcon = document.getElementById('loadingIcon');
+        
+        const resultArea = document.getElementById('resultArea');
+        const statusIconContainer = document.getElementById('statusIconContainer');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultDesc = document.getElementById('resultDesc');
+        const metricsArea = document.getElementById('metricsArea');
+        const latencyValue = document.getElementById('latencyValue');
+        const errorDetails = document.getElementById('errorDetails');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Toggle Password Visibility
+        let isVisible = false;
+        toggleVisibilityBtn.addEventListener('click', () => {
+            isVisible = !isVisible;
+            apiKeyInput.type = isVisible ? 'text' : 'password';
+            
+            // Re-render the correct icon
+            statusIconContainer.innerHTML = ''; 
+            eyeIcon.setAttribute('data-lucide', isVisible ? 'eye-off' : 'eye');
+            lucide.createIcons();
+        });
+
+        // Check API Key Logic
+        checkBtn.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                alert("Mohon masukkan API Key terlebih dahulu.");
+                return;
+            }
+
+            // Set Loading State
+            setLoading(true);
+            hideResult();
+
+            const startTime = performance.now();
+            const model = 'gemini-2.5-flash-preview-09-2025';
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Ping test." }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const endTime = performance.now();
+                const latency = Math.round(endTime - startTime);
+
+                if (response.ok) {
+                    showSuccess(latency);
+                } else {
+                    showError(data);
+                }
+
+            } catch (error) {
+                showError({ error: { message: "Gagal menghubungi server. Periksa koneksi internet Anda." } });
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            checkBtn.disabled = isLoading;
+            if (isLoading) {
+                btnText.textContent = "Sedang Memeriksa...";
+                btnIcon.classList.add('hidden');
+                loadingIcon.classList.remove('hidden');
+            } else {
+                btnText.textContent = "Periksa API Key";
+                btnIcon.classList.remove('hidden');
+                loadingIcon.classList.add('hidden');
+            }
+        }
+
+        function hideResult() {
+            resultArea.classList.add('hidden');
+            metricsArea.classList.add('hidden');
+            errorDetails.classList.add('hidden');
+        }
+
+        function showSuccess(latency) {
+            resultArea.classList.remove('hidden');
+            // Style for Success
+            resultArea.className = "rounded-2xl border p-6 animate-fade-in transition-colors duration-300 bg-emerald-950/30 border-emerald-500/30";
+            
+            // Icon
+            statusIconContainer.className = "p-2 rounded-full shrink-0 bg-emerald-500/20 text-emerald-400";
+            statusIconContainer.innerHTML = '<i data-lucide="check-circle" class="w-6 h-6"></i>';
+            
+            // Text
+            resultTitle.className = "font-bold text-lg text-emerald-400";
+            resultTitle.textContent = "API Key Valid";
+            resultDesc.textContent = "Kunci API berhasil mengautentikasi permintaan ke Gemini 2.5 Flash.";
+
+            // Metrics
+            metricsArea.classList.remove('hidden');
+            latencyValue.textContent = `${latency}ms`;
+
+            lucide.createIcons();
+        }
+
+        function showError(data) {
+            resultArea.classList.remove('hidden');
+            // Style for Error
+            resultArea.className = "rounded-2xl border p-6 animate-fade-in transition-colors duration-300 bg-red-950/30 border-red-500/30";
+
+            // Icon
+            statusIconContainer.className = "p-2 rounded-full shrink-0 bg-red-500/20 text-red-400";
+            statusIconContainer.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6"></i>';
+
+            // Text
+            resultTitle.className = "font-bold text-lg text-red-400";
+            resultTitle.textContent = "API Key Tidak Valid";
+            resultDesc.textContent = "Gagal mengautentikasi. Periksa kembali kunci Anda atau kuota API.";
+
+            // Error Details
+            errorDetails.classList.remove('hidden');
+            errorMessage.textContent = data?.error?.message || JSON.stringify(data);
+
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
