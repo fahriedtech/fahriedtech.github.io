@@ -6,13 +6,10 @@
     <title>WA Promo AI Generator</title>
   <link rel="icon" href="/images/favicon.png" type="image/png">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -53,36 +50,38 @@
 
     <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- === KOLOM KIRI: INPUT === -->
         <div class="flex flex-col gap-6">
             
-            <!-- Header & Product Form -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <div class="flex justify-between items-center mb-6 border-b pb-4">
                     <h1 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
                         <i data-lucide="sparkles" class="text-indigo-600 fill-indigo-100"></i> AI Promo Gen v5
                     </h1>
-                    <button onclick="handleReset()" class="text-slate-400 hover:text-red-500 transition-colors text-sm flex items-center gap-1">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reset
-                    </button>
+                    
+                    <div class="flex items-center gap-3">
+                        <button onclick="openKeyModal()" class="text-slate-400 hover:text-indigo-600 transition-colors text-sm flex items-center gap-1" title="Set API Key">
+                            <i data-lucide="key" class="w-4 h-4"></i> API Key
+                        </button>
+                        <div class="h-4 w-px bg-slate-300"></div>
+                        <button onclick="handleReset()" class="text-slate-400 hover:text-red-500 transition-colors text-sm flex items-center gap-1">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reset
+                        </button>
+                    </div>
                 </div>
 
                 <div class="space-y-4">
-                    <!-- Product Name -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Produk</label>
                         <input type="text" id="productName" placeholder="Contoh: Paket Wisata Bromo, Desain Logo" 
                             class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition">
                     </div>
 
-                    <!-- Pricing Section -->
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex items-center justify-between mb-3">
                            <label class="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
                              <i data-lucide="tag" class="w-3.5 h-3.5"></i> Pengaturan Harga
                            </label>
                            
-                           <!-- Checkbox "Harga Mulai Dari" -->
                            <label class="flex items-center gap-2 cursor-pointer select-none">
                               <div class="relative inline-block w-9 h-5 align-middle select-none transition duration-200 ease-in">
                                 <input type="checkbox" id="isStartingPrice" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer top-[2px] left-[2px] transition-all duration-300"/>
@@ -104,7 +103,6 @@
                         </div>
                     </div>
 
-                    <!-- Contact -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kontak / Link</label>
                         <div class="relative">
@@ -118,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- AI Settings -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2 text-sm uppercase border-b pb-2">
                     <i data-lucide="user" class="w-4 h-4"></i> Konfigurasi AI
@@ -144,7 +141,6 @@
                         </div>
                     </div>
 
-                    <!-- Moment Selector -->
                     <div>
                          <label class="block text-xs font-bold text-indigo-600 uppercase mb-1 flex items-center gap-1">
                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Momen Spesial (Opsional)
@@ -162,7 +158,6 @@
                           </select>
                     </div>
 
-                    <!-- Length Selector -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-2">
                           <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Panjang Teks
@@ -180,12 +175,10 @@
                         </div>
                     </div>
 
-                    <!-- Error Message -->
                     <div id="errorMsg" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg flex items-center gap-2">
                         <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> <span id="errorText">Error</span>
                     </div>
 
-                    <!-- Generate Button -->
                     <button id="btnGenerate" onclick="generateWithAI()" class="w-full py-3 mt-2 rounded-xl font-bold text-white shadow-md flex items-center justify-center gap-2 transition-all transform active:scale-95 bg-indigo-600 hover:bg-indigo-700">
                         <i data-lucide="sparkles" class="w-4 h-4 fill-white"></i> BUAT TEKS PROMOSI
                     </button>
@@ -197,11 +190,8 @@
             </div>
         </div>
 
-        <!-- === KOLOM KANAN: PREVIEW === -->
         <div class="flex flex-col h-full gap-4">
-           <!-- WA Preview Container -->
            <div class="bg-[#E5DDD5] rounded-xl shadow-lg overflow-hidden flex flex-col h-[500px] border border-slate-300 relative">
-            <!-- Header -->
             <div class="bg-[#008069] px-4 py-3 text-white flex items-center gap-3 shadow-md z-10">
               <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
                 <i data-lucide="smartphone" class="w-4 h-4"></i>
@@ -212,7 +202,6 @@
               </div>
             </div>
 
-            <!-- Chat Body -->
             <div class="flex-1 p-4 overflow-y-auto bg-[#e5ddd5] custom-scrollbar flex flex-col" 
                  style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: soft-light;">
               
@@ -220,14 +209,12 @@
                 Hari Ini
               </div>
 
-              <!-- Chat Bubble -->
               <div id="chatBubble" class="bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[95%] self-start relative text-[13.5px] leading-relaxed text-[#111b21] transition-opacity duration-300">
-                <!-- Content will be injected here -->
                 <div id="previewContent">
                     Halo! 👋<br>
                     Saya adalah asisten AI Anda.<br><br>
-                    Sekarang tersedia fitur <b>"Harga Mulai Dari"</b> untuk produk jasa atau bervariasi.<br>
-                    Coba isi data dan klik <b>"Generate"</b>! 🚀
+                    Sekarang tersedia fitur <b>"Harga Mulai Dari"</b> dan <b>"Custom API Key"</b>.<br>
+                    Klik ikon kunci 🔑 di atas untuk mengatur API Key Gemini Anda sendiri agar lebih lancar! 🚀
                 </div>
                 
                 <div class="text-[10px] text-slate-400 text-right mt-1 flex justify-end items-center gap-1">
@@ -235,7 +222,6 @@
                 </div>
               </div>
 
-              <!-- Loading Indicator (Hidden by default) -->
               <div id="chatLoading" class="hidden bg-white p-3 rounded-xl rounded-tl-none shadow-sm max-w-[100px] self-start mt-2">
                  <div class="flex gap-1 items-center py-1 px-1">
                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full dot-animate"></div>
@@ -246,7 +232,6 @@
 
             </div>
 
-            <!-- Fake Input -->
             <div class="bg-[#F0F2F5] px-2 py-2 flex items-center gap-2">
                <div class="bg-white flex-1 py-2 px-4 rounded-full text-slate-300 text-sm border border-white">
                   Ketik pesan
@@ -257,7 +242,6 @@
             </div>
           </div>
 
-          <!-- Action Area -->
           <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-2">
              <div class="flex justify-between items-center">
                 <span class="text-xs font-bold text-slate-500 uppercase">Hasil Text</span>
@@ -273,10 +257,50 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <div id="apiModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform transition-all scale-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="key" class="w-5 h-5 text-indigo-600"></i> Pengaturan API Key
+                </h3>
+                <button onclick="closeKeyModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Masukkan API Key Google Gemini Anda sendiri agar kuota penggunaan tidak terbatas. 
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 hover:underline font-medium">Dapatkan API Key di sini.</a>
+            </p>
+
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Gemini API Key</label>
+                <div class="relative">
+                    <input type="password" id="inputApiKey" placeholder="Tempel API Key di sini (AIza...)" 
+                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm pr-10">
+                    <button onclick="toggleKeyVisibility()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="eye" id="iconEye" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="saveApiKey()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
+                    Simpan Key
+                </button>
+                <button onclick="removeApiKey()" class="px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors border border-red-100">
+                    Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- SETUP ---
-        const apiKey = "AIzaSyAZRYJdAMXNgJX05G6D_5PVMrwdNRJ3Veg"; // System will inject this in some environments, or leave empty
+        // Default Key (Fallback) - Biarkan kosong jika ingin memaksa user input
+        const defaultApiKey = "AIzaSyAh20oULG6zZA5n57HkmgaMYV3aT-_j7q8"; 
+        let userApiKey = localStorage.getItem("custom_gemini_api_key") || "";
+        
         let currentLength = 'short';
         
         // Initialize Icons
@@ -286,7 +310,55 @@
         document.getElementById('timeString').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
         // Initial Text
-        document.getElementById('finalOutput').value = `Halo! 👋\nSaya adalah asisten AI Anda.\n\nSekarang tersedia fitur *"Harga Mulai Dari"* untuk produk jasa atau bervariasi.\nCoba isi data dan klik *"Generate"*! 🚀`;
+        document.getElementById('finalOutput').value = `Halo! 👋\nSaya adalah asisten AI Anda.\n\nSekarang tersedia fitur *"Harga Mulai Dari"* dan *"Custom API Key"*.\nKlik ikon kunci 🔑 di atas untuk mengatur API Key Gemini Anda sendiri agar lebih lancar! 🚀`;
+
+        // --- API KEY MODAL LOGIC ---
+        const modal = document.getElementById('apiModal');
+        const inputKey = document.getElementById('inputApiKey');
+
+        function openKeyModal() {
+            inputKey.value = userApiKey; // Load saved key
+            modal.classList.remove('hidden');
+        }
+
+        function closeKeyModal() {
+            modal.classList.add('hidden');
+        }
+
+        function toggleKeyVisibility() {
+            const type = inputKey.type === 'password' ? 'text' : 'password';
+            inputKey.type = type;
+            // Update icon needs re-render or just simple replace? lucide replaces svg.
+            // Simplified approach: toggle classes or re-init not efficient.
+            // Let's just use CSS logic or assume lucide is static. 
+            // For dynamic icon swap with Lucide in simple HTML, re-rendering is needed usually, 
+            // but let's stick to functional logic first.
+        }
+
+        function saveApiKey() {
+            const val = inputKey.value.trim();
+            if(!val) {
+                alert("API Key tidak boleh kosong!");
+                return;
+            }
+            localStorage.setItem("custom_gemini_api_key", val);
+            userApiKey = val;
+            alert("API Key berhasil disimpan! ✅");
+            closeKeyModal();
+        }
+
+        function removeApiKey() {
+            localStorage.removeItem("custom_gemini_api_key");
+            userApiKey = "";
+            inputKey.value = "";
+            alert("API Key dihapus. Menggunakan Default/Limit Terbatas.");
+            closeKeyModal();
+        }
+
+        // Close modal on click outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeKeyModal();
+        });
 
         // --- EVENT LISTENERS FOR CHECKBOX ---
         document.getElementById('isStartingPrice').addEventListener('change', function() {
@@ -359,6 +431,18 @@
 
         // --- AI GENERATION ---
         async function generateWithAI() {
+            // Priority: User Key > Default Key
+            const activeKey = userApiKey || defaultApiKey;
+
+            const errorContainer = document.getElementById('errorMsg');
+
+            if (!activeKey) {
+                 errorContainer.classList.remove('hidden');
+                 document.getElementById('errorText').textContent = "API Key belum diatur! Klik ikon kunci untuk setting.";
+                 openKeyModal();
+                 return;
+            }
+
             const productName = document.getElementById('productName').value;
             const price = document.getElementById('price').value;
             const promoPrice = document.getElementById('promoPrice').value;
@@ -367,8 +451,6 @@
             const tone = document.getElementById('tone').value;
             const moment = document.getElementById('moment').value;
             const isStartingPrice = document.getElementById('isStartingPrice').checked;
-
-            const errorContainer = document.getElementById('errorMsg');
 
             if (!productName) {
                 errorContainer.classList.remove('hidden');
@@ -420,7 +502,7 @@
 
             try {
                 const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -428,7 +510,13 @@
                     }
                 );
 
-                if (!response.ok) throw new Error("Gagal menghubungi AI");
+                if (!response.ok) {
+                    const errData = await response.json();
+                    if(error.status === 400 || error.status === 403) {
+                         throw new Error("API Key tidak valid.");
+                    }
+                    throw new Error("Gagal menghubungi AI. Periksa API Key.");
+                }
 
                 const data = await response.json();
                 const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -444,7 +532,7 @@
             } catch (error) {
                 console.error(error);
                 errorContainer.classList.remove('hidden');
-                document.getElementById('errorText').textContent = "Maaf, AI sedang sibuk. Coba lagi.";
+                document.getElementById('errorText').textContent = "Error: " + error.message;
             } finally {
                 // UI Finished State
                 document.getElementById('btnGenerate').classList.remove('hidden');
@@ -459,8 +547,7 @@
             const textToCopy = document.getElementById('finalOutput').value;
             const btn = document.getElementById('btnCopy');
             const span = document.getElementById('copyText');
-            const icon = btn.querySelector('i'); // Get icon element
-
+            
             // Create temporary textarea
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
@@ -487,7 +574,6 @@
                 btn.classList.add('bg-slate-800');
                 btn.classList.remove('bg-green-600');
                 span.textContent = 'Salin Teks';
-                // Note: Lucide icons replace <i> tags with SVGs, so we don't need to re-add class
             }, 2000);
         }
 
@@ -505,7 +591,7 @@
             document.getElementById('isStartingPrice').dispatchEvent(new Event('change'));
 
             // Reset Length
-            setLength('short', document.querySelector('.length-btn')); // Select first button
+            setLength('short', document.querySelector('.length-btn')); 
             
             document.getElementById('errorMsg').classList.add('hidden');
         }
