@@ -26,7 +26,7 @@
                 <h1 class="text-xl font-bold text-gray-800">
                     ✨ Generator Piket AI <span class="text-[10px] bg-teal-600 text-white px-2 py-1 rounded-full">v4.7 Hybrid</span>
                 </h1>
-                <p class="text-xs text-gray-500">Otomatis beralih ke Offline jika AI Gagal</p>
+                <p class="text-xs text-gray-500">Otomatis beralih ke Custom API / Offline jika Default AI Gagal</p>
             </div>
             <button onclick="resetApp()" class="no-print text-xs bg-red-100 text-red-600 px-3 py-2 rounded border border-red-200">
                 ⚠️ Reset Total
@@ -35,7 +35,6 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- INPUTS -->
             <div class="lg:col-span-4 space-y-5 no-print order-2 lg:order-1">
                 
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
@@ -43,12 +42,12 @@
                     
                     <details class="mb-3 bg-gray-50 border rounded text-xs">
                         <summary class="p-2 cursor-pointer font-bold text-gray-500 flex justify-between">
-                            <span>🔑 Pengaturan API Key</span>
-                            <span class="text-green-600">✔ Terpasang</span>
+                            <span>🔑 API Key (Opsional/Cadangan)</span>
+                            <span class="text-blue-600">ℹ️ Cek</span>
                         </summary>
                         <div class="p-2 border-t">
-                            <input type="password" id="apiKeyInput" class="w-full p-2 border rounded font-mono text-gray-600" value="AIzaSyCdHnZMK65iByypoeWfdsCbQsG7lYXi1LE">
-                            <p class="mt-1 text-[10px] italic text-gray-500">Jika AI macet, sistem otomatis pakai mode offline.</p>
+                            <input type="password" id="apiKeyInput" class="w-full p-2 border rounded font-mono text-gray-600" placeholder="Masukkan API Key Cadangan...">
+                            <p class="mt-1 text-[10px] italic text-gray-500">Sistem memprioritaskan Default Key. Isi ini jika default sudah limit.</p>
                         </div>
                     </details>
 
@@ -82,7 +81,6 @@
                 </div>
             </div>
 
-            <!-- RESULTS -->
             <div class="lg:col-span-8 space-y-4 order-1 lg:order-2">
                 <div class="sticky top-2 z-40 bg-white p-4 rounded-xl shadow-sm border border-gray-200 no-print">
                     <h3 class="text-xs font-bold text-gray-500 uppercase">🏦 Bank Siswa (Unassigned)</h3>
@@ -92,7 +90,7 @@
                 <div id="printArea" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 min-h-[500px]">
                     <div class="flex justify-between items-end border-b pb-4 mb-4">
                         <div>
-                            <h2 class="text-xl font-bold text-gray-800">JADWAL PIKET KELAS</h2>
+                            <h2 class="text-xl font-bold text-gray-800">JADWAL PIKET UMUM</h2>
                             <p class="text-xs text-gray-500 mt-1" id="dateDisplay">-</p>
                         </div>
                     </div>
@@ -104,11 +102,11 @@
         </div>
     </div>
 
-    <!-- LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- DATA ---
+            // --- DATA & KEYS ---
+            const DEFAULT_API_KEY = "AIzaSyCyMyIIenfKULYksS0qYkRdXye_Ws4-Bhg";
             let data = { students: [], tasks: [], assignments: [] };
             
             // --- DOM ---
@@ -132,7 +130,7 @@
             // --- CORE UTILS ---
             const uid = () => Math.random().toString(36).substr(2, 9);
             const save = () => localStorage.setItem('piket_v47_hybrid', JSON.stringify(data));
-            const getKey = () => el.key.value.trim();
+            const getCustomKey = () => el.key.value.trim();
 
             const cleanAndParseJSON = (text) => {
                 try { return JSON.parse(text); } 
@@ -144,6 +142,32 @@
                     return null;
                 }
             };
+
+            // Hybrid Call Utility
+            async function fetchGemini(prompt) {
+                const call = async (k) => {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`;
+                    const res = await fetch(url, {
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const json = await res.json();
+                    if(json.error) throw new Error(json.error.message);
+                    return json;
+                };
+
+                try {
+                    console.log("Mencoba Default Key...");
+                    return await call(DEFAULT_API_KEY);
+                } catch (err) {
+                    const cKey = getCustomKey();
+                    if(cKey) {
+                        console.log("Default Gagal, mencoba Custom Key...");
+                        return await call(cKey);
+                    }
+                    throw err; // Lempar error untuk masuk ke mode offline
+                }
+            }
 
             // --- PARSING ---
             const parse = () => {
@@ -170,49 +194,33 @@
                 render(); save();
             };
 
-            // --- HYBRID AI + OFFLINE LOGIC ---
-            
-            // 1. GENDER (HYBRID)
+            // --- LOGIKA GENDER (HYBRID) ---
             el.btnGender.addEventListener('click', async () => {
                 parse();
                 if(data.students.length === 0) return alert("Ketik nama siswa dulu.");
                 
                 el.btnGender.disabled = true;
-                el.btnGender.innerText = "⏳ Mencoba AI...";
-
-                let usedOffline = false;
+                el.btnGender.innerText = "⏳ Menghubungkan AI...";
 
                 try {
-                    // COBA AI DULU
                     const names = data.students.map(s => s.name);
-                    const prompt = `OUTPUT JSON ONLY. Classify gender (L/P) for: ${JSON.stringify(names)}. Format: {"Budi":"L", "Siti":"P"}. NO MARKDOWN.`;
+                    const prompt = `OUTPUT JSON ONLY. Classify gender (L/P) for these names: ${JSON.stringify(names)}. Return format: {"Name":"L", "Name2":"P"}.`;
                     
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${getKey()}`, {
-                        method: 'POST', headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    
-                    const j = await res.json();
-                    if(j.error) throw new Error("API Error");
-                    
+                    const j = await fetchGemini(prompt);
                     const map = cleanAndParseJSON(j.candidates[0].content.parts[0].text);
-                    if(!map) throw new Error("Parse Error");
+                    if(!map) throw new Error("Format AI salah.");
 
                     data.students.forEach(s => { if(map[s.name]) s.gender = map[s.name]; });
-                    alert("Sukses! Gender dideteksi via AI.");
+                    alert("Sukses mendeteksi via AI!");
 
                 } catch(e) {
-                    // JIKA GAGAL -> JALANKAN LOGIKA OFFLINE
-                    usedOffline = true;
-                    console.log("Fallback ke Offline Mode:", e);
-                    
+                    console.warn("Fallback Offline:", e);
                     data.students.forEach(s => {
                         const lastChar = s.name.trim().toLowerCase().slice(-1);
-                        // Rumus Tebak Gender Sederhana
                         if(['a','i','u','e','o','h','y'].includes(lastChar)) s.gender = 'P';
                         else s.gender = 'L';
                     });
-                    alert("Koneksi AI Gagal. Menggunakan deteksi manual (Offline Mode). Silakan cek ulang gender.");
+                    alert("Koneksi AI Gagal/Limit. Menggunakan deteksi tebakan (Offline). Cek kembali.");
                 } finally {
                     render(); save();
                     el.btnGender.disabled = false;
@@ -220,44 +228,20 @@
                 }
             });
 
-            // 2. TASKS (HYBRID)
+            // --- LOGIKA TUGAS (HYBRID) ---
             el.btnTask.addEventListener('click', async () => {
                 el.btnTask.disabled = true;
                 el.btnTask.innerText = "⏳...";
 
                 try {
-                    // COBA AI
-                    const prompt = "List 20 tugas piket sekolah Indonesia. Format: LOKASI - TUGAS [L/P]. Tanpa tabel. Contoh: Kelas - Sapu [P]";
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${getKey()}`, {
-                        method: 'POST', headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    
-                    const j = await res.json();
-                    if(j.error) throw new Error("API Error");
-                    
+                    const prompt = "Berikan 15 contoh tugas piket sekolah di Indonesia. Format baris: LOKASI - TUGAS [L/P]. Contoh: Kelas - Menyapu [P]";
+                    const j = await fetchGemini(prompt);
                     let text = j.candidates[0].content.parts[0].text.replace(/\*/g, '').replace(/`/g, '');
                     updateTaskInput(text);
-
                 } catch(e) {
-                    // JIKA GAGAL -> DATA STATIS
-                    console.log("Fallback Task Offline");
-                    const offlineTasks = `Kelas - Menyapu Lantai [P]
-Kelas - Mengangkat Kursi [L]
-Kelas - Menghapus Papan Tulis
-Halaman - Memungut Sampah [L]
-Taman - Menyiram Tanaman [P]
-WC Siswa - Mengepel Lantai [L]
-Kantor Guru - Membuang Sampah [L]
-Perpustakaan - Merapikan Buku [P]
-Mushola - Membersihkan Sajadah [L]
-UKS - Mengganti Seprei [P]
-Lab Komputer - Membersihkan Debu [P]
-Lobby - Mengepel Lantai Depan [L]
-Koridor - Menyapu Lorong [P]
-Gudang - Merapikan Alat Olahraga [L]`;
+                    const offlineTasks = `Kelas - Menyapu Lantai [P]\nKelas - Mengangkat Kursi [L]\nWC Siswa - Mengepel Lantai [L]\nHalaman - Memungut Sampah [L]\nUKS - Mengganti Seprei [P]`;
                     updateTaskInput(offlineTasks);
-                    alert("AI tidak merespon. Menampilkan daftar tugas standar (Offline).");
+                    alert("AI tidak merespon. Menampilkan daftar tugas standar.");
                 } finally {
                     el.btnTask.disabled = false;
                     el.btnTask.innerText = "💡 Saran Tugas";
@@ -270,7 +254,7 @@ Gudang - Merapikan Alat Olahraga [L]`;
                 parse();
             };
 
-            // --- SCHEDULING (ALWAYS OFFLINE) ---
+            // --- SCHEDULING (OFFLINE) ---
             el.btnGen.addEventListener('click', () => {
                 parse();
                 if(data.tasks.length === 0) return alert("Isi tugas dulu.");
@@ -291,7 +275,7 @@ Gudang - Merapikan Alat Olahraga [L]`;
                 render(); save();
             });
 
-            // --- RENDER ---
+            // --- RENDER & DRAG-DROP ---
             function render() {
                 el.preview.innerHTML = '';
                 data.students.forEach(s => {
@@ -299,9 +283,7 @@ Gudang - Merapikan Alat Olahraga [L]`;
                     el.preview.innerHTML += `<span class="text-[10px] px-2 py-1 rounded ${c}">${s.name} (${s.gender})</span>`;
                 });
 
-                el.bank.innerHTML = '';
-                el.grid.innerHTML = '';
-
+                el.bank.innerHTML = ''; el.grid.innerHTML = '';
                 const unassigned = data.students.filter(s => !data.assignments.find(a => a.sid === s.id));
                 unassigned.forEach(s => el.bank.appendChild(createPill(s)));
 
@@ -311,13 +293,13 @@ Gudang - Merapikan Alat Olahraga [L]`;
                 locs.forEach(loc => {
                     const div = document.createElement('div');
                     div.className = 'col-span-full mt-2';
-                    div.innerHTML = `<h3 class="font-bold border-b pb-1 mb-2">${loc}</h3>`;
+                    div.innerHTML = `<h3 class="font-bold border-b pb-1 mb-2 text-teal-700">${loc}</h3>`;
                     el.grid.appendChild(div);
 
                     data.tasks.filter(t => t.location === loc).forEach(t => {
                         const card = document.createElement('div');
                         card.className = 'bg-white border rounded p-3 break-inside-avoid';
-                        const badge = t.constraint !== '-' ? `<span class="text-xs font-bold text-gray-500">[${t.constraint}]</span>` : '';
+                        const badge = t.constraint !== '-' ? `<span class="text-xs font-bold text-gray-400">[${t.constraint}]</span>` : '';
                         card.innerHTML = `<div class="flex justify-between mb-2 text-sm font-semibold"><span>${t.name}</span>${badge}</div>`;
                         
                         const zone = document.createElement('div');
@@ -328,55 +310,38 @@ Gudang - Merapikan Alat Olahraga [L]`;
                             const s = data.students.find(x => x.id === a.sid);
                             if(s) zone.appendChild(createPill(s));
                         });
-                        card.appendChild(zone);
-                        el.grid.appendChild(card);
+                        card.appendChild(zone); el.grid.appendChild(card);
                     });
                 });
             }
 
-            // --- DRAG & DROP + CLICK ---
-            let selId = null; 
-            let dragId = null;
-
+            let selId = null; let dragId = null;
             function createPill(s) {
                 const d = document.createElement('div');
                 const c = s.gender === 'L' ? 'bg-blue-100 text-blue-800' : s.gender === 'P' ? 'bg-pink-100 text-pink-800' : 'bg-gray-200';
                 d.className = `draggable-item text-xs font-bold px-3 py-2 rounded shadow-sm cursor-pointer ${c}`;
-                d.innerText = s.name;
-                d.draggable = true;
-                
+                d.innerText = s.name; d.draggable = true;
                 d.onclick = (e) => {
                     e.stopPropagation();
-                    if(selId === s.id) { selId = null; document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected')); }
+                    if(selId === s.id) { selId = null; d.classList.remove('item-selected'); }
                     else {
-                        selId = s.id;
-                        document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected'));
+                        selId = s.id; document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected'));
                         d.classList.add('item-selected');
                     }
                 };
-                
                 d.ondragstart = () => { dragId = s.id; };
                 return d;
             }
 
-            // Move Logic
             const move = (sid, tid) => {
                 const s = data.students.find(x => x.id === sid);
                 const t = tid ? data.tasks.find(x => x.id === tid) : null;
-                
-                if(t && t.constraint !== '-' && t.constraint !== s.gender) {
-                    return alert(`Gagal: Tugas khusus ${t.constraint}, Siswa ${s.gender}`);
-                }
-
+                if(t && t.constraint !== '-' && t.constraint !== s.gender) return alert("Beda gender!");
                 data.assignments = data.assignments.filter(a => a.sid !== sid);
                 if(tid) data.assignments.push({ sid: sid, tid: tid });
-                
-                selId = null; dragId = null;
-                document.querySelectorAll('.item-selected').forEach(x => x.classList.remove('item-selected'));
-                render(); save();
+                selId = null; dragId = null; render(); save();
             };
 
-            // Global Listeners
             document.addEventListener('click', (e) => {
                 const z = e.target.closest('.drop-zone');
                 if(z && selId) move(selId, z.dataset.tid);
@@ -387,21 +352,17 @@ Gudang - Merapikan Alat Olahraga [L]`;
                 if(z && dragId) { e.preventDefault(); move(dragId, z.dataset.tid); }
             });
 
-            // Utils
-            window.resetApp = () => { if(confirm("Hapus semua?")) { localStorage.removeItem('piket_v47_hybrid'); location.reload(); } };
-            
-            el.btnImg.onclick = () => {
-                html2canvas(el.print, { scale: 2 }).then(c => {
-                    const a = document.createElement('a'); a.download = 'jadwal.jpg'; a.href = c.toDataURL(); a.click();
-                });
-            };
+            window.resetApp = () => { if(confirm("Hapus semua?")) { localStorage.clear(); location.reload(); } };
+            el.btnImg.onclick = () => html2canvas(el.print, { scale: 2 }).then(c => {
+                const a = document.createElement('a'); a.download = 'jadwal.jpg'; a.href = c.toDataURL(); a.click();
+            });
 
             el.students.addEventListener('input', parse);
             el.tasks.addEventListener('input', parse);
-            el.key.addEventListener('input', () => localStorage.setItem('my_key_v47', el.key.value));
+            el.key.addEventListener('input', () => localStorage.setItem('custom_key', el.key.value));
 
-            // Load
-            const savedKey = localStorage.getItem('my_key_v47');
+            // Load Existing
+            const savedKey = localStorage.getItem('custom_key');
             if(savedKey) el.key.value = savedKey;
 
             if(localStorage.getItem('piket_v47_hybrid')) {
