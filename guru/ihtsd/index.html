@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHT Koding KA Jenjang SD</title>
+   <link rel="icon" href="/images/favicon.png" type="image/png">
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-pink: #ff0055;
+            --bg-dark: #050505;
+            --glass-overlay: rgba(10, 15, 20, 0.85);
+            --border-neon: rgba(0, 243, 255, 0.4);
+            --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            --hud-font: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            font-family: var(--hud-font);
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 1. TOP NAVIGATION --- */
+        .top-nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: var(--glass-overlay);
+            backdrop-filter: blur(8px);
+            padding: 5px 8px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 5px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .nav-switch {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--hud-font);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            transition: all 0.3s var(--ease-cinematic);
+        }
+
+        .nav-switch.active {
+            background: rgba(0, 243, 255, 0.15);
+            color: var(--neon-cyan);
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* --- 2. MAIN STAGE --- */
+        .main-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 80px 0; /* Space for HUDs */
+        }
+
+        .content-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .content-container.fade-out {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        /* --- CONTENT TYPES --- */
+        
+        /* Infographic */
+        .img-single {
+            max-width: 95%;
+            max-height: 80vh;
+            object-fit: contain;
+            cursor: zoom-in;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+        .img-single:hover { border-color: var(--neon-cyan); }
+
+        /* Video */
+        .video-wrapper {
+            width: 90%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            border: 1px solid var(--border-neon);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            background: #000;
+        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        /* --- NEW: CYBERDECK CAROUSEL (Slider) --- */
+        .carousel-wrapper {
+            width: 90%;
+            max-width: 1100px;
+            height: 80vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-viewport {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth Slide */
+            cursor: grab;
+        }
+        
+        .carousel-track:active { cursor: grabbing; }
+
+        .slide-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none; /* Prevent drag image, allow drag track */
+        }
+
+        /* Overlay Click Zone for Lightbox on slides */
+        .zoom-trigger {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            cursor: zoom-in;
+            z-index: 5;
+        }
+
+        /* Carousel HUD Controls */
+        .car-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .car-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .car-prev { left: -60px; clip-path: polygon(20% 0, 100% 0, 100% 100%, 20% 100%, 0 50%); }
+        .car-next { right: -60px; clip-path: polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%); }
+
+        /* MODIFIED: Page Indicator Position (Bottom Right) */
+        .page-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            left: auto; /* Reset left positioning */
+            transform: none; /* Reset transform */
+            color: var(--neon-cyan);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--neon-cyan);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            pointer-events: none;
+            z-index: 25;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .car-btn { display: none; }
+            .carousel-wrapper { width: 100%; border: none; }
+            .carousel-viewport { border: none; }
+            .page-indicator { bottom: 10px; right: 10px; font-size: 0.7rem; }
+        }
+
+        /* --- 3. BOTTOM CONSOLE --- */
+        .bottom-console {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+
+        .module-dock {
+            pointer-events: auto;
+            display: flex;
+            gap: 15px;
+            background: var(--glass-overlay);
+            padding: 10px 25px 15px 25px;
+            border-radius: 20px 20px 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .mod-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-family: var(--hud-font);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mod-btn.active {
+            background: rgba(10, 255, 10, 0.15);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(10, 255, 10, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* --- 4. LIGHTBOX --- */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .lightbox.show { opacity: 1; pointer-events: all; }
+        .lightbox img {
+            max-width: 95vw; max-height: 95vh;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+        }
+        .close-lb {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 2rem; color: var(--neon-pink);
+            background: transparent; border: none; cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="top-nav">
+        <button class="nav-switch active" onclick="app.setType('infografis', this)">Infografis</button>
+        <button class="nav-switch" onclick="app.setType('video', this)">Video</button>
+        <button class="nav-switch" onclick="app.setType('slide', this)">Slide</button>
+    </nav>
+
+    <!-- STAGE -->
+    <main class="main-stage">
+        <div id="stage" class="content-container">
+            <!-- Dynamic Content -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div class="bottom-console">
+        <div class="module-dock">
+            <button class="mod-btn active" onclick="app.setModule(1, this)">1</button>
+            <button class="mod-btn" onclick="app.setModule(2, this)">2</button>
+            <button class="mod-btn" onclick="app.setModule(3, this)">3</button>
+            <button class="mod-btn" onclick="app.setModule(4, this)">4</button>
+            <button class="mod-btn" onclick="app.setModule(5, this)">5</button>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" onclick="app.closeLightbox()">
+        <button class="close-lb">✕</button>
+        <img id="lb-img" src="" alt="Zoom">
+    </div>
+
+    <script>
+        // --- NEW: OFFLINE CACHE MANAGER (IndexedDB) ---
+        const ImageLoader = {
+            dbName: 'CyberpunkTheaterCache',
+            storeName: 'images',
+            dbPromise: null,
+
+            // Open DB Connection
+            init() {
+                if (!this.dbPromise) {
+                    this.dbPromise = new Promise((resolve, reject) => {
+                        const request = indexedDB.open(this.dbName, 1);
+                        request.onupgradeneeded = (e) => {
+                            e.target.result.createObjectStore(this.storeName);
+                        };
+                        request.onsuccess = (e) => resolve(e.target.result);
+                        request.onerror = (e) => reject(e);
+                    });
+                }
+                return this.dbPromise;
+            },
+
+            // Get Image: First check DB, then Fetch & Store
+            async getImage(url) {
+                const db = await this.init();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(this.storeName, 'readonly');
+                    const store = tx.objectStore(this.storeName);
+                    const request = store.get(url);
+                    
+                    request.onsuccess = async () => {
+                        if (request.result) {
+                            // Hit Cache: Return Blob URL (Instant)
+                            console.log('Cache Hit:', url);
+                            resolve(URL.createObjectURL(request.result));
+                        } else {
+                            // Miss Cache: Fetch, Store, Return
+                            console.log('Downloading:', url);
+                            try {
+                                const response = await fetch(url);
+                                const blob = await response.blob();
+                                
+                                // Store in DB
+                                const txWrite = db.transaction(this.storeName, 'readwrite');
+                                txWrite.objectStore(this.storeName).put(blob, url);
+                                
+                                resolve(URL.createObjectURL(blob));
+                            } catch (err) {
+                                console.error("Fetch failed", err);
+                                resolve(url); // Fallback to original URL
+                            }
+                        }
+                    };
+                    request.onerror = () => resolve(url);
+                });
+            }
+        };
+
+        // --- DATA FACTORY ---
+        const createSlides = (mod, count) => 
+            Array.from({length: count}, (_, i) => `https://pakfahri.my.id/images/kodingsd/modul${mod}/${i+1}.jpg`);
+
+        const DB = {
+            1: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul1.jpg",
+                video: "https://youtu.be/f3j2izkY_jA",
+                slides: createSlides(1, 13)
+            },
+            2: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul2.jpg",
+                video: "https://youtu.be/e1DugzOHcB8",
+                slides: createSlides(2, 15)
+            },
+            3: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul3.jpg",
+                video: "https://youtu.be/4E0FzubOyzQ",
+                slides: createSlides(3, 15)
+            },
+            4: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul4.jpg",
+                video: "https://youtu.be/AhwiX4BurK4",
+                slides: createSlides(4, 15)
+            },
+            5: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul5.jpg",
+                video: "https://youtu.be/iL_T5esPnvI",
+                slides: createSlides(5, 15)
+            }
+        };
+
+        // --- APP CONTROLLER ---
+        const app = {
+            state: {
+                module: 1,
+                type: 'infografis',
+                slideIndex: 0
+            },
+            
+            els: {
+                stage: document.getElementById('stage'),
+                lightbox: document.getElementById('lightbox'),
+                lbImg: document.getElementById('lb-img')
+            },
+
+            init() {
+                this.render();
+            },
+
+            setModule(id, btn) {
+                if(this.state.module === id) return;
+                this.state.module = id;
+                this.state.slideIndex = 0;
+                
+                document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                this.transition();
+            },
+
+            setType(type, btn) {
+                if(this.state.type === type) return;
+                this.state.type = type;
+                
+                document.querySelectorAll('.nav-switch').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                this.transition();
+            },
+
+            transition() {
+                this.els.stage.classList.add('fade-out');
+                setTimeout(() => {
+                    this.render();
+                    this.els.stage.classList.remove('fade-out');
+                }, 400);
+            },
+
+            render() {
+                const data = DB[this.state.module];
+                let html = '';
+
+                if (this.state.type === 'infografis') {
+                    // Use ImageLoader for infografis too
+                    html = `
+                        <div class="loading-wrapper" style="position:absolute;">LOADING SYSTEM...</div>
+                        <img id="main-info-img"
+                             class="img-single" 
+                             onclick="app.openLightbox(this.src)" 
+                             src="https://placehold.co/800x600/000/0ff?text=Loading...">`;
+                             
+                    // Async load cached image
+                    ImageLoader.getImage(data.infografis).then(url => {
+                         const img = document.getElementById('main-info-img');
+                         if(img) img.src = url;
+                    });
+                } 
+                else if (this.state.type === 'video') {
+                    const vidId = this.getYTId(data.video);
+                    html = `
+                        <div class="video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/${vidId}?autoplay=1&rel=0" allowfullscreen></iframe>
+                        </div>`;
+                } 
+                else if (this.state.type === 'slide') {
+                    // Generate Carousel HTML with PLACEHOLDERS
+                    const slidesHtml = data.slides.map(src => `
+                        <div class="slide-item">
+                            <div class="zoom-trigger" onclick="app.openLightbox(this.nextElementSibling.src)"></div>
+                            <img class="cached-slide" 
+                                 data-original-src="${src}" 
+                                 src="https://placehold.co/800x600/000/0ff?text=LOADING+DATA..." 
+                                 loading="lazy">
+                        </div>
+                    `).join('');
+
+                    html = `
+                        <div class="carousel-wrapper">
+                            <button class="car-btn car-prev" onclick="slider.move(-1)">&#10094;</button>
+                            
+                            <div class="carousel-viewport" id="carViewport">
+                                <div class="carousel-track" id="carTrack">
+                                    ${slidesHtml}
+                                </div>
+                            </div>
+
+                            <button class="car-btn car-next" onclick="slider.move(1)">&#10095;</button>
+                            <div class="page-indicator" id="carIndicator">SLIDE // 01 OF ${data.slides.length}</div>
+                        </div>
+                    `;
+                }
+
+                this.els.stage.innerHTML = html;
+
+                if (this.state.type === 'slide') {
+                    slider.init(data.slides.length);
+                    // Start caching process for slides
+                    this.loadSlidesFromCache();
+                }
+            },
+
+            // New helper to load slide images from DB
+            loadSlidesFromCache() {
+                const imgs = document.querySelectorAll('.cached-slide');
+                imgs.forEach(async (img) => {
+                    const url = img.getAttribute('data-original-src');
+                    const cachedUrl = await ImageLoader.getImage(url);
+                    img.src = cachedUrl;
+                });
+            },
+
+            openLightbox(src) {
+                this.els.lbImg.src = src;
+                this.els.lightbox.classList.add('show');
+            },
+
+            closeLightbox() {
+                this.els.lightbox.classList.remove('show');
+            },
+
+            getYTId(url) {
+                const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+        };
+
+        // --- SLIDER ENGINE ---
+        const slider = {
+            index: 0,
+            total: 0,
+            track: null,
+            startX: 0,
+            currentX: 0,
+
+            init(total) {
+                this.index = 0;
+                this.total = total;
+                this.track = document.getElementById('carTrack');
+                this.updateUI();
+
+                const viewport = document.getElementById('carViewport');
+                viewport.addEventListener('touchstart', (e) => this.touchStart(e), {passive: true});
+                viewport.addEventListener('touchmove', (e) => this.touchMove(e), {passive: true});
+                viewport.addEventListener('touchend', () => this.touchEnd());
+            },
+
+            move(dir) {
+                this.index += dir;
+                if (this.index < 0) this.index = 0;
+                if (this.index >= this.total) this.index = this.total - 1;
+                this.updateUI();
+
+                // SYNC LIGHTBOX
+                if (app.els.lightbox.classList.contains('show')) {
+                    const currentImg = this.track.children[this.index].querySelector('img');
+                    if(currentImg) app.els.lbImg.src = currentImg.src;
+                }
+            },
+
+            updateUI() {
+                if (!this.track) return;
+                this.track.style.transform = `translateX(-${this.index * 100}%)`;
+                
+                const indEl = document.getElementById('carIndicator');
+                if (indEl) {
+                    indEl.innerText = `SLIDE // ${String(this.index + 1).padStart(2, '0')} OF ${this.total}`;
+                }
+            },
+
+            touchStart(e) { this.startX = e.touches[0].clientX; },
+            touchMove(e) { this.currentX = e.touches[0].clientX; },
+            touchEnd() {
+                if (!this.startX || !this.currentX) return;
+                const diff = this.startX - this.currentX;
+                if (diff > 50) this.move(1);
+                if (diff < -50) this.move(-1);
+                this.startX = 0; this.currentX = 0;
+            }
+        };
+
+        // KEYBOARD NAVIGATION
+        document.addEventListener('keydown', (e) => {
+            if (app.state.type === 'slide') {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault(); slider.move(-1);
+                }
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault(); slider.move(1);
+                }
+            }
+        });
+
+        app.init();
+
+    </script>
+</body>
+</html>
