@@ -3,1265 +3,689 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fahri, S.Pd - Produk Kami</title>
-    <link rel="icon" href="/images/favicon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>In House Training Koding KA jenjang SD</title>
+     <link rel="icon" href="/images/favicon.png" type="image/png">
     <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-green: #0aff0a;
+            --neon-pink: #ff0055;
+            --bg-dark: #050505;
+            --glass-overlay: rgba(10, 15, 20, 0.85);
+            --border-neon: rgba(0, 243, 255, 0.4);
+            --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            --hud-font: 'Courier New', Courier, monospace;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            background-color: #E0E5EC;
-            color: #2D3748;
-            /* Prevent text selection */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
-            /* Remove default tap highlight */
             -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
-        body.dark-mode {
-            background-color: #1a202c;
-            color: #e2e8f0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        /* Header Section - Neumorphism */
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 0;
-            position: relative;
-            box-shadow: 9px 9px 16px rgba(0, 0, 0, 0.2), -9px -9px 16px rgba(255, 255, 255, 0.1);
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            font-family: var(--hud-font);
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('/images/latarbelakang.jpg') center/cover no-repeat;
-            opacity: 0.6; /* Diubah dari 0.2 menjadi 0.6 */
-            z-index: 0;
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .profile-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer; /* Menambahkan cursor pointer */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .profile-image:hover {
-            transform: scale(1.05);
-            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3), -10px -10px 20px rgba(255, 255, 255, 0.15);
-        }
-        
-        .profile-info {
-            flex-grow: 1;
-        }
-        
-        .profile-info h1 {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .profile-description {
             display: flex;
             flex-direction: column;
-            gap: 4px;
         }
-        
-        .profile-description .desc-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        
-        .profile-description .desc-item i {
-            font-size: 0.9rem;
-            width: 16px;
-            text-align: center;
-        }
-        
-        /* Dark Mode Toggle */
-        .dark-mode-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2), -5px -5px 10px rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
-        
-        .dark-mode-toggle:hover {
-            transform: translateY(-3px);
-            box-shadow: 7px 7px 14px rgba(0, 0, 0, 0.2), -7px -7px 14px rgba(255, 255, 255, 0.1);
-        }
-        
-        .dark-mode-toggle:active {
-            transform: scale(0.95);
-        }
-        
-        .dark-mode-toggle i {
-            font-size: 1.3rem;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        body.dark-mode .dark-mode-toggle {
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Tabs Section - Neumorphism */
-        .tabs-section {
-            background-color: #E0E5EC;
-            padding: 20px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
-            transition: background-color 0.3s ease;
-        }
-        
-        body.dark-mode .tabs-section {
-            background-color: #1a202c;
-            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
-        }
-        
-        .tabs-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            background-color: #E0E5EC;
-            border-radius: 20px;
-            padding: 16px;
-            box-shadow: 9px 9px 16px #a3adb9, -9px -9px 16px #e6edf7;
-            gap: 18px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        body.dark-mode .tabs-container {
-            background-color: #1a202c;
-            box-shadow: 9px 9px 16px #0f141c, -9px -9px 16px #252c3c;
-        }
-        
-        .tab-button {
-            background-color: #E0E5EC;
-            color: #4A5568;
-            border: none;
-            padding: 16px 12px;
-            font-weight: 600;
-            font-size: 0.65rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            flex: 1;
-            height: 65px;
-            white-space: nowrap;
-            border-radius: 15px;
-            box-shadow: 6px 6px 12px #c8d0db, -6px -6px 12px #f8faff;
-            outline: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-        
-        body.dark-mode .tab-button {
-            background-color: #1a202c;
-            color: #a0aec0;
-            box-shadow: 6px 6px 12px #0f141c, -6px -6px 12px #252c3c;
-        }
-        
-        .tab-button:hover {
-            color: #2D3748;
-            transform: translateY(-2px);
-        }
-        
-        body.dark-mode .tab-button:hover {
-            color: #e2e8f0;
-        }
-        
-        .tab-button.active {
-            color: #2D3748;
-            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
-        }
-        
-        body.dark-mode .tab-button.active {
-            color: #e2e8f0;
-            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
-        }
-        
-        .tab-button:focus {
-            outline: none;
-            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
-        }
-        
-        body.dark-mode .tab-button:focus {
-            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
-        }
-        
-        .tab-button:active {
-            transform: scale(0.92);
-            box-shadow: inset 8px 8px 16px #c8d0db, inset -8px -8px 16px #f8faff;
-            background-color: #D8DDE4;
-        }
-        
-        body.dark-mode .tab-button:active {
-            box-shadow: inset 8px 8px 16px #0f141c, inset -8px -8px 16px #252c3c;
-            background-color: #0f141c;
-        }
-        
-        .tab-button i {
-            font-size: 1.1rem;
-        }
-        
-        .tab-button span {
-            font-size: 0.6rem;
-            text-align: center;
-            line-height: 1;
-        }
-        
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            padding: 40px 0;
-            background-color: #E0E5EC;
-            animation: fadeIn 0.5s ease;
-            transition: background-color 0.3s ease;
-        }
-        
-        body.dark-mode .tab-content {
-            background-color: #1a202c;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .content-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .content-header h2 {
-            font-size: 1.8rem;
-            color: #2D3748;
-            margin-bottom: 8px;
-            font-weight: 700;
-            transition: color 0.3s ease;
-        }
-        
-        body.dark-mode .content-header h2 {
-            color: #e2e8f0;
-        }
-        
-        .content-header p {
-            font-size: 1rem;
-            color: #4A5568;
-            max-width: 700px;
-            margin: 0 auto;
-            transition: color 0.3s ease;
-        }
-        
-        body.dark-mode .content-header p {
-            color: #a0aec0;
-        }
-        
-        /* Vertical Layout - Single Column for All Screen Sizes */
-        .content-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .content-card {
-            background-color: #E0E5EC;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            box-shadow: 9px 9px 16px #a3adb9, -9px -9px 16px #e6edf7;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            display: block;
-            color: inherit;
-            /* Added for accessibility */
-            position: relative;
-        }
-        
-        body.dark-mode .content-card {
-            background-color: #1a202c;
-            box-shadow: 9px 9px 16px #0f141c, -9px -9px 16px #252c3c;
-        }
-        
-        .content-card:hover {
-            box-shadow: inset 6px 6px 12px #c8d0db, inset -6px -6px 12px #f8faff;
-            transform: translateY(-3px);
-        }
-        
-        body.dark-mode .content-card:hover {
-            box-shadow: inset 6px 6px 12px #0f141c, inset -6px -6px 12px #252c3c;
-        }
-        
-        .content-card:active {
-            transform: scale(0.96);
-            box-shadow: inset 8px 8px 16px #c8d0db, inset -8px -8px 16px #e6edf7;
-            background-color: #D8DDE4;
-        }
-        
-        body.dark-mode .content-card:active {
-            box-shadow: inset 8px 8px 16px #0f141c, inset -8px -8px 16px #252c3c;
-            background-color: #0f141c;
-        }
-        
-        /* 16:9 Aspect Ratio for Images */
-        .card-image {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            display: block;
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-        }
-        
-        /* Footer - Neumorphism */
-        .footer {
-            background-color: #E0E5EC;
-            color: #4A5568;
-            text-align: center;
-            padding: 30px 0;
-            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        body.dark-mode .footer {
-            background-color: #1a202c;
-            color: #a0aec0;
-            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
-        }
-        
-        .footer p {
-            margin: 0;
-            font-size: 0.75rem;
-            color: #4A5568;
-            transition: color 0.3s ease;
-        }
-        
-        body.dark-mode .footer p {
-            color: #a0aec0;
-        }
-        
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .social-icons a {
-            color: #4A5568;
-            font-size: 1.1rem;
-            transition: all 0.2s ease;
-            background-color: #E0E5EC;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 6px 6px 12px #c8d0db, -6px -6px 12px #f8faff;
-            text-decoration: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body.dark-mode .social-icons a {
-            color: #a0aec0;
-            background-color: #1a202c;
-            box-shadow: 6px 6px 12px #0f141c, -6px -6px 12px #252c3c;
-        }
-        
-        .social-icons a:hover {
-            box-shadow: inset 3px 3px 6px #c8d0db, inset -3px -3px 6px #f8faff;
-            transform: translateY(-2px);
-        }
-        
-        body.dark-mode .social-icons a:hover {
-            box-shadow: inset 3px 3px 6px #0f141c, inset -3px -3px 6px #252c3c;
-        }
-        
-        .social-icons a:active {
-            transform: scale(0.88);
-            box-shadow: inset 5px 5px 10px #c8d0db, inset -5px -5px 10px #f8faff;
-            background-color: #D8DDE4;
-        }
-        
-        body.dark-mode .social-icons a:active {
-            box-shadow: inset 5px 5px 10px #0f141c, inset -5px -5px 10px #252c3c;
-            background-color: #0f141c;
-        }
-        
-        .social-icons a:focus {
-            outline: none;
-        }
-        
-        /* Popup Ad Styles */
-        .popup-overlay {
+
+        /* --- 1. TOP NAVIGATION --- */
+        .top-nav {
             position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: var(--glass-overlay);
+            backdrop-filter: blur(8px);
+            padding: 5px 8px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 5px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .nav-switch {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--hud-font);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            transition: all 0.3s var(--ease-cinematic);
+        }
+
+        .nav-switch.active {
+            background: rgba(0, 243, 255, 0.15);
+            color: var(--neon-cyan);
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* --- 2. MAIN STAGE --- */
+        .main-stage {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 10;
+            padding: 80px 0; /* Space for HUDs */
         }
-        
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .popup-content {
-            background-color: #E0E5EC;
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-            box-shadow: 9px 9px 16px rgba(0, 0, 0, 0.3), -9px -9px 16px rgba(255, 255, 255, 0.1);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-        }
-        
-        body.dark-mode .popup-content {
-            background-color: #1a202c;
-        }
-        
-        .popup-overlay.active .popup-content {
-            transform: scale(1);
-        }
-        
-        .popup-image {
+
+        .content-container {
             width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            border-radius: 10px;
-            display: block;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: relative; /* For absolute positioning of loaders */
         }
-        
-        .popup-close {
+
+        .content-container.fade-out {
+            opacity: 0;
+            transform: scale(0.98);
+        }
+
+        /* Loading Animation */
+        .loading-text {
             position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #4A5568;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--neon-cyan);
+            font-family: var(--hud-font);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            animation: blink 1.5s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 5;
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- CONTENT TYPES --- */
+        
+        /* Infographic */
+        .img-single {
+            max-width: 95%;
+            max-height: 80vh;
+            object-fit: contain;
+            cursor: zoom-in;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            transition: opacity 0.3s ease, transform 0.2s;
+        }
+        .img-single:hover { border-color: var(--neon-cyan); }
+
+        /* Video */
+        .video-wrapper {
+            width: 90%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            border: 1px solid var(--border-neon);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+            background: #000;
+        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        /* --- NEW: CYBERDECK CAROUSEL (Slider) --- */
+        .carousel-wrapper {
+            width: 90%;
+            max-width: 1100px;
+            height: 80vh;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 3px 3px 6px #c8d0db, -3px -3px 6px #f8faff;
-            transition: all 0.2s ease;
+        }
+
+        .carousel-viewport {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth Slide */
+            cursor: grab;
         }
         
-        body.dark-mode .popup-close {
-            color: #a0aec0;
-            box-shadow: 3px 3px 6px #0f141c, -3px -3px 6px #252c3c;
+        .carousel-track:active { cursor: grabbing; }
+
+        .slide-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: none; /* Prevent drag image, allow drag track */
+            position: relative; /* Ensure image sits on top of text eventually */
+            z-index: 2; /* Image above loading text */
         }
         
-        .popup-close:hover {
-            box-shadow: inset 3px 3px 6px #c8d0db, inset -3px -3px 6px #f8faff;
-            transform: translateY(-2px);
-        }
-        
-        body.dark-mode .popup-close:hover {
-            box-shadow: inset 3px 3px 6px #0f141c, inset -3px -3px 6px #252c3c;
-        }
-        
-        .popup-close:active {
-            transform: scale(0.9);
-        }
-        
-        .popup-timer {
+        /* Loading text specific for slides (behind image) */
+        .slide-item .loading-text {
+            z-index: 1;
+            font-size: 0.9rem; /* Lebih kecil khusus untuk slide */
+            width: 100%;
             text-align: center;
-            margin-top: 15px;
+        }
+
+        /* Overlay Click Zone for Lightbox on slides */
+        .zoom-trigger {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            cursor: zoom-in;
+            z-index: 5;
+        }
+
+        /* Carousel HUD Controls */
+        .car-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .car-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .car-prev { left: -60px; clip-path: polygon(20% 0, 100% 0, 100% 100%, 20% 100%, 0 50%); }
+        .car-next { right: -60px; clip-path: polygon(0 0, 80% 0, 100% 50%, 80% 100%, 0 100%); }
+
+        /* Page Indicator Position (Bottom Right) */
+        .page-indicator {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            left: auto; 
+            transform: none;
+            color: var(--neon-cyan);
             font-size: 0.9rem;
-            color: #4A5568;
-            transition: color 0.3s ease;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--neon-cyan);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            pointer-events: none;
+            z-index: 25;
         }
-        
-        body.dark-mode .popup-timer {
-            color: #a0aec0;
-        }
-        
-        /* Responsive Design */
+
+        /* Mobile adjustments */
         @media (max-width: 768px) {
-            .profile-section {
-                gap: 15px;
-            }
-            
-            .profile-image {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .profile-info h1 {
-                font-size: 1.6rem;
-            }
-            
-            .profile-description .desc-item {
-                font-size: 0.9rem;
-            }
-            
-            .content-grid {
-                gap: 15px;
-                max-width: 100%;
-            }
-            
-            .tabs-container {
-                padding: 12px;
-                gap: 14px;
-            }
-            
-            .tab-button {
-                padding: 14px 8px;
-                font-size: 0.6rem;
-                height: 60px;
-            }
-            
-            .tab-button i {
-                font-size: 1rem;
-            }
-            
-            .tab-button span {
-                font-size: 0.55rem;
-            }
-            
-            .footer {
-                padding: 25px 0;
-            }
-            
-            .footer p {
-                font-size: 0.7rem;
-            }
-            
-            .social-icons a {
-                width: 36px;
-                height: 36px;
-                font-size: 1rem;
-            }
-            
-            .popup-content {
-                max-width: 95%;
-                padding: 15px;
-            }
-            
-            .popup-image {
-                max-height: 300px;
-            }
-            
-            .dark-mode-toggle {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-            }
+            .car-btn { display: none; }
+            .carousel-wrapper { width: 100%; border: none; }
+            .carousel-viewport { border: none; }
+            .page-indicator { bottom: 10px; right: 10px; font-size: 0.7rem; }
+            .loading-text { font-size: 0.9rem; }
         }
-        
-        @media (max-width: 480px) {
-            .header {
-                padding: 30px 0;
-            }
-            
-            .profile-section {
-                gap: 12px;
-            }
-            
-            .profile-image {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .profile-info h1 {
-                font-size: 1.4rem;
-            }
-            
-            .profile-description .desc-item {
-                font-size: 0.85rem;
-            }
-            
-            .profile-description .desc-item i {
-                font-size: 0.8rem;
-            }
-            
-            .tabs-container {
-                padding: 10px;
-                gap: 12px;
-            }
-            
-            .tab-button {
-                padding: 12px 6px;
-                height: 55px;
-            }
-            
-            .tab-button i {
-                font-size: 0.9rem;
-            }
-            
-            .tab-button span {
-                font-size: 0.5rem;
-            }
-            
-            .content-header {
-                margin-bottom: 20px;
-            }
-            
-            .content-header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .content-header p {
-                font-size: 0.9rem;
-            }
-            
-            .content-grid {
-                gap: 12px;
-            }
-            
-            .footer {
-                padding: 20px 0;
-            }
-            
-            .footer p {
-                font-size: 0.65rem;
-            }
-            
-            .social-icons {
-                margin-top: 12px;
-                gap: 12px;
-            }
-            
-            .social-icons a {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            
-            .popup-content {
-                max-width: 95%;
-                padding: 12px;
-            }
-            
-            .popup-image {
-                max-height: 250px;
-            }
-            
-            .popup-timer {
-                font-size: 0.8rem;
-            }
-            
-            .dark-mode-toggle {
-                top: 10px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-            }
-            
-            .dark-mode-toggle i {
-                font-size: 1.1rem;
-            }
+
+        /* --- 3. BOTTOM CONSOLE --- */
+        .bottom-console {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
         }
-        
-        @media (max-width: 360px) {
-            .tabs-container {
-                padding: 8px;
-                gap: 10px;
-            }
-            
-            .tab-button {
-                padding: 10px 4px;
-                height: 50px;
-            }
-            
-            .tab-button i {
-                font-size: 0.85rem;
-            }
-            
-            .tab-button span {
-                font-size: 0.45rem;
-            }
-            
-            .content-grid {
-                gap: 10px;
-            }
-            
-            .footer {
-                padding: 15px 0;
-            }
-            
-            .footer p {
-                font-size: 0.6rem;
-            }
-            
-            .social-icons a {
-                width: 30px;
-                height: 30px;
-                font-size: 0.85rem;
-            }
-            
-            .popup-content {
-                max-width: 95%;
-                padding: 10px;
-            }
-            
-            .popup-image {
-                max-height: 200px;
-            }
-            
-            .popup-timer {
-                font-size: 0.75rem;
-            }
-            
-            .dark-mode-toggle {
-                top: 8px;
-                right: 8px;
-                width: 35px;
-                height: 35px;
-            }
-            
-            .dark-mode-toggle i {
-                font-size: 1rem;
-            }
+
+        .module-dock {
+            pointer-events: auto;
+            display: flex;
+            gap: 15px;
+            background: var(--glass-overlay);
+            padding: 10px 25px 15px 25px;
+            border-radius: 20px 20px 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
         }
+
+        .mod-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-family: var(--hud-font);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mod-btn.active {
+            background: rgba(10, 255, 10, 0.15);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(10, 255, 10, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* --- 4. LIGHTBOX --- */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .lightbox.show { opacity: 1; pointer-events: all; }
+        .lightbox img {
+            max-width: 95vw; max-height: 95vh;
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+        }
+        .close-lb {
+            position: absolute; top: 20px; right: 20px;
+            font-size: 2rem; color: var(--neon-pink);
+            background: transparent; border: none; cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Popup Ad -->
-    <div class="popup-overlay" id="popupAd">
-        <div class="popup-content">
-            <button class="popup-close" id="closePopup">
-                <i class="fas fa-times"></i>
-            </button>
-            <a href="/iklan" target="_blank"> 
-            <img src="/iklan/iklan.jpg" alt="Iklan Spesial" class="popup-image">
-            </a>
-            <div class="popup-timer" id="popupTimer">
-                <span id="countdown">5</span>
-            </div>
+
+    <!-- NAV -->
+    <nav class="top-nav">
+        <button class="nav-switch active" onclick="app.setType('infografis', this)">Infografis</button>
+        <button class="nav-switch" onclick="app.setType('video', this)">Video</button>
+        <button class="nav-switch" onclick="app.setType('slide', this)">Slide</button>
+    </nav>
+
+    <!-- STAGE -->
+    <main class="main-stage">
+        <div id="stage" class="content-container">
+            <!-- Dynamic Content -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div class="bottom-console">
+        <div class="module-dock">
+            <button class="mod-btn active" onclick="app.setModule(1, this)">1</button>
+            <button class="mod-btn" onclick="app.setModule(2, this)">2</button>
+            <button class="mod-btn" onclick="app.setModule(3, this)">3</button>
+            <button class="mod-btn" onclick="app.setModule(4, this)">4</button>
+            <button class="mod-btn" onclick="app.setModule(5, this)">5</button>
         </div>
     </div>
-    
-    <!-- Header Section -->
-    <header class="header">
-        <div class="container header-content">
-            <button class="dark-mode-toggle" id="darkModeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
-            <div class="profile-section">
-                <img src="/images/fotoprofil.jpg" alt="Fahri, S.Pd" class="profile-image" id="profileImage">
-                <div class="profile-info">
-                    <h1>Fahri, S.Pd</h1>
-                    <div class="profile-description">
-                        <div class="desc-item">
-                            <i class="fas fa-laptop-code"></i>
-                            <span>Guru Informatika</span>
-                        </div>
-                        <div class="desc-item">
-                            <i class="fas fa-school"></i>
-                            <span>SMP Negeri 2 Manggar</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-    
-    <!-- Tabs Section - Sticky Navigation -->
-    <section class="tabs-section">
-        <div class="container">
-            <div class="tabs-container">
-                <button class="tab-button active" onclick="openTab(event, 'modul-ajar')">
-                    <i class="fas fa-book"></i>
-                    <span>Modul</span>
-                </button>
-                <button class="tab-button" onclick="openTab(event, 'media-pembelajaran')">
-                    <i class="fas fa-laptop"></i>
-                    <span>Media</span>
-                </button>
-                <button class="tab-button" onclick="openTab(event, 'kurikuler')">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Kokurikuler</span>
-                </button>
-                <button class="tab-button" onclick="openTab(event, 'ebook')">
-                    <i class="fas fa-book-open"></i>
-                    <span>Ebook</span>
-                </button>
-                <button class="tab-button" onclick="openTab(event, 'pelatihan')">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Pelatihan</span>
-                </button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Tab Contents -->
-    
-    <!-- Modul Ajar Tab -->
-    <div id="modul-ajar" class="tab-content active">
-        <div class="container">
-            <div class="content-header">
-                <h2>Modul</h2>
-                <p>Produk yang berkaitan dengan Modul Ajar untuk meningkatkan efektivitas proses belajar mengajar</p>
-            </div>
-            <div class="content-grid">
-                <div class="content-card" data-link="/guru/buatmodulajar/">
-                    <img src="/images/generatormodulajar.jpg" alt="Generator Modul Ajar SMP" class="card-image">
-                </div>  
-                <div class="content-card" data-link="/guru/modulajarumum/">
-                    <img src="/images/modulajaruniversal.jpg" alt="Generator Modul Ajar sd smp sma" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/buatasesmen/">
-                    <img src="/images/generatorasesmen.jpg" alt="Generator Asesmen" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/kodingsd/">
-                    <img src="/images/generatoridekodingsd.jpg" alt="Generator Ide Koding SD" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/komunikasiguru/">
-                    <img src="/images/generatorkomunikasi.jpg" alt="Asisten AI Komunikasi Guru" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/narasirapot/">
-                    <img src="/images/generatornarasirapot.jpg" alt="Generator Narasi Rapot" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/sanksi/">
-                    <img src="/images/sanksi.jpg" alt="Asisten Pengambil Keputusan Berbasis Disiplin Positif" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://docs.google.com/forms/d/e/1FAIpQLSdq_Zazc0F0wQybyhmFSDgf_7wu5jnvl1Pe6J240rdl7plZNA/viewform?usp=dialog">
-                    <img src="/images/templatesiappakai.jpg" alt="Template Modul Ajar Siap Ajar" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://lynk.id/pakfahri/g90p2pe3w1do">
-                    <img src="/images/modulajarsd.jpg" alt="Modul Ajar SD Siap Pakai" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://lynk.id/pakfahri/o2n8r8q9zdvg">
-                    <img src="/images/modulajarsmp.jpg" alt="Modul Ajar SMP Siap Pakai" class="card-image">
-                </div>
-                <div class="content-card" data-link="http://lynk.id/pakfahri/013j7jyjyjm4">
-                    <img src="/images/jasamodulajar.jpg" alt="Jasa Buat Modul Ajar Siap Pakai" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://drive.google.com/drive/mobile/folders/1tRBF51QLdNhtcl0-yUBcYns_kffkA6jI?fbclid=IwVERTSANqzmRleHRuA2FlbQIxMAABHn7Nqf7L_79W9Uy0Ty14u5XCxIPbqO0uUB1TAvqZTwZSghS_3gngC1zshv4h_aem_xco7ylk6kgrX7y9-m9kXJw">
-                    <img src="/images/modulkodinggratis.jpg" alt="Modul Ajar Koding Gratis" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/modulsdfree/">
-                    <img src="/images/modulsdgratis.jpg" alt="Modul Ajar SD gratis" class="card-image">
-                </div>
-            </div>
-        </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" onclick="app.closeLightbox()">
+        <button class="close-lb">✕</button>
+        <img id="lb-img" src="" alt="Zoom">
     </div>
-    
-    <!-- Media Pembelajaran Tab -->
-    <div id="media-pembelajaran" class="tab-content">
-        <div class="container">
-            <div class="content-header">
-                <h2>Media</h2>
-                <p>Alat bantu serta media pembelajaran yang bisa guru gunakan</p>
-            </div>
-            <div class="content-grid">
-                <div class="content-card" data-link="https://drive.google.com/file/d/18J0k5kKON3QnJNlOPW_DQxOk1j1_0r3N/view?usp=sharing">
-                    <img src="/images/kodingtkpaud.jpg" alt="Gratis, Koding jenjang TK PAUD" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://fahriedtech.github.io/siswa/penjumlahan/">
-                    <img src="/images/penjumlahan.jpg" alt="Program latihan penjumlahan" class="card-image">
-                </div>
-                <div class="content-card" data-link="/siswa/pengurangan/">
-                    <img src="/images/pengurangan.jpg" alt="Program latihan pengurangan" class="card-image">
-                </div>
-                <div class="content-card" data-link="/siswa/perkalian/">
-                    <img src="/images/perkalian.jpg" alt="Program latihan perkalian" class="card-image">
-                </div>
-                <div class="content-card" data-link="/siswa/canva/">
-                    <img src="/images/canvasmp.jpg" alt="Canva untuk smp" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/scriptcode/">
-                    <img src="/images/generatorscriptcode.jpg" alt="buat skrip kode scratch sederhana untuk anak-anak" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/bagikelompok/">
-                    <img src="/images/bagikelompok.jpg" alt="alat pembagi kelompok" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/uruttampil/">
-                    <img src="/images/uruttampil.jpg" alt="alat untuk acak urutan tampil atau presentasi" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/denahkelas/">
-                    <img src="/images/denahkelas.jpg" alt="alat untuk acak tempat duduk atau denah kelas" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/acakpiket/">
-                    <img src="/images/acakpiket.jpg" alt="alat untuk membagi piket kelas otomatis" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/piketumum/">
-                    <img src="/images/piketumum.jpg" alt="alat untuk membagi peran dan tugas piket umum" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/petugasupacara/">
-                    <img src="/images/petugasupacara.jpg" alt="alat untuk membagi peran petuhas upacara secara adil" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/timer/">
-                    <img src="/images/timer.jpg" alt="Timer untuk take video ukin" class="card-image">
-                </div>
-            
-            </div>
-        </div>
-    </div>
-    
-    <!-- Kurikuler Tab -->
-    <div id="kurikuler" class="tab-content">
-        <div class="container">
-            <div class="content-header">
-                <h2>Kokurikuler</h2>
-                <p>Aktivitas yang disesuaikan dengan kurikulum nasional terbaru</p>
-            </div>
-            <div class="content-grid">
-                <div class="content-card" data-link="/guru/panduankokurikuler/">
-                    <img src="/images/panduankokurikuler.jpg" alt="Panduan Kokurikuler" class="card-image">
-                </div>
-                <div class="content-card" data-link="#">
-                    <img src="/images/kokurikuler7kaih.jpg" alt="Kokurikuler 7KAIH SD" class="card-image">
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Ebook Tab -->
-    <div id="ebook" class="tab-content">
-        <div class="container">
-            <div class="content-header">
-                <h2>Ebook</h2>
-                <p>Koleksi ebook pendidikan lengkap untuk mendukung kebutuhan belajar mengajar</p>
-            </div>
-            <div class="content-grid">
-                <div class="content-card" data-link="/guru/landingpage/">
-                    <img src="/images/landingpagewithai.jpg" alt="Buat wesite pertama" class="card-image">
-                </div>
-                <div class="content-card" data-link="/guru/googledocs">
-                    <img src="/images/pengolahkata.jpg" alt="Dasar aplikasi pengolah kata" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://lynk.id/pakfahri/393qgle1d4m1">
-                    <img src="/images/ebookcanvaguru.jpg" alt="Guru wajib tau trik canva ini" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://lynk.id/pakfahri/5k3o8p6655zo">
-                    <img src="/images/ebookscratchdasar.jpg" alt="Panduan pemrograman untuk pemula menggunakan scratch" class="card-image">
-                </div>
-                <div class="content-card" data-link="https://lynk.id/pakfahri/423n046qqzzp">
-                    <img src="/images/ebookbkkids.jpg" alt="sikecil ahli solusi - computational thinking sejak dini" class="card-image">
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Pelatihan Tab -->
-    <div id="pelatihan" class="tab-content">
-        <div class="container">
-            <div class="content-header">
-                <h2>Pelatihan</h2>
-                <p>Permintaan narasumber pada program pelatihan, bimtek dan webinar untuk meningkatkan kompetensi pendidik</p>
-            </div>
-            <div class="content-grid">
-               <div class="content-card" data-link="https://www.canva.com/design/DAG5JcT2Pzk/VHR7bp7c-57i90wNrlQbaA/view?utm_content=DAG5JcT2Pzk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc0057219fc">
-  <img src="/images/kodingka.jpg" alt="Bimtek Mapel Koding jenjang SD dan SMP" class="card-image">
-</div>  
 
-<div class="content-card" data-link="https://www.canva.com/design/DAG5HCYDRug/9I83BdY2GTcZoMxPrWChCQ/view?utm_content=DAG5HCYDRug&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hab7515993b">
-  <img src="/images/optimalisasiai.jpg" alt="Bimtek Optimalisasi AI untuk Guru" class="card-image">
-</div>
-
-<div class="content-card" data-link="https://wa.me/6281929200509?text=Halo%20Pak%20Fahri%20👋,%20saya%20tertarik%20dengan%20course%20Desain%20LKPD%20interaktif%20dengan%20Canva%20AI%20dan%20ingin%20bertanya%20lebih%20lanjut%20🙂">
-  <img src="/images/lkpdinteraktif.jpg" alt="Course Desain LKPD interaktif dengan Canva AI" class="card-image">
-</div>
-
-<div class="content-card" data-link="https://wa.me/6281929200509?text=Halo%20Pak%20Fahri%20👋,%20saya%20tertarik%20dengan%20course%20cepat,%20membuat%20landing%20page%20profesional%20dan%20ingin%20bertanya%20lebih%20lanjut%20🙂">
-  <img src="/images/websitejadi.jpg" alt="Course membuat landing page profesional" class="card-image">
-</div>
-
-<div class="content-card" data-link="https://wa.me/6281929200509?text=Halo%20Pak%20Fahri%20👋,%20saya%20tertarik%20dengan%20course%20Belajar%20Google%20Docs%20aplikasi%20pengolah%20kata%20dan%20ingin%20bertanya%20lebih%20lanjut%20🙂">
-  <img src="/images/googledocs.jpg" alt="Course Belajar Google Docs aplikasi pengolah kata" class="card-image">
-</div>
-
-<div class="content-card" data-link="https://wa.me/6281929200509?text=Halo%20Pak%20Fahri%20👋,%20saya%20tertarik%20dengan%20course%20Membuat%20game%20untuk%20siswa%20dan%20guru%20dan%20ingin%20bertanya%20lebih%20lanjut%20🙂">
-  <img src="/images/membuatgame.jpg" alt="Course Membuat game untuk siswa dan guru" class="card-image">
-</div>
-
-<div class="content-card" data-link="https://wa.me/6281929200509?text=Halo%20Pak%20Fahri%20👋,%20saya%20tertarik%20dengan%20course%20Baca%20cepat%20sumber%20buku%20digital%20menggunakan%20NotebookLLM%20dan%20ingin%20bertanya%20lebih%20lanjut%20🙂">
-  <img src="/images/risettuntas.jpg" alt="Course Baca cepat sumber buku menggunakan AI" class="card-image">
-</div>
-<div class="content-card" data-link="/guru/gurukoders">
-  <img src="/images/koders.jpg" alt="Bimtek Koding SMP Belitung Timur" class="card-image">
-</div>
-<div class="content-card" data-link="https://www.canva.com/design/DAGt7VoiLU4/gCM1Eh72XwHDcBYVr4c8MA/view?utm_content=DAGt7VoiLU4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hfabe1c92a3">
-  <img src="/images/sosialisasikka.jpg" alt="sosialisasi mapel Koding KA SD SMP Belitung Timur" class="card-image">
-</div>
-<div class="content-card" data-link="/guru/digi">
-  <img src="/images/digi.jpg" alt="Pengimbasan digitalisasi pembelajaran jenjang SMP" class="card-image">
-</div>
-<div class="content-card" data-link="https://docs.google.com/presentation/d/1LAF22NgfbYtY7rA5E68_NXrJiXlO2-Fw5X6Tc74w5z8/edit?usp=sharing">
-  <img src="/images/kodi.jpg" alt="Pengimbasan konten digital jenjang SMP" class="card-image">
-</div>
-<div class="content-card" data-link="/guru/ihtkkasd">
-  <img src="/images/ihtkkasd.jpg" alt="In House Training Koding dan Kecerdasan Artifisial jenjang Sekolah Dasar" class="card-image">
-</div>
-                
-            </div>
-        </div>
-    </div>
-    
-    <!-- Footer - Neumorphism -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Fahri, S.Pd. Hak Cipta Dilindungi.</p>
-            <div class="social-icons">
-                <a href="https://www.tiktok.com/@pakfahri.my.id"><i class="fab fa-tiktok"></i></a>
-                <a href="https://web.facebook.com/pakfahri.my.id"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.threads.com/@pakfahri.my.id">
-                    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/threads.svg" 
-     alt="Threads" width="24" height="24">
-
-</a>
-
-                <a href="https://www.instagram.com/pakfahri.my.id/"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
-    
     <script>
-        // Function to open tabs
-        function openTab(evt, tabName) {
-            // Hide all tab contents
-            const tabContents = document.getElementsByClassName('tab-content');
-            for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove('active');
-            }
-            
-            // Remove active class from all tab buttons
-            const tabButtons = document.getElementsByClassName('tab-button');
-            for (let i = 0; i < tabButtons.length; i++) {
-                tabButtons[i].classList.remove('active');
-            }
-            
-            // Show the specific tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to the button that opened the tab
-            evt.currentTarget.classList.add('active');
-        }
-        
-        // Dark Mode Functionality
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        const darkModeIcon = darkModeToggle.querySelector('i');
-        
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            body.classList.add('dark-mode');
-            darkModeIcon.classList.remove('fa-moon');
-            darkModeIcon.classList.add('fa-sun');
-        }
-        
-        // Toggle dark mode
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
-                darkModeIcon.classList.remove('fa-moon');
-                darkModeIcon.classList.add('fa-sun');
-            } else {
-                localStorage.setItem('darkMode', 'disabled');
-                darkModeIcon.classList.remove('fa-sun');
-                darkModeIcon.classList.add('fa-moon');
-            }
-        });
-        
-        // Popup Ad functionality
-        let countdownInterval;
-        let countdownValue = 5;
-        const popupAd = document.getElementById('popupAd');
-        const closePopup = document.getElementById('closePopup');
-        const countdownElement = document.getElementById('countdown');
-        
-        // Show popup when page loads
-        window.addEventListener('load', function() {
-            // Show popup after a short delay
-            setTimeout(function() {
-                popupAd.classList.add('active');
-                startCountdown();
-            }, 1000);
-        });
-        
-        // Start countdown timer
-        function startCountdown() {
-            countdownValue = 5;
-            countdownElement.textContent = countdownValue;
-            
-            countdownInterval = setInterval(function() {
-                countdownValue--;
-                countdownElement.textContent = countdownValue;
-                
-                if (countdownValue <= 0) {
-                    clearInterval(countdownInterval);
-                    closePopup.disabled = false;
-                    closePopup.style.opacity = '1';
-                    countdownElement.textContent = 'Sekarang bisa ditutup!';
-                }
-            }, 1000);
-        }
-        
-        // Close popup when close button is clicked
-        closePopup.addEventListener('click', function() {
-            if (countdownValue <= 0) {
-                popupAd.classList.remove('active');
-                clearInterval(countdownInterval);
-            }
-        });
-        
-        // Add smooth scroll behavior
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
+        // --- OFFLINE CACHE MANAGER (IndexedDB) ---
+        const ImageLoader = {
+            dbName: 'CyberpunkTheaterCache',
+            storeName: 'images',
+            dbPromise: null,
+
+            init() {
+                if (!this.dbPromise) {
+                    this.dbPromise = new Promise((resolve, reject) => {
+                        const request = indexedDB.open(this.dbName, 1);
+                        request.onupgradeneeded = (e) => {
+                            e.target.result.createObjectStore(this.storeName);
+                        };
+                        request.onsuccess = (e) => resolve(e.target.result);
+                        request.onerror = (e) => reject(e);
                     });
                 }
-            });
-        });
-        
-        // Prevent text selection on click
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-        });
-        
-        // Prevent context menu on long press (mobile)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        
-        // Handle content card clicks to open links
-        document.addEventListener('DOMContentLoaded', function() {
-            const contentCards = document.querySelectorAll('.content-card[data-link]');
-            
-            contentCards.forEach(card => {
-                // Add tabindex for accessibility
-                card.setAttribute('tabindex', '0');
-                
-                // Handle click events
-                card.addEventListener('click', function() {
-                    const link = this.getAttribute('data-link');
-                    if (link && link !== '#') {
-                        window.open(link, '_blank');
-                    }
-                });
-                
-                // Handle keyboard events for accessibility
-                card.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const link = this.getAttribute('data-link');
-                        if (link && link !== '#') {
-                            window.open(link, '_blank');
+                return this.dbPromise;
+            },
+
+            async getImage(url) {
+                const db = await this.init();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(this.storeName, 'readonly');
+                    const store = tx.objectStore(this.storeName);
+                    const request = store.get(url);
+                    
+                    request.onsuccess = async () => {
+                        if (request.result) {
+                            console.log('Cache Hit:', url);
+                            resolve(URL.createObjectURL(request.result));
+                        } else {
+                            console.log('Downloading:', url);
+                            try {
+                                const response = await fetch(url);
+                                const blob = await response.blob();
+                                const txWrite = db.transaction(this.storeName, 'readwrite');
+                                txWrite.objectStore(this.storeName).put(blob, url);
+                                resolve(URL.createObjectURL(blob));
+                            } catch (err) {
+                                console.error("Fetch failed", err);
+                                resolve(url);
+                            }
                         }
-                    }
-                });
-            });
-            
-            // NEW CODE: Handle profile image click
-            const profileImage = document.getElementById('profileImage');
-            if (profileImage) {
-                profileImage.addEventListener('click', function() {
-                    window.open('/', '_blank');
-                });
-                
-                // Add keyboard accessibility for profile image
-                profileImage.setAttribute('tabindex', '0');
-                profileImage.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        window.open('/', '_blank');
-                    }
+                    };
+                    request.onerror = () => resolve(url);
                 });
             }
+        };
+
+        // --- DATA FACTORY ---
+        const createSlides = (mod, count) => 
+            Array.from({length: count}, (_, i) => `https://pakfahri.my.id/images/kodingsd/modul${mod}/${i+1}.jpg`);
+
+        const DB = {
+            1: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul1.jpg",
+                video: "https://youtu.be/f3j2izkY_jA",
+                slides: createSlides(1, 13)
+            },
+            2: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul2.jpg",
+                video: "https://youtu.be/e1DugzOHcB8",
+                slides: createSlides(2, 15)
+            },
+            3: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul3.jpg",
+                video: "https://youtu.be/4E0FzubOyzQ",
+                slides: createSlides(3, 15)
+            },
+            4: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul4.jpg",
+                video: "https://youtu.be/AhwiX4BurK4",
+                slides: createSlides(4, 15)
+            },
+            5: {
+                infografis: "https://pakfahri.my.id/images/kodingsd/modul5.jpg",
+                video: "https://youtu.be/iL_T5esPnvI",
+                slides: createSlides(5, 15)
+            }
+        };
+
+        // --- APP CONTROLLER ---
+        const app = {
+            state: {
+                module: 1,
+                type: 'infografis',
+                slideIndex: 0
+            },
+            
+            els: {
+                stage: document.getElementById('stage'),
+                lightbox: document.getElementById('lightbox'),
+                lbImg: document.getElementById('lb-img')
+            },
+
+            init() {
+                this.render();
+            },
+
+            setModule(id, btn) {
+                if(this.state.module === id) return;
+                this.state.module = id;
+                this.state.slideIndex = 0;
+                
+                document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                this.transition();
+            },
+
+            setType(type, btn) {
+                if(this.state.type === type) return;
+                this.state.type = type;
+                
+                document.querySelectorAll('.nav-switch').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                this.transition();
+            },
+
+            transition() {
+                this.els.stage.classList.add('fade-out');
+                setTimeout(() => {
+                    this.render();
+                    this.els.stage.classList.remove('fade-out');
+                }, 400);
+            },
+
+            render() {
+                const data = DB[this.state.module];
+                let html = '';
+
+                if (this.state.type === 'infografis') {
+                    // Added unique ID for loader and set image opacity to 0 initially
+                    html = `
+                        <div id="info-loader" class="loading-text">LOADING DATA...</div>
+                        <img id="main-info-img"
+                             class="img-single" 
+                             style="opacity: 0;"
+                             onclick="app.openLightbox(this.src)" 
+                             src="https://placehold.co/800x600/000/0ff?text= ">`;
+                             
+                    // Async load cached image
+                    ImageLoader.getImage(data.infografis).then(url => {
+                         const img = document.getElementById('main-info-img');
+                         const loader = document.getElementById('info-loader');
+                         if(img) {
+                            img.onload = () => {
+                                // Show image, hide loader when actually ready
+                                img.style.opacity = 1;
+                                if(loader) loader.style.display = 'none';
+                            };
+                            img.src = url;
+                         }
+                    });
+                } 
+                else if (this.state.type === 'video') {
+                    const vidId = this.getYTId(data.video);
+                    html = `
+                        <div class="video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/${vidId}?autoplay=1&rel=0" allowfullscreen></iframe>
+                        </div>`;
+                } 
+                else if (this.state.type === 'slide') {
+                    // MODIFIED: Menggunakan text HTML terpisah (fixed size), bukan text di dalam gambar
+                    const slidesHtml = data.slides.map(src => `
+                        <div class="slide-item">
+                            <div class="loading-text">LOADING DATA...</div>
+                            <div class="zoom-trigger" onclick="app.openLightbox(this.nextElementSibling.src)"></div>
+                            <img class="cached-slide" 
+                                 data-original-src="${src}" 
+                                 style="opacity: 0;"
+                                 src="https://placehold.co/800x600/000/000?text=+" 
+                                 loading="lazy">
+                        </div>
+                    `).join('');
+
+                    html = `
+                        <div class="carousel-wrapper">
+                            <button class="car-btn car-prev" onclick="slider.move(-1)">&#10094;</button>
+                            
+                            <div class="carousel-viewport" id="carViewport">
+                                <div class="carousel-track" id="carTrack">
+                                    ${slidesHtml}
+                                </div>
+                            </div>
+
+                            <button class="car-btn car-next" onclick="slider.move(1)">&#10095;</button>
+                            <div class="page-indicator" id="carIndicator">SLIDE // 01 OF ${data.slides.length}</div>
+                        </div>
+                    `;
+                }
+
+                this.els.stage.innerHTML = html;
+
+                if (this.state.type === 'slide') {
+                    slider.init(data.slides.length);
+                    this.loadSlidesFromCache();
+                }
+            },
+
+            loadSlidesFromCache() {
+                const imgs = document.querySelectorAll('.cached-slide');
+                imgs.forEach(async (img) => {
+                    const url = img.getAttribute('data-original-src');
+                    // Find sibling loader
+                    const loader = img.parentElement.querySelector('.loading-text');
+                    
+                    const cachedUrl = await ImageLoader.getImage(url);
+                    
+                    img.onload = () => {
+                        // Tampilkan gambar, sembunyikan text loader
+                        img.style.opacity = 1;
+                        if(loader) loader.style.display = 'none';
+                    };
+                    img.src = cachedUrl;
+                });
+            },
+
+            openLightbox(src) {
+                this.els.lbImg.src = src;
+                this.els.lightbox.classList.add('show');
+            },
+
+            closeLightbox() {
+                this.els.lightbox.classList.remove('show');
+            },
+
+            getYTId(url) {
+                const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+        };
+
+        // --- SLIDER ENGINE ---
+        const slider = {
+            index: 0,
+            total: 0,
+            track: null,
+            startX: 0,
+            currentX: 0,
+
+            init(total) {
+                this.index = 0;
+                this.total = total;
+                this.track = document.getElementById('carTrack');
+                this.updateUI();
+
+                const viewport = document.getElementById('carViewport');
+                viewport.addEventListener('touchstart', (e) => this.touchStart(e), {passive: true});
+                viewport.addEventListener('touchmove', (e) => this.touchMove(e), {passive: true});
+                viewport.addEventListener('touchend', () => this.touchEnd());
+            },
+
+            move(dir) {
+                this.index += dir;
+                if (this.index < 0) this.index = 0;
+                if (this.index >= this.total) this.index = this.total - 1;
+                this.updateUI();
+
+                if (app.els.lightbox.classList.contains('show')) {
+                    const currentImg = this.track.children[this.index].querySelector('img');
+                    if(currentImg) app.els.lbImg.src = currentImg.src;
+                }
+            },
+
+            updateUI() {
+                if (!this.track) return;
+                this.track.style.transform = `translateX(-${this.index * 100}%)`;
+                
+                const indEl = document.getElementById('carIndicator');
+                if (indEl) {
+                    indEl.innerText = `SLIDE // ${String(this.index + 1).padStart(2, '0')} OF ${this.total}`;
+                }
+            },
+
+            touchStart(e) { this.startX = e.touches[0].clientX; },
+            touchMove(e) { this.currentX = e.touches[0].clientX; },
+            touchEnd() {
+                if (!this.startX || !this.currentX) return;
+                const diff = this.startX - this.currentX;
+                if (diff > 50) this.move(1);
+                if (diff < -50) this.move(-1);
+                this.startX = 0; this.currentX = 0;
+            }
+        };
+
+        // KEYBOARD NAVIGATION
+        document.addEventListener('keydown', (e) => {
+            if (app.state.type === 'slide') {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault(); slider.move(-1);
+                }
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault(); slider.move(1);
+                }
+            }
         });
+
+        app.init();
+
     </script>
 </body>
 </html>
