@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Testimoni Kelas AI Pak Fahri</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        button {
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #128C7E;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Form Testimoni Kelas AI</h2>
+    <form id="testiForm">
+        <div class="form-group">
+            <label for="nama">Nama Lengkap:</label>
+            <input type="text" id="nama" placeholder="Contoh: Ahmad Dahlan" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="sekolah">Nama Sekolah:</label>
+            <input type="text" id="sekolah" placeholder="Contoh: SD 12 Manggar" required>
+        </div>
+
+        <div class="form-group">
+            <label for="kesan">Kesan Mengikuti Kelas (Misal: seru/bermanfaat):</label>
+            <input type="text" id="kesan" placeholder="Contoh: sangat seru dan membuka wawasan baru" required>
+        </div>
+
+        <div class="form-group">
+            <label for="palingSuka">Apa yang paling kamu sukai dari kelas ini?</label>
+            <textarea id="palingSuka" placeholder="Contoh: penyampaian materinya yang praktis dan langsung praktik" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="karya">Produk/karya AI apa yang berhasil kamu buat?</label>
+            <textarea id="karya" placeholder="Contoh: video pembelajaran animasi dan modul ajar interaktif" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="pemateri">Pendapatmu tentang cara mengajar Pak Fahri:</label>
+            <input type="text" id="pemateri" placeholder="Contoh: sangat sabar, detail, dan mudah dipahami pemula" required>
+        </div>
+
+        <div class="form-group">
+            <label for="harapan">Harapan/Saran untuk kelas ke depannya:</label>
+            <input type="text" id="harapan" placeholder="Contoh: ada kelas lanjutan (level advanced)" required>
+        </div>
+
+        <button type="button" onclick="kirimWA()">Kirim Testimoni via WhatsApp</button>
+    </form>
+</div>
+
+<script>
+function kirimWA() {
+    const noWhatsApp = "6281929200509"; 
+
+    // Mengambil data dari form
+    const nama = document.getElementById('nama').value;
+    const sekolah = document.getElementById('sekolah').value;
+    const kesan = document.getElementById('kesan').value;
+    const palingSuka = document.getElementById('palingSuka').value;
+    const karya = document.getElementById('karya').value;
+    const pemateri = document.getElementById('pemateri').value;
+    const harapan = document.getElementById('harapan').value;
+
+    // Validasi input kosong
+    if(!nama || !sekolah || !kesan || !palingSuka || !karya || !pemateri || !harapan) {
+        alert("Mohon lengkapi semua kolom terlebih dahulu.");
+        return;
+    }
+
+    // Merangkai teks mengalir tanpa label nama/sekolah dan tanpa judul
+    let teks = `"Saya ${nama} dari ${sekolah}. Mengikuti Kelas AI di pakfahri.my.id adalah pengalaman yang ${kesan}. Hal yang paling saya sukai dari kelas ini adalah ${palingSuka}.\n\n`;
+    teks += `Berkat bimbingan di kelas ini, saya sekarang sudah berhasil membuat ${karya}. Materi yang dibawakan oleh Pak Fahri ${pemateri}. Semoga ke depannya kelas ini ${harapan}."`;
+
+    // Encode teks agar aman untuk URL link WhatsApp
+    const URL_WA = `https://wa.me/${noWhatsApp}?text=${encodeURIComponent(teks)}`;
+
+    // Buka WhatsApp di tab baru
+    window.open(URL_WA, '_blank');
+}
+</script>
+
+</body>
+</html>
