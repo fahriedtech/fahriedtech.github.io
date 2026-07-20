@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi & Simulator: Simetri Refleks Matrix</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e24;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 95vh;
+        }
+        h1 { color: #ffca28; margin-bottom: 25px; text-align: center; }
+        
+        /* Gaya Accordion */
+        .accordion-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        .accordion-item {
+            background-color: #2a2a35;
+            border: 2px solid #444;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .accordion-header {
+            background-color: #3e3e50;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .accordion-header:hover { background-color: #4e4e65; }
+        .accordion-header::after {
+            content: '▼';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        .accordion-item.active .accordion-header::after {
+            transform: rotate(-180deg);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 20px;
+        }
+        .accordion-item.active .accordion-content {
+            max-height: 1000px; /* Nilai besar agar konten muat saat terbuka */
+            padding: 20px;
+        }
+
+        /* Gaya Komponen di Dalam Game Accordion */
+        .presentation-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #1e1e24;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .grid-header {
+            font-weight: bold;
+            color: #ffca28;
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .row-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hand-box {
+            height: 80px;
+            background-color: #3e3e50;
+            border: 2px solid #555;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            transition: transform 0.1s ease;
+        }
+        .pop { transform: scale(1.05); background-color: #4e4e65; }
+        .btn-shuffle {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #ffca28;
+            color: #1e1e24;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-shuffle:hover { background-color: #ffd54f; }
+
+        /* Gaya Konten Penjelasan */
+        .ct-title { font-weight: bold; color: #ffca28; margin-top: 15px; font-size: 16px; }
+        .ct-desc { margin: 5px 0 15px 0; color: #ddd; line-height: 1.5; font-size: 15px; }
+        .ct-bullet { margin-left: 15px; color: #bbb; font-size: 14px; }
+        .conclusion-box {
+            background-color: #1e1e24;
+            border-left: 4px solid #ffca28;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SIMETRI REFLEKS MATRIX</h1>
+
+    <div class="accordion-container">
+        
+        <!-- BAGIAN 1: GAME / SIMULATOR -->
+        <div class="accordion-item active" id="item-game">
+            <div class="accordion-header" onclick="toggleAccordion('item-game')">1. Simulator Permainan</div>
+            <div class="accordion-content">
+                <div class="presentation-grid">
+                    <div class="grid-header">Urutan</div>
+                    <div class="grid-header">Tangan Kiri</div>
+                    <div class="grid-header">Tangan Kanan</div>
+
+                    <div class="row-number">1</div>
+                    <div id="b1-kiri" class="hand-box">✊</div>
+                    <div id="b1-kanan" class="hand-box">✋</div>
+
+                    <div class="row-number">2</div>
+                    <div id="b2-kiri" class="hand-box">✋</div>
+                    <div id="b2-kanan" class="hand-box">✊</div>
+
+                    <div class="row-number">3</div>
+                    <div id="b3-kiri" class="hand-box">✊</div>
+                    <div id="b3-kanan" class="hand-box">✊</div>
+
+                    <div class="row-number">4</div>
+                    <div id="b4-kiri" class="hand-box">✋</div>
+                    <div id="b4-kanan" class="hand-box">✋</div>
+                </div>
+                <button class="btn-shuffle" onclick="shuffleAllImages()">🔀 ACAK GAMBAR MATRIKS</button>
+            </div>
+        </div>
+
+        <!-- BAGIAN 2: PENJELASAN BERPIKIR KOMPUTASIONAL -->
+        <div class="accordion-item" id="item-ct">
+            <div class="accordion-header" onclick="toggleAccordion('item-ct')">2. Penjelasan Berpikir Komputasional</div>
+            <div class="accordion-content">
+                
+                <div class="ct-title">2. Pengenalan Pola (Membaca Keteraturan)</div>
+                <div class="ct-desc">
+                    Otak mengelompokkan baris secara instan menjadi 2 tipe logika:
+                    <div class="ct-bullet">• <b>Pola Simetri:</b> Kiri-Kanan sama (✊-✊ / ✋-✋).</div>
+                    <div class="ct-bullet">• <b>Pola Asimetri:</b> Kiri-Kanan silang (✊-✋ / ✋-✊).</div>
+                </div>
+
+                <div class="ct-title">3. Abstraksi (Menyaring Informasi)</div>
+                <div class="ct-desc">
+                    Pemain mengabaikan dekorasi visual (warna grid, nomor urut, tombol acak).<br>
+                    Hanya fokus pada data penting: <b>Bentuk Simbol</b> dan <b>Posisi Kolom</b>.
+                </div>
+
+                <div class="ct-title">4. Algoritma (Eksekusi Terstruktur)</div>
+                <div class="ct-desc">
+                    Otak menjalankan langkah sekuensial yang kaku:<br>
+                    <b>Mulai → Baris 1 → Baris 2 → Baris 3 → Baris 4 → Selesai.</b><br>
+                    Urutan tidak boleh melompat agar tidak terjadi error gerakan.
+                </div>
+
+                <div class="conclusion-box">
+                    <b>Kesimpulan:</b> Permainan ini membuktikan bahwa Berpikir Komputasional adalah metode berpikir kognitif manusia dalam memproses informasi, bukan sekadar tentang menulis kode komputer.
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Logika Pengendali Accordion
+        function toggleAccordion(id) {
+            const item = document.getElementById(id);
+            const isActive = item.classList.contains('active');
+            
+            // Tutup semua terlebih dahulu jika ingin sistem single-open
+            document.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('active'));
+            
+            // Jika sebelumnya tidak aktif, buka sekarang
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+
+        // Logika Pengacak Gambar Simulator
+        const hands = ["✊", "✋"];
+        function shuffleAllImages() {
+            for (let i = 1; i <= 4; i++) {
+                const kiriEl = document.getElementById(`b${i}-kiri`);
+                const kananEl = document.getElementById(`b${i}-kanan`);
+
+                kiriEl.innerText = hands[Math.floor(Math.random() * 2)];
+                kananEl.innerText = hands[Math.floor(Math.random() * 2)];
+
+                kiriEl.classList.add('pop');
+                kananEl.classList.add('pop');
+
+                setTimeout(() => {
+                    kiriEl.classList.remove('pop');
+                    kananEl.classList.remove('pop');
+                }, 100);
+            }
+        }
+        
+        // Jalankan acak sekali saat awal dimuat
+        window.onload = shuffleAllImages;
+    </script>
+</body>
+</html>
