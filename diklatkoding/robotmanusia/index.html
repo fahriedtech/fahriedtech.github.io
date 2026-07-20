@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi Grid Robot & Rintangan</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .controls {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    select, button {
+      padding: 10px 16px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      background-color: #fff;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .grid-container {
+      display: grid;
+      gap: 8px;
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .cell {
+      background-color: #f8fafc;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      position: relative;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+    }
+
+    .cell-label {
+      font-size: 9px;
+      font-weight: bold;
+      position: absolute;
+      bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Styling Kategori Sel */
+    .cell.start {
+      background-color: #dcfce7;
+      border: 2px solid #22c55e;
+    }
+    .cell.start .cell-label { color: #15803d; }
+
+    .cell.finish {
+      background-color: #fef9c3;
+      border: 2px solid #eab308;
+    }
+    .cell.finish .cell-label { color: #a16207; }
+
+    .cell.obstacle {
+      background-color: #fee2e2;
+      border: 2px solid #ef4444;
+    }
+    .cell.obstacle .cell-label { color: #b91c1c; }
+
+    .legend {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Generator Papan Robot</h1>
+
+  <div class="controls">
+    <label for="gridSize">Ukuran Grid:</label>
+    <select id="gridSize" onchange="generateGrid()">
+      <option value="4" selected>4 x 4</option>
+      <option value="5">5 x 5</option>
+      <option value="6">6 x 6</option>
+    </select>
+
+    <label for="obstacleCount">Jumlah Rintangan:</label>
+    <select id="obstacleCount">
+      <option value="1">1 Rintangan</option>
+      <option value="2">2 Rintangan</option>
+      <option value="3" selected>3 Rintangan</option>
+      <option value="4">4 Rintangan</option>
+    </select>
+
+    <button onclick="generateGrid()">Acak Posisi</button>
+  </div>
+
+  <div class="grid-container" id="grid"></div>
+
+  <div class="legend">
+    <div class="legend-item">🤖 <b>Start:</b> Robot</div>
+    <div class="legend-item">🧺 <b>Finish:</b> Keranjang Buah</div>
+    <div class="legend-item">🪨/🌲/🚧/⛰️ <b>Rintangan:</b> Acak</div>
+  </div>
+
+  <script>
+    // Inisialisasi Suara (Web Audio API)
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playShuffleSound() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      
+      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.12);
+    }
+
+    // Variasi Rintangan
+    const obstacleList = [
+      { icon: '🪨', name: 'Batu' },
+      { icon: '🌲', name: 'Pohon' },
+      { icon: '🚧', name: 'Barikade' },
+      { icon: '⛰️', name: 'Bukit' }
+    ];
+
+    function generateGrid() {
+      playShuffleSound();
+
+      const gridElement = document.getElementById('grid');
+      const gridSize = parseInt(document.getElementById('gridSize').value);
+      const obstacleCount = parseInt(document.getElementById('obstacleCount').value);
+      const totalCells = gridSize * gridSize;
+
+      // Penyesuaian ukuran kotak dan ikon sesuai jumlah grid
+      let cellSize = 80;
+      let fontSize = 30;
+
+      if (gridSize === 5) {
+        cellSize = 68;
+        fontSize = 26;
+      } else if (gridSize === 6) {
+        cellSize = 58;
+        fontSize = 22;
+      }
+
+      // Atur layout grid secara dinamis
+      gridElement.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
+      gridElement.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`;
+      gridElement.innerHTML = '';
+
+      // Array indeks sel yang tersedia
+      let availableIndexes = Array.from({ length: totalCells }, (_, i) => i);
+
+      function getRandomIndex() {
+        const randPos = Math.floor(Math.random() * availableIndexes.length);
+        return availableIndexes.splice(randPos, 1)[0];
+      }
+
+      // Tentukan posisi Start dan Finish secara acak
+      const startIndex = getRandomIndex();
+      const finishIndex = getRandomIndex();
+
+      // Tentukan posisi dan jenis rintangan secara acak
+      const obstacles = [];
+      for (let i = 0; i < obstacleCount; i++) {
+        const idx = getRandomIndex();
+        const randomObstacle = obstacleList[Math.floor(Math.random() * obstacleList.length)];
+        obstacles.push({ index: idx, ...randomObstacle });
+      }
+
+      // Render sel ke DOM
+      for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.style.fontSize = `${fontSize}px`;
+
+        if (i === startIndex) {
+          cell.classList.add('start');
+          cell.innerHTML = '🤖<span class="cell-label">Start</span>';
+        } else if (i === finishIndex) {
+          cell.classList.add('finish');
+          cell.innerHTML = '🧺<span class="cell-label">Finish</span>';
+        } else {
+          const obs = obstacles.find(o => o.index === i);
+          if (obs) {
+            cell.classList.add('obstacle');
+            cell.innerHTML = `${obs.icon}<span class="cell-label">${obs.name}</span>`;
+          }
+        }
+
+        gridElement.appendChild(cell);
+      }
+    }
+
+    // Jalankan pertama kali saat halaman dimuat
+    window.onload = generateGrid;
+  </script>
+</body>
+</html>
