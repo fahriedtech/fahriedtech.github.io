@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contoh Koding Fun Learning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #357abd;
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Contoh Koding Fun Learning</h1>
+
+    <div class="menu-container">
+        <a href="/diklatkoding/bagaimanakeseharianku/" class="menu-item">Bagaimana Keseharianku</a>
+        <a href="/diklatkoding/siapakahaku/" class="menu-item">Siapakah Aku</a>
+        <a href="/diklatkoding/simetrirefleks/" class="menu-item">Simetri Refleks</a>
+        <a href="/diklatkoding/susuncerita/" class="menu-item">Susun Cerita</a>
+    </div>
+
+</body>
+</html>
