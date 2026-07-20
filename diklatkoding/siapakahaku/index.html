@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detektif Fauna: Game Tebak Hewan IPA & Berpikir Komputasional</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Fredoka for playful education vibe) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti Library for Celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Tone.js for Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh;
+        }
+        .font-playful {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .animate-bounce-slow {
+            animation: bounce 3s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #4ade80;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            dark: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex flex-col min-height-screen overflow-x-hidden text-slate-800">
+
+    <!-- Sound toggler and Top bar -->
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-green-100 py-3 px-4 md:px-8 sticky top-0 z-40 transition-all">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-green-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-md shadow-green-200">
+                    <i class="fa-solid fa-brain-circuit text-xl md:text-2xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="font-playful text-lg md:text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-500 bg-clip-text text-transparent">Detektif Fauna</h1>
+                    <p class="text-[10px] md:text-xs text-slate-500 font-semibold uppercase tracking-wider">IPA & Berpikir Komputasional</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- Sound control -->
+                <button id="btn-sound" onclick="toggleSound()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition flex items-center justify-center" title="Toggle Sound">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+                <!-- Educational Info Toggle -->
+                <button onclick="toggleModal('modal-ct-guide')" class="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-sm transition flex items-center gap-2 border border-emerald-200">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span class="hidden md:inline">Panduan CT</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center px-4 py-6 md:py-10 max-w-6xl w-full mx-auto">
+        
+        <!-- SCREEN 1: WELCOME SCREEN -->
+        <section id="screen-welcome" class="w-full max-w-4xl bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-10 flex flex-col items-center text-center transition-all duration-300">
+            <div class="relative mb-6">
+                <div class="absolute -inset-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur opacity-40 animate-pulse"></div>
+                <div class="relative bg-white p-6 rounded-full shadow-lg">
+                    <span class="text-6xl md:text-7xl animate-bounce-slow inline-block">🕵️‍♂️🔍</span>
+                </div>
+            </div>
+            
+            <h2 class="font-playful text-3xl md:text-5xl font-extrabold text-slate-800 mb-3">Siapakah Aku?</h2>
+            <p class="text-slate-600 text-sm md:text-lg max-w-2xl mb-8 leading-relaxed">
+                Selamat datang calon <span class="text-green-600 font-bold">Detektif Fauna</span>! Gunakan kecerdasan IPA-mu dan kekuatan <span class="text-emerald-600 font-bold">Berpikir Komputasional</span> untuk memecahkan teka-teki adaptasi & klasifikasi dunia hewan.
+            </p>
+
+            <!-- Computational Thinking Mini Guide cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mb-8 max-w-3xl text-left">
+                <div class="bg-gradient-to-b from-blue-50 to-blue-100/50 p-3 rounded-2xl border border-blue-100">
+                    <div class="text-blue-600 text-lg mb-1"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                    <h4 class="font-bold text-xs text-blue-900">Dekomposisi</h4>
+                    <p class="text-[11px] text-blue-700/80 leading-snug">Pecah karakteristik hewan per bagian.</p>
+                </div>
+                <div class="bg-gradient-to-b from-purple-50 to-purple-100/50 p-3 rounded-2xl border border-purple-100">
+                    <div class="text-purple-600 text-lg mb-1"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h4 class="font-bold text-xs text-purple-900">Pengenalan Pola</h4>
+                    <p class="text-[11px] text-purple-700/80 leading-snug">Cari kesamaan adaptasi & klasifikasi.</p>
+                </div>
+                <div class="bg-gradient-to-b from-amber-50 to-amber-100/50 p-3 rounded-2xl border border-amber-100">
+                    <div class="text-amber-600 text-lg mb-1"><i class="fa-solid fa-filter"></i></div>
+                    <h4 class="font-bold text-xs text-amber-900">Abstraksi</h4>
+                    <p class="text-[11px] text-amber-700/80 leading-snug">Fokus pada info paling penting saja.</p>
+                </div>
+                <div class="bg-gradient-to-b from-emerald-50 to-emerald-100/50 p-3 rounded-2xl border border-emerald-100">
+                    <div class="text-emerald-600 text-lg mb-1"><i class="fa-solid fa-diagram-project"></i></div>
+                    <h4 class="font-bold text-xs text-emerald-900">Algoritma</h4>
+                    <p class="text-[11px] text-emerald-700/80 leading-snug">Alur logika eliminasi jawaban.</p>
+                </div>
+            </div>
+
+            <!-- Avatar Selection -->
+            <div class="w-full max-w-md mb-8">
+                <h3 class="font-playful text-lg font-bold text-slate-700 mb-3">Pilih Karakter Detektifmu:</h3>
+                <div class="grid grid-cols-4 gap-3">
+                    <button onclick="selectAvatar('cat', '😸')" class="avatar-option border-2 border-green-500 bg-green-50 rounded-2xl p-3 text-center transition hover:scale-105">
+                        <span class="text-3xl block">😸</span>
+                        <span class="text-[11px] font-bold text-slate-600 block mt-1">Meong</span>
+                    </button>
+                    <button onclick="selectAvatar('owl', '🦉')" class="avatar-option border-2 border-slate-200 bg-white rounded-2xl p-3 text-center transition hover:scale-105">
+                        <span class="text-3xl block">🦉</span>
+                        <span class="text-[11px] font-bold text-slate-600 block mt-1">Hooty</span>
+                    </button>
+                    <button onclick="selectAvatar('monkey', '🐵')" class="avatar-option border-2 border-slate-200 bg-white rounded-2xl p-3 text-center transition hover:scale-105">
+                        <span class="text-3xl block">🐵</span>
+                        <span class="text-[11px] font-bold text-slate-600 block mt-1">Moni</span>
+                    </button>
+                    <button onclick="selectAvatar('fox', '🦊')" class="avatar-option border-2 border-slate-200 bg-white rounded-2xl p-3 text-center transition hover:scale-105">
+                        <span class="text-3xl block">🦊</span>
+                        <span class="text-[11px] font-bold text-slate-600 block mt-1">Foxy</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Play Trigger -->
+            <button onclick="startGame()" class="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-playful text-xl font-bold rounded-2xl shadow-lg shadow-green-100 hover:shadow-xl hover:shadow-green-200 transition transform hover:-translate-y-1 w-full max-w-sm flex items-center justify-center gap-3">
+                <span>Mulai Petualangan</span>
+                <i class="fa-solid fa-compass animate-spin text-2xl" style="animation-duration: 4s;"></i>
+            </button>
+        </section>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <section id="screen-game" class="hidden w-full flex flex-col lg:flex-row gap-6 items-stretch">
+            
+            <!-- Left Side: Status, Riddle, and CT Interactive Power-Ups -->
+            <div class="w-full lg:w-3/5 flex flex-col gap-5">
+                
+                <!-- Status Bar -->
+                <div class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div id="game-avatar-display" class="text-3xl bg-slate-100 p-2 rounded-xl">😸</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="level-badge" class="px-2.5 py-0.5 bg-green-100 text-green-800 text-xs font-bold rounded-full uppercase tracking-wider">Level 1</span>
+                                <span id="level-title" class="text-xs font-medium text-slate-500">Detektif Cilik</span>
+                            </div>
+                            <div class="text-sm font-bold text-slate-700">Soal <span id="question-index">1</span> dari 5</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="flex-grow max-w-xs mx-4 hidden sm:block">
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div id="progress-bar-fill" class="bg-gradient-to-r from-green-500 to-emerald-500 h-full transition-all duration-500" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Score and Lives -->
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 font-semibold block uppercase">Skor</span>
+                            <span id="score-display" class="font-playful text-xl font-bold text-slate-800">000</span>
+                        </div>
+                        <div class="border-l border-slate-100 pl-4 flex gap-1 text-red-500" id="hearts-container">
+                            <i class="fa-solid fa-heart text-xl animate-pulse"></i>
+                            <i class="fa-solid fa-heart text-xl animate-pulse"></i>
+                            <i class="fa-solid fa-heart text-xl animate-pulse"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riddle Card (Siapakah Aku?) -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border-2 border-green-100 relative overflow-hidden flex-grow flex flex-col justify-between">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full -z-10"></div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-playful text-sm font-bold tracking-wider text-green-700 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-search"></i> Teka-Teki Hewan
+                            </span>
+                            <span class="text-xs font-medium text-slate-400" id="difficulty-indicator">Kesulitan: Mudah</span>
+                        </div>
+                        
+                        <!-- Riddle Text Clues -->
+                        <div class="space-y-3 min-h-[160px] flex flex-col justify-center">
+                            <div id="clue-1" class="p-3 bg-slate-50 rounded-xl border border-slate-100 transition duration-300">
+                                <span class="font-bold text-green-600 mr-2">Petunjuk 1:</span>
+                                <span class="text-slate-700 text-sm md:text-base" id="clue-text-1">Memuat data...</span>
+                            </div>
+                            <div id="clue-2" class="p-3 bg-slate-50 rounded-xl border border-slate-100 transition duration-300 opacity-40">
+                                <span class="font-bold text-green-600 mr-2">Petunjuk 2:</span>
+                                <span class="text-slate-700 text-sm md:text-base" id="clue-text-2">Buka petunjuk berikutnya dengan mengeliminasi pola...</span>
+                            </div>
+                            <div id="clue-3" class="p-3 bg-slate-50 rounded-xl border border-slate-100 transition duration-300 opacity-40">
+                                <span class="font-bold text-green-600 mr-2">Petunjuk 3:</span>
+                                <span class="text-slate-700 text-sm md:text-base" id="clue-text-3">Buka petunjuk ketiga dengan teknik abstraksi...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CT Toolbox Trigger -->
+                    <div class="mt-6 border-t border-slate-100 pt-4">
+                        <div class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Alat Berpikir Komputasional (Gunakan untuk petunjuk):</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button id="btn-ct-decomposition" onclick="useCTTool('decomposition')" class="py-2.5 px-2 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 hover:bg-blue-100 transition flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-arrows-split-up-and-left text-sm"></i>
+                                <span class="text-[10px] font-bold">Dekomposisi</span>
+                            </button>
+                            <button id="btn-ct-abstraction" onclick="useCTTool('abstraction')" class="py-2.5 px-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 hover:bg-amber-100 transition flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-filter text-sm"></i>
+                                <span class="text-[10px] font-bold">Abstraksi</span>
+                            </button>
+                            <button id="btn-ct-pattern" onclick="useCTTool('pattern')" class="py-2.5 px-2 bg-purple-50 border border-purple-200 rounded-xl text-purple-700 hover:bg-purple-100 transition flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                                <span class="text-[10px] font-bold">Pola & Klasifikasi</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Answers, Actions, and CT Side Drawer -->
+            <div class="w-full lg:w-2/5 flex flex-col gap-5">
+                
+                <!-- Answers Options Grid -->
+                <div class="bg-white p-6 rounded-3xl shadow-lg border border-slate-100 flex-grow flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-playful text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-check-double text-green-500"></i> Pilih Jawaban Terbaik:
+                        </h3>
+                        <div class="grid grid-cols-1 gap-3" id="options-container">
+                            <!-- Answer buttons will be populated dynamically -->
+                            <button class="w-full text-left p-4 rounded-2xl border-2 border-slate-100 hover:border-green-500 hover:bg-green-50/50 transition duration-200 font-semibold flex items-center justify-between group">
+                                <span>Pilihan Jawaban A</span>
+                                <i class="fa-solid fa-circle-chevron-right opacity-0 group-hover:opacity-100 text-green-500 transition-all"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Algorithmic elimination info -->
+                    <div class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="flex gap-2.5">
+                            <span class="text-xl">⚙️</span>
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-700">Rancangan Algoritma Anda</h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                                    Gunakan metode eliminasi sistematis. Singkirkan hewan yang tidak cocok dengan ciri klasifikasi di petunjuk untuk memperbesar probabilitas akurasi tebakan Anda.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: LEVEL SUCCESS / CONCLUSION SCREEN -->
+        <section id="screen-level-summary" class="hidden w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-slate-100 p-8 flex flex-col items-center text-center transition-all">
+            <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-4 border-2 border-amber-200">
+                <i class="fa-solid fa-star animate-spin" style="animation-duration: 8s;"></i>
+            </div>
+            <h2 class="font-playful text-3xl font-extrabold text-slate-800 mb-1" id="summary-level-title">Level Selesai!</h2>
+            <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-6">Pencapaian Detektif Terbuka</p>
+            
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-5 w-full mb-6 text-left">
+                <h4 class="font-playful text-green-800 font-bold mb-2 text-center">Refleksi Pembelajaran Berpikir Komputasional</h4>
+                <div class="space-y-3 text-xs md:text-sm text-slate-600">
+                    <div class="flex gap-2 items-start">
+                        <span class="text-green-500"><i class="fa-solid fa-circle-check"></i></span>
+                        <p><strong>Dekomposisi:</strong> Anda berhasil membedah detail fisiologis dan habitat hewan secara mendalam.</p>
+                    </div>
+                    <div class="flex gap-2 items-start">
+                        <span class="text-green-500"><i class="fa-solid fa-circle-check"></i></span>
+                        <p><strong>Pengenalan Pola:</strong> Anda mengelompokkan hewan berdasarkan taksonomi dan ekologinya.</p>
+                    </div>
+                    <div class="flex gap-2 items-start">
+                        <span class="text-green-500"><i class="fa-solid fa-circle-check"></i></span>
+                        <p><strong>Abstraksi:</strong> Anda menyaring informasi pengecoh dan memfokuskan pencarian pada organ adaptasi krusial.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 mb-8 bg-slate-50 px-6 py-4 rounded-xl border border-slate-100">
+                <div class="text-center">
+                    <span class="text-xs text-slate-400 font-bold block uppercase">Bonus Skor</span>
+                    <span class="font-playful text-2xl font-bold text-slate-800" id="summary-score-bonus">+500</span>
+                </div>
+                <div class="h-8 border-l border-slate-200"></div>
+                <div class="text-center">
+                    <span class="text-xs text-slate-400 font-bold block uppercase">Total Skor</span>
+                    <span class="font-playful text-2xl font-bold text-green-600" id="summary-total-score">1500</span>
+                </div>
+            </div>
+
+            <button onclick="nextLevel()" class="w-full max-w-sm px-6 py-3.5 bg-green-500 hover:bg-green-600 text-white font-playful font-bold rounded-xl transition shadow-lg shadow-green-100 flex items-center justify-center gap-2">
+                <span>Lanjutkan ke Level Berikutnya</span>
+                <i class="fa-solid fa-circle-arrow-right"></i>
+            </button>
+        </section>
+
+        <!-- SCREEN 4: FINAL VICTORY / GRADUATION SCREEN -->
+        <section id="screen-victory" class="hidden w-full max-w-3xl bg-white rounded-3xl shadow-2xl border-4 border-yellow-400 p-8 flex flex-col items-center text-center transition-all">
+            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-yellow-400 text-white rounded-full flex items-center justify-center text-5xl shadow-lg border-4 border-white">
+                🎓
+            </div>
+            
+            <div class="mt-10 mb-6">
+                <h2 class="font-playful text-3xl md:text-5xl font-extrabold text-slate-800">Sertifikat Kelulusan</h2>
+                <p class="text-yellow-600 text-sm font-extrabold uppercase tracking-widest mt-1">Master Detektif Fauna</p>
+            </div>
+
+            <!-- Digital Certificate Box -->
+            <div id="certificate" class="w-full border-8 border-double border-yellow-600 bg-amber-50/50 p-6 rounded-2xl mb-8 relative text-left shadow-inner">
+                <div class="absolute top-2 right-2 text-yellow-500/20 text-8xl pointer-events-none">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                
+                <p class="text-center font-serif text-slate-600 italic text-sm md:text-base">Dengan ini dinyatakan bahwa</p>
+                <h3 class="text-center font-playful text-2xl md:text-3xl font-bold text-slate-800 my-3" id="cert-player-name">Detektif Cerdas</h3>
+                <p class="text-center text-slate-600 text-xs md:text-sm max-w-md mx-auto leading-relaxed">
+                    Telah sukses memecahkan seluruh tantangan ilmiah adaptasi hewan di semua tingkatan, dan menguasai teknik analisis data biologi dengan konsep <strong>Berpikir Komputasional</strong>.
+                </p>
+
+                <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-yellow-600/20 text-xs text-slate-500">
+                    <div>
+                        <span class="block text-slate-400">Total Skor yang Diraih:</span>
+                        <strong class="text-slate-700 text-lg font-playful" id="cert-score">0</strong>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-slate-400">Gelar Kompetensi:</span>
+                        <strong class="text-emerald-700 text-lg font-playful">Computational Thinker</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                <button onclick="copyCertificateText()" class="flex-1 px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Salin Sertifikat</span>
+                </button>
+                <button onclick="restartGame()" class="flex-1 px-5 py-3.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-playful font-bold rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Main Lagi</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-white border-t border-slate-100 py-4 px-4 text-center text-xs text-slate-400 mt-auto font-medium">
+        <p>&copy; 2026 Game Detektif Fauna - Pelajaran IPA Sekolah Dasar & Menengah Terintegrasi Kurikulum Merdeka.</p>
+    </footer>
+
+    <!-- POPUP MODALS -->
+
+    <!-- MODAL 1: COMPUTATIONAL THINKING GUIDE -->
+    <div id="modal-ct-guide" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                <h3 class="font-playful text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-brain-circuit text-emerald-500"></i> Panduan Berpikir Komputasional (CT)
+                </h3>
+                <button onclick="toggleModal('modal-ct-guide')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto custom-scrollbar flex-grow space-y-4 text-slate-600 text-sm leading-relaxed pr-2">
+                <p>
+                    <strong>Berpikir Komputasional (Computational Thinking)</strong> adalah metode pemecahan masalah dengan menerapkan teknik ilmu komputer. Dalam menganalisis klasifikasi sains (IPA), kita menggunakan 4 teknik utama:
+                </p>
+                
+                <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                    <h4 class="font-bold text-blue-900 flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-arrows-split-up-and-left text-blue-500"></i> 1. Dekomposisi (Decomposition)
+                    </h4>
+                    <p class="text-xs text-blue-800">
+                        Memecah masalah rumit menjadi bagian-bagian kecil yang lebih mudah dikelola. Dalam menebak hewan, kita membaginya ke dalam sub-komponen: <strong>jenis makanan (diet)</strong>, <strong>alat pernapasan</strong>, <strong>alat gerak</strong>, dan <strong>habitatnya</strong>.
+                    </p>
+                </div>
+
+                <div class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100">
+                    <h4 class="font-bold text-purple-900 flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-500"></i> 2. Pengenalan Pola (Pattern Recognition)
+                    </h4>
+                    <p class="text-xs text-purple-800">
+                        Mengenali kesamaan ciri atau keteraturan data. Contoh: Jika menemukan hewan yang bernapas dengan insang, bersisik, dan bertelur, Anda langsung mengenali polanya sebagai kelompok <strong>Pisces (Ikan)</strong>.
+                    </p>
+                </div>
+
+                <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-100">
+                    <h4 class="font-bold text-amber-900 flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-filter text-amber-500"></i> 3. Abstraksi (Abstraction)
+                    </h4>
+                    <p class="text-xs text-amber-800">
+                        Menyaring detail yang tidak penting dan memfokuskan pikiran hanya pada informasi inti yang memecahkan teka-teki. Mengabaikan ukuran tubuh atau kesukaan populer hewan, fokus langsung ke cara adaptasi uniknya (misalnya: memiliki telapak kaki lengket).
+                    </p>
+                </div>
+
+                <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                    <h4 class="font-bold text-emerald-900 flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-diagram-project text-emerald-500"></i> 4. Rancangan Algoritma (Algorithm Design)
+                    </h4>
+                    <p class="text-xs text-emerald-800">
+                        Menyusun runtutan instruksi atau langkah logis untuk menyelesaikan masalah. Di game ini, Anda mengeliminasi pilihan yang salah satu per satu berdasarkan filter kriteria ciri hewan untuk menemukan opsi jawaban mutlak.
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 mt-4 text-center">
+                <button onclick="toggleModal('modal-ct-guide')" class="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white font-playful font-bold rounded-xl transition">
+                    Dimengerti, Terima Kasih!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CT ANALYSIS OVERLAY (SHOWS UP AFTER CORRECT ANSWER) -->
+    <div id="modal-feedback" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border border-slate-100 flex flex-col">
+            <div class="text-center mb-4">
+                <div id="feedback-icon-container" class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-2">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 id="feedback-title" class="font-playful text-2xl font-bold text-slate-800">Benar Sekali!</h3>
+                <p id="feedback-correct-answer" class="text-green-600 font-bold mt-1 text-lg">Nama Hewan</p>
+            </div>
+
+            <div class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-1">
+                <!-- IPA Insight -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-leaf text-green-500"></i> Penjelasan Ilmiah (IPA):
+                    </h4>
+                    <p id="feedback-ipa" class="text-sm text-slate-600 leading-relaxed">
+                        Data IPA dimuat di sini...
+                    </p>
+                </div>
+
+                <!-- CT Process -->
+                <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                    <h4 class="font-bold text-xs text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-brain-circuit text-emerald-600"></i> Analisis Berpikir Komputasional:
+                    </h4>
+                    <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
+                        <p id="feedback-ct-dec"><strong>Dekomposisi:</strong> Memecah ciri fisik...</p>
+                        <p id="feedback-ct-pat"><strong>Pola:</strong> Pola filogenetik menunjukkan...</p>
+                        <p id="feedback-ct-abs"><strong>Abstraksi:</strong> Membuang detail...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button id="feedback-action-btn" onclick="continueGame()" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-playful font-bold rounded-xl transition shadow-lg shadow-green-100 flex items-center justify-center gap-2">
+                    <span>Lanjutkan Soal</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: GAME OVER DIALOG -->
+    <div id="modal-gameover" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl border border-red-100 flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-3xl mb-4">
+                <i class="fa-solid fa-skull-crossbones"></i>
+            </div>
+            <h3 class="font-playful text-2xl font-bold text-slate-800 mb-1">Misi Gagal!</h3>
+            <p class="text-slate-500 text-sm mb-6 leading-relaxed">Jangan menyerah! Gunakan strategi eliminasi logis dan analisis data IPA dengan lebih teliti.</p>
+            
+            <button onclick="restartGame()" class="w-full py-3.5 bg-gradient-to-r from-red-500 to-orange-600 text-white font-playful font-bold rounded-xl transition shadow-lg shadow-red-100 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Coba Lagi</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* State Variables */
+        let soundEnabled = true;
+        let selectedCharacter = 'cat';
+        let currentLevel = 1;
+        let currentQuestionIdx = 0; // 0 to 4 inside each level
+        let score = 0;
+        let lives = 3;
+        let levelData = [];
+        let usedHintsThisQuestion = {
+            decomposition: false,
+            abstraction: false,
+            pattern: false
+        };
+
+        // Synthesizer for Retro Game Audio Effects using Tone.js
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.set({
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.05, decay: 0.1, sustain: 0.3, release: 0.5 }
+        });
+
+        // Toggle Sound Handler
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                playChime('start');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        // Custom Sound Effects Chimes using ToneJS frequencies
+        function playChime(type) {
+            if (!soundEnabled) return;
+            Tone.start();
+            try {
+                if (type === 'start') {
+                    synth.triggerAttackRelease(["C4", "E4", "G4"], "8n");
+                } else if (type === 'correct') {
+                    synth.triggerAttackRelease(["E4", "G4", "C5"], "16n", undefined, 0.1);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease(["D3", "C#3"], "8n");
+                } else if (type === 'gameover') {
+                    synth.triggerAttackRelease(["F3", "Eb3", "Db3", "C3"], "4n");
+                } else if (type === 'victory') {
+                    synth.triggerAttackRelease(["C4", "F4", "A4", "C5"], "4n");
+                } else if (type === 'click') {
+                    synth.triggerAttackRelease(["G4"], "16n");
+                } else if (type === 'hint') {
+                    synth.triggerAttackRelease(["A4", "B4"], "16n");
+                }
+            } catch (e) {
+                console.log("Audio play deferred or blocked");
+            }
+        }
+
+        /* Database Hewan (IPA & Berpikir Komputasional) - No Placeholders! */
+        const questionsDatabase = [
+            // LEVEL 1: Detektif Cilik (Dasar Klasifikasi / Herbivora & Karnivora Populer)
+            {
+                level: 1,
+                id: 1,
+                answer: "Gajah",
+                options: ["Gajah", "Jerapah", "Kuda Nil", "Badak Sumatra"],
+                clues: [
+                    "Aku adalah mamalia darat terbesar yang masih hidup saat ini.",
+                    "Aku memiliki hidung yang sangat panjang disebut belalai untuk makan dan minum.",
+                    "Aku pemakan tumbuhan (herbivora) yang memiliki taring raksasa yang disebut gading."
+                ],
+                ipaInfo: "Gajah adalah mamalia herbivora besar dari famili Elephantidae. Memiliki adaptasi luar biasa berupa belalai (organ gabungan hidung dan bibir atas) untuk memegang makanan, bernapas, serta gading yang merupakan perpanjangan gigi seri untuk perlindungan diri.",
+                ctInfo: {
+                    decomposition: "Membagi ciri gajah: Habitat darat, Ukuran tubuh raksasa, Organ adaptasi khusus (belalai & gading), Diet herbivora.",
+                    abstraction: "Abaikan detail warna abu-abu atau telinga lebar yang umum bagi hewan lain. Fokus utama pada kepemilikan organ 'belalai' dan 'gading' yang menjadi penciri mutlak gajah.",
+                    pattern: "Mempunyai kesamaan pola dengan mamalia lain seperti melahirkan (vivipar), menyusui anak, dan memiliki rambut di permukaan tubuh."
+                }
+            },
+            {
+                level: 1,
+                id: 2,
+                answer: "Kucing",
+                options: ["Anjing", "Kucing", "Kelinci", "Musang"],
+                clues: [
+                    "Aku adalah mamalia karnivora berukuran kecil yang sangat populer dipelihara manusia.",
+                    "Aku memiliki kumis sensitif di dekat hidung untuk mendeteksi arah angin dan mengukur celah.",
+                    "Aku menghasilkan suara dengkurang lembut (purring) saat merasa senang."
+                ],
+                ipaInfo: "Kucing (Felis catus) adalah mamalia karnivora domestik. Kumis kucing (vibrissae) berfungsi sebagai alat sensorik taktil yang membantu mereka bernavigasi dalam gelap dan memperkirakan dimensi ruang sempit.",
+                ctInfo: {
+                    decomposition: "Membagi komponen kucing: Karnivora, peliharaan manusia, berbulu halus, memiliki kumis taktil.",
+                    abstraction: "Abaikan variasi ras kucing (Persia, Anggora, Kampung). Fokus utama pada kombinasi unik: 'Kumis sensitif pengukur celah' dan suara 'dengkuran' khas.",
+                    pattern: "Mempunyai pola perilaku predator seperti penglihatan malam yang tajam (memantulkan cahaya) dan langkah kaki yang sangat sunyi."
+                }
+            },
+            {
+                level: 1,
+                id: 3,
+                answer: "Kupu-kupu",
+                options: ["Lebah Madu", "Kupu-kupu", "Capung", "Belalang"],
+                clues: [
+                    "Aku adalah serangga bersayap indah yang aktif di siang hari mencari nektar bunga.",
+                    "Aku memiliki alat hisap spiral panjang yang disebut probosis.",
+                    "Siklus hidupku mengalami metamorfosis sempurna: Telur -> Ulat -> Kepompong -> Diriku."
+                ],
+                ipaInfo: "Kupu-kupu tergolong ordo Lepidoptera. Mengalami metamorfosis sempurna (holometabola) di mana struktur tubuh saat larva (ulat) benar-benar berbeda dengan fase imago (dewasa) yang memiliki probosis untuk menghisap cairan nektar.",
+                ctInfo: {
+                    decomposition: "Komponen biologi kupu-kupu: Serangga (Insekta), bersayap, menghisap nektar bunga, siklus holometabola.",
+                    abstraction: "Abaikan motif warna sayap kupu-kupu yang sangat variatif. Fokus pada fase kunci 'Kepompong' dan alat makan 'Probosis'.",
+                    pattern: "Memiliki kesamaan pola metamorfosis sempurna dengan serangga lain seperti katak dan nyamuk (melewati fase pupa/transisi radikal)."
+                }
+            },
+            {
+                level: 1,
+                id: 4,
+                answer: "Ikan Mas",
+                options: ["Katup Udara", "Lumba-lumba", "Ikan Mas", "Kura-kura"],
+                clues: [
+                    "Aku hidup sepenuhnya di air tawar dan sekujur tubuhku tertutup oleh sisik berlendir.",
+                    "Aku bernapas dengan mengambil oksigen terlarut dalam air menggunakan insang.",
+                    "Aku berkembang biak dengan bertelur (ovipar) dalam jumlah ratusan sekaligus."
+                ],
+                ipaInfo: "Ikan Mas (Carassius auratus) adalah anggota famili Cyprinidae. Bernapas menggunakan insang (branchia) yang terdiri dari lembaran kaya pembuluh darah untuk bertukar gas CO2 dan O2.",
+                ctInfo: {
+                    decomposition: "Membedah struktur: Habitat air tawar, bernapas dengan insang, alat gerak sirip, tubuh bersisik licin.",
+                    abstraction: "Mengabaikan warna oranye keemasan hias, fokus pada karakteristik biologis mutlak kelas Pisces (Insang, sisik, berdarah dingin, ovipar).",
+                    pattern: "Menunjukkan pola hewan berdarah dingin (poikiloterm) yang suhu tubuhnya mengikuti suhu lingkungan sekitarnya."
+                }
+            },
+            {
+                level: 1,
+                id: 5,
+                answer: "Ayam",
+                options: ["Burung Hantu", "Ayam", "Bebek", "Kelelawar"],
+                clues: [
+                    "Aku adalah jenis burung (unggas) domestik yang memiliki sayap namun tidak bisa terbang tinggi.",
+                    "Tubuhku berbulu, memiliki paruh runcing tanpa gigi, dan bertaji bagi pejantan.",
+                    "Suara kokokku sering digunakan manusia sebagai penanda pagi hari."
+                ],
+                ipaInfo: "Ayam (Gallus gallus domesticus) adalah unggas darat. Mengembangkan taji sebagai alat pertahanan diri teritorial, memiliki paruh yang disesuaikan untuk memakan biji-bijian dan serangga kecil.",
+                ctInfo: {
+                    decomposition: "Membagi ciri ayam: Klasifikasi aves, sayap tidak fungsional terbang tinggi, berparuh, berkokok di pagi hari.",
+                    abstraction: "Abaikan jenis ayam (ayam negeri, ayam jago, ayam petelur). Fokus pada karakteristik biologis unggas berkokok pemakan biji.",
+                    pattern: "Memiliki kesamaan pola anatomi Aves seperti sistem pencernaan berlapis (tembolok dan lambung pengunyah/empedal)."
+                }
+            },
+
+            // LEVEL 2: Penyelidik Alam (Adaptasi Khusus & Hubungan Ekosistem)
+            {
+                level: 2,
+                id: 1,
+                answer: "Kelelawar",
+                options: ["Burung Hantu", "Kelelawar", "Tupai", "Elang"],
+                clues: [
+                    "Aku satu-satunya mamalia yang bisa terbang aktif menggunakan selaput kulit tipis di sela jari kaki/tanganku.",
+                    "Aku hewan nokturnal yang berburu mangsa di malam hari menggunakan pendengaran super sensitif.",
+                    "Aku memancarkan bunyi ultrasonik berfrekuensi tinggi untuk navigasi gelap gulita yang disebut ekolokasi."
+                ],
+                ipaInfo: "Kelelawar (Chiroptera) beradaptasi secara fisiologis dengan sistem sonar aktif yang disebut ekolokasi. Gelombang ultrasonik yang dipancarkan akan memantul kembali setelah menabrak objek, memberi peta spasial lingkungan sekitarnya.",
+                ctInfo: {
+                    decomposition: "Memecah adaptasi kelelawar: Mamalia bersayap kulit, pola aktivitas nokturnal, navigasi suara ultrasonik (ekolokasi).",
+                    abstraction: "Mengabaikan posisi tidur menggantung terbalik, fokus pada fitur navigasi radar unik 'Ekolokasi' dan status biologisnya sebagai 'Mamalia terbang'.",
+                    pattern: "Mempunyai pola indera pendengaran yang setara dengan lumba-lumba dalam mendeteksi objek melalui pantulan sonar."
+                }
+            },
+            {
+                level: 2,
+                id: 2,
+                answer: "Bunglon",
+                options: ["Kadal Kebun", "Bunglon", "Tokek", "Ular Kobra"],
+                clues: [
+                    "Aku adalah reptil pemakan serangga yang dapat memutar kedua mataku ke arah berbeda secara bersamaan.",
+                    "Aku memiliki lidah berlendir yang sangat panjang dan lengket yang dapat dilontarkan dengan kecepatan kilat.",
+                    "Aku pandai mengubah warna pigmen kulitku untuk menyesuaikan lingkungan dan mengekspresikan suasana hati (mimikri)."
+                ],
+                ipaInfo: "Bunglon (Chamaeleonidae) menggunakan adaptasi fisiologis berupa mimikri dengan menggeser kristal nanokristal di dalam sel kulit (kromatofor) untuk berkamuflase atau menarik pasangan.",
+                ctInfo: {
+                    decomposition: "Menganalisis anatomi bunglon: Perubahan pigmen kulit, penglihatan mata 360 derajat independen, lidah balistik proyektil.",
+                    abstraction: "Fokus langsung pada kombinasi organ pencari makan 'lidah panjang proyektil' dan perlindungan diri 'mimikri', lupakan ukuran ekornya.",
+                    pattern: "Menunjukkan pola perilaku bertahan hidup (survival) defensif mirip dengan beberapa cephalopoda (gurita) yang bisa mengganti tekstur dan warna kulit."
+                }
+            },
+            {
+                level: 2,
+                id: 3,
+                answer: "Unta",
+                options: ["Kuda Sandel", "Keledai", "Unta", "Kambing Gunung"],
+                clues: [
+                    "Aku hidup di iklim ekstrem gurun pasir yang gersang dan bersuhu tinggi.",
+                    "Aku memiliki punuk di punggungku yang sebenarnya berisi cadangan lemak (bukan air) untuk energi.",
+                    "Aku memiliki bulu mata ganda yang panjang tebal dan lubang hidung yang dapat menutup rapat untuk menghindari badai pasir."
+                ],
+                ipaInfo: "Unta (Camelus) mengoptimalkan metabolisme tubuhnya agar tahan dehidrasi hingga berhari-hari. Punuk unta menyimpan lemak yang bila teroksidasi menghasilkan energi dan air metabolik.",
+                ctInfo: {
+                    decomposition: "Memilah fitur unta: Habitat gurun, penyimpanan punuk lemak, proteksi bulu mata lebat, telapak kaki lebar antiblasus pasir.",
+                    abstraction: "Saring informasi: abaikan panjang leher unta, fokus pada fungsi biologi 'punuk lemak' penahan kelaparan ekstrim di gurun pasir.",
+                    pattern: "Mengikuti pola adaptasi morfologi xerofit (hewan/tumbuhan gurun) yang meminimalkan penguapan cairan tubuh."
+                }
+            },
+            {
+                level: 2,
+                id: 4,
+                answer: "Cicak",
+                options: ["Katak Pohon", "Cicak", "Ular Sawah", "Bekicot"],
+                clues: [
+                    "Aku adalah reptil kecil yang gemar merayap di dinding dan langit-langit rumah.",
+                    "Aku memiliki struktur rambut halus khusus bernama spatulae di telapak kakiku untuk melekat kuat pada permukaan licin.",
+                    "Jika terdesak oleh musuh, aku akan memutuskan ekorku sendiri (autotomi) untuk mengelabui mereka."
+                ],
+                ipaInfo: "Cicak (Cosymbotus platyurus) melakukan autotomi untuk melarikan diri dari predator. Ekor yang putus akan bergerak aktif menarik perhatian musuh sementara cicak melarikan diri, dan kelak ekor tersebut akan tumbuh kembali (regenerasi).",
+                ctInfo: {
+                    decomposition: "Struktur fungsional cicak: Kaki berperekat mikro (gaya Van der Waals), refleks autotomi ekor, diet insektivora merayap.",
+                    abstraction: "Menghapus detail ukuran tubuh mungilnya. Fokus utama pada istilah ilmiah 'Autotomi' dan mekanisme fisika rambut perekat kaki.",
+                    pattern: "Memiliki kesamaan pola pertahanan diri taktis dengan kadal laut atau kadal dinding Eropa."
+                }
+            },
+            {
+                level: 2,
+                id: 5,
+                answer: "Paus",
+                options: ["Hiu Putih", "Paus", "Lumba-lumba", "Anjing Laut"],
+                clues: [
+                    "Aku adalah hewan terbesar di lautan, namun aku bukanlah ikan melainkan mamalia berdarah panas.",
+                    "Aku tidak bernapas dengan insang, melainkan menghirup udara luar melalui lubang sembur (blowhole) di atas kepalaku.",
+                    "Aku melahirkan anak (vivipar), menyusui mereka, dan berkomunikasi dengan nyanyian frekuensi rendah sejauh ratusan kilometer."
+                ],
+                ipaInfo: "Paus (Cetacea) adalah mamalia laut yang berevolusi kembali ke air dari leluhur darat berkaki empat. Mereka wajib naik ke permukaan air secara berkala untuk menghirup oksigen segar ke paru-parunya.",
+                ctInfo: {
+                    decomposition: "Analisis struktur paus: Mamalia akuatik, pernapasan paru-paru via lubang sembur, komunikasi nyanyian akustik.",
+                    abstraction: "Jangan terkecoh oleh bentuk fisik siripnya yang mirip ikan. Ambil kesimpulan dari fakta reproduksi melahirkan & bernapas dengan paru-paru.",
+                    pattern: "Mewarisi pola mamalia darat: kelenjar susu, sirkulasi jantung empat ruang sekat sempurna, homoiterm (suhu tubuh stabil)."
+                }
+            },
+
+            // LEVEL 3: Ilmuwan Maestro (Fisiologi Kompleks & Taksonomi Menantang)
+            {
+                level: 3,
+                id: 1,
+                answer: "Platipus",
+                options: ["Berang-berang", "Platipus", "Bebek Kanada", "Trenggiling"],
+                clues: [
+                    "Aku adalah satwa endemik Australia timur yang semi-aquatic dan sangat membingungkan para ilmuwan taksonomi.",
+                    "Aku adalah mamalia namun berkembang biak dengan bertelur (monotremata).",
+                    "Aku memiliki paruh fleksibel menyerupai bebek, ekor seperti berang-berang, kaki berselaput, dan taji beracun pada kaki belakang jantan."
+                ],
+                ipaInfo: "Platipus (Ornithorhynchus anatinus) termasuk ordo Monotremata, cabang evolusi mamalia purba yang bertelur tetapi menyusui anaknya melalui kelenjar susu di permukaan kulit perut (tanpa puting). Memiliki elektroreseptor di paruhnya untuk berburu di air keruh.",
+                ctInfo: {
+                    decomposition: "Identifikasi anomali platipus: Bertelur (ovipar), menyusui (mamalia), paruh sensorik elektroreseptor, taji racun femoral.",
+                    abstraction: "Mengesampingkan bentuk tubuh berbulu cokelat biasa. Fokus pada keunikan hibrida evolusi: 'Mamalia bertelur dengan paruh bebek'.",
+                    pattern: "Menunjukkan pola transisi evolusioner antara reptil (bertelur, memiliki kloaka) dan mamalia sejati (memiliki kelenjar susu)."
+                }
+            },
+            {
+                level: 3,
+                id: 2,
+                answer: "Sigung",
+                options: ["Musang Bulan", "Sigung", "Landak", "Garangan"],
+                clues: [
+                    "Aku adalah mamalia karnivora kecil bercorak garis hitam-putih tebal di punggungku.",
+                    "Aku memiliki pertahanan diri kimiawi yang sangat ditakuti satwa liar lain maupun manusia.",
+                    "Aku mampu menyemprotkan cairan berbau sangat busuk dari kelenjar duburku hingga sejauh 3 meter yang bisa menyebabkan kebutaan sementara."
+                ],
+                ipaInfo: "Sigung (Mephitidae) memproduksi sekresi minyak kaya sulfur (tiol) dari kelenjar analnya. Bau menyengat ini sangat persisten dan sulit dihilangkan, berfungsi sebagai peringatan aposematik (pencegah predator).",
+                ctInfo: {
+                    decomposition: "Dekomposisi sistem sigung: Kelenjar pertahanan kimiawi dubur, pola warna kontras hitam-putih, zat kimia berbasis sulfur.",
+                    abstraction: "Fokus pada mekanisme pelepasan bau belerang aerosol pertahanan tubuh, abaikan kegemaran memanjat pohonnya.",
+                    pattern: "Meniru pola peringatan visual aposematik di alam liar: menggunakan pola warna mencolok untuk memberi tahu bahaya racun/bau."
+                }
+            },
+            {
+                level: 3,
+                id: 3,
+                answer: "Salamander",
+                options: ["Kadal Air", "Salamander", "Belut Listrik", "Cacing Tanah"],
+                clues: [
+                    "Aku adalah amfibi berekor yang kulitnya selalu basah dan tipis untuk membantu pernapasan difusi oksigen.",
+                    "Aku memiliki kemampuan regenerasi sel organ tubuh yang luar biasa: sanggup menumbuhkan kembali kaki, ekor, bahkan jaringan jantung yang rusak.",
+                    "Siklus hidupku bermula dari telur tanpa cangkang di air, bermetamorfosis memiliki kaki namun tetap mempertahankan ekor."
+                ],
+                ipaInfo: "Salamander (Caudata) adalah amfibi. Keistimewaan fisiologis terbesarnya terletak pada plastisitas sel punca pasca-amputasi yang mampu membangun kembali seluruh tulang, saraf, dan otot kaki yang hilang secara identik tanpa cacat (regenerasi scarless).",
+                ctInfo: {
+                    decomposition: "Anatomi salamander: Amfibi berekor, kulit penukar gas (respirasi kulit), regenerasi ekstrem organ ekstremitas.",
+                    abstraction: "Bedakan dari reptil kadal (kadal bersisik kering, salamander amfibi basah). Fokus pada kata kunci mutlak 'Regenerasi organ ekstrim' & 'Amfibi berekor'.",
+                    pattern: "Mengidentifikasi pola adaptasi amfibi yang butuh kedekatan habitat basah guna mencegah dehidrasi membran sel kulit luarnya."
+                }
+            },
+            {
+                level: 3,
+                id: 4,
+                answer: "Undur-undur",
+                options: ["Laba-laba Corong", "Semut Merah", "Undur-undur", "Kalajengking"],
+                clues: [
+                    "Fase larvaku sangat terkenal karena aku membuat jebakan pasir berbentuk corong sempurna untuk menjebak semut.",
+                    "Aku berjalan mundur di dalam pasir untuk menyembunyikan diri dan mendeteksi getaran mangsa.",
+                    "Setelah bermetamorfosis sempurna, aku akan berubah menjadi serangga bersayap transparan sekilas mirip capung kecil."
+                ],
+                ipaInfo: "Undur-undur (Myrmeleontidae) dalam fase larva memanfaatkan fisika sudut longsor pasir (angle of repose) untuk membuat sarang corong jebakan. Gerakannya yang mundur mempermudah navigasi penggalian tanah gembur pasir.",
+                ctInfo: {
+                    decomposition: "Analisis siklus undur-undur: Larva predator corong pasir, fisika mekanika tanah jebakan pasir, gerak mundur lokomotif.",
+                    abstraction: "Abaikan penampilan bentuk dewasanya yang kurang dikenal, fokus pada perilaku fungsional larvanya yang berjalan mundur dan berburu semut.",
+                    pattern: "Menggunakan pola jebakan gravitasi pasif mirip beberapa spesies laba-laba penenun corong lubang."
+                }
+            },
+            {
+                level: 3,
+                id: 5,
+                answer: "Burung Kolibri",
+                options: ["Pipit Kebun", "Burung Kolibri", "Cendrawasih", "Kelelawar Madu"],
+                clues: [
+                    "Aku adalah burung berukuran sangat mungil yang memiliki metabolisme energi tercepat dibanding semua vertebrata di bumi.",
+                    "Aku satu-satunya burung yang mampu terbang mundur, menyamping, bahkan melayang statis di udara (hovering).",
+                    "Sayapku mengepak sebanyak 80 kali per detik hingga terdengar suara dengungan, paruhku panjang melengkung untuk menghisap nektar bunga."
+                ],
+                ipaInfo: "Burung Kolibri (Trochilidae) memiliki adaptasi anatomi sendi bahu ball-and-socket fleksibel yang memungkinkan kepakan sayap berputar membentuk angka 8 untuk menghasilkan daya angkat saat terbang diam (hovering) menyerap nutrisi nektar bunga berkadar gula tinggi.",
+                ctInfo: {
+                    decomposition: "Bedah fisiologi kolibri: Frekuensi kepak sayap ultra-tinggi, sendi bahu rotasi 180 derajat, diet nektar, metabolisme ekstrim.",
+                    abstraction: "Jangan fokus pada warna warni mengkilap bulunya. Konsentrasi pada teknik fisika aerodinamika terbangnya: 'terbang mundur' dan 'kepakan sayap suara lebah'.",
+                    pattern: "Menunjukkan pola konvergensi evolusi adaptasi memakan nektar bunga dengan serangga lebah dan ngengat Sphinx."
+                }
+            }
+        ];
+
+        /* Game Initiation */
+        function selectAvatar(id, emoji) {
+            playChime('click');
+            selectedCharacter = id;
+            document.querySelectorAll('.avatar-option').forEach(btn => {
+                btn.classList.remove('border-green-500', 'bg-green-50');
+                btn.classList.add('border-slate-200', 'bg-white');
+            });
+            event.currentTarget.classList.remove('border-slate-200', 'bg-white');
+            event.currentTarget.classList.add('border-green-500', 'bg-green-50');
+        }
+
+        function startGame() {
+            playChime('start');
+            
+            // Set Player Name from avatar emoji selection
+            let avatarEmoji = '😸';
+            if (selectedCharacter === 'owl') avatarEmoji = '🦉';
+            if (selectedCharacter === 'monkey') avatarEmoji = '🐵';
+            if (selectedCharacter === 'fox') avatarEmoji = '🦊';
+            
+            document.getElementById('game-avatar-display').textContent = avatarEmoji;
+            document.getElementById('cert-player-name').textContent = "Detektif " + (selectedCharacter.toUpperCase());
+            
+            // Transition Screen
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            // Reset Game States
+            currentLevel = 1;
+            currentQuestionIdx = 0;
+            score = 0;
+            lives = 3;
+            updateStatsBar();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            // Reset CT tool usages for the new question
+            usedHintsThisQuestion = {
+                decomposition: false,
+                abstraction: false,
+                pattern: false
+            };
+            
+            // Fetch current questions set based on level
+            levelData = questionsDatabase.filter(q => q.level === currentLevel);
+            const questionObj = levelData[currentQuestionIdx];
+
+            // Update UI Elements
+            document.getElementById('question-index').textContent = (currentQuestionIdx + 1);
+            
+            // Progress Bar
+            const totalInLevel = levelData.length;
+            const progressPct = ((currentQuestionIdx + 1) / totalInLevel) * 100;
+            document.getElementById('progress-bar-fill').style.width = progressPct + '%';
+
+            // Reset Riddle Clues Styling (only Clue 1 visible initially)
+            document.getElementById('clue-text-1').textContent = questionObj.clues[0];
+            document.getElementById('clue-1').classList.remove('opacity-40', 'bg-blue-50/50');
+            document.getElementById('clue-1').classList.add('bg-slate-50');
+
+            document.getElementById('clue-text-2').textContent = "Pecahkan ciri fisik atau klasifikasi hewan ini untuk mengeliminasi.";
+            document.getElementById('clue-2').className = "p-3 bg-slate-50 rounded-xl border border-slate-100 transition duration-300 opacity-40";
+
+            document.getElementById('clue-text-3').textContent = "Terapkan pemikiran abstraksi untuk mendapatkan kata kunci penciri.";
+            document.getElementById('clue-3').className = "p-3 bg-slate-50 rounded-xl border border-slate-100 transition duration-300 opacity-40";
+
+            // Update Difficulty Tag
+            const diffTag = document.getElementById('difficulty-indicator');
+            if (currentLevel === 1) {
+                diffTag.textContent = "Kesulitan: Detektif Cilik (Mudah)";
+                diffTag.className = "text-xs font-semibold text-green-500 bg-green-50 px-2 py-0.5 rounded-full";
+            } else if (currentLevel === 2) {
+                diffTag.textContent = "Kesulitan: Penyelidik Alam (Sedang)";
+                diffTag.className = "text-xs font-semibold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full";
+            } else {
+                diffTag.textContent = "Kesulitan: Ilmuwan Maestro (Sulit)";
+                diffTag.className = "text-xs font-semibold text-purple-500 bg-purple-50 px-2 py-0.5 rounded-full";
+            }
+
+            // Populate Multiple Choice Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            // Shuffle option list to ensure randomness
+            const shuffledOptions = [...questionObj.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-100 hover:border-green-500 hover:bg-green-50/50 transition duration-200 font-semibold flex items-center justify-between group";
+                btn.innerHTML = `
+                    <span class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 group-hover:bg-green-100 group-hover:text-green-700 flex items-center justify-center font-bold text-xs transition">${idx + 1}</span>
+                        <span class="text-slate-700 font-playful text-sm md:text-base">${opt}</span>
+                    </span>
+                    <i class="fa-solid fa-circle-chevron-right opacity-0 group-hover:opacity-100 text-green-500 transition-all"></i>
+                `;
+                btn.onclick = () => submitAnswer(opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reset UI states of CT Tools Buttons
+            resetCTButtonsStyles();
+        }
+
+        /* Computational Thinking Tools Integrations */
+        function useCTTool(toolType) {
+            if (usedHintsThisQuestion[toolType]) return; // limit usage
+            
+            playChime('hint');
+            const questionObj = levelData[currentQuestionIdx];
+            usedHintsThisQuestion[toolType] = true;
+
+            const btn = document.getElementById(`btn-ct-${toolType}`);
+            
+            if (toolType === 'decomposition') {
+                // Change Button Color
+                btn.className = "py-2.5 px-2 bg-blue-500 border border-blue-600 rounded-xl text-white transition flex flex-col items-center gap-1 cursor-not-allowed";
+                
+                // Show Clue 2 with high highlights and decompositions breakdown text
+                const clueBox2 = document.getElementById('clue-2');
+                clueBox2.classList.remove('opacity-40');
+                clueBox2.classList.add('bg-blue-50/70', 'border-blue-200');
+                
+                // Decomposition breakdowns specific clues
+                document.getElementById('clue-text-2').innerHTML = `
+                    <span class="block font-semibold mb-1 text-blue-900"><i class="fa-solid fa-arrows-split-up-and-left"></i> Hasil Dekomposisi Ciri:</span>
+                    <span class="text-xs text-blue-800 block">${questionObj.clues[1]}</span>
+                `;
+            } 
+            else if (toolType === 'abstraction') {
+                // Change Button Color
+                btn.className = "py-2.5 px-2 bg-amber-500 border border-amber-600 rounded-xl text-white transition flex flex-col items-center gap-1 cursor-not-allowed";
+
+                // Show Clue 3 with high highlights and abstractions breakdown text
+                const clueBox3 = document.getElementById('clue-3');
+                clueBox3.classList.remove('opacity-40');
+                clueBox3.classList.add('bg-amber-50/70', 'border-amber-200');
+
+                // Abstraction: removes fluff and shows direct diagnostic adaptational marker
+                document.getElementById('clue-text-3').innerHTML = `
+                    <span class="block font-semibold mb-1 text-amber-900"><i class="fa-solid fa-filter"></i> Hasil Abstraksi Adaptasi:</span>
+                    <span class="text-xs text-amber-800 block">${questionObj.clues[2]}</span>
+                `;
+            } 
+            else if (toolType === 'pattern') {
+                // Change Button Color
+                btn.className = "py-2.5 px-2 bg-purple-500 border border-purple-600 rounded-xl text-white transition flex flex-col items-center gap-1 cursor-not-allowed";
+
+                // Pattern recognition eliminates 2 wrong answers by classifying them out of target class
+                const correctAnswer = questionObj.answer;
+                const options = questionObj.options;
+                
+                // Filter wrong options
+                const wrongOptions = options.filter(opt => opt !== correctAnswer);
+                // Keep 1 random wrong option to eliminate remaining ones
+                const eliminated = wrongOptions.sort(() => Math.random() - 0.5).slice(0, 2);
+
+                // Highlight/eliminate options in GUI
+                const optionButtons = document.querySelectorAll('#options-container button');
+                optionButtons.forEach(btn => {
+                    const optionText = btn.querySelector('.font-playful').textContent;
+                    if (eliminated.includes(optionText)) {
+                        btn.classList.add('opacity-30', 'pointer-events-none', 'bg-red-50', 'border-dashed');
+                        btn.querySelector('span.w-7').className = "w-7 h-7 rounded-full bg-red-100 text-red-500 flex items-center justify-center font-bold text-xs";
+                    }
+                });
+
+                // Display quick toast/message under algorithms log
+                const algText = document.querySelector('#screen-game p.text-slate-500');
+                algText.textContent = `Pola Ditemukan! Eliminasi pola mamalia/hewan non-kandidat berhasil menyaring 2 jawaban salah (${eliminated.join(', ')}).`;
+                algText.className = "text-[11px] text-purple-700 font-semibold mt-0.5 leading-relaxed";
+            }
+        }
+
+        function resetCTButtonsStyles() {
+            // Restore default classnames for CT tools buttons
+            document.getElementById('btn-ct-decomposition').className = "py-2.5 px-2 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 hover:bg-blue-100 transition flex flex-col items-center gap-1";
+            document.getElementById('btn-ct-abstraction').className = "py-2.5 px-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 hover:bg-amber-100 transition flex flex-col items-center gap-1";
+            document.getElementById('btn-ct-pattern').className = "py-2.5 px-2 bg-purple-50 border border-purple-200 rounded-xl text-purple-700 hover:bg-purple-100 transition flex flex-col items-center gap-1";
+            
+            // Restore default helper text in algorithms
+            const algText = document.querySelector('#screen-game p.text-slate-500');
+            algText.textContent = "Gunakan metode eliminasi sistematis. Singkirkan hewan yang tidak cocok dengan ciri klasifikasi di petunjuk untuk memperbesar probabilitas akurasi tebakan Anda.";
+            algText.className = "text-[11px] text-slate-500 mt-0.5 leading-relaxed";
+        }
+
+        /* Core Mechanics Answer Validator */
+        function submitAnswer(selectedOpt) {
+            const questionObj = levelData[currentQuestionIdx];
+            
+            if (selectedOpt === questionObj.answer) {
+                // CORRECT ANSWER
+                playChime('correct');
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                // Compute points based on how few hints used!
+                let hintsCount = 0;
+                if (usedHintsThisQuestion.decomposition) hintsCount++;
+                if (usedHintsThisQuestion.abstraction) hintsCount++;
+                if (usedHintsThisQuestion.pattern) hintsCount++;
+
+                const earnedScore = Math.max(100 - (hintsCount * 25), 50);
+                score += earnedScore;
+                updateStatsBar();
+
+                // Open Feedback Modal
+                showFeedbackModal(questionObj, earnedScore);
+            } else {
+                // WRONG ANSWER
+                playChime('wrong');
+                lives--;
+                updateStatsBar();
+
+                if (lives <= 0) {
+                    playChime('gameover');
+                    toggleModal('modal-gameover');
+                } else {
+                    // Quick red pulse notification animation on heart container
+                    const heartCont = document.getElementById('hearts-container');
+                    heartCont.classList.add('bg-red-50', 'scale-110');
+                    setTimeout(() => {
+                        heartCont.classList.remove('bg-red-50', 'scale-110');
+                    }, 500);
+                }
+            }
+        }
+
+        function showFeedbackModal(questionObj, earnedScore) {
+            document.getElementById('feedback-title').textContent = "Jawaban Benar! 🎉";
+            document.getElementById('feedback-correct-answer').textContent = "Aku Adalah " + questionObj.answer;
+            
+            // Populate Scientific Details
+            document.getElementById('feedback-ipa').textContent = questionObj.ipaInfo;
+
+            // Populate Computational Thinking Explanations
+            document.getElementById('feedback-ct-dec').innerHTML = `<strong>Dekomposisi:</strong> ${questionObj.ctInfo.decomposition}`;
+            document.getElementById('feedback-ct-pat').innerHTML = `<strong>Pengenalan Pola:</strong> ${questionObj.ctInfo.pattern}`;
+            document.getElementById('feedback-ct-abs').innerHTML = `<strong>Abstraksi:</strong> ${questionObj.ctInfo.abstraction}`;
+
+            // Score tag display on continue button
+            document.getElementById('feedback-action-btn').innerHTML = `
+                <span>Lanjutkan Soal (+${earnedScore} Poin)</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            `;
+
+            toggleModal('modal-feedback');
+        }
+
+        function continueGame() {
+            toggleModal('modal-feedback');
+            currentQuestionIdx++;
+
+            if (currentQuestionIdx < levelData.length) {
+                // Next question in same level
+                loadQuestion();
+            } else {
+                // Level Completed! Show Level summary Screen
+                playChime('victory');
+                showLevelSummaryScreen();
+            }
+        }
+
+        function showLevelSummaryScreen() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-level-summary').classList.remove('hidden');
+
+            // Level up text
+            let nextLvlBadgeName = "";
+            if (currentLevel === 1) nextLvlBadgeName = "Selesai Level 1: Detektif Cilik";
+            if (currentLevel === 2) nextLvlBadgeName = "Selesai Level 2: Penyelidik Alam";
+            if (currentLevel === 3) nextLvlBadgeName = "Selesai Level 3: Ilmuwan Maestro";
+
+            document.getElementById('summary-level-title').textContent = nextLvlBadgeName;
+
+            // Bonus calculations
+            const bonus = 500 * currentLevel;
+            score += bonus;
+            
+            document.getElementById('summary-score-bonus').textContent = `+${bonus}`;
+            document.getElementById('summary-total-score').textContent = score;
+
+            // Set final next button text
+            const nextLvlBtn = document.querySelector('#screen-level-summary button');
+            if (currentLevel < 3) {
+                nextLvlBtn.innerHTML = `
+                    <span>Lanjutkan ke Level ${currentLevel + 1}</span>
+                    <i class="fa-solid fa-circle-arrow-right"></i>
+                `;
+            } else {
+                nextLvlBtn.innerHTML = `
+                    <span>Ambil Sertifikat Master Detektif</span>
+                    <i class="fa-solid fa-graduation-cap"></i>
+                `;
+            }
+        }
+
+        function nextLevel() {
+            if (currentLevel < 3) {
+                currentLevel++;
+                currentQuestionIdx = 0;
+                lives = 3; // Replenish energy
+                updateStatsBar();
+
+                document.getElementById('screen-level-summary').classList.add('hidden');
+                document.getElementById('screen-game').classList.remove('hidden');
+                loadQuestion();
+            } else {
+                // Whole Game Completed! Show Final Certificate Screen
+                showFinalVictoryScreen();
+            }
+        }
+
+        function showFinalVictoryScreen() {
+            document.getElementById('screen-level-summary').classList.add('hidden');
+            document.getElementById('screen-victory').classList.remove('hidden');
+            
+            document.getElementById('cert-score').textContent = score + " Poin";
+            playChime('victory');
+
+            // Burst huge celebratory confetti
+            var duration = 5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function restartGame() {
+            // Close all active modales
+            document.getElementById('modal-gameover').classList.add('hidden');
+            document.getElementById('screen-victory').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+
+        // GUI Statistics Updates
+        function updateStatsBar() {
+            document.getElementById('score-display').textContent = score.toString().padStart(3, '0');
+            
+            // Level badge name
+            const lvlBadge = document.getElementById('level-badge');
+            const lvlTitle = document.getElementById('level-title');
+            if (currentLevel === 1) {
+                lvlBadge.textContent = "Level 1";
+                lvlBadge.className = "px-2.5 py-0.5 bg-green-100 text-green-800 text-xs font-bold rounded-full uppercase tracking-wider";
+                lvlTitle.textContent = "Detektif Cilik";
+            } else if (currentLevel === 2) {
+                lvlBadge.textContent = "Level 2";
+                lvlBadge.className = "px-2.5 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full uppercase tracking-wider";
+                lvlTitle.textContent = "Penyelidik Alam";
+            } else {
+                lvlBadge.textContent = "Level 3";
+                lvlBadge.className = "px-2.5 py-0.5 bg-purple-100 text-purple-800 text-xs font-bold rounded-full uppercase tracking-wider";
+                lvlTitle.textContent = "Ilmuwan Maestro";
+            }
+
+            // Health hearts update
+            const heartsContainer = document.getElementById('hearts-container');
+            heartsContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('i');
+                if (i < lives) {
+                    heart.className = "fa-solid fa-heart text-xl text-red-500 animate-pulse";
+                } else {
+                    heart.className = "fa-regular fa-heart text-xl text-slate-300";
+                }
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Toggle Generic Overlay Modals Helper
+        function toggleModal(id) {
+            playChime('click');
+            const target = document.getElementById(id);
+            if (target.classList.contains('hidden')) {
+                target.classList.remove('hidden');
+            } else {
+                target.classList.add('hidden');
+            }
+        }
+
+        // Copy Graduation Text Certificate
+        function copyCertificateText() {
+            playChime('click');
+            const certTitle = "MASTER DETEKTIF FAUNA (IPA & BERPIKIR KOMPUTASIONAL)";
+            const certText = `Sertifikat Kelulusan atas nama Detektif ${selectedCharacter.toUpperCase()} dengan peraihan skor akhir senilai ${score} Poin. Gelar Kompetensi: Computational Thinker!`;
+            
+            // Temporary copy logic supporting iframe constraints
+            const tempInput = document.createElement('textarea');
+            tempInput.value = `${certTitle}\n${certText}`;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // Notify user of copied action (via a custom toast replacement instead of alert)
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg font-semibold text-xs z-50 animate-bounce";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-green-400 mr-2"></i> Teks Sertifikat berhasil disalin ke clipboard!`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            // Warm up Tone.js synthesizer
+            playChime('click');
+        }
+    </script>
+</body>
+</html>
