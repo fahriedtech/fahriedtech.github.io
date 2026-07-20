@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acak Urutan Keseharian - Game Edukasi Lucu & Berpikir Komputasional</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka One (Font Lucu & Bulat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #f0fdf4; /* Light pastel green */
+            overflow-x: hidden;
+        }
+
+        /* Efek bouncy & goyang lucu */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        .wiggle-hover:hover {
+            animation: wiggle 0.5s ease-in-out infinite;
+        }
+
+        /* Gradasi tombol & elemen */
+        .btn-gradient-orange {
+            background: linear-gradient(135deg, #ff9f43 0%, #ff6b6b 100%);
+        }
+        .btn-gradient-blue {
+            background: linear-gradient(135deg, #54a0ff 0%, #00d2d3 100%);
+        }
+        .btn-gradient-green {
+            background: linear-gradient(135deg, #10ac84 0%, #1dd1a1 100%);
+        }
+        .btn-gradient-purple {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+        }
+
+        /* Gaya Khusus Card saat Dragging */
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+            border: 3px dashed #ff9f43;
+        }
+
+        /* Animasi Pita Kemenangan */
+        @keyframes ribbon-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        .ribbon-particle {
+            position: absolute;
+            pointer-events: none;
+            animation: ribbon-fall 4s linear forwards;
+            z-index: 100;
+        }
+
+        /* Custom Scrollbar Lucu */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f2f6;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5f0c3;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3e49e;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 transition-all duration-300">
+
+    <!-- CANVAS UNTUK EFEK PITA DAN KONFETI -->
+    <canvas id="victoryCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50 hidden"></canvas>
+
+    <!-- HEADER -->
+    <header class="p-4 bg-white shadow-md border-b-4 border-emerald-200">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-4xl">🎒</span>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-emerald-600 tracking-wider">Acak Urutan Keseharian!</h1>
+                    <p class="text-xs sm:text-sm text-slate-500">Bantu Bobo merapikan kegiatannya sekaligus belajar berpikir seperti komputer pintar!</p>
+                </div>
+            </div>
+            
+            <!-- Audio Button & Score/Stars -->
+            <div class="flex items-center gap-3">
+                <button id="soundToggle" onclick="toggleMute()" class="p-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-full transition-all focus:outline-none" title="Suara Aktif">
+                    <i id="soundIcon" class="fas fa-volume-up text-lg"></i>
+                </button>
+                <div class="flex items-center gap-2 bg-yellow-100 border-2 border-yellow-300 px-4 py-2 rounded-full">
+                    <span class="text-yellow-500 text-lg">⭐</span>
+                    <span id="starCounter" class="font-bold text-yellow-700 text-lg">0 / 4</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-6xl w-full mx-auto p-4 flex-grow flex flex-col justify-start">
+        
+        <!-- INTRO & CHARACTER MASKOT -->
+        <div class="bg-white border-4 border-amber-200 rounded-3xl p-5 mb-6 flex flex-col md:flex-row items-center gap-6 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-10 -mt-10 -z-0"></div>
+            
+            <!-- Mascot SVG (Cute Bear "Bobo" that blinks and smiles) -->
+            <div class="relative w-28 h-28 flex-shrink-0 z-10 bounce-slow">
+                <svg viewBox="0 0 100 100" class="w-full h-full">
+                    <!-- Telinga -->
+                    <circle cx="20" cy="30" r="15" fill="#f39c12"/>
+                    <circle cx="20" cy="30" r="8" fill="#ff7979"/>
+                    <circle cx="80" cy="30" r="15" fill="#f39c12"/>
+                    <circle cx="80" cy="30" r="8" fill="#ff7979"/>
+                    <!-- Wajah -->
+                    <circle cx="50" cy="55" r="40" fill="#f1c40f"/>
+                    <!-- Mata Kiri -->
+                    <circle id="eye-left" cx="35" cy="48" r="5" fill="#2c3e50"/>
+                    <circle cx="33" cy="46" r="2" fill="#fff"/>
+                    <!-- Mata Kanan -->
+                    <circle id="eye-right" cx="65" cy="48" r="5" fill="#2c3e50"/>
+                    <circle cx="63" cy="46" r="2" fill="#fff"/>
+                    <!-- Hidung & Mulut -->
+                    <ellipse cx="50" cy="60" rx="10" ry="7" fill="#fff"/>
+                    <polygon points="46,57 54,57 50,62" fill="#2c3e50"/>
+                    <!-- Mulut Senyum -->
+                    <path id="mascot-mouth" d="M 45 64 Q 50 69 55 64" stroke="#2c3e50" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <!-- Pipi Blushing -->
+                    <ellipse cx="23" cy="58" rx="5" ry="3" fill="#ff7675" opacity="0.6"/>
+                    <ellipse cx="77" cy="58" rx="5" ry="3" fill="#ff7675" opacity="0.6"/>
+                </svg>
+            </div>
+            
+            <div class="z-10 flex-grow text-center md:text-left">
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold mb-2 uppercase tracking-wide">Sahabat Belajarmu</span>
+                <p id="dialogBubble" class="text-lg text-slate-700 leading-relaxed font-medium">
+                    "Halo teman-teman! Yuk bantu aku merapikan urutan kegiatan harianku. Klik dan geser kartu-kartunya ke urutan yang benar ya!"
+                </p>
+            </div>
+        </div>
+
+        <!-- TABS BAR -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+            <button onclick="switchTab('gosok-gigi')" id="tab-gosok-gigi" class="tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 bg-white text-slate-600 hover:bg-emerald-50 active:scale-95 shadow-sm">
+                <span class="text-2xl">🪥</span>
+                <span class="text-sm">Gosok Gigi</span>
+            </button>
+            <button onclick="switchTab('sebelum-tidur')" id="tab-sebelum-tidur" class="tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 bg-white text-slate-600 hover:bg-emerald-50 active:scale-95 shadow-sm">
+                <span class="text-2xl">🛌</span>
+                <span class="text-sm">Sebelum Tidur</span>
+            </button>
+            <button onclick="switchTab('berangkat-sekolah')" id="tab-berangkat-sekolah" class="tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 bg-white text-slate-600 hover:bg-emerald-50 active:scale-95 shadow-sm">
+                <span class="text-2xl">🎒</span>
+                <span class="text-sm">Ke Sekolah</span>
+            </button>
+            <button onclick="switchTab('sebelum-makan')" id="tab-sebelum-makan" class="tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 bg-white text-slate-600 hover:bg-emerald-50 active:scale-95 shadow-sm">
+                <span class="text-2xl">🍽️</span>
+                <span class="text-sm">Sebelum Makan</span>
+            </button>
+        </div>
+
+        <!-- TWO-COLUMN LAYOUT: PLAY ZONE & COMPUTATIONAL THINKING CORNER -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            
+            <!-- PLAY ZONE (Left 2 Columns) -->
+            <div class="lg:col-span-2 bg-emerald-50 border-4 border-dashed border-emerald-300 rounded-3xl p-6 relative min-h-[450px] flex flex-col justify-between shadow-inner">
+                
+                <!-- Info Status / Panduan -->
+                <div class="text-center mb-4">
+                    <p class="text-xs text-emerald-700 bg-emerald-100 inline-block px-3 py-1 rounded-full font-bold">
+                        💡 Tips: Geser kartu ATAU gunakan tombol panah <i class="fas fa-arrow-up"></i> <i class="fas fa-arrow-down"></i> di kanan kartu!
+                    </p>
+                </div>
+
+                <!-- List of Draggable Items -->
+                <div id="itemsContainer" class="space-y-3 flex-grow flex flex-col justify-center">
+                    <!-- Diisi dinamis oleh JS -->
+                </div>
+
+                <!-- BOTTOM ACTION CONTROLS -->
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                    <button onclick="resetCurrentTab()" class="w-full sm:w-auto px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow">
+                        <i class="fas fa-redo-alt"></i> Acak Ulang
+                    </button>
+                    <button id="checkButton" onclick="checkCurrentOrder()" class="w-full sm:w-auto px-10 py-4 btn-gradient-orange text-white font-extrabold text-lg rounded-2xl transition-all transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle text-xl"></i> Periksa Urutan!
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- COMPUTATIONAL THINKING CORNER (Right Column - Dynamic Locked/Unlocked Corner) -->
+            <div id="computationalCorner" class="bg-indigo-50 border-4 border-indigo-200 rounded-3xl p-6 shadow-md relative overflow-hidden flex flex-col gap-4 min-h-[300px] justify-center">
+                <!-- Diisi dinamis oleh fungsi updateComputationalCorner() -->
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="p-4 text-center text-slate-400 text-xs border-t border-slate-100 bg-white mt-8">
+        <p>© 2026 Game Acak Urutan Keseharian. Dibuat dengan penuh ❤️ untuk anak pintar!</p>
+    </footer>
+
+    <!-- SUCCESS POPUP MODAL -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center border-8 border-yellow-300 shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative" id="successModalContent">
+            
+            <!-- TOMBOL SILANG (X) UNTUK KEMBALI KE LAYAR UTAMA -->
+            <button onclick="closeModal(false)" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all text-xl focus:outline-none" title="Tutup & Baca Pojok Komputasional">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Confetti/Ribbon illustration -->
+            <div class="relative w-24 h-24 mx-auto mb-4 mt-2">
+                <div class="absolute inset-0 bg-yellow-100 rounded-full animate-ping opacity-75"></div>
+                <div class="relative bg-gradient-to-r from-yellow-400 to-amber-500 w-24 h-24 rounded-full flex items-center justify-center text-5xl shadow-lg">
+                    👑
+                </div>
+            </div>
+
+            <h2 id="modalTitle" class="text-3xl font-extrabold text-amber-600 mb-2">Hebat Sekali! 🎉</h2>
+            <p id="modalDescription" class="text-slate-600 mb-6 font-medium">Kamu berhasil mengurutkan kegiatan ini dengan sempurna tanpa ada kesalahan!</p>
+
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 mb-6 flex items-center justify-center gap-3">
+                <span class="text-3xl">🌟</span>
+                <div class="text-left">
+                    <p class="text-xs text-slate-500 font-bold uppercase">Bintang Diperoleh</p>
+                    <p class="text-lg font-extrabold text-emerald-700">Selamat! +1 Bintang</p>
+                </div>
+            </div>
+
+            <!-- Tombol Lanjut Bermain dialihkan dengan parameter true -->
+            <button onclick="closeModal(true)" class="w-full py-4 btn-gradient-green text-white font-extrabold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:scale-95">
+                Lanjut Bermain! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // --- DATA AKTIVITAS ---
+        const routinesData = {
+            'gosok-gigi': {
+                title: 'Gosok Gigi',
+                emoji: '🪥',
+                correctOrder: [
+                    { id: 'gg-1', text: 'Ambil Sikat & Odol', emoji: '🪥' },
+                    { id: 'gg-2', text: 'Taruh Odol ke Sikat Gigi', emoji: '🧴' },
+                    { id: 'gg-3', text: 'Sikat Gigi Memutar dengan Rapi', emoji: '🦷' },
+                    { id: 'gg-4', text: 'Kumur-kumur pakai Air Bersih', emoji: '🧼' },
+                    { id: 'gg-5', text: 'Cuci Sikat & Simpan Kembali', emoji: '💧' }
+                ],
+                successMsg: "Horeee! Gigi Bobo sekarang jadi super bersih, putih, dan bebas kuman! Bau mulutnya juga segar sekali! 🦷✨",
+                hintMsg: "Ingat, sebelum menyikat gigi, kita harus menyiapkan sikat dan odolnya terlebih dahulu ya!"
+            },
+            'sebelum-tidur': {
+                title: 'Sebelum Tidur',
+                emoji: '🛌',
+                correctOrder: [
+                    { id: 'st-1', text: 'Cuci Kaki & Muka biar Segar', emoji: '🧼' },
+                    { id: 'st-2', text: 'Pakai Piyama Tidur yang Nyaman', emoji: '👕' },
+                    { id: 'st-3', text: 'Rapikan Kasur & Bantal', emoji: '🛏️' },
+                    { id: 'st-4', text: 'Matikan atau Redupkan Lampu', emoji: '💡' },
+                    { id: 'st-5', text: 'Berdoa lalu Tidur Nyenyak', emoji: '😴' }
+                ],
+                successMsg: "Zzz... Bobo sekarang sudah siap tidur dengan nyaman dan bermimpi indah. Selamat malam anak pintar! 🌙⭐",
+                hintMsg: "Yuk, cuci kaki dan muka dulu sebelum tidur agar kotoran seharian hilang!"
+            },
+            'berangkat-sekolah': {
+                title: 'Berangkat Sekolah',
+                emoji: '🎒',
+                correctOrder: [
+                    { id: 'bs-1', text: 'Mandi Pagi biar Segar & Wangi', emoji: '🚿' },
+                    { id: 'bs-2', text: 'Pakai Seragam Sekolah dengan Rapi', emoji: '👔' },
+                    { id: 'bs-3', text: 'Sarapan Pagi yang Lezat & Sehat', emoji: '🍳' },
+                    { id: 'bs-4', text: 'Pakai Kaus Kaki & Sepatumu', emoji: '👟' },
+                    { id: 'bs-5', text: 'Pamit & Salim kepada Orang Tua', emoji: '🎒' }
+                ],
+                successMsg: "Asyiik! Bobo siap menyambut hari seru di sekolah dengan penuh semangat dan ilmu baru! Belajar yang rajin ya! 🏫🎒",
+                hintMsg: "Mandi dulu di pagi hari agar mata tidak ngantuk, baru setelah itu berpakaian rapi!"
+            },
+            'sebelum-makan': {
+                title: 'Sebelum Makan',
+                emoji: '🍽️',
+                correctOrder: [
+                    { id: 'sm-1', text: 'Cuci Tangan pakai Sabun di Air Mengalir', emoji: '🧼' },
+                    { id: 'sm-2', text: 'Duduk dengan Manis dan Sopan di Kursi', emoji: '🪑' },
+                    { id: 'sm-3', text: 'Berdoa Bersama Sebelum Makan', emoji: '🤲' },
+                    { id: 'sm-4', text: 'Ambil Makanan Secukupnya saja', emoji: '🍛' },
+                    { id: 'sm-5', text: 'Makan Perlahan & Nikmati Makanannya', emoji: '😋' }
+                ],
+                successMsg: "Nyam nyam nyam! Makanan sehat masuk ke perut yang bersih. Tubuh Bobo pun jadi sehat dan kuat! 🥩🍉",
+                hintMsg: "Kebersihan adalah yang utama! Pastikan kuman di tangan hilang sebelum menyentuh makanan!"
+            }
+        };
+
+        // --- GAME STATES ---
+        let currentTab = 'gosok-gigi';
+        let currentShuffledItems = [];
+        let starsEarned = {
+            'gosok-gigi': false,
+            'sebelum-tidur': false,
+            'berangkat-sekolah': false,
+            'sebelum-makan': false
+        };
+        let isMuted = false;
+
+        // --- SOUND EFFECTS (Web Audio API Synthesizer) ---
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Suara klik / drag ringan
+        function playPopSound() {
+            if (isMuted) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.1);
+            } catch(e) { console.log(e); }
+        }
+
+        // Suara salah urutan (bloop sedih)
+        function playErrorSound() {
+            if (isMuted) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(180, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
+                
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch(e) { console.log(e); }
+        }
+
+        // Suara menang (Arpeggio ceria)
+        function playVictorySound() {
+            if (isMuted) return;
+            try {
+                const ctx = getAudioContext();
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // C Major Arpeggio
+                
+                notes.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                        
+                        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                        
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        
+                        osc.start();
+                        osc.stop(ctx.currentTime + 0.3);
+                    }, index * 100);
+                });
+            } catch(e) { console.log(e); }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const icon = document.getElementById('soundIcon');
+            const btn = document.getElementById('soundToggle');
+            if (isMuted) {
+                icon.className = 'fas fa-volume-mute text-lg';
+                btn.title = 'Suara Dimatikan';
+                btn.classList.replace('bg-emerald-100', 'bg-slate-100');
+                btn.classList.replace('text-emerald-700', 'text-slate-500');
+            } else {
+                icon.className = 'fas fa-volume-up text-lg';
+                btn.title = 'Suara Aktif';
+                btn.classList.replace('bg-slate-100', 'bg-emerald-100');
+                btn.classList.replace('text-slate-500', 'text-emerald-700');
+                playPopSound();
+            }
+        }
+
+        // --- CARA MENGACAK URUTAN (Fischer-Yates) ---
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Pastikan hasil acakan tidak langsung benar secara kebetulan
+        function getGuaranteedShuffled(originalArray) {
+            let shuffled = [...originalArray];
+            let attempts = 0;
+            while (attempts < 10) {
+                shuffled = shuffle(shuffled);
+                let isSame = true;
+                for (let i = 0; i < originalArray.length; i++) {
+                    if (shuffled[i].id !== originalArray[i].id) {
+                        isSame = false;
+                        break;
+                    }
+                }
+                if (!isSame) break;
+                attempts++;
+            }
+            return shuffled;
+        }
+
+        // --- SISTEM DRAG & DROP & CONTROL ---
+        let dragSrcEl = null;
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            dragSrcEl = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+            playPopSound();
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('border-emerald-400', 'bg-emerald-100', 'scale-[1.01]');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('border-emerald-400', 'bg-emerald-100', 'scale-[1.01]');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (dragSrcEl !== this) {
+                // Saling tukar data di state array
+                const srcId = e.dataTransfer.getData('text/plain');
+                const targetId = this.getAttribute('data-id');
+                
+                const srcIndex = currentShuffledItems.findIndex(item => item.id === srcId);
+                const targetIndex = currentShuffledItems.findIndex(item => item.id === targetId);
+                
+                // Swap posisi di memory array
+                const temp = currentShuffledItems[srcIndex];
+                currentShuffledItems[srcIndex] = currentShuffledItems[targetIndex];
+                currentShuffledItems[targetIndex] = temp;
+                
+                playPopSound();
+                renderCards();
+            }
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            // Bersihkan semua highlight jika tersisa
+            const listItems = document.querySelectorAll('.draggable-card');
+            listItems.forEach(item => {
+                item.classList.remove('border-emerald-400', 'bg-emerald-100', 'scale-[1.01]');
+            });
+        }
+
+        // --- ATURAN TOUCH SCREEN (Dukungan tombol naik/turun) ---
+        function moveItem(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= currentShuffledItems.length) return;
+            
+            // Swap elemen
+            const temp = currentShuffledItems[index];
+            currentShuffledItems[index] = currentShuffledItems[targetIndex];
+            currentShuffledItems[targetIndex] = temp;
+            
+            playPopSound();
+            renderCards();
+        }
+
+        // --- FUNGSI RENDER UTAMA ---
+        function renderCards() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+
+            currentShuffledItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "draggable-card bg-white border-3 border-slate-200 p-4 rounded-2xl shadow flex items-center justify-between cursor-grab active:cursor-grabbing hover:border-amber-300 hover:shadow-md transition-all duration-200 select-none";
+                card.setAttribute('draggable', 'true');
+                card.setAttribute('data-id', item.id);
+                
+                // Event listener untuk drag standard desktop
+                card.addEventListener('dragstart', handleDragStart, false);
+                card.addEventListener('dragenter', handleDragEnter, false);
+                card.addEventListener('dragover', handleDragOver, false);
+                card.addEventListener('dragleave', handleDragLeave, false);
+                card.addEventListener('drop', handleDrop, false);
+                card.addEventListener('dragend', handleDragEnd, false);
+
+                // Konten Kartu
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 flex-grow">
+                        <!-- Nomor Urut Visual Terkini -->
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-slate-300 flex items-center justify-center font-extrabold text-slate-500 text-sm">
+                            ${index + 1}
+                        </div>
+                        <!-- Emoji & Deskripsi -->
+                        <span class="text-3xl">${item.emoji}</span>
+                        <p class="font-semibold text-slate-700 text-sm sm:text-base leading-snug">${item.text}</p>
+                    </div>
+                    
+                    <!-- Tombol Pengatur Touch-friendly & Drag Handle -->
+                    <div class="flex items-center gap-1 sm:gap-2 ml-2">
+                        <div class="flex flex-col gap-1">
+                            <button onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-emerald-100 text-slate-600 hover:text-emerald-700 rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-colors" title="Naikkan">
+                                <i class="fas fa-chevron-up text-xs"></i>
+                            </button>
+                            <button onclick="moveItem(${index}, 1)" ${index === currentShuffledItems.length - 1 ? 'disabled' : ''} class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-emerald-100 text-slate-600 hover:text-emerald-700 rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-colors" title="Turunkan">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                        </div>
+                        <!-- Drag Handle Icon -->
+                        <div class="hidden sm:flex text-slate-300 p-2 cursor-grab">
+                            <i class="fas fa-grip-vertical text-lg"></i>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // --- BERPINDAH TAB ---
+        function switchTab(tabName) {
+            if (currentTab === tabName && currentShuffledItems.length > 0) return;
+            
+            currentTab = tabName;
+            playPopSound();
+
+            // Ubah tampilan tombol tab aktif & nonaktif
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const id = btn.id;
+                if (id === `tab-${tabName}`) {
+                    btn.className = "tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 border-emerald-600 bg-emerald-500 text-white shadow-md scale-105 z-10";
+                } else {
+                    btn.className = "tab-btn px-4 py-3 rounded-2xl font-bold text-center transition-all flex flex-col items-center justify-center gap-1 border-b-4 border-slate-300 bg-white text-slate-600 hover:bg-slate-50 active:scale-95 shadow-sm";
+                }
+            });
+
+            // Set dialog balon asisten ramah
+            const currentObj = routinesData[tabName];
+            const companionText = `Bantu Bobo merapikan urutan <b>"${currentObj.title}"</b> ya! Geser kartu dari langkah pertama sampai terakhir.`;
+            document.getElementById('dialogBubble').innerHTML = companionText;
+
+            // Reset wajah maskot ke tersenyum manis
+            setMascotFace('happy');
+
+            // Ambil data baru dan acak
+            resetCurrentTab();
+
+            // Perbarui Pojok Komputasional sesuai status penyelesaian tab ini
+            updateComputationalCorner();
+        }
+
+        function resetCurrentTab() {
+            const originalData = routinesData[currentTab].correctOrder;
+            currentShuffledItems = getGuaranteedShuffled(originalData);
+            renderCards();
+            playPopSound();
+        }
+
+        // Mengubah ekspresi wajah maskot
+        function setMascotFace(mood) {
+            const mouth = document.getElementById('mascot-mouth');
+            const leftEye = document.getElementById('eye-left');
+            const rightEye = document.getElementById('eye-right');
+
+            if (mood === 'happy') {
+                mouth.setAttribute('d', 'M 45 64 Q 50 69 55 64'); // Senyum lebar
+                leftEye.setAttribute('r', '5');
+                rightEye.setAttribute('r', '5');
+            } else if (mood === 'sad') {
+                mouth.setAttribute('d', 'M 45 67 Q 50 62 55 67'); // Cemberut sedih
+                leftEye.setAttribute('r', '4');
+                rightEye.setAttribute('r', '4');
+            } else if (mood === 'win') {
+                mouth.setAttribute('d', 'M 42 63 Q 50 74 58 63'); // Ketawa bahagia
+                // Mata kedip gembira ^ ^
+                leftEye.setAttribute('r', '5');
+                rightEye.setAttribute('r', '5');
+            }
+        }
+
+        // --- SISTEM DINAMIS POJOK KOMPUTASIONAL (LOCKED / UNLOCKED) ---
+        function updateComputationalCorner(justUnlocked = false) {
+            const corner = document.getElementById('computationalCorner');
+            const tabData = routinesData[currentTab];
+            const isUnlocked = starsEarned[currentTab];
+
+            // Atur dekorasi latar belakang blob agar terlihat konsisten
+            corner.innerHTML = `
+                <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-indigo-100 rounded-full opacity-60"></div>
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-100 rounded-full opacity-60"></div>
+            `;
+
+            if (!isUnlocked) {
+                // TAMPILAN TERKUNCI (Cute Locked Box State)
+                const lockedContainer = document.createElement('div');
+                lockedContainer.className = "relative z-10 text-center py-6 px-2 flex flex-col items-center justify-center gap-4 transition-all duration-500 transform scale-100";
+                lockedContainer.innerHTML = `
+                    <span class="inline-block bg-indigo-200 text-indigo-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">
+                        🧠 Pojok Komputasional
+                    </span>
+                    <div class="relative w-28 h-28 flex items-center justify-center bg-indigo-100 rounded-3xl border-4 border-dashed border-indigo-300 animate-bounce mt-2 shadow-inner">
+                        <span class="text-6xl select-none">🎁</span>
+                        <div class="absolute -bottom-2 -right-2 bg-rose-500 text-white rounded-2xl p-2 border-2 border-white shadow-lg flex items-center justify-center w-10 h-10 animate-pulse">
+                            <i class="fas fa-lock text-base"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-indigo-700 mt-2">Kotak Rahasia Bobo! 🔒</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed max-w-xs font-medium">
+                        Selesaikan urutan kegiatan <strong>"${tabData.title}"</strong> dengan benar untuk membuka kunci kotak hadiah ini dan mempelajari cara berpikir seperti komputer pintar! 🤖✨
+                    </p>
+                `;
+                corner.appendChild(lockedContainer);
+            } else {
+                // TAMPILAN TERBUKA (Unlocked Educational State)
+                const unlockedContainer = document.createElement('div');
+                const animationClass = justUnlocked ? "animate-[wiggle_0.5s_ease-in-out_3]" : "";
+                unlockedContainer.className = `relative z-10 ${animationClass} transition-all duration-500`;
+                unlockedContainer.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-block bg-emerald-200 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide">
+                            🔓 Kotak Terbuka!
+                        </span>
+                        <span class="text-2xl animate-bounce">🎉</span>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-indigo-700 mb-3 flex items-center gap-2">
+                        <span>Hebat, Kamu Berhasil!</span> 🤖
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4 font-medium">
+                        Saat kamu merapikan urutan <strong>${tabData.title}</strong>, kamu sedang menggunakan cara belajar rahasia yang biasa dipakai oleh para <strong>Insinyur Komputer Hebat</strong>! Cara ini namanya <span class="text-indigo-600 font-bold">Berpikir Komputasional</span>:
+                    </p>
+
+                    <!-- 4 Pillars Box -->
+                    <div class="space-y-4">
+                        <!-- Pilar 1: Dekomposisi -->
+                        <div class="bg-white p-3 rounded-2xl shadow-sm border-2 border-pink-100 hover:border-pink-200 transition-all">
+                            <h4 class="font-extrabold text-pink-600 text-sm flex items-center gap-2 mb-1">
+                                <span>🧩 1. Pecah Masalah (Dekomposisi)</span>
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Kita tidak merapikan seluruh isi hari Bobo sekaligus, tapi memecahnya menjadi bagian kecil seperti "${tabData.title}" saja agar lebih mudah dikerjakan!
+                            </p>
+                        </div>
+
+                        <!-- Pilar 2: Pengenalan Pola -->
+                        <div class="bg-white p-3 rounded-2xl shadow-sm border-2 border-yellow-100 hover:border-yellow-200 transition-all">
+                            <h4 class="font-extrabold text-amber-600 text-sm flex items-center gap-2 mb-1">
+                                <span>🔍 2. Mencari Pola</span>
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Kamu mengenali urutan langkah logis yang selalu terulang dengan cara yang sama setiap kali Bobo melakukan kegiatan ini. Itu namanya menemukan pola!
+                            </p>
+                        </div>
+
+                        <!-- Pilar 3: Abstraksi -->
+                        <div class="bg-white p-3 rounded-2xl shadow-sm border-2 border-green-100 hover:border-green-200 transition-all">
+                            <h4 class="font-extrabold text-emerald-600 text-sm flex items-center gap-2 mb-1">
+                                <span>🎈 3. Fokus yang Penting (Abstraksi)</span>
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Saat mengurutkan langkah, kita abaikan detail-detail kecil lainnya. Kita hanya fokus pada langkah pentingnya saja agar tidak pusing!
+                            </p>
+                        </div>
+
+                        <!-- Pilar 4: Algoritma -->
+                        <div class="bg-white p-3 rounded-2xl shadow-sm border-2 border-blue-100 hover:border-blue-200 transition-all">
+                            <h4 class="font-extrabold text-blue-600 text-sm flex items-center gap-2 mb-1">
+                                <span>🚀 4. Langkah Berurutan (Algoritma)</span>
+                            </h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Menyusun kartu langkah demi langkah dari nomor 1 sampai 5 adalah **Algoritma**. Komputer paling suka urutan yang rapi seperti ini agar program berjalan sempurna tanpa eror!
+                            </p>
+                        </div>
+                    </div>
+                `;
+                corner.appendChild(unlockedContainer);
+            }
+        }
+
+        // --- CEK URUTAN ---
+        function checkCurrentOrder() {
+            const targetData = routinesData[currentTab];
+            const correctOrder = targetData.correctOrder;
+            
+            let isAllCorrect = true;
+            let firstErrorIndex = -1;
+
+            // Dapatkan list kartu saat ini di DOM
+            const cards = document.querySelectorAll('.draggable-card');
+
+            // Cek satu per satu
+            currentShuffledItems.forEach((item, index) => {
+                const expected = correctOrder[index];
+                const cardEl = cards[index];
+
+                if (item.id === expected.id) {
+                    // Benar: beri efek border hijau
+                    cardEl.classList.add('border-green-500', 'bg-green-50');
+                    cardEl.classList.remove('border-slate-200', 'border-red-500', 'bg-red-50');
+                } else {
+                    isAllCorrect = false;
+                    if (firstErrorIndex === -1) firstErrorIndex = index;
+                    // Salah: beri efek border merah bergetar
+                    cardEl.classList.add('border-red-500', 'bg-red-50', 'animate-shake');
+                    cardEl.classList.remove('border-slate-200', 'border-green-500', 'bg-green-50');
+                    
+                    // Hilangkan animasi shake setelah selesai
+                    setTimeout(() => {
+                        cardEl.classList.remove('animate-shake');
+                    }, 500);
+                }
+            });
+
+            if (isAllCorrect) {
+                // --- MENANG ---
+                playVictorySound();
+                setMascotFace('win');
+                
+                // Tandai bintang
+                let isFirstTimeCorrect = !starsEarned[currentTab];
+                if (isFirstTimeCorrect) {
+                    starsEarned[currentTab] = true;
+                    updateStarCounter();
+                }
+
+                // Munculkan dialog asisten super senang
+                document.getElementById('dialogBubble').innerHTML = `<span class="text-emerald-600 font-bold">Luar Biasa!</span> ${targetData.successMsg}`;
+
+                // Triger pita kemenangan visual
+                triggerVictoryEffects();
+
+                // Perbarui pojok komputasional menjadi terbuka (dengan trigger efek)
+                updateComputationalCorner(isFirstTimeCorrect);
+
+                // Munculkan popup sukses gembira
+                setTimeout(() => {
+                    showSuccessModal(targetData.title, targetData.successMsg);
+                }, 600);
+
+            } else {
+                // --- SALAH URUTAN ---
+                playErrorSound();
+                setMascotFace('sad');
+                
+                // Dialog asisten memberikan petunjuk manis
+                document.getElementById('dialogBubble').innerHTML = `<span class="text-red-500 font-bold">Uh-oh!</span> Ada urutan yang masih kurang tepat nih. ${targetData.hintMsg} Cobalah periksa kartu yang berbingkai merah!`;
+            }
+        }
+
+        // --- SISTEM BINTANG ---
+        function updateStarCounter() {
+            let total = 0;
+            for (let k in starsEarned) {
+                if (starsEarned[k]) total++;
+            }
+            document.getElementById('starCounter').innerText = `${total} / 4`;
+        }
+
+        // --- POPUP SUCCESS WINDOWS ---
+        function showSuccessModal(title, description) {
+            const modal = document.getElementById('successModal');
+            const content = document.getElementById('successModalContent');
+            
+            document.getElementById('modalTitle').innerText = `Hebat! Urutan ${title} Selesai!`;
+            document.getElementById('modalDescription').innerText = description;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 50);
+        }
+
+        // --- MODIFIKASI CLOSE MODAL ---
+        // Parameter autoSwitch menentukan apakah akan melanjutkan ke tab berikutnya secara otomatis.
+        function closeModal(autoSwitch = false) {
+            const modal = document.getElementById('successModal');
+            const content = document.getElementById('successModalContent');
+
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                
+                if (autoSwitch) {
+                    // Auto switch ke tab berikutnya yang belum dikerjakan
+                    autoSwitchToNextTab();
+                } else {
+                    // Jika memilih untuk tetap di layar, beritahu asisten agar memberikan arahan santai
+                    document.getElementById('dialogBubble').innerHTML = `Kamu telah menyelesaikan tugas ini! Silakan baca <b>Pojok Komputasional</b> di sebelah kanan untuk rahasia pintarmu ya! 🧠📚`;
+                }
+            }, 300);
+        }
+
+        function autoSwitchToNextTab() {
+            const keys = Object.keys(routinesData);
+            let nextTab = currentTab;
+            
+            // Cari tab yang belum diselesaikan
+            for (let key of keys) {
+                if (!starsEarned[key]) {
+                    nextTab = key;
+                    break;
+                }
+            }
+
+            if (nextTab !== currentTab) {
+                switchTab(nextTab);
+            } else {
+                // Jika semua sudah diselesaikan
+                let allDone = Object.values(starsEarned).every(v => v === true);
+                if (allDone) {
+                    document.getElementById('dialogBubble').innerHTML = "🌟 <b>LUAR BIASA!</b> Kamu sudah menyelesaikan semua kegiatan dengan benar! Kamu adalah anak yang sangat pintar dan teratur! 👑🎉";
+                    setMascotFace('win');
+                }
+            }
+        }
+
+        // --- EFEK VISUAL KEMENANGAN (PITA JATUH & KONFETI) ---
+        let animationFrameId;
+        function triggerVictoryEffects() {
+            const canvas = document.getElementById('victoryCanvas');
+            canvas.classList.remove('hidden');
+            const ctx = canvas.getContext('2d');
+            
+            // Atur ukuran canvas agar pas layar penuh
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const colors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fd79a8'];
+            const particles = [];
+
+            // Tambahkan elemen pita spiral & kotak konfeti
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height - 20,
+                    width: Math.random() * 8 + 6,
+                    height: Math.random() * 15 + 10,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 4 - 2,
+                    type: Math.random() > 0.4 ? 'ribbon' : 'confetti'
+                });
+            }
+
+            function updateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    p.y += p.speed;
+                    p.rotation += p.rotationSpeed;
+                    
+                    if (p.y < canvas.height) {
+                        alive = true;
+                    }
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+
+                    if (p.type === 'ribbon') {
+                        // Menggambar pita keriting bergulung
+                        ctx.beginPath();
+                        ctx.moveTo(-p.width/2, 0);
+                        ctx.bezierCurveTo(-p.width, p.height/3, p.width, p.height*2/3, -p.width/2, p.height);
+                        ctx.lineWidth = 3;
+                        ctx.strokeStyle = p.color;
+                        ctx.stroke();
+                    } else {
+                        // Menggambar konfeti kotak klasik
+                        ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
+                    }
+                    ctx.restore();
+                });
+
+                if (alive) {
+                    animationFrameId = requestAnimationFrame(updateParticles);
+                } else {
+                    canvas.classList.add('hidden');
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+
+            // Jalankan animasi loop
+            updateParticles();
+        }
+
+        // Pastikan ukuran canvas diperbarui jika ukuran layar berubah
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('victoryCanvas');
+            if (canvas && !canvas.classList.contains('hidden')) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+
+        // --- SISTEM KEDIP MASKOT ---
+        setInterval(() => {
+            const leftEye = document.getElementById('eye-left');
+            const rightEye = document.getElementById('eye-right');
+            if (leftEye && rightEye) {
+                // Tutup mata sekejap
+                leftEye.setAttribute('ry', '1');
+                rightEye.setAttribute('ry', '1');
+                setTimeout(() => {
+                    // Buka mata lagi
+                    leftEye.setAttribute('ry', '5');
+                    rightEye.setAttribute('ry', '5');
+                }, 150);
+            }
+        }, 4000);
+
+        // --- INISIALISASI GAME ---
+        window.onload = function() {
+            // Aktifkan tab bawaan pertama kali dimuat
+            switchTab('gosok-gigi');
+        };
+    </script>
+
+    <!-- CSS Animasi Shake khusus untuk kartu salah -->
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</body>
+</html>
