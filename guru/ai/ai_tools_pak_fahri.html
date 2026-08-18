@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pak Fahri - AI Tools untuk Guru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        page: 'var(--bg-page)',
+                        textMain: 'var(--text-main)',
+                        textMuted: 'var(--text-muted)',
+                        borderColor: 'var(--border-color)',
+                        cardBg: 'var(--card-bg)',
+                        cardBorder: 'var(--card-border)',
+                        accent: '#304FFE',
+                        accentDark: '#4D6BFF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-page: #F7F7F5;
+            --text-main: #161616;
+            --text-muted: #6b7280; /* gray-500 */
+            --border-color: rgba(229, 231, 235, 0.6);
+            --card-bg: #ffffff;
+            --card-border: rgba(229, 231, 235, 0.7);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-page: #121212;
+                --text-main: #f3f4f6;
+                --text-muted: #9ca3af;
+                --border-color: rgba(255, 255, 255, 0.1);
+                --card-bg: #1e1e1e;
+                --card-border: rgba(255, 255, 255, 0.08);
+            }
+        }
+        
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            /* Prevent overscroll bounce on mobile to maintain the 'app' feel */
+            overscroll-behavior-y: none; 
+        }
+        
+        /* Custom hide scrollbar utility */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Subtle float animation for the floating badges */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 6s ease-in-out 2s infinite;
+        }
+    </style>
+</head>
+<body class="h-[100dvh] min-h-[600px] w-full flex flex-col overflow-hidden relative selection:bg-accent selection:text-white">
+
+    <!-- HEADER (8%) -->
+    <header class="h-[8vh] min-h-[60px] max-h-[80px] w-full flex items-center justify-between px-6 lg:px-12 border-b border-borderColor flex-none z-50 bg-page/80 backdrop-blur-sm">
+        <div class="flex flex-col">
+            <h1 class="text-sm lg:text-base font-extrabold tracking-widest uppercase">Pak Fahri</h1>
+            <p class="text-[9px] lg:text-[10px] font-semibold text-textMuted tracking-widest">AI • Koding • Pendidikan</p>
+        </div>
+        
+        <!-- Social Icons (Desktop & Mobile) -->
+        <nav class="flex items-center gap-5 text-textMuted">
+            <a href="https://www.instagram.com/pakfahri.my.id/" target="_blank" rel="noopener noreferrer" class="hover:text-textMain transition-colors" title="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://wa.me/6281929200509" target="_blank" rel="noopener noreferrer" class="hover:text-[#25D366] transition-colors" title="WhatsApp">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            </a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION (42%) -->
+    <main class="flex-1 flex flex-col lg:flex-row px-6 lg:px-12 relative min-h-0 items-center justify-between py-6 lg:py-0">
+        
+        <!-- Left: Typography & Copy -->
+        <div class="w-full lg:w-[45%] flex flex-col justify-center order-1 lg:pr-10 z-10 text-center lg:text-left">
+            <h2 class="text-3xl sm:text-5xl lg:text-[4.5rem] font-extrabold leading-[1.05] tracking-tight">
+                AI TOOLS<br />
+                UNTUK GURU
+            </h2>
+            <p class="mt-2 lg:mt-4 text-[13px] sm:text-base lg:text-lg text-textMuted max-w-full lg:max-w-md leading-relaxed font-medium">
+                Perangkat pembelajaran, dibantu AI.
+            </p>
+            
+            <!-- Desktop Author -->
+            <div class="hidden lg:flex flex-col mt-8 lg:mt-12">
+                <p class="text-sm font-bold text-textMain">Dibuat oleh Pak Fahri</p>
+                <p class="text-xs text-textMuted font-medium mt-0.5">Guru Informatika & Fasilitator AI Pendidikan</p>
+            </div>
+        </div>
+
+        <!-- Right: Visual Composition -->
+        <div class="w-full lg:w-[55%] flex justify-center lg:justify-end items-center relative z-0 h-full py-6 lg:py-10 order-2">
+            <!-- Central Image Container -->
+            <div class="relative w-full max-w-[150px] lg:max-w-[320px] aspect-[4/5] lg:mr-8">
+                
+                <!-- Main Portrait -->
+                <img src="https://images.unsplash.com/photo-1558222218-b7b54eede3f3?auto=format&fit=crop&q=80&w=600&h=800" 
+                     alt="Pak Fahri" 
+                     class="w-full h-full object-cover rounded-2xl lg:rounded-[32px] shadow-xl border border-white/10 dark:border-white/5" />
+                
+                <!-- Floating Label 1 -->
+                <div class="absolute -top-3 -left-4 lg:-top-6 lg:-left-12 bg-cardBg/90 backdrop-blur-md px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-full shadow-sm border border-cardBorder text-[8px] lg:text-[11px] font-bold tracking-widest text-textMain uppercase animate-float">
+                    Modul Ajar
+                </div>
+                
+                <!-- Floating Label 2 -->
+                <div class="absolute top-1/4 -right-6 lg:-right-14 bg-cardBg/90 backdrop-blur-md px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-full shadow-sm border border-cardBorder text-[8px] lg:text-[11px] font-bold tracking-widest text-accent dark:text-accentDark uppercase animate-float-delayed">
+                    Presentasi
+                </div>
+
+                <!-- Floating Label 3 -->
+                <div class="absolute bottom-1/4 -right-4 lg:-right-8 bg-cardBg/90 backdrop-blur-md px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-full shadow-sm border border-cardBorder text-[8px] lg:text-[11px] font-bold tracking-widest text-textMain uppercase animate-float hidden lg:block">
+                    LKPD
+                </div>
+
+                <!-- AI Processing Fragment (Visual Cue) -->
+                <div class="absolute -bottom-4 -left-6 lg:-bottom-8 lg:-left-16 bg-cardBg/95 backdrop-blur-xl p-2.5 lg:p-4 rounded-xl lg:rounded-[20px] shadow-2xl border border-cardBorder flex flex-col gap-1.5 lg:gap-2 min-w-[110px] lg:min-w-[150px] z-20">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full bg-accent animate-pulse"></div>
+                        <p class="text-[7px] lg:text-[10px] font-semibold text-textMuted uppercase tracking-wider">Gem bekerja...</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-xs font-medium text-textMain">
+                        <span class="text-accent dark:text-accentDark">✓</span> Struktur
+                    </div>
+                    <div class="flex items-center gap-1.5 lg:gap-2 text-[9px] lg:text-xs font-medium text-textMain">
+                        <span class="text-accent dark:text-accentDark">✓</span> Visual
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Mobile Author -->
+        <div class="w-full flex lg:hidden flex-col items-center order-3 text-center z-10 pb-2">
+            <p class="text-xs font-bold text-textMain">Dibuat oleh Pak Fahri</p>
+            <p class="text-[10px] text-textMuted font-medium mt-0.5">Guru Informatika & Fasilitator AI Pendidikan</p>
+        </div>
+    </main>
+
+    <!-- TOOLS SECTION (35%) -->
+    <section id="tools" class="flex-none px-6 lg:px-12 pb-6 lg:pb-8 flex flex-col lg:grid lg:grid-cols-3 gap-2.5 lg:gap-6 z-10">
+        
+        <!-- TOOL 1 -->
+        <a href="https://gemini.google.com/gem/1T2XV-BMj-6CjCDH9kY3otgAyJmbRSnf-?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
+            <!-- Huge Background Number (Desktop) -->
+            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">01</div>
+            
+            <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
+                
+                <!-- Title Area -->
+                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">01</span>
+                    <div class="flex-1">
+                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">MODUL AJAR</h3>
+                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Pembuat Modul Ajar</p>
+                    </div>
+                </div>
+
+                <!-- Mini Preview Graphic (Desktop Only) -->
+                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-8 h-10 border border-cardBorder rounded-md bg-page flex flex-col gap-1 p-1">
+                        <div class="w-full h-1 bg-textMuted/30 rounded-sm"></div>
+                        <div class="w-2/3 h-1 bg-textMuted/20 rounded-sm"></div>
+                        <div class="w-full h-1 bg-textMuted/20 rounded-sm"></div>
+                        <div class="w-1/2 h-1 bg-accent/30 rounded-sm"></div>
+                    </div>
+                </div>
+
+                <!-- CTA Arrow -->
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
+                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
+                        Buka Gem
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                    <span class="lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
+
+        <!-- TOOL 2 -->
+        <a href="https://gemini.google.com/gem/12ZeMTitubMqmv7fXUJm6oI8P9Q9HXzFX?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
+            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">02</div>
+            
+            <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
+                
+                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">02</span>
+                    <div class="flex-1">
+                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">PRESENTASI</h3>
+                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Prompt Presentasi Visual</p>
+                    </div>
+                </div>
+
+                <!-- Mini Preview Graphic (Desktop Only) -->
+                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-12 h-8 border border-cardBorder rounded-md bg-page flex items-center justify-center p-1 gap-1">
+                        <div class="w-1/3 h-full bg-accent/20 rounded-sm"></div>
+                        <div class="w-2/3 h-full bg-textMuted/10 rounded-sm flex flex-col gap-1 p-0.5">
+                            <div class="w-full h-1 bg-textMuted/30 rounded-sm"></div>
+                            <div class="w-1/2 h-1 bg-textMuted/20 rounded-sm"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
+                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
+                        Buka Gem
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                    <span class="lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
+
+        <!-- TOOL 3 -->
+        <a href="https://gemini.google.com/gem/1vZPLgNcU7LYAoQTXvoYHWl3fQd0fy86a?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
+            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">03</div>
+            
+            <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
+                
+                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">03</span>
+                    <div class="flex-1">
+                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">LKPD</h3>
+                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Prompt LKPD Visual</p>
+                    </div>
+                </div>
+
+                <!-- Mini Preview Graphic (Desktop Only) -->
+                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-8 h-10 border border-cardBorder rounded-md bg-page p-1 flex flex-col justify-between">
+                        <div class="w-full flex justify-between gap-1 mb-1">
+                             <div class="w-3 h-3 border border-textMuted/30 rounded-sm"></div>
+                             <div class="w-3 h-3 border border-textMuted/30 rounded-sm"></div>
+                        </div>
+                        <div class="w-full h-1 bg-textMuted/20 rounded-sm mt-1"></div>
+                        <div class="w-full h-1 bg-textMuted/20 rounded-sm mt-0.5"></div>
+                    </div>
+                </div>
+
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
+                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
+                        Buka Gem
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                    <span class="lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
+
+    </section>
+
+    <!-- FOOTER / CTA -->
+    <footer class="h-[8vh] min-h-[50px] flex-none px-6 lg:px-12 flex items-center justify-center lg:justify-start border-t border-borderColor z-20">
+        <div class="flex items-center gap-3">
+            <span class="text-[10px] lg:text-xs font-semibold text-textMuted uppercase tracking-widest">Tutorial</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-textMuted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg>
+            <a href="https://www.instagram.com/pakfahri.my.id/" target="_blank" rel="noopener noreferrer" class="text-textMuted hover:text-textMain transition-colors" title="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://wa.me/6281929200509" target="_blank" rel="noopener noreferrer" class="text-textMuted hover:text-[#25D366] transition-colors" title="WhatsApp">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            </a>
+        </div>
+    </footer>
+
+</body>
+</html>
