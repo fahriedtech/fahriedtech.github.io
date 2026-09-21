@@ -121,9 +121,9 @@
         </div>
 
         <!-- Right: Visual Composition -->
-        <div class="w-full lg:w-[55%] flex justify-center lg:justify-end items-center relative z-0 h-full py-6 lg:py-10 order-2">
+        <div class="w-full lg:w-[55%] flex justify-center lg:justify-end items-center relative z-0 h-full py-4 lg:py-10 order-2">
             <!-- Central Image Container -->
-            <div class="relative w-full max-w-[150px] lg:max-w-[320px] aspect-[4/5] lg:mr-8">
+            <div class="relative w-full max-w-[140px] lg:max-w-[320px] aspect-[4/5] lg:mr-8">
                 
                 <!-- Main Portrait -->
                 <img src="/images/foto.png" 
@@ -135,7 +135,7 @@
                     Modul Ajar
                 </div>
                 
-                <!-- Floating Label 2 (Diubah warnanya) -->
+                <!-- Floating Label 2 -->
                 <div class="absolute top-1/4 -right-6 lg:-right-14 bg-cardBg/90 backdrop-blur-md px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-full shadow-sm border border-cardBorder text-[8px] lg:text-[11px] font-bold tracking-widest text-textMain uppercase animate-float-delayed">
                     Presentasi
                 </div>
@@ -170,26 +170,45 @@
     </main>
 
     <!-- TOOLS SECTION (35%) -->
-    <section id="tools" class="flex-none px-6 lg:px-12 pb-6 lg:pb-8 flex flex-col lg:grid lg:grid-cols-3 gap-2.5 lg:gap-6 z-10">
+    <section id="tools" class="flex-none px-6 lg:px-12 pb-4 lg:pb-8 flex flex-col lg:grid lg:grid-cols-5 gap-1.5 lg:gap-4 z-10">
         
-        <!-- TOOL 1 -->
-        <a href="https://gemini.google.com/gem/1T2XV-BMj-6CjCDH9kY3otgAyJmbRSnf-?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
-            <!-- Huge Background Number (Desktop) -->
-            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">01</div>
-            
+        <!-- TOOL 1: COVER -->
+        <a href="https://gemini.google.com/gem/1oMOl-2aGArMUalQl-vOxRqfgMbrumYlz?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[20px] rounded-[10px] border border-cardBorder p-2.5 lg:p-5 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[190px]">
+            <div class="hidden lg:block absolute -right-2 -bottom-4 text-[90px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">01</div>
             <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
-                
-                <!-- Title Area -->
-                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
-                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">01</span>
+                <div class="flex items-center lg:items-start gap-3 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-5 lg:w-auto text-center lg:text-left">01</span>
                     <div class="flex-1">
-                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">MODUL AJAR</h3>
-                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Pembuat Modul Ajar</p>
+                        <h3 class="text-[11px] lg:text-[15px] font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">COVER</h3>
+                        <p class="text-textMuted text-[9px] lg:text-[11px] lg:mt-1 font-medium lg:block">Pembuat Cover</p>
                     </div>
                 </div>
+                <div class="mt-3 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-8 h-10 border border-cardBorder rounded-md bg-page flex flex-col gap-1 p-1">
+                        <div class="w-full h-1/2 bg-accent/20 rounded-sm"></div>
+                        <div class="w-2/3 h-1 bg-textMuted/30 rounded-sm mt-0.5"></div>
+                        <div class="w-1/2 h-1 bg-textMuted/20 rounded-sm"></div>
+                    </div>
+                </div>
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start w-auto lg:w-full lg:pt-3">
+                    <span class="hidden lg:flex items-center gap-1.5 text-xs font-bold">Buka Gem <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                    <span class="lg:hidden"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                </div>
+            </div>
+        </a>
 
-                <!-- Mini Preview Graphic (Desktop Only) -->
-                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+        <!-- TOOL 2: MODUL AJAR -->
+        <a href="https://gemini.google.com/gem/1T2XV-BMj-6CjCDH9kY3otgAyJmbRSnf-?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[20px] rounded-[10px] border border-cardBorder p-2.5 lg:p-5 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[190px]">
+            <div class="hidden lg:block absolute -right-2 -bottom-4 text-[90px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">02</div>
+            <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
+                <div class="flex items-center lg:items-start gap-3 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-5 lg:w-auto text-center lg:text-left">02</span>
+                    <div class="flex-1">
+                        <h3 class="text-[11px] lg:text-[15px] font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">MODUL AJAR</h3>
+                        <p class="text-textMuted text-[9px] lg:text-[11px] lg:mt-1 font-medium lg:block">Pembuat Modul</p>
+                    </div>
+                </div>
+                <div class="mt-3 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="w-8 h-10 border border-cardBorder rounded-md bg-page flex flex-col gap-1 p-1">
                         <div class="w-full h-1 bg-textMuted/30 rounded-sm"></div>
                         <div class="w-2/3 h-1 bg-textMuted/20 rounded-sm"></div>
@@ -197,40 +216,25 @@
                         <div class="w-1/2 h-1 bg-accent/30 rounded-sm"></div>
                     </div>
                 </div>
-
-                <!-- CTA Arrow -->
-                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
-                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
-                        Buka Gem
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
-                    <span class="lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start w-auto lg:w-full lg:pt-3">
+                    <span class="hidden lg:flex items-center gap-1.5 text-xs font-bold">Buka Gem <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                    <span class="lg:hidden"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
                 </div>
             </div>
         </a>
 
-        <!-- TOOL 2 -->
-        <a href="https://gemini.google.com/gem/12ZeMTitubMqmv7fXUJm6oI8P9Q9HXzFX?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
-            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">02</div>
-            
+        <!-- TOOL 3: PRESENTASI -->
+        <a href="https://gemini.google.com/gem/12ZeMTitubMqmv7fXUJm6oI8P9Q9HXzFX?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[20px] rounded-[10px] border border-cardBorder p-2.5 lg:p-5 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[190px]">
+            <div class="hidden lg:block absolute -right-2 -bottom-4 text-[90px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">03</div>
             <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
-                
-                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
-                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">02</span>
+                <div class="flex items-center lg:items-start gap-3 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-5 lg:w-auto text-center lg:text-left">03</span>
                     <div class="flex-1">
-                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">PRESENTASI</h3>
-                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Prompt Presentasi Visual</p>
+                        <h3 class="text-[11px] lg:text-[15px] font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">PRESENTASI</h3>
+                        <p class="text-textMuted text-[9px] lg:text-[11px] lg:mt-1 font-medium lg:block">Prompt Presentasi</p>
                     </div>
                 </div>
-
-                <!-- Mini Preview Graphic (Desktop Only) -->
-                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="mt-3 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="w-12 h-8 border border-cardBorder rounded-md bg-page flex items-center justify-center p-1 gap-1">
                         <div class="w-1/3 h-full bg-accent/20 rounded-sm"></div>
                         <div class="w-2/3 h-full bg-textMuted/10 rounded-sm flex flex-col gap-1 p-0.5">
@@ -239,39 +243,25 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
-                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
-                        Buka Gem
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
-                    <span class="lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start w-auto lg:w-full lg:pt-3">
+                    <span class="hidden lg:flex items-center gap-1.5 text-xs font-bold">Buka Gem <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                    <span class="lg:hidden"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
                 </div>
             </div>
         </a>
 
-        <!-- TOOL 3 -->
-        <a href="https://gemini.google.com/gem/1vZPLgNcU7LYAoQTXvoYHWl3fQd0fy86a?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[24px] rounded-[12px] border border-cardBorder p-4 lg:p-6 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[220px]">
-            <div class="hidden lg:block absolute -right-4 -bottom-6 text-[120px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">03</div>
-            
+        <!-- TOOL 4: LKPD -->
+        <a href="https://gemini.google.com/gem/1vZPLgNcU7LYAoQTXvoYHWl3fQd0fy86a?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[20px] rounded-[10px] border border-cardBorder p-2.5 lg:p-5 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[190px]">
+            <div class="hidden lg:block absolute -right-2 -bottom-4 text-[90px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">04</div>
             <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
-                
-                <div class="flex items-center lg:items-start gap-4 lg:gap-0 lg:flex-col w-full">
-                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-4 lg:w-auto text-center lg:text-left">03</span>
+                <div class="flex items-center lg:items-start gap-3 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-5 lg:w-auto text-center lg:text-left">04</span>
                     <div class="flex-1">
-                        <h3 class="text-xs lg:text-lg font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">LKPD</h3>
-                        <p class="text-textMuted text-[10px] lg:text-sm lg:mt-1 font-medium lg:block">Prompt LKPD Visual</p>
+                        <h3 class="text-[11px] lg:text-[15px] font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">LKPD</h3>
+                        <p class="text-textMuted text-[9px] lg:text-[11px] lg:mt-1 font-medium lg:block">Prompt LKPD</p>
                     </div>
                 </div>
-
-                <!-- Mini Preview Graphic (Desktop Only) -->
-                <div class="mt-4 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="mt-3 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="w-8 h-10 border border-cardBorder rounded-md bg-page p-1 flex flex-col justify-between">
                         <div class="w-full flex justify-between gap-1 mb-1">
                              <div class="w-3 h-3 border border-textMuted/30 rounded-sm"></div>
@@ -281,19 +271,36 @@
                         <div class="w-full h-1 bg-textMuted/20 rounded-sm mt-0.5"></div>
                     </div>
                 </div>
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start w-auto lg:w-full lg:pt-3">
+                    <span class="hidden lg:flex items-center gap-1.5 text-xs font-bold">Buka Gem <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                    <span class="lg:hidden"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                </div>
+            </div>
+        </a>
 
-                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start lg:w-full lg:pt-4">
-                    <span class="hidden lg:flex items-center gap-1.5 text-sm font-bold">
-                        Buka Gem
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
-                    <span class="lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </span>
+        <!-- TOOL 5: PAPAN INTERAKTIF DIGITAL -->
+        <a href="https://gemini.google.com/gem/1GTGtcIQRsLHCHXZ7F3fqKHipweE085WS?usp=sharing" target="_blank" rel="noopener noreferrer" class="group relative bg-cardBg lg:rounded-[20px] rounded-[10px] border border-cardBorder p-2.5 lg:p-5 shadow-sm lg:hover:shadow-xl hover:border-accent/20 dark:hover:border-accentDark/30 transition-all duration-300 flex flex-col justify-between overflow-hidden lg:h-[190px]">
+            <div class="hidden lg:block absolute -right-2 -bottom-4 text-[90px] font-black text-black/5 dark:text-white/5 pointer-events-none transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:text-black/10 dark:group-hover:text-white/10">05</div>
+            <div class="relative z-10 flex items-center justify-between lg:items-start lg:flex-col w-full h-full">
+                <div class="flex items-center lg:items-start gap-3 lg:gap-0 lg:flex-col w-full">
+                    <span class="text-[10px] lg:text-xs font-black text-textMuted lg:text-accent dark:lg:text-accentDark lg:mb-2 w-5 lg:w-auto text-center lg:text-left">05</span>
+                    <div class="flex-1">
+                        <h3 class="text-[11px] lg:text-[15px] font-bold tracking-tight text-textMain group-hover:text-accent dark:group-hover:text-accentDark transition-colors leading-tight">PAPAN DIGITAL</h3>
+                        <p class="text-textMuted text-[9px] lg:text-[11px] lg:mt-1 font-medium lg:block">Media Interaktif</p>
+                    </div>
+                </div>
+                <div class="mt-3 hidden lg:flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-11 h-8 border border-cardBorder rounded-md bg-page flex flex-col p-1 gap-1">
+                        <div class="w-full h-1.5 bg-accent/20 rounded-sm"></div>
+                        <div class="flex gap-1 w-full h-full">
+                            <div class="w-1/4 h-full bg-textMuted/20 rounded-sm"></div>
+                            <div class="w-3/4 h-full bg-textMuted/10 rounded-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-textMuted group-hover:text-accent dark:group-hover:text-accentDark transition-colors lg:mt-auto flex justify-end lg:justify-start w-auto lg:w-full lg:pt-3">
+                    <span class="hidden lg:flex items-center gap-1.5 text-xs font-bold">Buka Gem <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
+                    <span class="lg:hidden"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" /></svg></span>
                 </div>
             </div>
         </a>
