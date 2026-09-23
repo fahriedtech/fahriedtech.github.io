@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Koding & KA - Pak Fahri</title>
+    
+    <!-- Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* TEMA GELAP PEKAT (Default) */
+        :root {
+            --bg-base: #000000;
+            --card-bg: rgba(25, 25, 25, 0.8);
+            --card-border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-sub: #a0a0a0;
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-hover: rgba(255, 255, 255, 0.15);
+            --accent-solid: #ffffff;
+            --accent-invert: #000000;
+            --anim-opacity: 0.1;
+        }
+
+        /* TEMA TERANG PEKAT (Jika Sistem pengguna Light Mode) */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-base: #f5f5f5;
+                --card-bg: rgba(255, 255, 255, 0.8);
+                --card-border: rgba(0, 0, 0, 0.15);
+                --text-main: #000000;
+                --text-sub: #555555;
+                --btn-bg: rgba(0, 0, 0, 0.03);
+                --btn-hover: rgba(0, 0, 0, 0.08);
+                --accent-solid: #000000;
+                --accent-invert: #ffffff;
+                --anim-opacity: 0.05;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* NO SCROLL */
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* ELEMEN BERGERAK DI LATAR (Animasi CSS Murni) */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border: 1px solid var(--text-main);
+            opacity: var(--anim-opacity);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        .shape:nth-child(1) { width: 30vw; height: 30vw; top: -10%; left: -10%; animation-duration: 25s; }
+        .shape:nth-child(2) { width: 40vw; height: 40vw; bottom: -20%; right: -10%; animation-duration: 30s; animation-direction: reverse; }
+        .shape:nth-child(3) { width: 20vw; height: 20vw; top: 40%; left: 60%; animation-duration: 20s; }
+
+        @keyframes float {
+            0% { transform: rotate(0deg) translate(0, 0) scale(1); }
+            33% { transform: rotate(120deg) translate(50px, -50px) scale(1.1); }
+            66% { transform: rotate(240deg) translate(-50px, 50px) scale(0.9); }
+            100% { transform: rotate(360deg) translate(0, 0) scale(1); }
+        }
+
+        /* Container Utama */
+        .bento-container {
+            width: 95vw;
+            height: 95vh;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+            z-index: 1; /* Di atas animasi */
+        }
+
+        /* Kartu Monokrom */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 3vh;
+            padding: 3vh 3vw;
+        }
+
+        /* Header Profil */
+        .profile-header {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vh 3vw;
+        }
+        
+        .profile-info h1 {
+            font-size: clamp(1.2rem, 3.5vh, 2rem);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+        .profile-info p {
+            font-size: clamp(0.8rem, 2vh, 1rem);
+            color: var(--text-sub);
+        }
+        
+        .ig-btn {
+            background: var(--accent-solid);
+            color: var(--accent-invert);
+            text-decoration: none;
+            padding: 1.2vh 1.5vw;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: clamp(0.7rem, 1.8vh, 1rem);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--accent-solid);
+        }
+        .ig-btn:hover {
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        /* Tata Letak Konten */
+        .main-content {
+            flex: 1 1 auto;
+            display: flex;
+            gap: 2vh;
+            overflow: hidden;
+        }
+
+        .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+        }
+
+        .section-title {
+            font-size: clamp(1rem, 2.5vh, 1.2rem);
+            font-weight: 600;
+            margin-bottom: 1vh;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5vh;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2vh;
+            flex: 1;
+            justify-content: space-around;
+        }
+
+        /* Tombol Link List */
+        .link-btn {
+            background: var(--btn-bg);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 1.5vh 1.5vw;
+            border-radius: 1.5vh;
+            font-size: clamp(0.75rem, 2vh, 1rem);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--card-border);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .link-btn i {
+            font-size: 1.2em;
+            color: var(--text-sub);
+        }
+        .link-btn:hover {
+            background: var(--btn-hover);
+            transform: translateX(8px);
+        }
+        
+        .link-btn:hover i {
+            color: var(--text-main);
+        }
+
+        /* Tag / Item Drive */
+        .drive-tags {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2vh;
+            margin-top: 1vh;
+        }
+        
+        .tag {
+            background: transparent;
+            padding: 1vh 1vw;
+            border-radius: 1vh;
+            font-size: clamp(0.75rem, 1.8vh, 0.9rem);
+            color: var(--text-main);
+            border: 1px dashed var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Drive Main Button */
+        .drive-main-btn {
+            background: transparent;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 1.5vh 1.5vw;
+            border-radius: 1.5vh;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vh, 1rem);
+            text-align: center;
+            border: 2px solid var(--text-main);
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .drive-main-btn:hover {
+            background: var(--text-main);
+            color: var(--bg-base);
+        }
+
+        /* Responsif Smartphone */
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5vh;
+                padding: 2.5vh;
+            }
+            .link-btn { padding: 1.2vh 4vw; }
+            .glass-card { padding: 2.5vh 4vw; }
+            .drive-tags { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .tag { padding: 0.8vh 3vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animasi Latar Belakang -->
+    <div class="bg-animation">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Konten Utama -->
+    <div class="bento-container">
+        
+        <!-- Header -->
+        <div class="glass-card profile-header">
+            <div class="profile-info">
+                <h1>Materi Koding & KA</h1>
+                <p>Fase C</p>
+            </div>
+            <a href="https://instagram.com/Pakfahri.my.id" target="_blank" class="ig-btn">
+                <i class="fa-brands fa-instagram"></i> @Pakfahri.my.id
+            </a>
+        </div>
+
+        <!-- Layout 2 Kolom -->
+        <div class="main-content">
+            
+            <!-- Kolom Kiri: Presentasi (Canva) -->
+            <div class="glass-card col">
+                <div class="section-title">
+                    <i class="fa-solid fa-layer-group"></i> Presentasi
+                </div>
+                <div class="links-container">
+                    <a href="https://canva.link/pengenalanmapelkodingka" target="_blank" class="link-btn">
+                        <i class="fa-solid fa-code"></i> Pengenalan Mapel Koding KA
+                    </a>
+                    <a href="https://canva.link/s1berpikirkomputasional" target="_blank" class="link-btn">
+                        <i class="fa-solid fa-brain"></i> Berpikir Komputasional
+                    </a>
+                    <a href="https://canva.link/s2literasidigital" target="_blank" class="link-btn">
+                        <i class="fa-solid fa-globe"></i> Literasi Digital
+                    </a>
+                    <a href="https://canva.link/s1literasikecerdasanartifisial" target="_blank" class="link-btn">
+                        <i class="fa-solid fa-robot"></i> Literasi & Etika KA
+                    </a>
+                    <a href="https://canva.link/s2pemanfaatankecerdasanartifisial" target="_blank" class="link-btn">
+                        <i class="fa-solid fa-microchip"></i> Pemanfaatan & Pengembangan KA
+                    </a>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Drive -->
+            <div class="glass-card col" style="flex: 0.6;">
+                <div class="section-title">
+                    <i class="fa-brands fa-google-drive"></i> Berkas Drive
+                </div>
+                <div class="links-container" style="justify-content: flex-start;">
+                    
+                    <a href="https://drive.google.com/drive/folders/12YeSE-piGsRrlLhf1nD6-2oQ2UiJv9OE" target="_blank" class="drive-main-btn">
+                        Buka Folder Drive <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8em;"></i>
+                    </a>
+                    
+                    <div class="drive-tags">
+                        <span class="tag"><i class="fa-solid fa-file"></i> CP Koding KA</span>
+                        <span class="tag"><i class="fa-solid fa-book-open"></i> Buku Koding KA</span>
+                        <span class="tag"><i class="fa-solid fa-folder-open"></i> Modul Koding KA</span>
+                        <span class="tag"><i class="fa-solid fa-map"></i> Pemetaan Materi</span>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
