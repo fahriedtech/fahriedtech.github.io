@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Robot Coder: Duel Algoritma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 2px;
+            background-color: #334155;
+            padding: 4px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 550px;
+            aspect-ratio: 1/1;
+        }
+
+        .cell {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1.2rem, 3vw, 2.2rem);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .robot {
+            z-index: 10;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .bump-effect {
+            animation: bump 0.3s ease;
+        }
+
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25) rotate(12deg); background-color: #ef4444; }
+            100% { transform: scale(1); }
+        }
+
+        .control-btn {
+            background: linear-gradient(145deg, #475569, #334155);
+            border: 2px solid #64748b;
+            border-radius: 12px;
+            font-size: 1.6rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1/1;
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), 3px 3px 8px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .control-btn:active {
+            transform: scale(0.92);
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.5);
+        }
+
+        .sequence-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-content: flex-start;
+            background: #020617;
+            border-radius: 8px;
+            padding: 8px;
+            min-height: 110px;
+            max-height: 140px;
+            overflow-y: auto;
+            border: 2px solid #334155;
+        }
+
+        .seq-item {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seq-item:hover {
+            background: #fca5a5;
+            transform: scale(1.05);
+        }
+        
+        .seq-item.active {
+            background: #fbbf24;
+            transform: scale(1.18);
+            box-shadow: 0 0 10px #fbbf24;
+            z-index: 5;
+        }
+
+        /* Custom Scrollbar */
+        .sequence-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sequence-box::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+
+        .team-red .control-btn:active { border-color: #ef4444; }
+        .team-blue .control-btn:active { border-color: #3b82f6; }
+
+        canvas#confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 60;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Canvas Confetti -->
+    <canvas id="confetti"></canvas>
+
+    <!-- Overlay Start / Fullscreen -->
+    <div id="start-overlay" class="fixed inset-0 bg-slate-950 z-[100] flex flex-col justify-center items-center p-4">
+        <div class="text-center max-w-md">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-yellow-400 mb-4 animate-bounce">🤖 Robot Coder</h1>
+            <p class="text-slate-300 text-lg mb-2">Duel Algoritma & Pemrograman Visual</p>
+            <p class="text-slate-400 text-sm mb-8">Susun langkah algoritma robotmu untuk mengumpulkan target kotak sebelum lawan!</p>
+            <button onclick="enterFullScreen()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 px-8 rounded-2xl font-bold text-2xl shadow-xl border-4 border-indigo-400 active:scale-95 transition">
+                🚀 Mulai Bermain
+            </button>
+        </div>
+    </div>
+
+    <!-- Header Control Bar -->
+    <header class="py-3 px-4 bg-slate-900 border-b border-slate-800 shadow-lg flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">🤖</span>
+            <h1 class="text-xl md:text-2xl font-bold text-yellow-400">Robot Coder</h1>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+            <!-- Sound Toggle -->
+            <button onclick="toggleAudio()" id="audioBtn" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg font-semibold text-sm border border-slate-600">
+                🔊 Suara: ON
+            </button>
+
+            <!-- Speed Toggle -->
+            <button onclick="toggleSpeed()" id="speedBtn" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg font-semibold text-sm border border-slate-600">
+                ⚡ Kecepatan: 1x
+            </button>
+
+            <!-- Acak Peta -->
+            <button onclick="generateBoard()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm border border-indigo-400 active:scale-95 transition">
+                🔄 Acak Peta
+            </button>
+
+            <!-- Run Button -->
+            <button onclick="runCode()" id="runBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-1.5 rounded-lg font-extrabold text-base border-2 border-emerald-400 active:scale-95 transition shadow-lg">
+                ▶️ JALANKAN
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Workspace -->
+    <main class="flex-1 flex flex-col md:flex-row items-center justify-center p-3 gap-4 max-w-7xl mx-auto w-full">
+        
+        <!-- Panel Tim Merah -->
+        <div class="w-full md:w-1/3 flex flex-col gap-2 team-red bg-red-950/30 p-3.5 rounded-2xl border-2 border-red-900/60 shadow-lg">
+            <div class="flex justify-between items-center">
+                <div class="text-red-400 font-bold text-xl flex items-center gap-2">
+                    <span>🟥</span> Tim Merah 🤖
+                </div>
+                <div class="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded border border-red-700/50">
+                    Target: 📦 (Merah)
+                </div>
+            </div>
+
+            <!-- Sequence List -->
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
+                    <span>Klik item untuk hapus</span>
+                    <span id="count-red" class="text-red-400 font-bold">0/15</span>
+                </div>
+                <div class="sequence-box" id="seq-red"></div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="undoCommand('red')" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 rounded-lg text-white font-bold text-xs border border-slate-600 active:scale-95">
+                    ⏪ Hapus 1
+                </button>
+                <button onclick="clearSequence('red')" class="flex-1 bg-red-900/40 hover:bg-red-800/60 py-1.5 rounded-lg text-red-200 font-bold text-xs border border-red-700/50 active:scale-95">
+                    🗑️ Hapus Semua
+                </button>
+            </div>
+
+            <!-- D-Pad Kontrol Merah -->
+            <div class="grid grid-cols-3 gap-2 w-full max-w-[200px] mx-auto mt-1">
+                <div></div>
+                <div class="control-btn" onclick="addCommand('red', 'UP')">⬆️</div>
+                <div></div>
+                <div class="control-btn" onclick="addCommand('red', 'LEFT')">⬅️</div>
+                <div class="control-btn" onclick="addCommand('red', 'DOWN')">⬇️</div>
+                <div class="control-btn" onclick="addCommand('red', 'RIGHT')">➡️</div>
+            </div>
+
+            <!-- Status Tim Merah -->
+            <div id="status-red" class="text-center font-bold text-base text-slate-500 h-6">Siap</div>
+        </div>
+
+        <!-- Area Tengah: Peta Permainan -->
+        <div class="w-full md:w-auto flex justify-center items-center relative my-2 md:my-0">
+            <div class="game-board" id="board">
+                <!-- Cell-cell grid di-generate oleh JS -->
+            </div>
+
+            <!-- Overlay Pemenang -->
+            <div id="winner-overlay" class="absolute inset-0 bg-slate-950/95 hidden flex-col justify-center items-center z-50 rounded-xl backdrop-blur-md p-6 text-center">
+                <h2 id="winner-text" class="text-4xl md:text-5xl font-black mb-3">🏆 Victory!</h2>
+                <p id="winner-sub" class="text-slate-300 text-base mb-6 max-w-sm">Algoritma kamu berhasil memandu robot menuju target.</p>
+                <button onclick="generateBoard()" class="bg-yellow-500 hover:bg-yellow-400 text-slate-950 px-8 py-3 rounded-xl font-bold text-xl shadow-xl border-2 border-yellow-200 active:scale-95 transition">
+                    🎮 Main Lagi
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel Tim Biru -->
+        <div class="w-full md:w-1/3 flex flex-col gap-2 team-blue bg-blue-950/30 p-3.5 rounded-2xl border-2 border-blue-900/60 shadow-lg">
+            <div class="flex justify-between items-center">
+                <div class="text-blue-400 font-bold text-xl flex items-center gap-2">
+                    <span>🟦</span> Tim Biru 🤖
+                </div>
+                <div class="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded border border-blue-700/50">
+                    Target: 📦 (Biru)
+                </div>
+            </div>
+
+            <!-- Sequence List -->
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
+                    <span>Klik item untuk hapus</span>
+                    <span id="count-blue" class="text-blue-400 font-bold">0/15</span>
+                </div>
+                <div class="sequence-box" id="seq-blue"></div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="undoCommand('blue')" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 rounded-lg text-white font-bold text-xs border border-slate-600 active:scale-95">
+                    ⏪ Hapus 1
+                </button>
+                <button onclick="clearSequence('blue')" class="flex-1 bg-blue-900/40 hover:bg-blue-800/60 py-1.5 rounded-lg text-blue-200 font-bold text-xs border border-blue-700/50 active:scale-95">
+                    🗑️ Hapus Semua
+                </button>
+            </div>
+
+            <!-- D-Pad Kontrol Biru -->
+            <div class="grid grid-cols-3 gap-2 w-full max-w-[200px] mx-auto mt-1">
+                <div></div>
+                <div class="control-btn" onclick="addCommand('blue', 'UP')">⬆️</div>
+                <div></div>
+                <div class="control-btn" onclick="addCommand('blue', 'LEFT')">⬅️</div>
+                <div class="control-btn" onclick="addCommand('blue', 'DOWN')">⬇️</div>
+                <div class="control-btn" onclick="addCommand('blue', 'RIGHT')">➡️</div>
+            </div>
+
+            <!-- Status Tim Biru -->
+            <div id="status-blue" class="text-center font-bold text-base text-slate-500 h-6">Siap</div>
+        </div>
+
+    </main>
+
+    <script>
+        const GRID_SIZE = 8;
+        const MAX_COMMANDS = 15;
+        const ICONS = {
+            up: '⬆️', down: '⬇️', left: '⬅️', right: '➡️',
+            redRobot: '🤖', blueRobot: '🤖',
+            redBox: '📦', blueBox: '📦',
+            wall: '🧱'
+        };
+
+        let speedMs = 500;
+        let audioEnabled = true;
+
+        let gameState = {
+            isRunning: false,
+            red: { x: 0, y: 0, seq: [], startX: 0, startY: 0, finished: false },
+            blue: { x: 7, y: 7, seq: [], startX: 7, startY: 7, finished: false },
+            targets: { red: {x: -1, y: -1}, blue: {x: -1, y: -1} },
+            walls: []
+        };
+
+        const boardEl = document.getElementById('board');
+        const overlayEl = document.getElementById('winner-overlay');
+        const startOverlayEl = document.getElementById('start-overlay');
+
+        // Audio System (Web Audio API)
+        function playSound(type) {
+            if (!audioEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'move') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(280, now);
+                    osc.frequency.exponentialRampToValueAtTime(520, now + 0.08);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'bump') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.linearRampToValueAtTime(70, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'win') {
+                    const notes = [261.63, 329.63, 392.00, 523.25];
+                    notes.forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.09);
+                        g.gain.setValueAtTime(0.18, now + idx * 0.09);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.2);
+                        o.start(now + idx * 0.09);
+                        o.stop(now + idx * 0.09 + 0.2);
+                    });
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('audioBtn').innerText = audioEnabled ? "🔊 Suara: ON" : "🔇 Suara: OFF";
+        }
+
+        function toggleSpeed() {
+            if (speedMs === 500) {
+                speedMs = 250;
+                document.getElementById('speedBtn').innerText = "⚡ Kecepatan: 2x";
+            } else if (speedMs === 250) {
+                speedMs = 100;
+                document.getElementById('speedBtn').innerText = "⚡ Kecepatan: 3x";
+            } else {
+                speedMs = 500;
+                document.getElementById('speedBtn').innerText = "⚡ Kecepatan: 1x";
+            }
+        }
+
+        function enterFullScreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            startOverlayEl.style.display = 'none';
+            playSound('click');
+        }
+
+        // BFS Path Validation to Ensure Solvability
+        function isPathAvailable(start, goal, walls) {
+            let queue = [start];
+            let visited = new Set([`${start.x},${start.y}`]);
+            
+            while (queue.length > 0) {
+                let curr = queue.shift();
+                if (curr.x === goal.x && curr.y === goal.y) return true;
+
+                let neighbors = [
+                    {x: curr.x, y: curr.y - 1}, {x: curr.x, y: curr.y + 1},
+                    {x: curr.x - 1, y: curr.y}, {x: curr.x + 1, y: curr.y}
+                ];
+
+                for (let n of neighbors) {
+                    if (n.x >= 0 && n.x < GRID_SIZE && n.y >= 0 && n.y < GRID_SIZE) {
+                        let key = `${n.x},${n.y}`;
+                        let isWall = walls.some(w => w.x === n.x && w.y === n.y);
+                        if (!visited.has(key) && !isWall) {
+                            visited.add(key);
+                            queue.push(n);
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function generateBoard() {
+            if (gameState.isRunning) return;
+            
+            overlayEl.classList.add('hidden');
+            overlayEl.classList.remove('flex');
+            stopConfetti();
+
+            gameState.red.startX = 0; gameState.red.startY = 0;
+            gameState.red.x = 0; gameState.red.y = 0;
+            gameState.red.finished = false;
+
+            gameState.blue.startX = 7; gameState.blue.startY = 7;
+            gameState.blue.x = 7; gameState.blue.y = 7;
+            gameState.blue.finished = false;
+
+            // Reset Status Text
+            document.getElementById('status-red').innerText = 'Siap';
+            document.getElementById('status-red').className = 'text-center font-bold text-base text-slate-500 h-6';
+            document.getElementById('status-blue').innerText = 'Siap';
+            document.getElementById('status-blue').className = 'text-center font-bold text-base text-slate-500 h-6';
+            
+            document.getElementById('runBtn').disabled = false;
+            document.getElementById('runBtn').classList.remove('opacity-50');
+
+            // Solvability Loop: Keep generating until valid paths exist
+            let boardValid = false;
+            let attempts = 0;
+
+            while (!boardValid && attempts < 100) {
+                attempts++;
+                gameState.targets.red = getRandomEmptyPos();
+                gameState.targets.blue = getRandomEmptyPos([gameState.targets.red]);
+
+                gameState.walls = [];
+                let wallCount = Math.floor(Math.random() * 4) + 10;
+                let reserved = [
+                    {x:0, y:0}, {x:0, y:1}, {x:1, y:0},
+                    {x:7, y:7}, {x:7, y:6}, {x:6, y:7},
+                    gameState.targets.red, gameState.targets.blue
+                ];
+
+                for (let i = 0; i < wallCount; i++) {
+                    let wPos = getRandomEmptyPos(reserved.concat(gameState.walls));
+                    if (wPos) gameState.walls.push(wPos);
+                }
+
+                let redPathOK = isPathAvailable({x:0, y:0}, gameState.targets.red, gameState.walls);
+                let bluePathOK = isPathAvailable({x:7, y:7}, gameState.targets.blue, gameState.walls);
+
+                if (redPathOK && bluePathOK) {
+                    boardValid = true;
+                }
+            }
+
+            renderBoard();
+            playSound('click');
+        }
+
+        function getRandomEmptyPos(exclude = []) {
+            let attempts = 0;
+            while (attempts < 100) {
+                let rx = Math.floor(Math.random() * GRID_SIZE);
+                let ry = Math.floor(Math.random() * GRID_SIZE);
+
+                if ((rx === 0 && ry === 0) || (rx === 7 && ry === 7)) continue;
+                let isOccupied = exclude.some(pos => pos.x === rx && pos.y === ry);
+                if (!isOccupied) return {x: rx, y: ry};
+                attempts++;
+            }
+            return {x: 3, y: 3};
+        }
+
+        function renderBoard() {
+            boardEl.innerHTML = '';
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${x}-${y}`;
+
+                    if ((x + y) % 2 === 0) cell.style.backgroundColor = '#e2e8f0';
+
+                    // Walls
+                    const isWall = gameState.walls.find(w => w.x === x && w.y === y);
+                    if (isWall) {
+                        cell.innerHTML = ICONS.wall;
+                        cell.style.backgroundColor = '#475569';
+                    }
+
+                    // Targets
+                    if (x === gameState.targets.red.x && y === gameState.targets.red.y) {
+                        cell.innerHTML += `<div class="absolute inset-0 flex justify-center items-center text-2xl md:text-3xl" style="background: rgba(239,68,68,0.25)">${ICONS.redBox}</div>`;
+                        cell.style.border = "3px dashed #ef4444";
+                    }
+                    if (x === gameState.targets.blue.x && y === gameState.targets.blue.y) {
+                        cell.innerHTML += `<div class="absolute inset-0 flex justify-center items-center text-2xl md:text-3xl" style="background: rgba(59,130,246,0.25)">${ICONS.blueBox}</div>`;
+                        cell.style.border = "3px dashed #3b82f6";
+                    }
+
+                    // Bases
+                    if (x === 0 && y === 0) cell.style.boxShadow = "inset 0 0 12px rgba(239,68,68,0.6)";
+                    if (x === 7 && y === 7) cell.style.boxShadow = "inset 0 0 12px rgba(59,130,246,0.6)";
+
+                    boardEl.appendChild(cell);
+                }
+            }
+            updateRobotPositions();
+        }
+
+        function updateRobotPositions() {
+            document.querySelectorAll('.robot').forEach(el => el.remove());
+            drawRobot(gameState.red.x, gameState.red.y, ICONS.redRobot, 'red');
+            drawRobot(gameState.blue.x, gameState.blue.y, ICONS.blueRobot, 'blue');
+        }
+
+        function drawRobot(x, y, icon, team) {
+            const cell = document.getElementById(`cell-${x}-${y}`);
+            if (!cell) return;
+
+            const bot = document.createElement('div');
+            bot.className = 'robot absolute z-20';
+            
+            if (team === 'red') {
+                bot.innerHTML = `<span class="bg-red-500/30 rounded-full p-1 border-2 border-red-500 shadow-md shadow-red-500/50">${icon}</span>`;
+            } else {
+                bot.innerHTML = `<span class="bg-blue-500/30 rounded-full p-1 border-2 border-blue-500 shadow-md shadow-blue-500/50">${icon}</span>`;
+            }
+
+            cell.appendChild(bot);
+        }
+
+        function addBumpEffect(x, y) {
+            const cell = document.getElementById(`cell-${x}-${y}`);
+            if (cell) {
+                cell.classList.remove('bump-effect');
+                void cell.offsetWidth;
+                cell.classList.add('bump-effect');
+            }
+            playSound('bump');
+        }
+
+        function addCommand(team, cmd) {
+            if (gameState.isRunning) return;
+            if (gameState[team].seq.length >= MAX_COMMANDS) return;
+
+            gameState[team].seq.push(cmd);
+            renderSequence(team);
+            playSound('click');
+        }
+
+        function removeCommandAt(team, index) {
+            if (gameState.isRunning) return;
+            gameState[team].seq.splice(index, 1);
+            renderSequence(team);
+            playSound('click');
+        }
+
+        function undoCommand(team) {
+            if (gameState.isRunning) return;
+            gameState[team].seq.pop();
+            renderSequence(team);
+            playSound('click');
+        }
+
+        function clearSequence(team) {
+            if (gameState.isRunning) return;
+            gameState[team].seq = [];
+            renderSequence(team);
+            playSound('click');
+        }
+
+        function renderSequence(team) {
+            const container = document.getElementById(`seq-${team}`);
+            container.innerHTML = '';
+            
+            gameState[team].seq.forEach((cmd, idx) => {
+                const el = document.createElement('div');
+                el.className = 'seq-item';
+                el.id = `seq-${team}-${idx}`;
+                el.innerText = ICONS[cmd.toLowerCase()];
+                el.title = "Klik untuk hapus";
+                el.onclick = () => removeCommandAt(team, idx);
+                container.appendChild(el);
+            });
+
+            document.getElementById(`count-${team}`).innerText = `${gameState[team].seq.length}/${MAX_COMMANDS}`;
+        }
+
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        async function runCode() {
+            if (gameState.isRunning) return;
+            if (gameState.red.seq.length === 0 && gameState.blue.seq.length === 0) return;
+
+            gameState.isRunning = true;
+            document.getElementById('runBtn').disabled = true;
+            document.getElementById('runBtn').classList.add('opacity-50');
+
+            document.getElementById('status-red').innerText = '⚙️ Mengesksekusi...';
+            document.getElementById('status-red').className = 'text-center font-bold text-base text-yellow-400 h-6';
+            document.getElementById('status-blue').innerText = '⚙️ Mengesksekusi...';
+            document.getElementById('status-blue').className = 'text-center font-bold text-base text-yellow-400 h-6';
+
+            // Reset Posisi Robot
+            gameState.red.x = gameState.red.startX; gameState.red.y = gameState.red.startY;
+            gameState.blue.x = gameState.blue.startX; gameState.blue.y = gameState.blue.startY;
+            gameState.red.finished = false;
+            gameState.blue.finished = false;
+            updateRobotPositions();
+
+            let maxSteps = Math.max(gameState.red.seq.length, gameState.blue.seq.length);
+
+            for (let i = 0; i < maxSteps; i++) {
+                // Highlight Command saat ini
+                if (i < gameState.red.seq.length) {
+                    document.querySelectorAll(`#seq-red .seq-item`).forEach(e => e.classList.remove('active'));
+                    const item = document.getElementById(`seq-red-${i}`);
+                    if (item) {
+                        item.classList.add('active');
+                        item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+                if (i < gameState.blue.seq.length) {
+                    document.querySelectorAll(`#seq-blue .seq-item`).forEach(e => e.classList.remove('active'));
+                    const item = document.getElementById(`seq-blue-${i}`);
+                    if (item) {
+                        item.classList.add('active');
+                        item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+
+                await sleep(speedMs);
+
+                // Eksekusi Langkah
+                if (i < gameState.red.seq.length && !gameState.red.finished) {
+                    processMove('red', gameState.red.seq[i]);
+                }
+                if (i < gameState.blue.seq.length && !gameState.blue.finished) {
+                    processMove('blue', gameState.blue.seq[i]);
+                }
+
+                updateRobotPositions();
+                checkVictoryConditions();
+
+                if (gameState.red.finished || gameState.blue.finished) {
+                    await sleep(400);
+                    break;
+                }
+            }
+
+            document.querySelectorAll(`.seq-item`).forEach(e => e.classList.remove('active'));
+            gameState.isRunning = false;
+            document.getElementById('runBtn').disabled = false;
+            document.getElementById('runBtn').classList.remove('opacity-50');
+
+            if (!gameState.red.finished && !gameState.blue.finished) {
+                document.getElementById('status-red').innerText = '❌ Belum Sampai';
+                document.getElementById('status-red').className = 'text-center font-bold text-base text-red-400 h-6';
+                document.getElementById('status-blue').innerText = '❌ Belum Sampai';
+                document.getElementById('status-blue').className = 'text-center font-bold text-base text-red-400 h-6';
+            }
+        }
+
+        function processMove(team, cmd) {
+            let robot = gameState[team];
+            let nextX = robot.x;
+            let nextY = robot.y;
+
+            if (cmd === 'UP') nextY--;
+            if (cmd === 'DOWN') nextY++;
+            if (cmd === 'LEFT') nextX--;
+            if (cmd === 'RIGHT') nextX++;
+
+            // Cek Batas Area
+            if (nextX < 0 || nextX >= GRID_SIZE || nextY < 0 || nextY >= GRID_SIZE) {
+                addBumpEffect(robot.x, robot.y);
+                return;
+            }
+
+            // Cek Tembok
+            let hitWall = gameState.walls.some(w => w.x === nextX && w.y === nextY);
+            if (hitWall) {
+                addBumpEffect(nextX, nextY);
+                return;
+            }
+
+            // Cek Tabrakan Robot Lawan
+            let enemy = team === 'red' ? gameState.blue : gameState.red;
+            if (enemy.x === nextX && enemy.y === nextY) {
+                addBumpEffect(nextX, nextY);
+                return;
+            }
+
+            // Berhasil Pindah
+            robot.x = nextX;
+            robot.y = nextY;
+            playSound('move');
+        }
+
+        function checkVictoryConditions() {
+            let redWins = (gameState.red.x === gameState.targets.red.x && gameState.red.y === gameState.targets.red.y);
+            let blueWins = (gameState.blue.x === gameState.targets.blue.x && gameState.blue.y === gameState.targets.blue.y);
+
+            if (redWins) {
+                gameState.red.finished = true;
+                document.getElementById('status-red').innerText = '✅ TARGET TERAMBIL!';
+                document.getElementById('status-red').className = 'text-center font-bold text-base text-emerald-400 h-6';
+            }
+            if (blueWins) {
+                gameState.blue.finished = true;
+                document.getElementById('status-blue').innerText = '✅ TARGET TERAMBIL!';
+                document.getElementById('status-blue').className = 'text-center font-bold text-base text-emerald-400 h-6';
+            }
+
+            if (redWins || blueWins) {
+                playSound('win');
+                startConfetti();
+                showWinnerModal(redWins, blueWins);
+            }
+        }
+
+        function showWinnerModal(redWins, blueWins) {
+            overlayEl.classList.remove('hidden');
+            overlayEl.classList.add('flex');
+
+            const title = document.getElementById('winner-text');
+            const sub = document.getElementById('winner-sub');
+
+            if (redWins && blueWins) {
+                title.innerText = '🤝 HASIL SERI!';
+                title.className = 'text-4xl md:text-5xl font-black mb-3 text-purple-400';
+                sub.innerText = 'Kedua tim berhasil menyusun algoritma yang sempurna secara bersamaan!';
+            } else if (redWins) {
+                title.innerText = '🟥 TIM MERAH MENANG!';
+                title.className = 'text-4xl md:text-5xl font-black mb-3 text-red-500';
+                sub.innerText = 'Tim Merah berhasil memandu robotnya mengambil kotak target!';
+            } else if (blueWins) {
+                title.innerText = '🟦 TIM BIRU MENANG!';
+                title.className = 'text-4xl md:text-5xl font-black mb-3 text-blue-500';
+                sub.innerText = 'Tim Biru berhasil memandu robotnya mengambil kotak target!';
+            }
+        }
+
+        // Simple Confetti Effect
+        let confettiAnimationId = null;
+        function startConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = Array.from({ length: 90 }).map(() => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 8 + 4,
+                color: ['#ef4444', '#3b82f6', '#fbbf24', '#10b981', '#a855f7'][Math.floor(Math.random() * 5)],
+                speedY: Math.random() * 3 + 2,
+                speedX: Math.random() * 2 - 1
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    if (p.y > canvas.height) p.y = -10;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                confettiAnimationId = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function stopConfetti() {
+            if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        window.onload = () => {
+            generateBoard();
+        };
+    </script>
+</body>
+</html>
