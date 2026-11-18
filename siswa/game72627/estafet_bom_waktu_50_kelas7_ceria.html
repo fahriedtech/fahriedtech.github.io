@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Estafet Bom Waktu 50 — Edisi Ceria SAS Informatika Kelas 7</title>
+    <!-- Google Fonts: Fredoka & Nunito (Lucu, Bulat & Ramah Anak) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Fredoka', 'cursive', 'sans-serif'],
+                        sans: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Mengunci viewport 100dvh tanpa scroll halaman utama */
+        html, body {
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Latar belakang polkadot pastel ceria */
+        .bg-playful-dots {
+            background-color: #fef9c3;
+            background-image:
+                radial-gradient(#fde047 2.5px, transparent 2.5px),
+                radial-gradient(#fed7aa 2.5px, #fffbeb 2.5px);
+            background-size: 36px 36px;
+            background-position: 0 0, 18px 18px;
+        }
+
+        /* Animasi percikan sumbu bom kawaii */
+        @keyframes sparkFlicker {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.4) rotate(25deg); opacity: 0.8; }
+        }
+        .fuse-spark {
+            transform-origin: 31px 5px;
+            animation: sparkFlicker 0.25s infinite ease-in-out;
+        }
+
+        /* Animasi detak panik lucu saat waktu tersisa < 5 detik */
+        @keyframes panicPulse {
+            0%, 100% { transform: scale(1) rotate(-2deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+        .bomb-panic {
+            animation: panicPulse 0.28s infinite ease-in-out;
+        }
+
+        /* Animasi getar kartun saat bom meledak */
+        @keyframes boomShake {
+            0%, 100% { transform: translate(0, 0); }
+            15% { transform: translate(-7px, 4px); }
+            30% { transform: translate(7px, -4px); }
+            45% { transform: translate(-6px, -3px); }
+            60% { transform: translate(6px, 3px); }
+            75% { transform: translate(-3px, 2px); }
+        }
+        .animate-boom {
+            animation: boomShake 0.42s ease-in-out;
+        }
+
+        /* Animasi melayang skor +10 / -10 */
+        @keyframes scorePop {
+            0% { opacity: 0; transform: translateY(6px) scale(0.7); }
+            25% { opacity: 1; transform: translateY(-4px) scale(1.2); }
+            80% { opacity: 1; transform: translateY(-10px) scale(1); }
+            100% { opacity: 0; transform: translateY(-16px) scale(0.9); }
+        }
+        .score-float {
+            animation: scorePop 0.95s forwards ease-out;
+        }
+
+        /* Animasi bintang perayaan jawaban benar */
+        @keyframes starBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.3) rotate(180deg); }
+        }
+        .confetti-star {
+            position: absolute;
+            pointer-events: none;
+            font-size: 18px;
+            z-index: 40;
+            animation: starBurst 0.7s ease-out forwards;
+        }
+
+        /* Scrollbar lucu untuk area soal panjang & bank soal */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 999px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(249, 115, 22, 0.45);
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="bg-playful-dots text-slate-800 font-sans flex justify-center select-none">
+
+    <!-- Wadah Utama Vertikal 1 Layar Penuh (Max-Width 540px Terpusat) -->
+    <div id="app-container" class="w-full max-w-[540px] h-full flex flex-col justify-between bg-white/80 sm:border-x-4 sm:border-amber-300 shadow-2xl overflow-hidden relative">
+
+        <!-- =====================================================================
+             1. PANEL ATAS: PEMAIN 1 (ATAS) — DIPUTAR 180° • TEMA KUCING OREN CERIA
+             ===================================================================== -->
+        <section id="panel-p1" class="relative flex-1 w-full bg-gradient-to-b from-orange-100 via-amber-50 to-rose-50 p-2.5 flex flex-col justify-between min-h-0" style="transform: rotate(180deg);">
+            
+            <!-- Header Pemain 1 -->
+            <div class="flex items-center justify-between gap-1.5 shrink-0">
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span id="p1-name-badge" class="px-2.5 py-1 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-display font-bold text-xs tracking-wide truncate max-w-[130px] shadow-sm border-b-2 border-orange-700">
+                        🐱 Pemain 1
+                    </span>
+                    <div class="relative flex items-center gap-1 bg-white border-2 border-orange-300 px-2.5 py-0.5 rounded-2xl shrink-0 shadow-xs">
+                        <span class="text-[11px] text-orange-600 font-extrabold">⭐</span>
+                        <strong id="p1-score" class="font-display font-bold text-sm text-orange-600">500</strong>
+                        <span id="p1-delta" class="hidden absolute -right-12 top-0 font-display font-bold text-xs px-2 py-0.5 rounded-xl border-2 pointer-events-none shadow-md"></span>
+                    </div>
+                    <span class="font-display text-[11px] font-bold text-orange-700 bg-orange-200/70 px-2 py-0.5 rounded-xl border border-orange-300 shrink-0">
+                        <strong id="p1-answered">0</strong>/25
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-1 shrink-0">
+                    <button id="btn-tts-p1" type="button" onclick="speakActiveQuestion()" class="px-2.5 py-1 rounded-2xl bg-amber-400 hover:bg-amber-300 border-b-2 border-amber-600 text-amber-950 text-[11px] font-display font-bold flex items-center gap-1 active:translate-y-0.5 transition cursor-pointer shadow-xs">
+                        <span>🔊</span><span>Bacakan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kotak Teks Soal Pemain 1 -->
+            <div class="flex-1 my-1.5 bg-white/95 border-2 border-orange-200 rounded-3xl p-2.5 flex flex-col justify-center min-h-0 overflow-y-auto custom-scroll shadow-xs">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <span id="p1-card-label" class="text-[10px] font-display font-bold uppercase tracking-wider text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
+                        💣 BOM DI TANGANMU • KARTU #1
+                    </span>
+                    <span id="p1-round-tag" class="text-[10px] font-display font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">
+                        Babak 1
+                    </span>
+                </div>
+                <div id="p1-question-text" class="text-xs sm:text-[13px] font-extrabold text-slate-800 leading-snug">
+                    Tekan MULAI BABAK 1 untuk memulai petualangan kuis estafet!
+                </div>
+            </div>
+
+            <!-- Kilat Hijau +10! BOM DIOPER! Pemain 1 -->
+            <div id="p1-pass-banner" class="hidden rounded-2xl py-2.5 px-4 bg-gradient-to-r from-emerald-400 to-green-500 border-2 border-b-4 border-emerald-700 text-center text-white font-display font-bold text-sm shadow-md shrink-0">
+                🎉 YEAY +10! BOM DIOPER KE LAWAN! 🚀
+            </div>
+
+            <!-- 4 Tombol Pilihan Ganda Pemain 1 (Grid 2x2) -->
+            <div id="p1-options" class="grid grid-cols-2 gap-1.5 shrink-0"></div>
+
+            <!-- Kotak Ledakan & Pembahasan Pemain 1 -->
+            <div id="p1-explosion-box" class="hidden rounded-3xl p-2.5 bg-rose-100 border-2 border-rose-400 text-xs space-y-1.5 shrink-0 shadow-sm">
+                <div id="p1-exp-title" class="font-display font-bold text-rose-700 text-xs sm:text-sm">💥 DUARRR! BOM MELEDAK! (-10 Poin)</div>
+                <div id="p1-exp-key" class="inline-block px-2.5 py-0.5 rounded-xl bg-emerald-500 text-white font-extrabold text-[11px] shadow-xs"></div>
+                <p id="p1-exp-desc" class="text-[11px] font-semibold text-slate-700 leading-snug max-h-[54px] overflow-y-auto custom-scroll"></p>
+                <button type="button" onclick="passBombAfterExplosion()" class="w-full min-h-[40px] rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-105 active:translate-y-0.5 border-b-4 border-orange-700 text-white font-display font-bold text-xs shadow-md transition cursor-pointer">
+                    OPER BOM KE LAWAN ▶
+                </button>
+            </div>
+
+            <!-- Overlay Standby Pemain 1 -->
+            <div id="p1-standby-mask" class="hidden absolute inset-0 z-20 bg-orange-50/90 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center pointer-events-none">
+                <div class="text-3xl mb-1 animate-bounce">🐱💤</div>
+                <div class="px-4 py-1.5 rounded-full bg-white border-2 border-orange-300 text-orange-700 font-display font-bold text-xs shadow-xs mb-1">
+                    ISTIRAHAT SEBENTAR — Giliran Lawan
+                </div>
+                <p id="p1-standby-sub" class="text-[11px] font-bold text-orange-800/80 max-w-[270px]">
+                    Siap-siap tangkap bomnya kalau lawan sudah selesai ya!
+                </p>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             2. BILAH TENGAH: CONTROL & KAWAII BOMB BAR
+             ===================================================================== -->
+        <header id="center-bomb-bar" class="w-full bg-white border-y-4 border-amber-300 px-2.5 py-1.5 flex items-center justify-between gap-1.5 shrink-0 z-30 shadow-md">
+            
+            <!-- Kiri: Info Babak, Nomor Kartu & Pemegang Bom -->
+            <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1">
+                    <span id="hud-round-badge" class="px-2 py-0.5 rounded-full bg-purple-500 text-white font-display font-bold text-[10px] tracking-wide shrink-0">
+                        BABAK 1 / 2
+                    </span>
+                    <span id="hud-queue-text" class="font-display font-bold text-xs text-slate-800 truncate">
+                        KARTU 1 / 50
+                    </span>
+                </div>
+                <div class="flex items-center gap-1 mt-0.5">
+                    <span id="hud-subqueue-text" class="text-[10px] font-extrabold text-slate-500 shrink-0">Babak: 1/25</span>
+                    <span class="text-slate-300 text-[10px]">•</span>
+                    <span id="hud-holder-text" class="text-[10px] font-extrabold text-orange-600 truncate">▲ Bom di Pemain 1</span>
+                </div>
+            </div>
+
+            <!-- Tengah: Maskot Bom Lucu Kawaii & Timer -->
+            <div id="bomb-widget" class="flex items-center gap-1.5 bg-amber-50 border-2 border-orange-400 rounded-2xl px-2.5 py-1 shadow-xs shrink-0">
+                <!-- SVG Bom Lucu dengan Mata Besar & Pipi Merona -->
+                <div class="relative w-7 h-7 flex items-center justify-center shrink-0">
+                    <svg class="w-7 h-7" viewBox="0 0 38 38" fill="none">
+                        <!-- Badan Bom Bulat -->
+                        <circle cx="16" cy="22" r="12" fill="#334155" stroke="#1e293b" stroke-width="2"/>
+                        <ellipse cx="12" cy="16" rx="3.2" ry="1.8" transform="rotate(-25 12 16)" fill="#64748b"/>
+                        <!-- Mata Kawaii Besar -->
+                        <circle cx="12.5" cy="22.5" r="2.2" fill="#ffffff"/>
+                        <circle cx="13" cy="22.5" r="1.2" fill="#0f172a"/>
+                        <circle cx="19.5" cy="22.5" r="2.2" fill="#ffffff"/>
+                        <circle cx="20" cy="22.5" r="1.2" fill="#0f172a"/>
+                        <!-- Pipi Merona Pink -->
+                        <ellipse cx="10" cy="25" rx="1.8" ry="1" fill="#fb7185" opacity="0.85"/>
+                        <ellipse cx="22" cy="25" rx="1.8" ry="1" fill="#fb7185" opacity="0.85"/>
+                        <!-- Mulut Lucu -->
+                        <path d="M14.8 25.5 Q16 26.8 17.2 25.5" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                        <!-- Tutup Sumbu -->
+                        <rect x="21" y="8" width="5.5" height="4.5" rx="1.5" transform="rotate(35 21 8)" fill="#94a3b8" stroke="#1e293b" stroke-width="1.2"/>
+                        <!-- Tali Sumbu -->
+                        <path d="M24 9.5 C27 5.5, 30 6.5, 32 4.5" stroke="#f97316" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Percikan Bintang -->
+                        <g class="fuse-spark">
+                            <circle cx="32" cy="4.5" r="4" fill="#ef4444"/>
+                            <circle cx="32" cy="4.5" r="2.2" fill="#fde047"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <div class="flex flex-col items-center leading-none min-w-[60px]">
+                    <div class="flex items-baseline gap-0.5">
+                        <span id="bomb-timer-display" class="font-display font-bold text-base sm:text-lg text-orange-600 tracking-tight">30.0</span>
+                        <span class="text-[9px] font-extrabold text-slate-500 uppercase">DTK</span>
+                    </div>
+                    <div class="w-full h-2 bg-amber-200 rounded-full overflow-hidden mt-1 border border-amber-300">
+                        <div id="bomb-timer-bar" class="h-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-100 ease-linear" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Tombol Utilitas Ceria -->
+            <div class="flex items-center gap-1 shrink-0">
+                <button id="btn-mute" type="button" onclick="toggleMute()" class="w-7 h-7 rounded-xl bg-amber-100 hover:bg-amber-200 border-b-2 border-amber-400 text-xs flex items-center justify-center active:translate-y-0.5 transition cursor-pointer" title="Suara Mute/Unmute">
+                    🔊
+                </button>
+                <button type="button" onclick="openBankModal()" class="px-2 h-7 rounded-xl bg-purple-100 hover:bg-purple-200 border-b-2 border-purple-400 text-purple-800 text-[10px] font-display font-bold flex items-center gap-1 active:translate-y-0.5 transition cursor-pointer" title="Bank 50 Soal">
+                    <span>📚</span>
+                    <span>50</span>
+                </button>
+                <button type="button" onclick="toggleFullscreen()" class="w-7 h-7 rounded-xl bg-sky-100 hover:bg-sky-200 border-b-2 border-sky-400 text-sky-800 text-xs flex items-center justify-center active:translate-y-0.5 transition cursor-pointer" title="Layar Penuh">
+                    ⛶
+                </button>
+                <button type="button" onclick="openResetModal()" class="w-7 h-7 rounded-xl bg-rose-100 hover:bg-rose-200 border-b-2 border-rose-400 text-rose-700 text-xs flex items-center justify-center active:translate-y-0.5 transition cursor-pointer" title="Ulangi Game">
+                    🔄
+                </button>
+            </div>
+        </header>
+
+        <!-- =====================================================================
+             3. PANEL BAWAH: PEMAIN 2 (BAWAH) — NORMAL 0° • TEMA PANDA BIRU CERIA
+             ===================================================================== -->
+        <section id="panel-p2" class="relative flex-1 w-full bg-gradient-to-t from-sky-100 via-cyan-50 to-teal-50 p-2.5 flex flex-col justify-between min-h-0">
+            
+            <!-- Header Pemain 2 -->
+            <div class="flex items-center justify-between gap-1.5 shrink-0">
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span id="p2-name-badge" class="px-2.5 py-1 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-display font-bold text-xs tracking-wide truncate max-w-[130px] shadow-sm border-b-2 border-sky-700">
+                        🐼 Pemain 2
+                    </span>
+                    <div class="relative flex items-center gap-1 bg-white border-2 border-sky-300 px-2.5 py-0.5 rounded-2xl shrink-0 shadow-xs">
+                        <span class="text-[11px] text-sky-600 font-extrabold">⭐</span>
+                        <strong id="p2-score" class="font-display font-bold text-sm text-sky-600">500</strong>
+                        <span id="p2-delta" class="hidden absolute -right-12 top-0 font-display font-bold text-xs px-2 py-0.5 rounded-xl border-2 pointer-events-none shadow-md"></span>
+                    </div>
+                    <span class="font-display text-[11px] font-bold text-sky-700 bg-sky-200/70 px-2 py-0.5 rounded-xl border border-sky-300 shrink-0">
+                        <strong id="p2-answered">0</strong>/25
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-1 shrink-0">
+                    <button id="btn-tts-p2" type="button" onclick="speakActiveQuestion()" class="px-2.5 py-1 rounded-2xl bg-amber-400 hover:bg-amber-300 border-b-2 border-amber-600 text-amber-950 text-[11px] font-display font-bold flex items-center gap-1 active:translate-y-0.5 transition cursor-pointer shadow-xs">
+                        <span>🔊</span><span>Bacakan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kotak Teks Soal Pemain 2 -->
+            <div class="flex-1 my-1.5 bg-white/95 border-2 border-sky-200 rounded-3xl p-2.5 flex flex-col justify-center min-h-0 overflow-y-auto custom-scroll shadow-xs">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <span id="p2-card-label" class="text-[10px] font-display font-bold uppercase tracking-wider text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full">
+                        💣 BOM DI TANGANMU • KARTU #2
+                    </span>
+                    <span id="p2-round-tag" class="text-[10px] font-display font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-700">
+                        Babak 1
+                    </span>
+                </div>
+                <div id="p2-question-text" class="text-xs sm:text-[13px] font-extrabold text-slate-800 leading-snug">
+                    Menunggu giliran estafet bom...
+                </div>
+            </div>
+
+            <!-- Kilat Hijau +10! BOM DIOPER! Pemain 2 -->
+            <div id="p2-pass-banner" class="hidden rounded-2xl py-2.5 px-4 bg-gradient-to-r from-emerald-400 to-green-500 border-2 border-b-4 border-emerald-700 text-center text-white font-display font-bold text-sm shadow-md shrink-0">
+                🎉 YEAY +10! BOM DIOPER KE LAWAN! 🚀
+            </div>
+
+            <!-- 4 Tombol Pilihan Ganda Pemain 2 (Grid 2x2) -->
+            <div id="p2-options" class="grid grid-cols-2 gap-1.5 shrink-0"></div>
+
+            <!-- Kotak Ledakan & Pembahasan Pemain 2 -->
+            <div id="p2-explosion-box" class="hidden rounded-3xl p-2.5 bg-rose-100 border-2 border-rose-400 text-xs space-y-1.5 shrink-0 shadow-sm">
+                <div id="p2-exp-title" class="font-display font-bold text-rose-700 text-xs sm:text-sm">💥 DUARRR! BOM MELEDAK! (-10 Poin)</div>
+                <div id="p2-exp-key" class="inline-block px-2.5 py-0.5 rounded-xl bg-emerald-500 text-white font-extrabold text-[11px] shadow-xs"></div>
+                <p id="p2-exp-desc" class="text-[11px] font-semibold text-slate-700 leading-snug max-h-[54px] overflow-y-auto custom-scroll"></p>
+                <button type="button" onclick="passBombAfterExplosion()" class="w-full min-h-[40px] rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:brightness-105 active:translate-y-0.5 border-b-4 border-sky-700 text-white font-display font-bold text-xs shadow-md transition cursor-pointer">
+                    OPER BOM KE LAWAN ▶
+                </button>
+            </div>
+
+            <!-- Overlay Standby Pemain 2 -->
+            <div id="p2-standby-mask" class="hidden absolute inset-0 z-20 bg-sky-50/90 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center pointer-events-none">
+                <div class="text-3xl mb-1 animate-bounce">🐼💤</div>
+                <div class="px-4 py-1.5 rounded-full bg-white border-2 border-sky-300 text-sky-700 font-display font-bold text-xs shadow-xs mb-1">
+                    ISTIRAHAT SEBENTAR — Giliran Lawan
+                </div>
+                <p id="p2-standby-sub" class="text-[11px] font-bold text-sky-800/80 max-w-[270px]">
+                    Siap-siap tangkap bomnya kalau lawan sudah selesai ya!
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- =====================================================================
+         MODAL 1: LAYAR AWAL CERIA (START OVERLAY)
+         ===================================================================== -->
+    <div id="modal-start" class="fixed inset-0 z-50 bg-amber-950/55 backdrop-blur-md flex items-center justify-center p-3.5 overflow-y-auto">
+        <div class="w-full max-w-md rounded-[32px] bg-gradient-to-b from-amber-50 via-white to-sky-50 border-4 border-amber-300 p-4 sm:p-5 shadow-2xl flex flex-col gap-3">
+            <div class="text-center">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 border-2 border-purple-300 text-purple-700 text-[11px] font-display font-bold tracking-wide mb-1">
+                    <span>🎮</span><span>SAS Informatika Kelas 7 • 50 Soal</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-rose-500 to-sky-500 leading-tight">
+                    ESTAFET BOM WAKTU 50
+                </h1>
+                <p class="text-xs font-extrabold text-slate-600 mt-0.5">
+                    Duel Seru 2 Babak Tatap Muka (Atas 180° vs Bawah 0°)
+                </p>
+            </div>
+
+            <!-- Input Nama Pemain 1 & Pemain 2 -->
+            <div class="bg-white rounded-3xl p-3 border-2 border-amber-200 grid grid-cols-2 gap-2.5 shadow-xs">
+                <div>
+                    <label for="input-p1-name" class="block text-[11px] font-display font-bold text-orange-600 mb-1">🐱 Pemain 1 (Atas)</label>
+                    <input id="input-p1-name" type="text" maxlength="15" placeholder="Pemain 1" class="w-full px-3 py-1.5 rounded-2xl bg-orange-50 border-2 border-orange-300 text-xs font-extrabold text-slate-800 placeholder-orange-300 focus:outline-none focus:border-orange-500">
+                </div>
+                <div>
+                    <label for="input-p2-name" class="block text-[11px] font-display font-bold text-sky-600 mb-1">🐼 Pemain 2 (Bawah)</label>
+                    <input id="input-p2-name" type="text" maxlength="15" placeholder="Pemain 2" class="w-full px-3 py-1.5 rounded-2xl bg-sky-50 border-2 border-sky-300 text-xs font-extrabold text-slate-800 placeholder-sky-300 focus:outline-none focus:border-sky-500">
+                </div>
+            </div>
+
+            <!-- Pilihan Durasi Timer per Soal -->
+            <div class="bg-white rounded-3xl p-3 border-2 border-amber-200 shadow-xs">
+                <div class="text-xs font-display font-bold text-slate-700 mb-2">⏱️ Pilih Waktu Berpikir per Soal:</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="selectTimerDuration(20)" id="dur-btn-20" class="py-2 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-600 font-display font-bold text-xs cursor-pointer transition">
+                        20 Detik
+                    </button>
+                    <button type="button" onclick="selectTimerDuration(30)" id="dur-btn-30" class="py-2 rounded-2xl bg-orange-500 text-white border-2 border-b-4 border-orange-700 font-display font-bold text-xs shadow-sm cursor-pointer transition">
+                        30 Detik
+                    </button>
+                    <button type="button" onclick="selectTimerDuration(60)" id="dur-btn-60" class="py-2 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-600 font-display font-bold text-xs cursor-pointer transition">
+                        1 Menit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Aturan Main Ramah Anak -->
+            <div class="bg-amber-50/90 rounded-3xl p-3 border-2 border-amber-200 space-y-1.5 text-[11px] font-bold text-slate-700 leading-snug">
+                <div><span class="text-orange-600 font-extrabold">⭐ Modal Awal 500 Poin:</span> Jawab benar dapat <span class="text-emerald-600 font-extrabold">+10 poin</span> &amp; bom langsung terbang ke lawan! Kalau salah / waktu habis, bom meledak <span class="text-rose-600 font-extrabold">-10 poin</span>.</div>
+                <div><span class="text-sky-600 font-extrabold">⚖️ 2 Babak Adil (50 Soal):</span>
+                    <ul class="list-disc pl-4 mt-0.5 space-y-0.5 text-slate-600">
+                        <li><strong>Babak 1 (Soal 1–25):</strong> Kucing Oren (Atas) mulai duluan!</li>
+                        <li><strong>Babak 2 (Soal 26–50):</strong> Panda Biru (Bawah) gantian mulai duluan!</li>
+                        <li>Masing-masing menjawab <strong>25 soal berbeda</strong> (Skor maks <strong>750</strong>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button type="button" onclick="startNewMatch()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500 hover:brightness-105 active:translate-y-0.5 border-b-4 border-rose-700 text-white font-display font-bold text-base shadow-lg transition cursor-pointer">
+                    🚀 MULAI BABAK 1 SEKARANG!
+                </button>
+                <button type="button" onclick="openBankModal()" class="w-full min-h-[38px] rounded-2xl bg-purple-100 hover:bg-purple-200 border-2 border-purple-300 text-purple-800 font-display font-bold text-xs transition cursor-pointer">
+                    📚 Belajar Bank 50 Soal &amp; Pembahasan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 2: JEDA BABAK 1 -> BABAK 2
+         ===================================================================== -->
+    <div id="modal-intermission" class="hidden fixed inset-0 z-50 bg-purple-950/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="w-full max-w-sm rounded-[32px] bg-gradient-to-b from-purple-50 via-white to-amber-50 border-4 border-purple-300 p-5 text-center space-y-4 shadow-2xl">
+            <div class="text-5xl animate-bounce">🔄</div>
+            <div>
+                <span class="px-3 py-1 rounded-full bg-purple-100 border-2 border-purple-300 text-purple-700 text-[11px] font-display font-bold uppercase tracking-wider">
+                    Babak 1 Tuntas (Kartu 25 / 50)
+                </span>
+                <h2 class="text-2xl font-display font-bold text-slate-800 mt-2">
+                    SKOR SEMENTARA
+                </h2>
+                <p class="text-xs font-bold text-slate-600 mt-1">
+                    Hebat! 25 soal Babak 1 selesai. Sekarang giliran awal ditukar ya!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 bg-white p-3 rounded-3xl border-2 border-purple-200 text-xs shadow-xs">
+                <div class="p-2.5 rounded-2xl bg-orange-50 border-2 border-orange-300">
+                    <div id="inter-p1-name" class="text-orange-600 font-display font-bold truncate">🐱 Pemain 1</div>
+                    <div id="inter-p1-score" class="font-display font-bold text-2xl text-slate-800 mt-0.5">500</div>
+                    <div class="text-[11px] font-bold text-slate-500">Benar: <span id="inter-p1-right" class="text-emerald-600 font-extrabold">0</span>/13</div>
+                </div>
+                <div class="p-2.5 rounded-2xl bg-sky-50 border-2 border-sky-300">
+                    <div id="inter-p2-name" class="text-sky-600 font-display font-bold truncate">🐼 Pemain 2</div>
+                    <div id="inter-p2-score" class="font-display font-bold text-2xl text-slate-800 mt-0.5">500</div>
+                    <div class="text-[11px] font-bold text-slate-500">Benar: <span id="inter-p2-right" class="text-emerald-600 font-extrabold">0</span>/12</div>
+                </div>
+            </div>
+
+            <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-2.5 text-[11px] font-bold text-sky-900">
+                <strong>Babak 2 (Kartu 26–50):</strong> Giliran pertama dipegang <strong id="inter-next-starter" class="text-sky-600">Pemain 2 (Bawah)</strong> (13 soal) dan <strong id="inter-next-second" class="text-orange-600">Pemain 1</strong> mendapat 12 soal.
+            </div>
+
+            <button type="button" onclick="startRound2()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-sky-500 to-purple-500 hover:brightness-105 active:translate-y-0.5 border-b-4 border-purple-700 text-white font-display font-bold text-sm shadow-lg transition cursor-pointer">
+                LANJUT BABAK 2 ▶
+            </button>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 3: BANK 50 SOAL SAS INFORMATIKA KELAS 7
+         ===================================================================== -->
+    <div id="modal-bank" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3">
+        <div class="w-full max-w-lg h-[88dvh] rounded-[32px] bg-amber-50 border-4 border-amber-300 p-4 shadow-2xl flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-2 shrink-0">
+                <div>
+                    <h2 class="text-base sm:text-lg font-display font-bold text-slate-800">📚 Bank 50 Soal Informatika Kelas 7</h2>
+                    <p class="text-[11px] font-bold text-slate-500">Lengkap dengan Kunci Jawaban &amp; Pembahasan Mudah</p>
+                </div>
+                <button type="button" onclick="closeBankModal()" class="w-9 h-9 rounded-2xl bg-rose-100 hover:bg-rose-200 border-b-2 border-rose-400 text-rose-700 font-display font-bold flex items-center justify-center cursor-pointer">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Pencarian & Tab -->
+            <div class="flex flex-col gap-2 shrink-0">
+                <input id="bank-search" type="text" oninput="renderBankList()" placeholder="Cari kata kunci (misal: Scratch, Excel, SUM, Algoritma, Sprite)..." class="w-full px-3.5 py-2 rounded-2xl bg-white border-2 border-amber-300 text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500">
+                <div class="flex gap-1.5 overflow-x-auto pb-1">
+                    <button type="button" onclick="setBankTab(1)" id="tab-bank-1" class="px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-orange-500 text-white shrink-0 cursor-pointer">
+                        Babak 1 (Soal 1–25)
+                    </button>
+                    <button type="button" onclick="setBankTab(2)" id="tab-bank-2" class="px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-white text-sky-700 border-2 border-sky-200 shrink-0 cursor-pointer">
+                        Babak 2 (Soal 26–50)
+                    </button>
+                    <button type="button" onclick="setBankTab(0)" id="tab-bank-0" class="px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-white text-slate-700 border-2 border-slate-200 shrink-0 cursor-pointer">
+                        Semua (50)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Daftar Soal -->
+            <div id="bank-list" class="flex-1 overflow-y-auto custom-scroll space-y-2.5 pr-1"></div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 4: KONFIRMASI ULANGI PERMAINAN
+         ===================================================================== -->
+    <div id="modal-reset" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="w-full max-w-xs rounded-[30px] bg-white border-4 border-amber-300 p-5 text-center space-y-4 shadow-2xl">
+            <div class="text-4xl">🔄</div>
+            <div>
+                <h3 class="font-display font-bold text-lg text-slate-800">Ulangi dari Babak 1?</h3>
+                <p class="text-xs font-bold text-slate-500 mt-1">Skor kedua pemain akan kembali ke 500 poin dan kartu diacak ulang.</p>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" onclick="closeResetModal()" class="flex-1 min-h-[42px] rounded-2xl bg-slate-100 hover:bg-slate-200 border-b-2 border-slate-300 text-slate-700 font-display font-bold text-xs cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" onclick="confirmResetGame()" class="flex-1 min-h-[42px] rounded-2xl bg-rose-500 hover:bg-rose-400 border-b-2 border-rose-700 text-white font-display font-bold text-xs cursor-pointer">
+                    Ya, Ulangi!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 5: PIALA KEMENANGAN AKHIR (SETELAH 50 SOAL)
+         ===================================================================== -->
+    <div id="modal-victory" class="hidden fixed inset-0 z-50 bg-amber-950/65 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="w-full max-w-sm rounded-[32px] bg-gradient-to-b from-amber-100 via-white to-orange-50 border-4 border-amber-400 p-6 text-center space-y-4 shadow-2xl">
+            <div class="text-6xl animate-bounce">🏆</div>
+            <div>
+                <span class="px-3 py-1 rounded-full bg-emerald-100 border-2 border-emerald-400 text-emerald-700 text-[11px] font-display font-bold uppercase tracking-wider">
+                    🎉 2 Babak Selesai • 50 Soal Tuntas
+                </span>
+                <h2 id="victory-title" class="text-2xl font-display font-bold text-slate-800 mt-2">
+                    PEMAIN 1 JUARA!
+                </h2>
+                <p class="text-xs font-bold text-slate-600 mt-1">
+                    Keren banget! Kalian sudah menyelesaikan semua 50 soal Informatika Kelas 7!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 bg-white p-3.5 rounded-3xl border-2 border-amber-200 text-xs shadow-xs">
+                <div class="p-2.5 rounded-2xl bg-orange-50 border-2 border-orange-300">
+                    <div id="vic-p1-name" class="text-orange-600 font-display font-bold truncate">🐱 Pemain 1</div>
+                    <div id="vic-p1-score" class="font-display font-bold text-2xl text-slate-800 mt-0.5">500</div>
+                    <div class="text-[11px] font-bold text-slate-500">Benar: <strong id="vic-p1-right" class="text-emerald-600">0</strong> / 25</div>
+                </div>
+                <div class="p-2.5 rounded-2xl bg-sky-50 border-2 border-sky-300">
+                    <div id="vic-p2-name" class="text-sky-600 font-display font-bold truncate">🐼 Pemain 2</div>
+                    <div id="vic-p2-score" class="font-display font-bold text-2xl text-slate-800 mt-0.5">500</div>
+                    <div class="text-[11px] font-bold text-slate-500">Benar: <strong id="vic-p2-right" class="text-emerald-600">0</strong> / 25</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button type="button" onclick="confirmResetGame()" class="w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 border-b-4 border-orange-700 text-white font-display font-bold text-sm shadow-lg cursor-pointer">
+                    MAIN LAGI YUK! 🔄
+                </button>
+                <button type="button" onclick="openBankModal()" class="w-full min-h-[40px] rounded-2xl bg-purple-100 hover:bg-purple-200 border-2 border-purple-300 text-purple-800 font-display font-bold text-xs cursor-pointer">
+                    📚 Lihat Bank 50 Soal &amp; Pembahasan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         LOGIKA JAVASCRIPT LENGKAP
+         ===================================================================== -->
+    <script>
+        /**
+         * 1. MESIN AUDIO CERIA OFFLINE (WEB AUDIO API)
+         */
+        const SoundFX = {
+            ctx: null,
+            muted: false,
+
+            init() {
+                try {
+                    if (!this.ctx) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        this.ctx = new AudioCtx();
+                    }
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                } catch (e) {}
+            },
+
+            tick(isUrgent = false) {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = isUrgent ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(isUrgent ? 980 : 620, now);
+                    gain.gain.setValueAtTime(isUrgent ? 0.14 : 0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.06);
+                } catch (e) {}
+            },
+
+            passBomb() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const notes = [587.33, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    try {
+                        const now = this.ctx.currentTime + i * 0.055;
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now);
+                        gain.gain.setValueAtTime(0.18, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.15);
+                    } catch (e) {}
+                });
+            },
+
+            explosion() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const bufferSize = this.ctx.sampleRate * 0.4;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(720, now);
+                    filter.frequency.exponentialRampToValueAtTime(75, now + 0.4);
+
+                    const nGain = this.ctx.createGain();
+                    nGain.gain.setValueAtTime(0.3, now);
+                    nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                    noise.connect(filter);
+                    filter.connect(nGain);
+                    nGain.connect(this.ctx.destination);
+                    noise.start(now);
+
+                    const osc = this.ctx.createOscillator();
+                    const oGain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(36, now + 0.36);
+                    oGain.gain.setValueAtTime(0.24, now);
+                    oGain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+
+                    osc.connect(oGain);
+                    oGain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.36);
+                } catch (e) {}
+            },
+
+            fanfare() {
+                if (this.muted) return;
+                this.init();
+                if (!this.ctx) return;
+                const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+                melody.forEach((freq, i) => {
+                    try {
+                        const now = this.ctx.currentTime + i * 0.12;
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now);
+                        gain.gain.setValueAtTime(0.2, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.22);
+                    } catch (e) {}
+                });
+            }
+        };
+
+        /**
+         * 2. PEMBACA SUARA INDONESIA (WEB SPEECH API id-ID)
+         */
+        function cleanHtmlForSpeech(htmlStr) {
+            return htmlStr
+                .replace(/<table[\s\S]*?<\/table>/gi, ' perhatikan tabel data berikut. ')
+                .replace(/<svg[\s\S]*?<\/svg>/gi, ' perhatikan gambar antarmuka Scratch berikut. ')
+                .replace(/<div class="bebras-cards[\s\S]*?<\/div><\/div>/gi, ' perhatikan kartu huruf Kiki berikut. ')
+                .replace(/<sup>(.*?)<\/sup>/gi, ' derajat ')
+                .replace(/&times;/gi, ' kali ')
+                .replace(/&divide;/gi, ' dibagi ')
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function speakActiveQuestion() {
+            if (SoundFX.muted || !state.currentCard) return;
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utter = new SpeechSynthesisUtterance(cleanHtmlForSpeech(state.currentCard.q));
+                    utter.lang = 'id-ID';
+                    utter.rate = 1.02;
+                    window.speechSynthesis.speak(utter);
+                }
+            } catch (e) {}
+        }
+
+        function stopSpeech() {
+            try {
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            } catch (e) {}
+        }
+
+        /**
+         * 3. DIAGRAM VISUAL MINI UNTUK SOAL BERGAMBAR / TABEL
+         */
+        const VISUAL_KIKI_CARDS = `
+            <div class="bebras-cards mt-1.5 flex flex-wrap gap-1 justify-center">
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">A</span><span class="text-slate-300">-</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">M</span><span class="text-slate-800">T</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">O</span><span class="text-slate-800">G</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">I</span><span class="text-slate-800">R</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">L</span><span class="text-slate-800">A</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">R</span><span class="text-slate-800">O</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">T</span><span class="text-slate-800">I</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">G</span><span class="text-slate-800">L</span></div>
+                <div class="inline-flex flex-col items-center border border-slate-700 rounded bg-white text-[9px] font-bold w-6 overflow-hidden"><span class="bg-slate-800 text-white w-full text-center">A</span><span class="text-slate-800">M</span></div>
+            </div>
+        `;
+
+        const VISUAL_ARA_ROOMS = `
+            <div class="mt-1.5 grid grid-cols-2 gap-1.5 text-[9px] font-extrabold text-center">
+                <div class="bg-orange-50 border border-orange-300 rounded-lg p-1">
+                    <div class="text-orange-700 mb-0.5">📅 Senin</div>
+                    <div class="grid grid-cols-5 gap-0.5">
+                        <span class="bg-white border rounded">A</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">B***</span>
+                        <span class="bg-white border rounded">C</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">D***</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">E***</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">F***</span>
+                        <span class="bg-white border rounded">G</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">H***</span>
+                        <span class="bg-white border rounded">I</span>
+                        <span class="bg-white border rounded">J</span>
+                    </div>
+                </div>
+                <div class="bg-sky-50 border border-sky-300 rounded-lg p-1">
+                    <div class="text-sky-700 mb-0.5">📅 Selasa</div>
+                    <div class="grid grid-cols-5 gap-0.5">
+                        <span class="bg-amber-200 border border-amber-500 rounded">A***</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">B***</span>
+                        <span class="bg-white border rounded">C</span>
+                        <span class="bg-white border rounded">D</span>
+                        <span class="bg-white border rounded">E</span>
+                        <span class="bg-white border rounded">F</span>
+                        <span class="bg-white border rounded">G</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">H***</span>
+                        <span class="bg-white border rounded">I</span>
+                        <span class="bg-amber-200 border border-amber-500 rounded">J***</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const VISUAL_SCRATCH_UI = `
+            <svg class="w-full max-w-[300px] h-[68px] mx-auto mt-1 rounded-lg border border-purple-300 bg-slate-50" viewBox="0 0 320 74" fill="none">
+                <rect x="0" y="0" width="320" height="12" fill="#8b5cf6"/>
+                <text x="8" y="9" fill="#fff" font-size="7" font-weight="bold">SCRATCH</text>
+                <!-- A: Tab Kode/Kostum/Suara -->
+                <rect x="2" y="14" width="66" height="11" rx="2" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+                <text x="35" y="22" text-anchor="middle" fill="#6d28d9" font-size="8" font-weight="bold">A (Tab)</text>
+                <!-- B: Kategori Kode -->
+                <rect x="2" y="27" width="26" height="45" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+                <text x="15" y="52" text-anchor="middle" fill="#1d4ed8" font-size="9" font-weight="bold">B</text>
+                <!-- C: Daftar Blok -->
+                <rect x="30" y="27" width="56" height="45" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+                <text x="58" y="52" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="bold">C</text>
+                <!-- D: Area Skrip Tengah -->
+                <rect x="89" y="14" width="126" height="58" rx="3" fill="#ffffff" stroke="#f97316" stroke-width="1.3" stroke-dasharray="3 2"/>
+                <text x="152" y="46" text-anchor="middle" fill="#ea580c" font-size="11" font-weight="bold">D (Area Skrip)</text>
+                <!-- E: Stage / Panggung -->
+                <rect x="218" y="14" width="100" height="33" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+                <text x="268" y="33" text-anchor="middle" fill="#b45309" font-size="9" font-weight="bold">E (Stage 🐱)</text>
+                <!-- F: Kumpulan Sprite -->
+                <rect x="218" y="49" width="68" height="23" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+                <text x="252" y="63" text-anchor="middle" fill="#15803d" font-size="9" font-weight="bold">F (Sprite)</text>
+                <!-- G: Backdrop -->
+                <rect x="288" y="49" width="30" height="23" rx="2" fill="#fce7f3" stroke="#db2777" stroke-width="1"/>
+                <text x="303" y="63" text-anchor="middle" fill="#be185d" font-size="9" font-weight="bold">G</text>
+            </svg>
+        `;
+
+        const VISUAL_WISATA_TABLE = `
+            <table class="w-full mt-1 text-[9px] border-collapse border border-slate-300 bg-white text-left">
+                <thead>
+                    <tr class="bg-amber-100 text-slate-800">
+                        <th class="border border-slate-300 px-1.5 py-0.5">Sel</th>
+                        <th class="border border-slate-300 px-1.5 py-0.5">Nama Tempat Wisata (A)</th>
+                        <th class="border border-slate-300 px-1.5 py-0.5 text-right">Pengunjung (B)</th>
+                    </tr>
+                </thead>
+                <tbody class="font-semibold text-slate-700">
+                    <tr><td class="border border-slate-300 px-1.5">2</td><td class="border border-slate-300 px-1.5">Pantai Lalang</td><td class="border border-slate-300 px-1.5 text-right">12450</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">3</td><td class="border border-slate-300 px-1.5">Pantai Serdang</td><td class="border border-slate-300 px-1.5 text-right">18765</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">4</td><td class="border border-slate-300 px-1.5">Pantai Sengaran</td><td class="border border-slate-300 px-1.5 text-right">9320</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">5</td><td class="border border-slate-300 px-1.5">Pantai Mudong</td><td class="border border-slate-300 px-1.5 text-right">9230</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">6</td><td class="border border-slate-300 px-1.5">Pantai Burung Mandi</td><td class="border border-slate-300 px-1.5 text-right">21452</td></tr>
+                </tbody>
+            </table>
+        `;
+
+        const VISUAL_NILAI_TABLE = `
+            <table class="w-full mt-1 text-[9px] border-collapse border border-slate-300 bg-white text-left">
+                <thead>
+                    <tr class="bg-sky-100 text-slate-800">
+                        <th class="border border-slate-300 px-1.5 py-0.5">Baris</th>
+                        <th class="border border-slate-300 px-1.5 py-0.5">Nama (A)</th>
+                        <th class="border border-slate-300 px-1.5 py-0.5">Nilai (B)</th>
+                        <th class="border border-slate-300 px-1.5 py-0.5">Keterangan (C)</th>
+                    </tr>
+                </thead>
+                <tbody class="font-semibold text-slate-700">
+                    <tr><td class="border border-slate-300 px-1.5">2</td><td class="border border-slate-300 px-1.5">Andi</td><td class="border border-slate-300 px-1.5">80</td><td class="border border-slate-300 px-1.5">Lulus</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">3</td><td class="border border-slate-300 px-1.5">Budi</td><td class="border border-slate-300 px-1.5">65</td><td class="border border-slate-300 px-1.5">Tidak Lulus</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">4</td><td class="border border-slate-300 px-1.5">Citra</td><td class="border border-slate-300 px-1.5">90</td><td class="border border-slate-300 px-1.5">Lulus</td></tr>
+                    <tr><td class="border border-slate-300 px-1.5">5</td><td class="border border-slate-300 px-1.5">Dini</td><td class="border border-slate-300 px-1.5">55</td><td class="border border-slate-300 px-1.5">Tidak Lulus</td></tr>
+                    <tr class="bg-amber-50 font-extrabold"><td class="border border-slate-300 px-1.5">6</td><td class="border border-slate-300 px-1.5">Eko</td><td class="border border-slate-300 px-1.5">75</td><td class="border border-slate-300 px-1.5 text-rose-600">?</td></tr>
+                </tbody>
+            </table>
+        `;
+
+        /**
+         * 4. BANK 50 SOAL SAS INFORMATIKA KELAS 7 (DARI DOKUMEN WORD)
+         * - Soal 1 s.d. 25: Babak 1
+         * - Soal 26 s.d. 50: Babak 2
+         */
+        const QUESTIONS_50 = [
+            // ================= BABAK 1 (SOAL 1 - 25) =================
+            {
+                id: 1, roundGroup: 1,
+                q: "Cara berpikir untuk menyelesaikan masalah secara logis, sistematis, dan efisien adalah pengertian dari…",
+                opts: ["Algoritma", "Struktur data", "Berpikir komputasional", "Optimasi penjadwalan"],
+                ans: 2,
+                exp: "Berpikir komputasional (computational thinking) adalah cara berpikir untuk menyelesaikan masalah secara logis, sistematis, dan efisien."
+            },
+            {
+                id: 2, roundGroup: 1,
+                q: `Kiki mengirim kartu huruf kepada Ben: bagian atas bertanda hitam, huruf bawah ditulis SEBELUM huruf atas, dan 1 kartu hanya punya 1 huruf. Kata rahasia yang dikirim Kiki adalah… ${VISUAL_KIKI_CARDS}`,
+                opts: ["Komputasi", "Algoritma", "Struktur", "Optimasi"],
+                ans: 1,
+                exp: "Dimulai dari kartu tunggal A, lalu A→L, L→G, G→O, O→R, R→I, I→T, T→M, M→A sehingga terbaca kata ALGORITMA."
+            },
+            {
+                id: 3, roundGroup: 1,
+                q: "Di bawah ini yang bukan termasuk langkah–langkah Berpikir Komputasional adalah…",
+                opts: ["Dekomposisi", "Pengenalan pola", "Algoritma", "Berpikir komputasi"],
+                ans: 3,
+                exp: "Empat langkah/pilar berpikir komputasional adalah Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma."
+            },
+            {
+                id: 4, roundGroup: 1,
+                q: "Contoh struktur data dalam kehidupan sehari-hari adalah…",
+                opts: ["Daftar belanja", "Mengatur jadwal", "Membuat kue", "Membuat gelang warna-warni"],
+                ans: 0,
+                exp: "Daftar belanja merupakan contoh struktur data sederhana berbentuk daftar (list) untuk menyusun informasi secara teratur."
+            },
+            {
+                id: 5, roundGroup: 1,
+                q: "Dalam kehidupan sehari-hari kita perlu mengatur jadwal untuk berbagai kegiatan agar dapat memilih kegiatan yang paling tepat dilakukan. Pernyataan berikut merupakan contoh dari…",
+                opts: ["Optimasi Penjadwalan", "Struktur Data", "Representasi Data", "Algoritma"],
+                ans: 0,
+                exp: "Memilih dan mengatur urutan kegiatan agar waktu dan sumber daya digunakan sebaik mungkin disebut optimasi penjadwalan."
+            },
+            {
+                id: 6, roundGroup: 1,
+                q: "Dalam mengerjakan berbagai kegiatan untuk mendefinisikan sebuah bentuk atau struktur yang tetap adalah pengertian dari…",
+                opts: ["Objek", "Optimasi", "Data", "Pola"],
+                ans: 3,
+                exp: "Pola adalah bentuk, keteraturan, atau struktur tetap yang berulang dalam suatu kejadian atau kumpulan data."
+            },
+            {
+                id: 7, roundGroup: 1,
+                q: `Ara mencatat ruang kelas A–J yang dipinjam (bertanda ***). Berapa banyak ruang yang TIDAK pernah dipinjam pada hari Senin maupun hari Selasa? ${VISUAL_ARA_ROOMS}`,
+                opts: ["1", "2", "3", "4"],
+                ans: 2,
+                exp: "Ruang yang kosong tanpa tanda *** pada Senin maupun Selasa ada 3 ruang, yaitu Ruang C, Ruang G, dan Ruang I."
+            },
+            {
+                id: 8, roundGroup: 1,
+                q: `Perhatikan catatan peminjaman ruang Ara (tanda *** = dipinjam). Ruang mana saja yang sama-sama dipinjam pada hari Senin maupun hari Selasa? ${VISUAL_ARA_ROOMS}`,
+                opts: ["Ruang A dan B", "Ruang B dan H", "Ruang C dan I", "Ruang B, H dan J"],
+                ans: 1,
+                exp: "Senin meminjam B, D, E, F, H dan Selasa meminjam A, B, H, J. Ruang yang dipinjam pada kedua hari tersebut adalah Ruang B dan H."
+            },
+            {
+                id: 9, roundGroup: 1,
+                q: "Yang merupakan contoh dari data tekstual adalah...",
+                opts: ["Foto pemandangan alam", "Tabel hasil dari pertandingan sepak bola", "Kumpulan artikel berita", "Rekaman suara data"],
+                ans: 2,
+                exp: "Data tekstual berbentuk susunan huruf, kata, atau paragraf tulisan, seperti kumpulan artikel berita."
+            },
+            {
+                id: 10, roundGroup: 1,
+                q: "Jenis data yang merepresentasikan angka, seperti jumlah siswa di kelas, adalah data …",
+                opts: ["Visual", "Tekstual", "Numerik", "Audio"],
+                ans: 2,
+                exp: "Data numerik adalah data yang berbentuk bilangan/angka dan dapat dihitung secara matematis."
+            },
+            {
+                id: 11, roundGroup: 1,
+                q: "Seni terbaru dan membuat kalian akan berkreasi tanpa batas disebut ...",
+                opts: ["Informatika", "Coding", "Programing", "Berpikir komputasional"],
+                ans: 1,
+                exp: "Dalam materi pemrograman visual Informatika Kelas 7, coding disebut sebagai seni terbaru untuk berkreasi tanpa batas."
+            },
+            {
+                id: 12, roundGroup: 1,
+                q: "Scratch dibuat oleh MIT Media Lab. Dengan Scratch kalian dapat mengembangkan sebuah program sederhana yang berisi ...",
+                opts: ["Cerita, games maupun animasi interaktif", "Gambar, games maupun animasi interaktif", "Narasi, games maupun animasi interaktif", "Literasi, games maupun animasi interaktif"],
+                ans: 0,
+                exp: "Scratch dirancang untuk membuat cerita, permainan (games), dan animasi interaktif dengan menyusun blok kode."
+            },
+            {
+                id: 13, roundGroup: 1,
+                q: "Aktivitas yang menggunakan aplikasi Scratch yang dapat diakses secara online maupun di-install langsung di komputer dapat melalui halaman...",
+                opts: ["http://scratch.edu.mit/", "http://scratch.mit.edu/", "http://scratch.sch.edu/", "http://scratch.mit.sch/"],
+                ans: 1,
+                exp: "Halaman situs resmi aplikasi Scratch dari MIT Media Lab adalah http://scratch.mit.edu/."
+            },
+            {
+                id: 14, roundGroup: 1,
+                q: "Berikut ini kelebihan jika kita memiliki akun Scratch adalah ...",
+                opts: ["Bisa menyimpan hasil proyek", "Bisa memindahkan semua hasil proyek", "Bisa memotong semua hasil proyek", "Bisa menghilangkan semua hasil proyek"],
+                ans: 0,
+                exp: "Dengan membuat akun Scratch online, pengguna dapat menyimpan hasil proyeknya secara daring dan membagikannya."
+            },
+            {
+                id: 15, roundGroup: 1,
+                q: "Yang merupakan salah satu fungsi dari menu “Variables” pada aplikasi Scratch adalah...",
+                opts: ["Mengatur kondisi suatu objek terkena sesuatu", "Mengatur posisi objek ke titik tertentu", "Mengatur nilai dari suatu variabel", "Menyembunyikan objek"],
+                ans: 2,
+                exp: "Menu Variables digunakan untuk membuat, menampilkan, mengubah, dan mengatur nilai suatu variabel seperti skor."
+            },
+            {
+                id: 16, roundGroup: 1,
+                q: "Pada aplikasi Scratch terdapat sebuah fungsi yang dapat membuat objek menampilkan teks tertentu. Hal itu merupakan fungsi dari menu…",
+                opts: ["Motion", "Looks", "Sensing", "Sound"],
+                ans: 1,
+                exp: "Menu Looks (Tampilan) berisi blok perintah seperti 'say Halo!' untuk menampilkan teks percakapan pada objek."
+            },
+            {
+                id: 17, roundGroup: 1,
+                q: `Perhatikan gambar antarmuka Scratch berikut! Kumpulan kategori kode yang dapat dilakukan objek ditunjukkan pada menu ... ${VISUAL_SCRATCH_UI}`,
+                opts: ["Menu A", "Menu B", "Menu C", "Menu D"],
+                ans: 1,
+                exp: "Menu B di sisi kiri berisi kategori blok kode (Gerakan, Tampilan, Suara, Kejadian, Kontrol, Sensor, Operator, Variabel)."
+            },
+            {
+                id: 18, roundGroup: 1,
+                q: `Perhatikan gambar antarmuka Scratch berikut! Kumpulan Sprite yang digunakan pada projek ditunjukkan pada menu ... ${VISUAL_SCRATCH_UI}`,
+                opts: ["Menu E", "Menu F", "Menu G", "Menu H"],
+                ans: 1,
+                exp: "Menu F di pojok kanan bawah menampilkan daftar seluruh karakter (Sprite) yang digunakan dalam proyek."
+            },
+            {
+                id: 19, roundGroup: 1,
+                q: `Perhatikan gambar antarmuka Scratch berikut! Fungsi dari menu D adalah ... ${VISUAL_SCRATCH_UI}`,
+                opts: [
+                    "Kumpulan kode yang dapat diterapkan pada objek",
+                    "Untuk review hasil implementasi blok kode pada objek",
+                    "Meletakkan daftar blok kode yang diimplementasikan pada objek",
+                    "Untuk mengatur backdrops yang akan digunakan"
+                ],
+                ans: 2,
+                exp: "Menu D adalah area tengah (Script Area) tempat menyusun dan meletakkan rangkaian blok kode untuk sprite."
+            },
+            {
+                id: 20, roundGroup: 1,
+                q: "Apabila kode pemrograman “move 10 steps” dijalankan maka sprite akan …",
+                opts: ["Bergerak 10 langkah", "Bergerak 15 langkah", "Berputar ke kanan 15<sup>o</sup>", "Berputar ke kanan 10<sup>o</sup>"],
+                ans: 0,
+                exp: "Blok perintah 'move 10 steps' membuat karakter sprite melangkah maju sejauh 10 langkah."
+            },
+            {
+                id: 21, roundGroup: 1,
+                q: "Perintah “say Halo! for 5 seconds” akan membuat sprite …",
+                opts: ["Berbicara “Halo” selama 2 detik", "Berbicara “Halo” selama 5 detik", "Bergerak 5 langkah", "Mengeluarkan suara “Halo”"],
+                ans: 1,
+                exp: "Perintah 'say Halo! for 5 seconds' menampilkan gelembung teks 'Halo!' selama 5 detik."
+            },
+            {
+                id: 22, roundGroup: 1,
+                q: "Perintah “Choose a Backdrop” berfungsi untuk ...",
+                opts: ["Mengganti sprite", "Mengganti kostum", "Mengganti latar", "Menambahkan suara"],
+                ans: 2,
+                exp: "Choose a Backdrop digunakan untuk memilih atau mengganti latar belakang panggung (Stage)."
+            },
+            {
+                id: 23, roundGroup: 1,
+                q: "Perintah yang digunakan untuk menambahkan efek suara ditunjukkan pada kode pemrograman …",
+                opts: ["Move 10 steps", "Say hello! for 2 seconds", "Start sound Meow", "When green flag clicked"],
+                ans: 2,
+                exp: "Blok 'Start sound Meow' dari kategori Sound memutar efek suara kucing 'Meow'."
+            },
+            {
+                id: 24, roundGroup: 1,
+                q: "Perintah “repeat” pada aplikasi Scratch berfungsi untuk …",
+                opts: ["Menampilkan gambar", "Perintah pergerakan", "Perubahan tampilan", "Perintah berulang"],
+                ans: 3,
+                exp: "Blok 'repeat' menjalankan perintah di dalamnya secara berulang sesuai jumlah hitungan yang diatur."
+            },
+            {
+                id: 25, roundGroup: 1,
+                q: "Karakter utama yang dapat diprogram dalam Scratch disebut …",
+                opts: ["Stage", "Background", "Object", "Sprite"],
+                ans: 3,
+                exp: "Karakter atau objek yang dapat diberi perintah blok kode di dalam Scratch disebut Sprite."
+            },
+
+            // ================= BABAK 2 (SOAL 26 - 50) =================
+            {
+                id: 26, roundGroup: 2,
+                q: "Data berasal dari kata dalam bahasa Latin “Datum” yang artinya adalah ...",
+                opts: ["Informasi", "Fakta", "Angka", "Simbol"],
+                ans: 1,
+                exp: "Kata 'datum' dalam bahasa Latin berarti fakta atau keterangan yang benar dan nyata."
+            },
+            {
+                id: 27, roundGroup: 2,
+                q: "Banyaknya satuan ukuran data ada ...",
+                opts: ["3", "4", "5", "6"],
+                ans: 3,
+                exp: "Dalam materi Informatika Kelas 7 terdapat 6 satuan ukuran data: Byte (B), Kilobyte (KB), Megabyte (MB), Gigabyte (GB), Terabyte (TB), dan Petabyte (PB)."
+            },
+            {
+                id: 28, roundGroup: 2,
+                q: "Satuan terkecil dalam ukuran penyimpanan data adalah ...",
+                opts: ["Byte", "Kilobyte", "Megabyte", "Gigabyte"],
+                ans: 0,
+                exp: "Dari keempat pilihan tersebut, satuan ukuran penyimpanan terkecil adalah Byte (1 KB = 1.024 Byte)."
+            },
+            {
+                id: 29, roundGroup: 2,
+                q: "Tujuan utama dari analisis data ialah untuk menginterpretasi yaitu ...",
+                opts: [
+                    "Mengumpulkan data tanpa diproses",
+                    "Menyimpan data dalam komputer",
+                    "Menemukan makna dalam data untuk mengambil keputusan yang tepat",
+                    "Mengurutkan data berdasarkan abjad"
+                ],
+                ans: 2,
+                exp: "Interpretasi data bertujuan menemukan makna di balik data sehingga dapat mengambil keputusan yang tepat."
+            },
+            {
+                id: 30, roundGroup: 2,
+                q: "Analisis data sangatlah diperlukan dalam ruang lingkup informatika, karena ...",
+                opts: [
+                    "Untuk mengetahui fakta, keterangan yang benar dan nyata yang dapat dikumpulkan",
+                    "Untuk menggambarkan sesuatu atau kuantitatif yang berupa informasi numerik (angka)",
+                    "Agar data yang disimpan dapat ditampilkan dalam sajian (visualisasi) tertentu",
+                    "Untuk menyimpulkan atau mengambil keputusan dengan baik berdasarkan data"
+                ],
+                ans: 3,
+                exp: "Analisis data membantu mengolah kumpulan data menjadi kesimpulan yang akurat untuk mengambil keputusan dengan baik."
+            },
+            {
+                id: 31, roundGroup: 2,
+                q: "Arti dari interpretasi adalah ...",
+                opts: [
+                    "Menganalisis, mempelajari, dan menyimpulkan hubungan yang dipelajari",
+                    "Menyimpulkan hubungan atau mengambil keputusan",
+                    "Menafsirkan data sehingga data menjadi bermakna",
+                    "Proses pengumpulan dan pengorganisasian data"
+                ],
+                ans: 2,
+                exp: "Interpretasi berarti menafsirkan atau menjelaskan arti data sehingga data tersebut menjadi bermakna."
+            },
+            {
+                id: 32, roundGroup: 2,
+                q: "Pada saat menganalisis data, kita mempelajari bagaimana mengolah data menggunakan salah satu aplikasi lembar kerja. Aplikasi lembar kerja yang digunakan adalah ...",
+                opts: ["Microsoft Excel", "Microsoft Word", "Microsoft PowerPoint", "Microsoft Outlook"],
+                ans: 0,
+                exp: "Microsoft Excel adalah aplikasi lembar kerja (spreadsheet) untuk mengolah, menghitung, dan menganalisis data."
+            },
+            {
+                id: 33, roundGroup: 2,
+                q: "Menu yang berfungsi untuk menampilkan lembar kerja kosong pada Ms. Excel biasa disebut ...",
+                opts: ["Worksheet", "Folder", "Blank Workbook", "Browser"],
+                ans: 2,
+                exp: "Menu 'Blank Workbook' dipilih untuk membuat dokumen lembar kerja baru yang masih kosong di Microsoft Excel."
+            },
+            {
+                id: 34, roundGroup: 2,
+                q: "Fungsi Quick Access Toolbar pada Microsoft Excel adalah ...",
+                opts: [
+                    "Menampilkan seluruh worksheet",
+                    "Menampilkan fitur yang sering digunakan",
+                    "Menghapus seluruh data",
+                    "Mengatur ukuran kolom"
+                ],
+                ans: 1,
+                exp: "Quick Access Toolbar menyediakan pintasan tombol perintah yang paling sering digunakan seperti Save, Undo, dan Redo."
+            },
+            {
+                id: 35, roundGroup: 2,
+                q: "Jika kita membuka lembar worksheet kosong, maka lembar kerja yang akan muncul pertama kali adalah …",
+                opts: ["Sheet 4", "Sheet 2", "Sheet 1", "Sheet 3"],
+                ans: 2,
+                exp: "Saat membuka buku kerja kosong di Excel, tab lembar kerja pertama yang muncul otomatis bernama Sheet 1."
+            },
+            {
+                id: 36, roundGroup: 2,
+                q: "Menu toolbar yang berfungsi untuk mengunci baris dan kolom tertentu adalah …",
+                opts: ["Freeze first column", "Freeze panes", "Freeze top row", "Unfreeze panes"],
+                ans: 1,
+                exp: "Freeze Panes mengunci baris dan kolom tertentu agar judul tabel tetap terlihat saat halaman digeser ke bawah atau samping."
+            },
+            {
+                id: 37, roundGroup: 2,
+                q: "Berikut ini, yang tidak termasuk dalam menu Format Cells adalah …",
+                opts: ["Number", "Cell", "Fill", "Font"],
+                ans: 1,
+                exp: "Dialog Format Cells berisi tab Number, Alignment, Font, Border, Fill, dan Protection—tidak ada tab bernama 'Cell'."
+            },
+            {
+                id: 38, roundGroup: 2,
+                q: "Pada menu Format Cells yang berfungsi merubah warna cell adalah …",
+                opts: ["Number", "Cell", "Fill", "Font"],
+                ans: 2,
+                exp: "Tab Fill pada Format Cells digunakan untuk memberi atau mengubah warna latar belakang pada sel."
+            },
+            {
+                id: 39, roundGroup: 2,
+                q: "Untuk menghitung total jumlah nilai pada range tertentu maka fungsi yang akan digunakan adalah ...",
+                opts: ["MAX", "MIN", "COUNT", "SUM"],
+                ans: 3,
+                exp: "Fungsi =SUM() menjumlahkan seluruh angka yang berada di dalam rentang sel (range) tertentu."
+            },
+            {
+                id: 40, roundGroup: 2,
+                q: "Untuk menghitung jumlah data pada range area tertentu di lembar kerja (worksheet) maka kita bisa menggunakan fungsi ...",
+                opts: ["MAX", "MIN", "COUNT", "SUM"],
+                ans: 2,
+                exp: "Fungsi =COUNT() digunakan untuk menghitung banyaknya sel yang berisi data angka dalam suatu range."
+            },
+            {
+                id: 41, roundGroup: 2,
+                q: "Di bawah ini rumus pada text yang digunakan untuk mengubah tampilan teks menjadi huruf kecil semua yaitu ...",
+                opts: ["=UPPER(text)", "=LOWER(text)", "=PROPER(text)", "=MIN(text)"],
+                ans: 1,
+                exp: "Rumus =LOWER(text) mengubah semua huruf dalam teks menjadi huruf kecil semua."
+            },
+            {
+                id: 42, roundGroup: 2,
+                q: "Fungsi statistik yang digunakan untuk menghitung rata-rata dari sekumpulan data adalah ...",
+                opts: ["Median", "Average", "Large", "Small"],
+                ans: 1,
+                exp: "Fungsi =AVERAGE() menghitung nilai rata-rata dari sekumpulan data numerik."
+            },
+            {
+                id: 43, roundGroup: 2,
+                q: `Data pengunjung tempat wisata di Belitung Timur. Jika ingin mencari nilai terkecil pertama dari data di atas, rumus yang digunakan adalah ... ${VISUAL_WISATA_TABLE}`,
+                opts: ["=LARGE(B2:B6,1)", "=LARGE(B2:B6,2)", "=SMALL(B2:B6,1)", "=SMALL(B2:B6,2)"],
+                ans: 2,
+                exp: "Fungsi =SMALL(B2:B6,1) menghasilkan nilai terkecil ke-1 dari range B2:B6, yaitu 9230 (Pantai Mudong)."
+            },
+            {
+                id: 44, roundGroup: 2,
+                q: `Data nilai Informatika SMP. Jika rumus =IF(B2>=70;"Lulus";"Tidak Lulus") diterapkan pada nilai Eko (75), maka hasil yang muncul adalah ... ${VISUAL_NILAI_TABLE}`,
+                opts: ["70", "75", "Lulus", "Tidak Lulus"],
+                ans: 2,
+                exp: "Karena nilai Eko adalah 75 dan syarat >= 70 terpenuhi (75 >= 70 benar), rumus IF menampilkan keterangan 'Lulus'."
+            },
+            {
+                id: 45, roundGroup: 2,
+                q: "Untuk melakukan pengurutan kita bisa menggunakan fungsi ...",
+                opts: ["Sort", "Filter", "General", "Duplikat data"],
+                ans: 0,
+                exp: "Fungsi Sort digunakan untuk mengurutkan data dari nilai terkecil ke terbesar atau sebaliknya."
+            },
+            {
+                id: 46, roundGroup: 2,
+                q: "Untuk melakukan penyaringan kita bisa menggunakan fungsi ...",
+                opts: ["Sort", "Filter", "General", "Duplikat data"],
+                ans: 1,
+                exp: "Fungsi Filter digunakan untuk menyaring dan menampilkan baris data sesuai kriteria yang diinginkan."
+            },
+            {
+                id: 47, roundGroup: 2,
+                q: "Kegiatan untuk mengecek kebenaran dari data yang dimasukkan ke dalam lembar kerja adalah pengertian dari ...",
+                opts: ["Data", "Duplikat data", "Data Validation", "Data Invalidation"],
+                ans: 2,
+                exp: "Data Validation adalah fitur untuk memeriksa dan membatasi jenis maupun aturan data yang boleh diinput ke dalam sel."
+            },
+            {
+                id: 48, roundGroup: 2,
+                q: "Pada sebuah lembar kerja yang berfungsi untuk menambahkan nomor halaman adalah...",
+                opts: ["Header", "Footer", "Page Number", "File Name"],
+                ans: 2,
+                exp: "Fitur Page Number pada Header & Footer berfungsi menyisipkan nomor halaman pada lembar kerja saat dicetak."
+            },
+            {
+                id: 49, roundGroup: 2,
+                q: "Fitur pada sebuah lembar kerja yang berfungsi untuk membuat sheet yang diamankan hanya dapat dilihat isinya dan tidak dapat diubah menggunakan fitur ...",
+                opts: ["Workbook", "Sheet", "Protect Sheet", "Tab review"],
+                ans: 2,
+                exp: "Fitur Protect Sheet mengamankan lembar kerja agar hanya bisa dibaca dan tidak bisa diubah tanpa kata sandi."
+            },
+            {
+                id: 50, roundGroup: 2,
+                q: "Saat mengaktifkan Protect Sheet, pengguna diminta untuk memasukkan password sebanyak dua kali dengan tujuan ...",
+                opts: [
+                    "Memastikan tidak terjadi kesalahan ketik pada password",
+                    "Mempercepat proses penyimpanan",
+                    "Membuat password cadangan",
+                    "Menggabungkan dua akun"
+                ],
+                ans: 0,
+                exp: "Memasukkan password dua kali bertujuan memastikan tidak ada kesalahan ketik (typo) sebelum lembar kerja dikunci."
+            }
+        ];
+
+        /**
+         * 5. STATE PERMAINAN ESTAFET BOM WAKTU 50 (2 BABAK × 25 SOAL)
+         */
+        const state = {
+            playerNames: { 1: 'Pemain 1', 2: 'Pemain 2' },
+            durationSeconds: 30,
+            round: 1,
+            cardIndexInRound: 0,
+            holder: 1,
+            scores: { 1: 500, 2: 500 },
+            roundCorrect: { 1: 0, 2: 0 },
+            totalCorrect: { 1: 0, 2: 0 },
+            answeredCount: { 1: 0, 2: 0 },
+            roundQueue: [],
+            currentCard: null,
+            currentShuffledOpts: [],
+            timeLeftMs: 30000,
+            timerInterval: null,
+            lastTickStep: 60,
+            isWaitingExplosionAck: false,
+            isTransitioning: false,
+            bankTab: 1
+        };
+
+        /**
+         * 6. UTILITAS ACAK, PERAYAAN BINTANG & PEMBAGIAN 2 BABAK
+         */
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function buildRoundQueue(roundNumber) {
+            if (roundNumber === 1) {
+                state.roundQueue = shuffleArray(QUESTIONS_50.slice(0, 25));
+            } else {
+                state.roundQueue = shuffleArray(QUESTIONS_50.slice(25, 50));
+            }
+        }
+
+        function spawnStarConfetti(panelEl) {
+            const icons = ['⭐', '🎉', '✨', '🌟', '🎈'];
+            for (let i = 0; i < 8; i++) {
+                const star = document.createElement('span');
+                star.className = 'confetti-star';
+                star.textContent = icons[i % icons.length];
+                const angle = (Math.PI * 2 * i) / 8;
+                const dist = 50 + Math.random() * 45;
+                star.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+                star.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+                star.style.left = '50%';
+                star.style.top = '55%';
+                panelEl.appendChild(star);
+                setTimeout(() => star.remove(), 720);
+            }
+        }
+
+        /**
+         * 7. AUTO-FULLSCREEN & KONTROL MULAI BABAK
+         */
+        function enterFullscreen() {
+            try {
+                const elem = document.documentElement;
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    if (elem.requestFullscreen) {
+                        const p = elem.requestFullscreen();
+                        if (p && typeof p.catch === 'function') p.catch(() => {});
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    }
+                }
+            } catch (e) {}
+        }
+
+        function selectTimerDuration(sec) {
+            state.durationSeconds = sec;
+            [20, 30, 60].forEach(d => {
+                const btn = document.getElementById(`dur-btn-${d}`);
+                if (!btn) return;
+                if (d === sec) {
+                    btn.className = "py-2 rounded-2xl bg-orange-500 text-white border-2 border-b-4 border-orange-700 font-display font-bold text-xs shadow-sm cursor-pointer transition";
+                } else {
+                    btn.className = "py-2 rounded-2xl bg-slate-100 border-2 border-slate-200 text-slate-600 font-display font-bold text-xs cursor-pointer transition";
+                }
+            });
+        }
+
+        function applyPlayerNames() {
+            const raw1 = document.getElementById('input-p1-name').value.trim();
+            const raw2 = document.getElementById('input-p2-name').value.trim();
+            state.playerNames[1] = raw1 || 'Pemain 1';
+            state.playerNames[2] = raw2 || 'Pemain 2';
+
+            document.getElementById('p1-name-badge').textContent = `🐱 ${state.playerNames[1]}`;
+            document.getElementById('p2-name-badge').textContent = `🐼 ${state.playerNames[2]}`;
+        }
+
+        function startNewMatch() {
+            enterFullscreen();
+            SoundFX.init();
+            SoundFX.passBomb();
+
+            applyPlayerNames();
+
+            document.getElementById('modal-start').classList.add('hidden');
+            document.getElementById('modal-intermission').classList.add('hidden');
+            document.getElementById('modal-victory').classList.add('hidden');
+
+            state.round = 1;
+            state.scores = { 1: 500, 2: 500 };
+            state.roundCorrect = { 1: 0, 2: 0 };
+            state.totalCorrect = { 1: 0, 2: 0 };
+            state.answeredCount = { 1: 0, 2: 0 };
+
+            buildRoundQueue(1);
+            state.cardIndexInRound = 0;
+            state.holder = 1;
+
+            loadCurrentCard();
+        }
+
+        function startRound2() {
+            enterFullscreen();
+            SoundFX.init();
+            SoundFX.passBomb();
+            document.getElementById('modal-intermission').classList.add('hidden');
+
+            state.round = 2;
+            state.roundCorrect = { 1: 0, 2: 0 };
+            buildRoundQueue(2);
+            state.cardIndexInRound = 0;
+            state.holder = 2;
+
+            loadCurrentCard();
+        }
+
+        /**
+         * 8. MEMUAT KARTU AKTIF & MERENDER TOMBOL PILIHAN LUCU
+         */
+        function loadCurrentCard() {
+            stopBombTimer();
+            stopSpeech();
+            state.isWaitingExplosionAck = false;
+            state.isTransitioning = false;
+
+            const card = state.roundQueue[state.cardIndexInRound];
+            state.currentCard = card;
+
+            const activeP = state.holder;
+            const standbyP = activeP === 1 ? 2 : 1;
+            const roundCardNum = state.cardIndexInRound + 1;
+            const globalCardNum = (state.round - 1) * 25 + roundCardNum;
+
+            // Update Bilah Tengah
+            document.getElementById('hud-round-badge').textContent = `BABAK ${state.round} / 2`;
+            document.getElementById('hud-queue-text').textContent = `KARTU ${globalCardNum} / 50`;
+            document.getElementById('hud-subqueue-text').textContent = `Babak: ${roundCardNum}/25`;
+
+            const holderEl = document.getElementById('hud-holder-text');
+            if (activeP === 1) {
+                holderEl.textContent = `▲ Bom di ${state.playerNames[1]}`;
+                holderEl.className = 'text-[10px] font-extrabold text-orange-600 truncate';
+            } else {
+                holderEl.textContent = `▼ Bom di ${state.playerNames[2]}`;
+                holderEl.className = 'text-[10px] font-extrabold text-sky-600 truncate';
+            }
+
+            // Update Skor & Progres Soal per Pemain
+            document.getElementById('p1-score').textContent = state.scores[1];
+            document.getElementById('p2-score').textContent = state.scores[2];
+            document.getElementById('p1-answered').textContent = state.answeredCount[1];
+            document.getElementById('p2-answered').textContent = state.answeredCount[2];
+
+            // Kunci panel standby & aktifkan panel pemegang bom
+            document.getElementById(`p${standbyP}-standby-mask`).classList.remove('hidden');
+            document.getElementById(`p${standbyP}-standby-sub`).textContent =
+                `Siap-siap tangkap bomnya kalau ${state.playerNames[activeP]} sudah selesai ya!`;
+            document.getElementById(`p${activeP}-standby-mask`).classList.add('hidden');
+
+            // Reset kotak ledakan & kilat pass banner
+            document.getElementById(`p${activeP}-explosion-box`).classList.add('hidden');
+            document.getElementById(`p${activeP}-pass-banner`).classList.add('hidden');
+            const optsContainer = document.getElementById(`p${activeP}-options`);
+            optsContainer.classList.remove('hidden');
+
+            // Label kartu & pertanyaan
+            document.getElementById(`p${activeP}-round-tag`).textContent = `Babak ${state.round}`;
+            document.getElementById(`p${activeP}-card-label`).textContent =
+                `💣 BOM DI TANGANMU • KARTU #${globalCardNum} (SOAL #${card.id})`;
+            document.getElementById(`p${activeP}-question-text`).innerHTML = card.q;
+
+            // Acak 4 pilihan jawaban dengan warna lencana A/B/C/D permen lucu
+            const indexed = card.opts.map((text, idx) => ({
+                text,
+                isCorrect: idx === card.ans
+            }));
+            state.currentShuffledOpts = shuffleArray(indexed);
+
+            optsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            const badgeColors = [
+                'bg-rose-500 text-white border-rose-700',
+                'bg-sky-500 text-white border-sky-700',
+                'bg-emerald-500 text-white border-emerald-700',
+                'bg-purple-500 text-white border-purple-700'
+            ];
+
+            state.currentShuffledOpts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "min-h-[46px] text-left px-2.5 py-2 rounded-2xl bg-white hover:bg-amber-50 border-2 border-b-4 border-slate-200 hover:border-amber-300 text-[11px] sm:text-xs font-extrabold text-slate-800 flex items-center gap-2 active:translate-y-0.5 transition cursor-pointer leading-tight shadow-xs";
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-xl ${badgeColors[idx]} border-b-2 flex items-center justify-center font-display font-bold text-xs shrink-0">${letters[idx]}</span>
+                    <span>${opt.text}</span>
+                `;
+                btn.onclick = () => handleAnswerTap(activeP, idx, btn);
+                optsContainer.appendChild(btn);
+            });
+
+            startBombTimer();
+        }
+
+        function startBombTimer() {
+            state.timeLeftMs = state.durationSeconds * 1000;
+            state.lastTickStep = Math.ceil(state.timeLeftMs / 1000);
+            updateTimerVisual();
+
+            state.timerInterval = setInterval(() => {
+                state.timeLeftMs -= 100;
+                if (state.timeLeftMs <= 0) {
+                    state.timeLeftMs = 0;
+                    updateTimerVisual();
+                    stopBombTimer();
+                    triggerBombExplosion(true);
+                    return;
+                }
+
+                const isUrgent = state.timeLeftMs < 5000;
+                const currentStep = isUrgent
+                    ? Math.ceil(state.timeLeftMs / 500)
+                    : Math.ceil(state.timeLeftMs / 1000);
+
+                if (currentStep !== state.lastTickStep) {
+                    state.lastTickStep = currentStep;
+                    SoundFX.tick(isUrgent);
+                }
+                updateTimerVisual();
+            }, 100);
+        }
+
+        function stopBombTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+        }
+
+        function updateTimerVisual() {
+            const display = document.getElementById('bomb-timer-display');
+            const bar = document.getElementById('bomb-timer-bar');
+            const widget = document.getElementById('bomb-widget');
+            const sec = (state.timeLeftMs / 1000).toFixed(1);
+            const pct = Math.max(0, Math.min(100, (state.timeLeftMs / (state.durationSeconds * 1000)) * 100));
+
+            display.textContent = sec;
+            bar.style.width = `${pct}%`;
+
+            if (state.timeLeftMs < 5000 && state.timeLeftMs > 0) {
+                display.className = 'font-display font-bold text-base sm:text-lg text-rose-600 tracking-tight';
+                bar.className = 'h-full bg-rose-500 transition-all duration-100 ease-linear';
+                widget.classList.add('border-rose-500', 'bg-rose-50', 'bomb-panic');
+                widget.classList.remove('border-orange-400', 'bg-amber-50');
+            } else {
+                display.className = 'font-display font-bold text-base sm:text-lg text-orange-600 tracking-tight';
+                bar.className = 'h-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-100 ease-linear';
+                widget.classList.remove('border-rose-500', 'bg-rose-50', 'bomb-panic');
+                widget.classList.add('border-orange-400', 'bg-amber-50');
+            }
+        }
+
+        function showScoreDelta(player, deltaText, isPositive) {
+            const el = document.getElementById(`p${player}-delta`);
+            el.textContent = deltaText;
+            el.className = `absolute -right-12 top-0 font-display font-bold text-xs px-2 py-0.5 rounded-xl border-2 pointer-events-none shadow-md score-float ${
+                isPositive
+                    ? 'bg-emerald-500 text-white border-emerald-700'
+                    : 'bg-rose-500 text-white border-rose-700'
+            }`;
+            el.classList.remove('hidden');
+            clearTimeout(el._hideTimer);
+            el._hideTimer = setTimeout(() => el.classList.add('hidden'), 950);
+        }
+
+        /**
+         * 9. MENANGANI JAWABAN PEMAIN
+         */
+        function handleAnswerTap(player, optIndex, clickedBtn) {
+            if (player !== state.holder || state.isWaitingExplosionAck || state.isTransitioning) return;
+
+            stopBombTimer();
+            stopSpeech();
+            const chosen = state.currentShuffledOpts[optIndex];
+
+            const allBtns = document.getElementById(`p${player}-options`).children;
+            for (let i = 0; i < allBtns.length; i++) {
+                allBtns[i].disabled = true;
+            }
+
+            if (chosen.isCorrect) {
+                state.isTransitioning = true;
+                state.scores[player] += 10;
+                state.roundCorrect[player] += 1;
+                state.totalCorrect[player] += 1;
+                state.answeredCount[player] += 1;
+
+                document.getElementById(`p${player}-score`).textContent = state.scores[player];
+                document.getElementById(`p${player}-answered`).textContent = state.answeredCount[player];
+                showScoreDelta(player, '+10 ⭐', true);
+                SoundFX.passBomb();
+
+                const panelEl = document.getElementById(`panel-p${player}`);
+                spawnStarConfetti(panelEl);
+
+                clickedBtn.className = "min-h-[46px] text-left px-2.5 py-2 rounded-2xl bg-emerald-500 border-2 border-b-4 border-emerald-700 text-[11px] sm:text-xs font-extrabold text-white flex items-center gap-2 leading-tight shadow-md";
+                document.getElementById(`p${player}-pass-banner`).classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById(`p${player}-pass-banner`).classList.add('hidden');
+                    advanceToNextCard();
+                }, 680);
+            } else {
+                clickedBtn.className = "min-h-[46px] text-left px-2.5 py-2 rounded-2xl bg-rose-500 border-2 border-b-4 border-rose-700 text-[11px] sm:text-xs font-extrabold text-white flex items-center gap-2 leading-tight shadow-md";
+                state.currentShuffledOpts.forEach((o, i) => {
+                    if (o.isCorrect && allBtns[i]) {
+                        allBtns[i].className = "min-h-[46px] text-left px-2.5 py-2 rounded-2xl bg-emerald-500 border-2 border-b-4 border-emerald-700 text-[11px] sm:text-xs font-extrabold text-white flex items-center gap-2 leading-tight shadow-md";
+                    }
+                });
+                triggerBombExplosion(false);
+            }
+        }
+
+        function triggerBombExplosion(isTimeout) {
+            state.isWaitingExplosionAck = true;
+            stopSpeech();
+            SoundFX.explosion();
+
+            const player = state.holder;
+            state.scores[player] -= 10;
+            state.answeredCount[player] += 1;
+            document.getElementById(`p${player}-score`).textContent = state.scores[player];
+            document.getElementById(`p${player}-answered`).textContent = state.answeredCount[player];
+            showScoreDelta(player, '-10 💥', false);
+
+            const panelEl = document.getElementById(`panel-p${player}`);
+            const bombBar = document.getElementById('center-bomb-bar');
+            panelEl.classList.remove('animate-boom');
+            bombBar.classList.remove('animate-boom');
+            void panelEl.offsetWidth;
+            panelEl.classList.add('animate-boom');
+            bombBar.classList.add('animate-boom');
+
+            const card = state.currentCard;
+            document.getElementById(`p${player}-options`).classList.add('hidden');
+            const expBox = document.getElementById(`p${player}-explosion-box`);
+            expBox.classList.remove('hidden');
+
+            document.getElementById(`p${player}-exp-title`).textContent = isTimeout
+                ? '⏰ WAKTU HABIS! DUARRR! (-10 Poin)'
+                : '💥 JAWABAN KURANG TEPAT! (-10 Poin)';
+            document.getElementById(`p${player}-exp-key`).innerHTML = `✓ Jawaban Benar: ${card.opts[card.ans]}`;
+            document.getElementById(`p${player}-exp-desc`).innerHTML = `<strong>Penjelasan:</strong> ${card.exp}`;
+        }
+
+        function passBombAfterExplosion() {
+            if (!state.isWaitingExplosionAck) return;
+            SoundFX.passBomb();
+            advanceToNextCard();
+        }
+
+        /**
+         * 10. PERPINDAHAN KARTU, JEDA BABAK & HASIL AKHIR
+         */
+        function advanceToNextCard() {
+            state.cardIndexInRound++;
+
+            if (state.cardIndexInRound >= 25) {
+                stopBombTimer();
+                if (state.round === 1) {
+                    showRound1Intermission();
+                } else {
+                    showFinalVictory();
+                }
+                return;
+            }
+
+            state.holder = state.holder === 1 ? 2 : 1;
+            loadCurrentCard();
+        }
+
+        function showRound1Intermission() {
+            SoundFX.fanfare();
+            document.getElementById('inter-p1-name').textContent = `🐱 ${state.playerNames[1]}`;
+            document.getElementById('inter-p2-name').textContent = `🐼 ${state.playerNames[2]}`;
+            document.getElementById('inter-p1-score').textContent = state.scores[1];
+            document.getElementById('inter-p1-right').textContent = state.roundCorrect[1];
+            document.getElementById('inter-p2-score').textContent = state.scores[2];
+            document.getElementById('inter-p2-right').textContent = state.roundCorrect[2];
+            document.getElementById('inter-next-starter').textContent = `${state.playerNames[2]} (Bawah)`;
+            document.getElementById('inter-next-second').textContent = state.playerNames[1];
+            document.getElementById('modal-intermission').classList.remove('hidden');
+        }
+
+        function showFinalVictory() {
+            SoundFX.fanfare();
+            const s1 = state.scores[1];
+            const s2 = state.scores[2];
+            const titleEl = document.getElementById('victory-title');
+
+            if (s1 > s2) {
+                titleEl.textContent = `🏆 ${state.playerNames[1].toUpperCase()} JUARA!`;
+            } else if (s2 > s1) {
+                titleEl.textContent = `🏆 ${state.playerNames[2].toUpperCase()} JUARA!`;
+            } else {
+                titleEl.textContent = '🤝 SERI SAMA KUAT!';
+            }
+
+            document.getElementById('vic-p1-name').textContent = `🐱 ${state.playerNames[1]}`;
+            document.getElementById('vic-p2-name').textContent = `🐼 ${state.playerNames[2]}`;
+            document.getElementById('vic-p1-score').textContent = s1;
+            document.getElementById('vic-p1-right').textContent = state.totalCorrect[1];
+            document.getElementById('vic-p2-score').textContent = s2;
+            document.getElementById('vic-p2-right').textContent = state.totalCorrect[2];
+
+            document.getElementById('modal-victory').classList.remove('hidden');
+        }
+
+        /**
+         * 11. KONTROL UTILITAS (BANK 50 SOAL, RESET, MUTE, FULLSCREEN)
+         */
+        function toggleMute() {
+            SoundFX.muted = !SoundFX.muted;
+            if (SoundFX.muted) stopSpeech();
+            document.getElementById('btn-mute').textContent = SoundFX.muted ? '🔇' : '🔊';
+        }
+
+        function toggleFullscreen() {
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    enterFullscreen();
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            } catch (e) {}
+        }
+
+        function openResetModal() {
+            document.getElementById('modal-reset').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('modal-reset').classList.add('hidden');
+        }
+
+        function confirmResetGame() {
+            closeResetModal();
+            stopBombTimer();
+            stopSpeech();
+            startNewMatch();
+        }
+
+        function openBankModal() {
+            renderBankList();
+            document.getElementById('modal-bank').classList.remove('hidden');
+        }
+
+        function closeBankModal() {
+            document.getElementById('modal-bank').classList.add('hidden');
+        }
+
+        function setBankTab(tabNum) {
+            state.bankTab = tabNum;
+            const t1 = document.getElementById('tab-bank-1');
+            const t2 = document.getElementById('tab-bank-2');
+            const t0 = document.getElementById('tab-bank-0');
+
+            t1.className = tabNum === 1
+                ? "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-orange-500 text-white shrink-0 cursor-pointer"
+                : "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-white text-orange-600 border-2 border-orange-200 shrink-0 cursor-pointer";
+
+            t2.className = tabNum === 2
+                ? "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-sky-500 text-white shrink-0 cursor-pointer"
+                : "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-white text-sky-700 border-2 border-sky-200 shrink-0 cursor-pointer";
+
+            t0.className = tabNum === 0
+                ? "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-amber-400 text-amber-950 shrink-0 cursor-pointer"
+                : "px-3 py-1.5 rounded-xl text-[11px] font-display font-bold bg-white text-slate-700 border-2 border-slate-200 shrink-0 cursor-pointer";
+
+            renderBankList();
+        }
+
+        function renderBankList() {
+            const keyword = document.getElementById('bank-search').value.toLowerCase().trim();
+            const container = document.getElementById('bank-list');
+
+            const filtered = QUESTIONS_50.filter(item => {
+                const matchTab = state.bankTab === 0 || item.roundGroup === state.bankTab;
+                const plainQ = item.q.replace(/<[^>]+>/g, ' ');
+                const combined = `#${item.id} ${plainQ} ${item.opts[item.ans]} ${item.exp}`.toLowerCase();
+                const matchSearch = !keyword || combined.includes(keyword);
+                return matchTab && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="text-center text-xs font-bold text-slate-500 py-8">Tidak ada soal yang cocok dengan pencarian tersebut.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const rBadge = item.roundGroup === 1
+                    ? `<span class="text-[10px] font-display font-bold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 border border-orange-300">Babak 1</span>`
+                    : `<span class="text-[10px] font-display font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-300">Babak 2</span>`;
+
+                return `
+                    <div class="bg-white border-2 border-amber-200 rounded-3xl p-3 space-y-1.5 shadow-xs">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-display text-xs font-bold text-orange-600">Soal #${item.id}</span>
+                            ${rBadge}
+                        </div>
+                        <div class="text-xs font-extrabold text-slate-800 leading-snug">${item.q}</div>
+                        <div class="inline-block px-2.5 py-0.5 rounded-xl bg-emerald-500 text-white font-extrabold text-[11px]">
+                            ✓ Kunci: ${item.opts[item.ans]}
+                        </div>
+                        <p class="text-[11px] font-semibold text-slate-600 leading-relaxed pt-1 border-t border-amber-100">
+                            <strong class="text-purple-700">Penjelasan:</strong> ${item.exp}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
