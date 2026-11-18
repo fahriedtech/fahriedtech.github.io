@@ -98,17 +98,147 @@
         <!-- =====================================================================
              PANEL ATAS: PEMAIN 1 (DIPUTAR 180 DERAJAT UNTUK LAWAN DI SEBERANG MEJA)
              ===================================================================== -->
-        <section id="panel-p1" class="relative flex-1 w-full bg-gradient-to-b from-amber-950/75 to-slate-900 border-b border-amber-500/40 p-2.5 flex flex-col justify-between min-h-0 transition-opacity duration-200" style="transform: rotate(180deg);">
+        <section id="panel-p1" class="relative flex-1 w-full bg-gradient-to-b from-orange-950/80 to-slate-900 border-b border-[#f97316]/50 p-2.5 flex flex-col justify-between min-h-0 transition-opacity duration-200" style="transform: rotate(180deg);">
             
             <!-- Header Pemain 1 -->
             <div class="flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2 min-w-0">
-                    <span class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-xs tracking-wide shrink-0">PEMAIN 1</span>
-                    <div class="relative flex items-center gap-1.5 bg-slate-950/80 border border-amber-500/40 px-2.5 py-1 rounded-lg">
+                    <span class="px-2.5 py-1 rounded-lg bg-[#f97316] text-slate-950 font-black text-xs tracking-wide shrink-0">PEMAIN 1</span>
+                    <div class="relative flex items-center gap-1.5 bg-slate-950/80 border border-[#f97316]/50 px-2.5 py-1 rounded-lg">
                         <span class="text-[11px] text-slate-400 font-semibold">Skor:</span>
-                        <strong id="p1-score" class="font-mono font-black text-sm text-amber-300">450</strong>
+                        <strong id="p1-score" class="font-mono font-black text-sm text-orange-300">450</strong>
                         <span id="p1-delta" class="hidden absolute -right-11 top-0 font-mono font-black text-xs px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 pointer-events-none"></span>
                     </div>
+                    <span class="font-mono text-[11px] font-bold text-slate-300 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">Terjawab: <strong id="p1-answered" class="text-orange-300">0</strong>/23</span>
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <span id="p1-zone-badge" class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">Excel</span>
+                    <button id="btn-tts-p1" onclick="speakActiveQuestion()" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-400/40 text-indigo-200 text-[11px] font-bold flex items-center gap-1 active:scale-95 transition cursor-pointer">
+                        <span>🔊</span><span>Baca</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kotak Teks Soal Pemain 1 -->
+            <div class="flex-1 my-1.5 bg-slate-950/85 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-center min-h-0 overflow-y-auto custom-scroll">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <span id="p1-card-label" class="text-[10px] font-extrabold uppercase tracking-wider text-orange-400">💣 BOM DI TANGANMU • KARTU #1</span>
+                    <span id="p1-zone-mobile" class="sm:hidden text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300">Excel</span>
+                </div>
+                <p id="p1-question-text" class="text-xs sm:text-sm font-bold text-white leading-snug">
+                    Tekan Mulai Babak 1 untuk memulai estafet bom waktu!
+                </p>
+            </div>
+
+            <!-- 4 Tombol Pilihan Ganda Pemain 1 (Grid 2x2) -->
+            <div id="p1-options" class="grid grid-cols-2 gap-1.5 shrink-0">
+                <!-- Dirender melalui JS -->
+            </div>
+
+            <!-- Kotak Ledakan & Pembahasan Pemain 1 (Muncul saat Salah / Waktu Habis) -->
+            <div id="p1-explosion-box" class="hidden rounded-2xl p-2.5 bg-rose-950/90 border-2 border-rose-500/70 text-xs space-y-1.5 shrink-0">
+                <div id="p1-exp-title" class="font-black text-rose-200 text-xs sm:text-sm">💥 BOM MELEDAK! (-10 Poin)</div>
+                <div id="p1-exp-key" class="inline-block px-2 py-0.5 rounded bg-emerald-500/25 border border-emerald-400/40 text-emerald-200 font-bold text-[11px]"></div>
+                <p id="p1-exp-desc" class="text-[11px] text-slate-200 leading-snug max-h-[62px] overflow-y-auto custom-scroll"></p>
+                <button onclick="passBombAfterExplosion()" class="w-full min-h-[40px] rounded-xl bg-[#f97316] hover:bg-orange-400 active:scale-95 text-slate-950 font-black text-xs shadow-lg transition cursor-pointer">
+                    OPER BOM KE LAWAN ▶
+                </button>
+            </div>
+
+            <!-- Overlay Standby Saat Bom Berada di Pemain 2 -->
+            <div id="p1-standby-mask" class="hidden absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center pointer-events-auto">
+                <div class="px-3.5 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-extrabold text-xs mb-1">
+                    🛡️ STANDBY — GILIRAN PEMAIN 2
+                </div>
+                <p class="text-[11px] text-slate-400 max-w-[260px]">
+                    Bersiap! Bom akan berpindah ke sisimu begitu kartu lawan selesai.
+                </p>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             ZONA TENGAH: BOM WAKTU DIGITAL, TIMER & HUD KONTROL
+             ===================================================================== -->
+        <header id="center-bomb-bar" class="w-full bg-slate-900 border-y-2 border-slate-800 px-2.5 py-1.5 flex items-center justify-between gap-2 shrink-0 z-30 shadow-xl">
+            
+            <!-- Kiri: Indikator Babak & Antrean 46 Kartu -->
+            <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <span id="hud-round-badge" class="px-2 py-0.5 rounded-md bg-indigo-600 text-white font-black text-[10px] tracking-wider">BABAK 1/2</span>
+                    <span id="hud-queue-text" class="font-mono font-extrabold text-xs text-slate-200">Kartu 1/46</span>
+                </div>
+                <div id="hud-holder-text" class="text-[10px] font-bold text-orange-400 mt-0.5 truncate">
+                    ▲ Bom di Pemain 1
+                </div>
+            </div>
+
+            <!-- Tengah: Animasi Bom Digital, Timer Hitung Mundur & Progress Bar -->
+            <div id="bomb-widget" class="flex items-center gap-2 bg-slate-950 border-2 border-[#f97316]/60 rounded-2xl px-2.5 py-1 shadow-inner">
+                <!-- Ikon SVG Bom dengan Sumbu Menyala -->
+                <div class="relative w-7 h-7 flex items-center justify-center shrink-0">
+                    <svg class="w-7 h-7" viewBox="0 0 36 36" fill="none">
+                        <!-- Badan Bom -->
+                        <circle cx="16" cy="21" r="11" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+                        <circle cx="13" cy="18" r="3" fill="#475569" opacity="0.7"/>
+                        <!-- Leher Sumbu -->
+                        <rect x="20" y="8" width="5" height="4" rx="1" transform="rotate(35 20 8)" fill="#64748b"/>
+                        <!-- Tali Sumbu -->
+                        <path d="M23 9 C26 5, 29 6, 31 4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Percikan Api Sumbu -->
+                        <g class="fuse-spark">
+                            <circle cx="31" cy="4" r="3.5" fill="#ef4444"/>
+                            <circle cx="31" cy="4" r="2" fill="#facc15"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Angka Countdown & Progress Bar -->
+                <div class="flex flex-col items-center leading-none min-w-[66px]">
+                    <div class="flex items-baseline gap-1">
+                        <span id="bomb-timer-display" class="font-mono font-black text-lg sm:text-xl text-orange-300 tracking-tight">30.0</span>
+                        <span class="text-[8px] font-bold text-slate-400 uppercase">DTK</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                        <div id="bomb-timer-bar" class="h-full bg-[#f97316] transition-all duration-100 ease-linear" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Tombol Kisi-Kisi (46), Mute, Reset, Fullscreen -->
+            <div class="flex items-center gap-1 shrink-0">
+                <button onclick="openBankModal()" class="px-2 py-1.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 border border-indigo-500/40 text-indigo-200 text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition cursor-pointer" title="Daftar 46 Kisi-Kisi">
+                    <span>📚</span>
+                    <span>46</span>
+                </button>
+                <button id="btn-mute" onclick="toggleMute()" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs flex items-center justify-center active:scale-95 transition cursor-pointer" title="Suara">
+                    🔊
+                </button>
+                <button onclick="openResetModal()" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs flex items-center justify-center active:scale-95 transition cursor-pointer" title="Ulangi Game">
+                    🔄
+                </button>
+                <button onclick="toggleFullscreen()" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs flex items-center justify-center active:scale-95 transition cursor-pointer" title="Layar Penuh">
+                    ⛶
+                </button>
+            </div>
+        </header>
+
+        <!-- =====================================================================
+             PANEL BAWAH: PEMAIN 2 (ORIENTASI NORMAL 0 DERAJAT)
+             ===================================================================== -->
+        <section id="panel-p2" class="relative flex-1 w-full bg-gradient-to-t from-cyan-950/80 to-slate-900 border-t border-[#06b6d4]/50 p-2.5 flex flex-col justify-between min-h-0 transition-opacity duration-200">
+            
+            <!-- Header Pemain 2 -->
+            <div class="flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="px-2.5 py-1 rounded-lg bg-[#06b6d4] text-slate-950 font-black text-xs tracking-wide shrink-0">PEMAIN 2</span>
+                    <div class="relative flex items-center gap-1.5 bg-slate-950/80 border border-[#06b6d4]/50 px-2.5 py-1 rounded-lg">
+                        <span class="text-[11px] text-slate-400 font-semibold">Skor:</span>
+                        <strong id="p2-score" class="font-mono font-black text-sm text-cyan-300">450</strong>
+                        <span id="p2-delta" class="hidden absolute -right-11 top-0 font-mono font-black text-xs px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 pointer-events-none"></span>
+                    </div>
+                    <span class="font-mono text-[11px] font-bold text-slate-300 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">Terjawab: <strong id="p2-answered" class="text-cyan-300">0</strong>/23</span>
+                </div>
                     <span id="p1-round-prog" class="font-mono text-[11px] font-bold text-slate-300 bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-700">Soal 1/23</span>
                 </div>
 
@@ -303,32 +433,33 @@
             <div class="bg-slate-950/80 rounded-2xl p-3 border border-slate-800">
                 <div class="text-xs font-extrabold text-slate-200 mb-2">⏱️ Pilih Durasi Timer Bom per Soal:</div>
                 <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="selectTimerDuration(15)" id="dur-btn-15" class="py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs cursor-pointer transition">
-                        15 Detik
-                    </button>
-                    <button type="button" onclick="selectTimerDuration(20)" id="dur-btn-20" class="py-2 rounded-xl bg-amber-400 text-slate-950 border-2 border-amber-300 font-mono font-black text-xs shadow-md cursor-pointer transition">
+                    <button type="button" onclick="selectTimerDuration(20)" id="dur-btn-20" class="py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs cursor-pointer transition">
                         20 Detik
                     </button>
-                    <button type="button" onclick="selectTimerDuration(25)" id="dur-btn-25" class="py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs cursor-pointer transition">
-                        25 Detik
+                    <button type="button" onclick="selectTimerDuration(30)" id="dur-btn-30" class="py-2 rounded-xl bg-[#f97316] text-slate-950 border-2 border-orange-300 font-mono font-black text-xs shadow-md cursor-pointer transition">
+                        30 Detik
+                    </button>
+                    <button type="button" onclick="selectTimerDuration(60)" id="dur-btn-60" class="py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs cursor-pointer transition">
+                        1 Menit
                     </button>
                 </div>
             </div>
 
             <!-- Penjelasan Sistem 2 Babak & Modal 450 -->
             <div class="bg-slate-950/75 rounded-2xl p-3 border border-slate-800 space-y-1.5 text-[11px] text-slate-300 leading-relaxed">
-                <div><strong class="text-amber-300">💰 Modal Awal 450 Poin:</strong> Benar <strong>+10</strong> (bom langsung teroper), Salah atau Waktu Habis <strong>-10</strong> (bom meledak & muncul pembahasan).</div>
-                <div><strong class="text-cyan-300">🔄 Sistem 2 Babak (100% Soal Berbeda):</strong>
+                <div><strong class="text-orange-300">💰 Modal Awal 450 Poin:</strong> Benar <strong>+10</strong> (bom langsung teroper), Salah atau Waktu Habis <strong>-10</strong> (bom meledak & muncul pembahasan).</div>
+                <div><strong class="text-cyan-300">🔄 Sistem 2 Babak Adil (46 Soal Berbeda):</strong>
                     <ul class="list-disc pl-4 mt-0.5 space-y-0.5 text-slate-400">
-                        <li><strong>Babak 1:</strong> Pemain 1 memegang bom pertama (23 soal Kelompok A), Pemain 2 mendapat 23 soal Kelompok B.</li>
-                        <li><strong>Babak 2:</strong> Giliran ditukar! Pemain 2 memegang bom pertama & paket soal ditukar sehingga tiap pemain merasakan seluruh <strong>46 soal berbeda</strong>.</li>
+                        <li><strong>Babak 1 (Kartu 1–23 • Kelompok A):</strong> Pemain 1 memegang bom pertama (12 soal), Pemain 2 mendapat 11 soal.</li>
+                        <li><strong>Babak 2 (Kartu 24–46 • Kelompok B):</strong> Giliran pertama ditukar ke Pemain 2 (12 soal), Pemain 1 mendapat 11 soal.</li>
+                        <li><strong>Total Akhir:</strong> Tiap pemain mengerjakan 23 soal berbeda (46 soal tuntas, skor maks 680).</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex flex-col gap-2 pt-0.5">
-                <button onclick="startNewMatch()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 hover:brightness-110 active:scale-98 text-slate-950 font-black text-base shadow-lg transition cursor-pointer">
-                    💣 MULAI BABAK 1 SEKARANG
+                <button onclick="startNewMatch()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-[#f97316] via-amber-500 to-rose-500 hover:brightness-110 active:scale-98 text-slate-950 font-black text-base shadow-lg transition cursor-pointer">
+                    💣 MULAI BABAK 1 ▶
                 </button>
                 <button onclick="openBankModal()" class="w-full min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs transition cursor-pointer">
                     📚 Pelajari Daftar 46 Kisi-Kisi & Pembahasan
@@ -338,43 +469,43 @@
     </div>
 
     <!-- =====================================================================
-         MODAL 2: LAYAR JEDA ANTAR-BABAK (BABAK 1 SELESAI -> TUKAR SOAL BABAK 2)
+         MODAL 2: LAYAR JEDA ANTAR-BABAK (BABAK 1 SELESAI -> LANJUT BABAK 2)
          ===================================================================== -->
     <div id="modal-intermission" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
         <div class="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/60 p-5 text-center space-y-4 shadow-2xl">
             <div class="text-4xl">🔄</div>
             <div>
                 <span class="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[11px] font-extrabold uppercase tracking-wider">
-                    Babak 1 Tuntas (46/46 Kartu)
+                    Babak 1 Tuntas (Kartu 23/46)
                 </span>
                 <h2 class="text-xl sm:text-2xl font-black text-white mt-2">
                     SKOR SEMENTARA BABAK 1
                 </h2>
                 <p class="text-xs text-slate-300 mt-1">
-                    Siap bertukar paket soal dan giliran pertama di Babak 2!
+                    Siap bertukar giliran pertama untuk 23 soal Kelompok B di Babak 2!
                 </p>
             </div>
 
             <!-- Skor Sementara -->
             <div class="grid grid-cols-2 gap-2.5 bg-slate-950/85 p-3 rounded-2xl border border-slate-800 text-xs">
-                <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30">
-                    <div class="text-amber-400 font-black">PEMAIN 1</div>
+                <div class="p-2.5 rounded-xl bg-orange-950/40 border border-[#f97316]/40">
+                    <div class="text-orange-400 font-black">PEMAIN 1</div>
                     <div id="inter-p1-score" class="font-mono font-black text-xl text-white mt-0.5">450</div>
-                    <div class="text-[11px] text-slate-400">Benar: <span id="inter-p1-right" class="text-emerald-400 font-bold">0</span>/23</div>
+                    <div class="text-[11px] text-slate-400">Benar: <span id="inter-p1-right" class="text-emerald-400 font-bold">0</span>/12</div>
                 </div>
-                <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30">
+                <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-[#06b6d4]/40">
                     <div class="text-cyan-400 font-black">PEMAIN 2</div>
                     <div id="inter-p2-score" class="font-mono font-black text-xl text-white mt-0.5">450</div>
-                    <div class="text-[11px] text-slate-400">Benar: <span id="inter-p2-right" class="text-emerald-400 font-bold">0</span>/23</div>
+                    <div class="text-[11px] text-slate-400">Benar: <span id="inter-p2-right" class="text-emerald-400 font-bold">0</span>/11</div>
                 </div>
             </div>
 
             <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-2.5 text-[11px] text-indigo-200">
-                <strong>Aturan Babak 2:</strong> <strong>Pemain 2 (Bawah)</strong> memegang bom pertama dan mengerjakan 23 soal yang sebelumnya dikerjakan Pemain 1 (dan sebaliknya).
+                <strong>Aturan Babak 2 (Kartu 24–46):</strong> <strong>Pemain 2 (Bawah)</strong> memegang bom pertama dan mendapat 12 soal, sedangkan <strong>Pemain 1 (Atas)</strong> mendapat 11 soal.
             </div>
 
-            <button onclick="startRound2()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-cyan-400 to-indigo-500 hover:brightness-110 active:scale-95 text-slate-950 font-black text-sm shadow-lg transition cursor-pointer">
-                LANJUT BABAK 2 (TUKAR SOAL) ▶
+            <button onclick="startRound2()" class="w-full min-h-[48px] rounded-2xl bg-gradient-to-r from-[#06b6d4] to-indigo-500 hover:brightness-110 active:scale-95 text-slate-950 font-black text-sm shadow-lg transition cursor-pointer">
+                MULAI BABAK 2 ▶
             </button>
         </div>
     </div>
@@ -452,21 +583,21 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2.5 bg-slate-950/85 p-3.5 rounded-2xl border border-slate-800 text-xs">
-                <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30">
-                    <div class="text-amber-400 font-black">PEMAIN 1</div>
+                <div class="p-2.5 rounded-xl bg-orange-950/40 border border-[#f97316]/40">
+                    <div class="text-orange-400 font-black">PEMAIN 1</div>
                     <div id="vic-p1-score" class="font-mono font-black text-xl text-white mt-0.5">450</div>
-                    <div class="text-[11px] text-slate-400">Benar: <strong id="vic-p1-right" class="text-emerald-400">0</strong> / 46</div>
+                    <div class="text-[11px] text-slate-400">Benar: <strong id="vic-p1-right" class="text-emerald-400">0</strong> / 23</div>
                 </div>
-                <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30">
+                <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-[#06b6d4]/40">
                     <div class="text-cyan-400 font-black">PEMAIN 2</div>
                     <div id="vic-p2-score" class="font-mono font-black text-xl text-white mt-0.5">450</div>
-                    <div class="text-[11px] text-slate-400">Benar: <strong id="vic-p2-right" class="text-emerald-400">0</strong> / 46</div>
+                    <div class="text-[11px] text-slate-400">Benar: <strong id="vic-p2-right" class="text-emerald-400">0</strong> / 23</div>
                 </div>
             </div>
 
             <div class="flex flex-col gap-2">
-                <button onclick="confirmResetGame()" class="w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
-                    🔁 MAIN LAGI (ACAK PAKET BARU)
+                <button onclick="confirmResetGame()" class="w-full min-h-[46px] rounded-2xl bg-gradient-to-r from-[#f97316] to-amber-500 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
+                    MAIN LAGI 🔄
                 </button>
                 <button onclick="openBankModal()" class="w-full min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs cursor-pointer">
                     📚 Review 46 Pembahasan Lengkap
@@ -949,10 +1080,10 @@
             },
             {
                 id: 39, zone: 3,
-                q: "Level pada Blockly Games yang mengajarkan konsep algoritma berurutan (sequence), percabangan/kondisi (if-else), dan perulangan (loops) untuk mencari jalan keluar adalah...",
+                q: "Level pada Blockly Games tempat pemain menyusun urutan blok gerak maju/belok untuk mencari jalan keluar labirin menggunakan konsep sequence, percabangan (if-else), dan perulangan (loops) adalah...",
                 opts: ["Maze", "Puzzle", "Music", "Movie"],
                 ans: 0,
-                exp: "Labirin (Maze) mengajarkan konsep algoritma berurutan (sequence), percabangan (if-else), dan perulangan (loops) untuk menemukan jalan keluar."
+                exp: "Labirin (Maze) melatih penyusunan urutan blok gerak maju/belok serta mengajarkan konsep algoritma berurutan (sequence), percabangan (if-else), dan perulangan (loops)."
             },
             {
                 id: 40, zone: 3,
@@ -1024,28 +1155,29 @@
          * 4. STATE PERMAINAN ESTAFET BOM WAKTU 46 (2 BABAK)
          */
         const state = {
-            durationSeconds: 20,      // Pilihan: 15, 20, atau 25 detik
-            round: 1,                 // 1 atau 2
-            cardIndexInRound: 0,      // 0 .. 45 (46 kartu per babak)
+            durationSeconds: 30,      // Pilihan: 20, 30 (default), atau 60 detik (1 menit)
+            round: 1,                 // 1 (Kartu 1..23) atau 2 (Kartu 24..46)
+            cardIndexInRound: 0,      // 0 .. 22 (23 kartu per babak)
             holder: 1,                // 1 (Pemain 1 Atas) atau 2 (Pemain 2 Bawah)
             scores: { 1: 450, 2: 450 },
             roundCorrect: { 1: 0, 2: 0 },
             totalCorrect: { 1: 0, 2: 0 },
-            deckGroupA: [],           // 23 soal seimbang
-            deckGroupB: [],           // 23 soal seimbang
-            roundQueue: [],           // 46 kartu terurut untuk babak aktif
+            answeredCount: { 1: 0, 2: 0 },
+            deckGroupA: [],           // 23 soal Kelompok A (Babak 1)
+            deckGroupB: [],           // 23 soal Kelompok B (Babak 2)
+            roundQueue: [],           // 23 kartu terurut untuk babak aktif
             currentCard: null,
             currentShuffledOpts: [],
-            timeLeftMs: 20000,
+            timeLeftMs: 30000,
             timerInterval: null,
-            lastWholeSecond: 20,
+            lastWholeSecond: 30,
             isWaitingExplosionAck: false,
             isTransitioning: false,
             bankFilterZone: 0
         };
 
         /**
-         * 5. UTILITAS ACAK & PEMBAGIAN PAKET A (23 SOAL) & PAKET B (23 SOAL) SEIMBANG
+         * 5. UTILITAS ACAK & PEMBAGIAN KELOMPOK A (23 SOAL) & KELOMPOK B (23 SOAL)
          */
         function shuffleArray(arr) {
             const copy = [...arr];
@@ -1057,7 +1189,7 @@
         }
 
         function createBalancedDecks() {
-            // Bagi tiap zona secara merata agar Kelompok A (23) dan Kelompok B (23) memiliki bobot materi identik
+            // Bagi tiap zona secara merata agar Kelompok A (23) dan Kelompok B (23) seimbang
             const z1 = shuffleArray(QUESTIONS_46.filter(q => q.zone === 1)); // 18 -> 9 & 9
             const z2 = shuffleArray(QUESTIONS_46.filter(q => q.zone === 2)); // 12 -> 6 & 6
             const z3 = shuffleArray(QUESTIONS_46.filter(q => q.zone === 3)); // 16 -> 8 & 8
@@ -1076,36 +1208,39 @@
         }
 
         function buildRoundQueue(roundNumber) {
-            const queue = [];
             if (roundNumber === 1) {
-                // Babak 1: P1 mulai duluan (Kelompok A), P2 kedua (Kelompok B)
-                const listA = shuffleArray(state.deckGroupA);
-                const listB = shuffleArray(state.deckGroupB);
-                for (let i = 0; i < 23; i++) {
-                    queue.push(listA[i]); // indeks genap 0,2,4... -> Pemain 1
-                    queue.push(listB[i]); // indeks ganjil 1,3,5... -> Pemain 2
-                }
+                // Babak 1 (Soal 1 s.d. 23): Kelompok A (P1 mulai pertama -> 12 soal, P2 -> 11 soal)
+                state.roundQueue = shuffleArray(state.deckGroupA);
             } else {
-                // Babak 2: P2 mulai duluan (Kelompok A), P1 kedua (Kelompok B) -> Tukar soal!
-                const listA = shuffleArray(state.deckGroupA);
-                const listB = shuffleArray(state.deckGroupB);
-                for (let i = 0; i < 23; i++) {
-                    queue.push(listA[i]); // indeks genap 0,2,4... -> Pemain 2
-                    queue.push(listB[i]); // indeks ganjil 1,3,5... -> Pemain 1
-                }
+                // Babak 2 (Soal 24 s.d. 46): Kelompok B (P2 mulai pertama -> 12 soal, P1 -> 11 soal)
+                state.roundQueue = shuffleArray(state.deckGroupB);
             }
-            state.roundQueue = queue;
         }
 
         /**
-         * 6. KONTROL MULAI PERMAINAN, BABAK 1, & BABAK 2
+         * 6. FUNGSI AUTO-FULLSCREEN & KONTROL MULAI BABAK 1 / BABAK 2
          */
+        function enterFullscreen() {
+            try {
+                const elem = document.documentElement;
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen().catch(() => {});
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    }
+                }
+            } catch (e) {}
+        }
+
         function selectTimerDuration(sec) {
             state.durationSeconds = sec;
-            [15, 20, 25].forEach(d => {
+            [20, 30, 60].forEach(d => {
                 const btn = document.getElementById(`dur-btn-${d}`);
                 if (d === sec) {
-                    btn.className = "py-2 rounded-xl bg-amber-400 text-slate-950 border-2 border-amber-300 font-mono font-black text-xs shadow-md cursor-pointer transition";
+                    btn.className = "py-2 rounded-xl bg-[#f97316] text-slate-950 border-2 border-orange-300 font-mono font-black text-xs shadow-md cursor-pointer transition";
                 } else {
                     btn.className = "py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs cursor-pointer transition";
                 }
@@ -1113,6 +1248,7 @@
         }
 
         function startNewMatch() {
+            enterFullscreen();
             SoundFX.init();
             SoundFX.passBomb();
             document.getElementById('modal-start').classList.add('hidden');
@@ -1123,6 +1259,7 @@
             state.scores = { 1: 450, 2: 450 };
             state.roundCorrect = { 1: 0, 2: 0 };
             state.totalCorrect = { 1: 0, 2: 0 };
+            state.answeredCount = { 1: 0, 2: 0 };
 
             createBalancedDecks();
             buildRoundQueue(1);
@@ -1133,6 +1270,7 @@
         }
 
         function startRound2() {
+            enterFullscreen();
             SoundFX.init();
             SoundFX.passBomb();
             document.getElementById('modal-intermission').classList.add('hidden');
@@ -1160,24 +1298,25 @@
 
             const activeP = state.holder;
             const standbyP = activeP === 1 ? 2 : 1;
+            const globalCardNumber = (state.round - 1) * 23 + state.cardIndexInRound + 1;
 
             // Update HUD Tengah
             document.getElementById('hud-round-badge').textContent = `BABAK ${state.round}/2`;
-            document.getElementById('hud-queue-text').textContent = `Kartu ${state.cardIndexInRound + 1}/46`;
+            document.getElementById('hud-queue-text').textContent = `Kartu ${globalCardNumber}/46`;
             const holderEl = document.getElementById('hud-holder-text');
             if (activeP === 1) {
                 holderEl.textContent = '▲ Bom di Pemain 1 (Atas)';
-                holderEl.className = 'text-[10px] font-extrabold text-amber-400 mt-0.5 truncate';
+                holderEl.className = 'text-[10px] font-extrabold text-orange-400 mt-0.5 truncate';
             } else {
                 holderEl.textContent = '▼ Bom di Pemain 2 (Bawah)';
                 holderEl.className = 'text-[10px] font-extrabold text-cyan-400 mt-0.5 truncate';
             }
 
-            // Update Skor & Progres Soal Pemain (1..23 per pemain dalam 1 babak)
-            const playerSoalNumber = Math.floor(state.cardIndexInRound / 2) + 1;
+            // Update Skor & Jumlah Soal Terjawab (0..23 per pemain)
             document.getElementById('p1-score').textContent = state.scores[1];
             document.getElementById('p2-score').textContent = state.scores[2];
-            document.getElementById(`p${activeP}-round-prog`).textContent = `Soal ${playerSoalNumber}/23`;
+            document.getElementById('p1-answered').textContent = state.answeredCount[1];
+            document.getElementById('p2-answered').textContent = state.answeredCount[2];
 
             // Kunci panel standby & buka panel pemegang bom
             document.getElementById(`p${standbyP}-standby-mask`).classList.remove('hidden');
@@ -1204,7 +1343,7 @@
             zMobile.className = `sm:hidden text-[10px] font-bold px-1.5 py-0.2 rounded ${zoneStyle}`;
 
             document.getElementById(`p${activeP}-card-label`).textContent =
-                `💣 BOM DI TANGANMU • KARTU #${state.cardIndexInRound + 1} (KISI #${card.id})`;
+                `💣 BOM DI TANGANMU • KARTU #${globalCardNumber} (KISI #${card.id})`;
             document.getElementById(`p${activeP}-question-text`).innerHTML = card.q;
 
             // Acak 4 pilihan jawaban
@@ -1264,18 +1403,24 @@
 
         function updateTimerVisual() {
             const display = document.getElementById('bomb-timer-display');
+            const bar = document.getElementById('bomb-timer-bar');
             const widget = document.getElementById('bomb-widget');
             const sec = (state.timeLeftMs / 1000).toFixed(1);
+            const pct = Math.max(0, Math.min(100, (state.timeLeftMs / (state.durationSeconds * 1000)) * 100));
+
             display.textContent = sec;
+            bar.style.width = `${pct}%`;
 
             if (state.timeLeftMs <= 5000 && state.timeLeftMs > 0) {
-                display.className = 'font-mono font-black text-xl sm:text-2xl text-rose-400 tracking-tight';
+                display.className = 'font-mono font-black text-lg sm:text-xl text-rose-400 tracking-tight';
+                bar.className = 'h-full bg-rose-500 transition-all duration-100 ease-linear';
                 widget.classList.add('border-rose-500', 'bomb-panic');
-                widget.classList.remove('border-amber-500/50');
+                widget.classList.remove('border-[#f97316]/60');
             } else {
-                display.className = 'font-mono font-black text-xl sm:text-2xl text-amber-300 tracking-tight';
+                display.className = 'font-mono font-black text-lg sm:text-xl text-orange-300 tracking-tight';
+                bar.className = 'h-full bg-[#f97316] transition-all duration-100 ease-linear';
                 widget.classList.remove('border-rose-500', 'bomb-panic');
-                widget.classList.add('border-amber-500/50');
+                widget.classList.add('border-[#f97316]/60');
             }
         }
 
@@ -1314,8 +1459,10 @@
                 state.scores[player] += 10;
                 state.roundCorrect[player] += 1;
                 state.totalCorrect[player] += 1;
+                state.answeredCount[player] += 1;
 
                 document.getElementById(`p${player}-score`).textContent = state.scores[player];
+                document.getElementById(`p${player}-answered`).textContent = state.answeredCount[player];
                 showScoreDelta(player, '+10', true);
                 SoundFX.passBomb();
 
@@ -1323,7 +1470,7 @@
 
                 setTimeout(() => {
                     advanceToNextCard();
-                }, 460);
+                }, 550);
             } else {
                 // JAWABAN SALAH: Bom Langsung Meledak!
                 clickedBtn.className = "min-h-[44px] text-left px-2.5 py-2 rounded-xl bg-rose-700 border-2 border-rose-400 text-[11px] sm:text-xs font-black text-white flex items-center gap-2 leading-tight";
@@ -1338,7 +1485,9 @@
 
             const player = state.holder;
             state.scores[player] -= 10;
+            state.answeredCount[player] += 1;
             document.getElementById(`p${player}-score`).textContent = state.scores[player];
+            document.getElementById(`p${player}-answered`).textContent = state.answeredCount[player];
             showScoreDelta(player, '-10', false);
 
             // Efek getar ledakan pada panel pemain dan bom tengah
@@ -1375,8 +1524,8 @@
         function advanceToNextCard() {
             state.cardIndexInRound++;
 
-            // Cek apakah seluruh 46 kartu pada babak aktif sudah selesai
-            if (state.cardIndexInRound >= 46) {
+            // Cek apakah seluruh 23 kartu pada babak aktif sudah selesai
+            if (state.cardIndexInRound >= 23) {
                 stopBombTimer();
                 if (state.round === 1) {
                     showRound1Intermission();
@@ -1433,10 +1582,14 @@
 
         function toggleFullscreen() {
             try {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                    enterFullscreen();
+                } else if (document.exitFullscreen) {
                     document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
                 }
             } catch (e) {}
         }
