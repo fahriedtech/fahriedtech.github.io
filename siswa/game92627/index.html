@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MONOPOLI INFORMATIKA: Duel 1 HP (4 Ronde • 40 Soal)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Classic Monopoly Typography & Board Aesthetics */
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background-color: #CDE6D0;
+      color: #1A1A1A;
+    }
+
+    .font-monopoly {
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    /* Classic Monopoly Red Banner */
+    .monopoly-banner {
+      background: linear-gradient(180deg, #E53935 0%, #C62828 100%);
+      border: 3px solid #FFFFFF;
+      outline: 3px solid #1A1A1A;
+      box-shadow: 0 4px 0 #1A1A1A;
+      color: #FFFFFF;
+      text-shadow: 2px 2px 0 #1A1A1A, -1px -1px 0 #1A1A1A, 1px -1px 0 #1A1A1A, -1px 1px 0 #1A1A1A;
+    }
+
+    /* Classic Deed Card Surface */
+    .deed-card {
+      background-color: #FAF6EB;
+      border: 2px solid #1A1A1A;
+      box-shadow: 0 3px 0 #1A1A1A;
+    }
+
+    /* Board Grid 5x5 (16 perimeter tiles + 3x3 center arena) */
+    .board-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 1fr 1fr 1fr 1.02fr;
+      grid-template-rows: 1.02fr 1fr 1fr 1fr 1.02fr;
+      background-color: #1A1A1A;
+      gap: 2px;
+      border: 3px solid #1A1A1A;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+      transform-origin: center center;
+      transform: rotate(90deg);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+    }
+
+    .board-tile {
+      background-color: #FAF6EB;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transition: transform 0.15s ease, background-color 0.2s ease;
+    }
+
+    .board-tile.tile-active-p1 {
+      box-shadow: inset 0 0 0 3px #047857;
+    }
+
+    .board-tile.tile-active-p2 {
+      box-shadow: inset 0 0 0 3px #B91C1C;
+    }
+
+    .board-center {
+      grid-column: 2 / 5;
+      grid-row: 2 / 5;
+      background-color: #CDE6D0;
+      background-image: radial-gradient(circle at center, #DDF0DF 0%, #BFE0C3 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .center-upright-box {
+      transform-origin: center center;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Player Zones */
+    .zone-p1 {
+      transform: rotate(180deg);
+      background: linear-gradient(180deg, #E8F5E9 0%, #FAF6EB 100%);
+      border-top: 3px solid #1A1A1A;
+    }
+
+    .zone-p2 {
+      background: linear-gradient(180deg, #FFEBEE 0%, #FAF6EB 100%);
+      border-top: 3px solid #1A1A1A;
+    }
+
+    /* Tactile Monopoly Buttons */
+    .btn-mono {
+      border: 2px solid #1A1A1A;
+      box-shadow: 0 3px 0 #1A1A1A;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+    }
+
+    .btn-mono:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #1A1A1A;
+    }
+
+    .btn-mono:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      box-shadow: 0 1px 0 #1A1A1A;
+    }
+
+    /* Dice Rolling Animation */
+    @keyframes diceShake {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(-16deg) scale(1.1); }
+      40% { transform: rotate(14deg) scale(1.12); }
+      60% { transform: rotate(-12deg) scale(1.08); }
+      80% { transform: rotate(10deg) scale(1.1); }
+    }
+
+    .dice-rolling {
+      animation: diceShake 0.45s ease-in-out infinite;
+    }
+
+    /* Token Bounce Animation */
+    @keyframes tokenHop {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.18); }
+    }
+
+    .token-hop {
+      animation: tokenHop 0.24s ease-out;
+    }
+
+    /* Pulse Highlight for Active Action */
+    @keyframes pulseBorder {
+      0%, 100% { box-shadow: 0 3px 0 #1A1A1A, 0 0 0 0 rgba(211, 47, 47, 0.55); }
+      50% { box-shadow: 0 3px 0 #1A1A1A, 0 0 0 6px rgba(211, 47, 47, 0); }
+    }
+
+    .pulse-action {
+      animation: pulseBorder 1.2s infinite;
+    }
+
+    /* Center Card Flip Transition */
+    .card-rotatable {
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-origin: center center;
+    }
+
+    /* Custom subtle scrollbar inside question text if needed */
+    .thin-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .thin-scroll::-webkit-scrollbar-thumb {
+      background: rgba(26, 26, 26, 0.25);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="flex flex-col justify-between">
+
+  <!-- ==================== START SCREEN ==================== -->
+  <div id="startScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 bg-[#CDE6D0] overflow-y-auto">
+    <div class="w-full max-w-md deed-card rounded-2xl p-5 flex flex-col items-center text-center relative">
+      <!-- Decorative Corner Badges -->
+      <div class="w-full flex justify-between items-center text-[11px] font-bold text-stone-700 mb-2">
+        <span class="px-2 py-0.5 bg-[#FAF6EB] border border-[#1A1A1A] rounded">EDISI INFORMATIKA IX</span>
+        <span class="px-2 py-0.5 bg-[#FBC02D] border border-[#1A1A1A] rounded">4 RONDE &bull; 40 SOAL</span>
+      </div>
+
+      <!-- Classic Monopoly Red Title Banner -->
+      <div class="monopoly-banner w-full py-3 px-4 rounded-xl my-1">
+        <h1 class="font-monopoly text-3xl sm:text-4xl font-bold tracking-wider uppercase leading-none">
+          MONOPOLI INFORMATIKA
+        </h1>
+        <p class="text-xs sm:text-sm font-bold tracking-widest mt-1 text-amber-200">
+          DUEL 1 HP &bull; ATAS LAWAN BAWAH
+        </p>
+      </div>
+
+      <!-- Tokens Preview -->
+      <div class="grid grid-cols-2 gap-3 w-full my-3">
+        <div class="bg-emerald-50 border-2 border-[#1A1A1A] rounded-xl p-2.5 flex flex-col items-center">
+          <div class="w-10 h-10 flex items-center justify-center mb-1">
+            <!-- Top Hat SVG -->
+            <svg viewBox="0 0 64 64" class="w-9 h-9">
+              <ellipse cx="32" cy="50" rx="26" ry="7" fill="#1A1A1A"/>
+              <path d="M17 16 L47 16 L45 48 L19 48 Z" fill="#263238" stroke="#1A1A1A" stroke-width="2.5"/>
+              <rect x="18" y="39" width="28" height="6" fill="#059669"/>
+              <ellipse cx="32" cy="16" rx="15" ry="4" fill="#37474F" stroke="#1A1A1A" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="font-monopoly text-sm font-bold text-emerald-900">PEMAIN 1 (ATAS)</span>
+          <span class="text-[11px] font-semibold text-stone-600">Layar Terbalik 180&deg;</span>
+          <span class="mt-1 text-xs font-extrabold text-emerald-800 bg-emerald-200/70 px-2 py-0.5 rounded border border-[#1A1A1A]">Modal: M$ 1.000</span>
+        </div>
+
+        <div class="bg-rose-50 border-2 border-[#1A1A1A] rounded-xl p-2.5 flex flex-col items-center">
+          <div class="w-10 h-10 flex items-center justify-center mb-1">
+            <!-- Classic Race Car SVG -->
+            <svg viewBox="0 0 64 64" class="w-10 h-10">
+              <path d="M10 38 L16 26 L36 24 L50 32 L56 38 L54 44 L10 44 Z" fill="#D32F2F" stroke="#1A1A1A" stroke-width="2.5"/>
+              <path d="M22 26 L26 19 L37 19 L41 26 Z" fill="#90CAF9" stroke="#1A1A1A" stroke-width="2"/>
+              <circle cx="19" cy="44" r="7" fill="#212121" stroke="#1A1A1A" stroke-width="2"/>
+              <circle cx="19" cy="44" r="3" fill="#E0E0E0"/>
+              <circle cx="46" cy="44" r="7" fill="#212121" stroke="#1A1A1A" stroke-width="2"/>
+              <circle cx="46" cy="44" r="3" fill="#E0E0E0"/>
+            </svg>
+          </div>
+          <span class="font-monopoly text-sm font-bold text-rose-900">PEMAIN 2 (BAWAH)</span>
+          <span class="text-[11px] font-semibold text-stone-600">Layar Normal 0&deg;</span>
+          <span class="mt-1 text-xs font-extrabold text-rose-800 bg-rose-200/70 px-2 py-0.5 rounded border border-[#1A1A1A]">Modal: M$ 1.000</span>
+        </div>
+      </div>
+
+      <!-- Simple 3-Step Rule Box -->
+      <div class="w-full bg-[#FAF6EB] border-2 border-[#1A1A1A] rounded-xl p-3 text-left text-xs space-y-1.5 mb-4">
+        <div class="font-monopoly text-sm font-bold text-[#1A1A1A] border-b border-stone-300 pb-1 flex items-center justify-between">
+          <span>ATURAN MAIN SINGKAT</span>
+          <span class="text-[11px] font-sans font-bold text-emerald-800">Peta 90&deg; &bull; Kartu Menghadap Pemain</span>
+        </div>
+        <p class="font-medium text-stone-800"><span class="inline-block w-4 h-4 text-center rounded bg-[#2E7D32] text-white font-bold mr-1">1</span> <strong>Jawab Benar &rarr; Dapat Dadu:</strong> Jawab soal giliranmu untuk membuka tombol Kocok Dadu.</p>
+        <p class="font-medium text-stone-800"><span class="inline-block w-4 h-4 text-center rounded bg-[#F57C00] text-white font-bold mr-1">2</span> <strong>Peta 90&deg; &amp; Kartu Otomatis:</strong> Papan jalan menghadap 90&deg; agar adil dilihat dari atas/bawah, sementara kartu soal di tengah otomatis menghadap pemain yang mendapat giliran.</p>
+        <p class="font-medium text-stone-800"><span class="inline-block w-4 h-4 text-center rounded bg-[#D32F2F] text-white font-bold mr-1">3</span> <strong>4 Ronde (Per 10 Soal):</strong> R2 aktif <em>Curi Dadu</em>, R3 sewa 1,5&times;, R4 <em>Overclock</em> sewa 2&times; &amp; gaji M$ 400!</p>
+      </div>
+
+      <!-- Start Button -->
+      <button id="btnStartGame" onclick="startGame()" class="btn-mono w-full py-3.5 px-6 rounded-xl bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-monopoly text-xl sm:text-2xl font-bold tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer">
+        <span>MULAI BERMAIN</span>
+        <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN SPLIT-SCREEN ARENA ==================== -->
+  <main id="gameArena" class="hidden w-full h-[100dvh] flex flex-col justify-between overflow-hidden">
+
+    <!-- ==================== TOP ZONE: PLAYER 1 (ROTATED 180 DEG) ==================== -->
+    <section id="zoneP1" class="zone-p1 w-full h-[22dvh] min-h-[126px] px-2.5 py-1.5 flex flex-col justify-between relative">
+      <!-- Top Row: Player Info & Status -->
+      <div class="flex items-center justify-between gap-1.5">
+        <div class="flex items-center gap-1.5">
+          <div class="w-7 h-7 rounded-lg bg-emerald-700 border-2 border-[#1A1A1A] flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 64 64" class="w-5 h-5">
+              <ellipse cx="32" cy="50" rx="25" ry="7" fill="#FFFFFF"/>
+              <path d="M18 16 L46 16 L44 48 L20 48 Z" fill="#1A1A1A"/>
+              <rect x="19" y="39" width="26" height="5" fill="#FBC02D"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1">
+              <span class="font-monopoly text-xs sm:text-sm font-bold text-emerald-950 leading-none">PEMAIN 1</span>
+              <span id="p1TurnBadge" class="px-1.5 py-0.5 text-[10px] font-extrabold rounded bg-emerald-700 text-white border border-[#1A1A1A] leading-none">GILIRANMU</span>
+            </div>
+            <div class="flex items-center gap-2 mt-0.5 text-[11px] font-bold">
+              <span id="p1Money" class="text-emerald-900 bg-emerald-200/80 px-1.5 rounded border border-emerald-700">M$ 1.000</span>
+              <span id="p1Props" class="text-stone-700">Aset: 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Hint Pill -->
+        <div id="p1StatusMsg" class="text-[10px] sm:text-xs font-bold px-2 py-1 rounded-lg bg-[#FAF6EB] border border-[#1A1A1A] text-stone-800 max-w-[48%] truncate text-right">
+          Jawab soal untuk dadu!
+        </div>
+      </div>
+
+      <!-- Middle/Bottom Row: Answer Buttons OR Dice / Buy Actions -->
+      <div class="flex-1 flex items-center gap-1.5 mt-1">
+        <!-- 4 Option Buttons A B C D -->
+        <div id="p1OptionsGrid" class="grid grid-cols-4 gap-1.5 flex-1 h-full max-h-[58px]">
+          <button onclick="handleAnswer(0, 0)" id="p1Opt0" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>A</span>
+          </button>
+          <button onclick="handleAnswer(0, 1)" id="p1Opt1" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>B</span>
+          </button>
+          <button onclick="handleAnswer(0, 2)" id="p1Opt2" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>C</span>
+          </button>
+          <button onclick="handleAnswer(0, 3)" id="p1Opt3" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>D</span>
+          </button>
+        </div>
+
+        <!-- Action Panel (Dice / Buy / Skip) -->
+        <div id="p1ActionBox" class="flex items-center gap-1.5 h-full max-h-[58px]">
+          <button onclick="rollDice(0)" id="p1BtnDice" disabled class="btn-mono h-full px-3 rounded-xl bg-[#FBC02D] text-[#1A1A1A] font-monopoly text-xs sm:text-sm font-bold flex flex-col items-center justify-center leading-tight">
+            <span class="text-base leading-none">&#9861;</span>
+            <span>DADU</span>
+          </button>
+          <button onclick="buyProperty(0)" id="p1BtnBuy" class="hidden btn-mono h-full px-2.5 rounded-xl bg-[#2E7D32] text-white font-monopoly text-xs font-bold flex flex-col items-center justify-center leading-tight">
+            <span>BELI</span>
+            <span id="p1BuyPrice" class="text-[10px] font-sans">M$ 120</span>
+          </button>
+          <button onclick="skipProperty(0)" id="p1BtnSkip" class="hidden btn-mono h-full px-2 rounded-xl bg-stone-300 text-[#1A1A1A] font-monopoly text-xs font-bold flex items-center justify-center">
+            LEWATI
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MIDDLE ZONE: 16-TILE MONOPOLY BOARD (90 DEG) ==================== -->
+    <section id="middleArenaContainer" class="w-full h-[56dvh] flex items-center justify-center bg-[#B6D7B9] relative overflow-hidden">
+      <div id="monopolyBoard" class="board-grid rounded-lg">
+        <!-- Tiles & Center Arena are rendered dynamically by JS into this 5x5 grid -->
+      </div>
+    </section>
+
+    <!-- ==================== BOTTOM ZONE: PLAYER 2 (NORMAL 0 DEG) ==================== -->
+    <section id="zoneP2" class="zone-p2 w-full h-[22dvh] min-h-[126px] px-2.5 py-1.5 flex flex-col justify-between relative">
+      <!-- Top Row: Player Info & Status -->
+      <div class="flex items-center justify-between gap-1.5">
+        <div class="flex items-center gap-1.5">
+          <div class="w-7 h-7 rounded-lg bg-rose-700 border-2 border-[#1A1A1A] flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 64 64" class="w-6 h-6">
+              <path d="M10 38 L16 26 L36 24 L50 32 L56 38 L54 44 L10 44 Z" fill="#FFFFFF"/>
+              <circle cx="19" cy="44" r="6" fill="#1A1A1A"/>
+              <circle cx="46" cy="44" r="6" fill="#1A1A1A"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1">
+              <span class="font-monopoly text-xs sm:text-sm font-bold text-rose-950 leading-none">PEMAIN 2</span>
+              <span id="p2TurnBadge" class="hidden px-1.5 py-0.5 text-[10px] font-extrabold rounded bg-rose-700 text-white border border-[#1A1A1A] leading-none">GILIRANMU</span>
+            </div>
+            <div class="flex items-center gap-2 mt-0.5 text-[11px] font-bold">
+              <span id="p2Money" class="text-rose-900 bg-rose-200/80 px-1.5 rounded border border-rose-700">M$ 1.000</span>
+              <span id="p2Props" class="text-stone-700">Aset: 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Hint Pill -->
+        <div id="p2StatusMsg" class="text-[10px] sm:text-xs font-bold px-2 py-1 rounded-lg bg-[#FAF6EB] border border-[#1A1A1A] text-stone-800 max-w-[48%] truncate text-right">
+          Menunggu giliran...
+        </div>
+      </div>
+
+      <!-- Middle/Bottom Row: Answer Buttons OR Dice / Buy Actions -->
+      <div class="flex-1 flex items-center gap-1.5 mt-1">
+        <div id="p2OptionsGrid" class="grid grid-cols-4 gap-1.5 flex-1 h-full max-h-[58px]">
+          <button onclick="handleAnswer(1, 0)" id="p2Opt0" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>A</span>
+          </button>
+          <button onclick="handleAnswer(1, 1)" id="p2Opt1" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>B</span>
+          </button>
+          <button onclick="handleAnswer(1, 2)" id="p2Opt2" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>C</span>
+          </button>
+          <button onclick="handleAnswer(1, 3)" id="p2Opt3" class="btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none">
+            <span>D</span>
+          </button>
+        </div>
+
+        <div id="p2ActionBox" class="flex items-center gap-1.5 h-full max-h-[58px]">
+          <button onclick="rollDice(1)" id="p2BtnDice" disabled class="btn-mono h-full px-3 rounded-xl bg-[#FBC02D] text-[#1A1A1A] font-monopoly text-xs sm:text-sm font-bold flex flex-col items-center justify-center leading-tight">
+            <span class="text-base leading-none">&#9861;</span>
+            <span>DADU</span>
+          </button>
+          <button onclick="buyProperty(1)" id="p2BtnBuy" class="hidden btn-mono h-full px-2.5 rounded-xl bg-[#2E7D32] text-white font-monopoly text-xs font-bold flex flex-col items-center justify-center leading-tight">
+            <span>BELI</span>
+            <span id="p2BuyPrice" class="text-[10px] font-sans">M$ 120</span>
+          </button>
+          <button onclick="skipProperty(1)" id="p2BtnSkip" class="hidden btn-mono h-full px-2 rounded-xl bg-stone-300 text-[#1A1A1A] font-monopoly text-xs font-bold flex items-center justify-center">
+            LEWATI
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODAL: ZOOM DIAGRAM / TABLE (FACING ACTIVE PLAYER) ==================== -->
+  <div id="zoomModal" onclick="closeZoomModal()" class="hidden fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4 overflow-hidden">
+    <div id="zoomModalCard" onclick="event.stopPropagation()" class="card-rotatable deed-card rounded-2xl p-3 flex flex-col justify-between w-full max-w-[440px] max-h-[82dvh]">
+      <div class="flex justify-between items-center border-b-2 border-[#1A1A1A] pb-1.5 mb-2 shrink-0">
+        <span class="font-monopoly text-sm sm:text-base font-bold">PERBESAR GAMBAR SOAL</span>
+        <div class="flex items-center gap-1.5">
+          <button id="btnZoomRotateDir" onclick="toggleZoomFlip()" class="btn-mono px-2 py-1 rounded-lg bg-amber-300 text-xs font-bold cursor-pointer">&#128260; Putar 180&deg;</button>
+          <button onclick="closeZoomModal()" class="btn-mono px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs font-bold cursor-pointer">TUTUP &times;</button>
+        </div>
+      </div>
+      <div id="zoomModalBody" class="flex-1 overflow-auto flex items-center justify-center p-2 bg-white rounded-xl border border-stone-300">
+        <!-- Cloned diagram injected here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ROUND SUMMARY (EVERY 10 QUESTIONS) ==================== -->
+  <div id="roundModal" class="hidden fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4">
+    <div class="deed-card rounded-2xl p-5 w-full max-w-md text-center">
+      <div class="monopoly-banner py-2 px-4 rounded-xl mb-3">
+        <h2 id="roundModalTitle" class="font-monopoly text-2xl font-bold uppercase">REKAP RONDE 1 SELESAI</h2>
+        <p id="roundModalSub" class="text-xs font-bold text-amber-200">10 Soal Telah Selesai Dimainkan</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 my-3 text-left">
+        <div class="bg-emerald-50 border-2 border-[#1A1A1A] rounded-xl p-3">
+          <div class="font-monopoly text-sm font-bold text-emerald-900">PEMAIN 1 (TOPI)</div>
+          <div id="recapP1Cash" class="text-xs font-semibold text-stone-700 mt-1">Tunai: M$ 1.000</div>
+          <div id="recapP1Prop" class="text-xs font-semibold text-stone-700">Aset: M$ 0</div>
+          <div id="recapP1Total" class="font-monopoly text-base font-bold text-emerald-800 border-t border-emerald-300 mt-1.5 pt-1">Total: M$ 1.000</div>
+        </div>
+        <div class="bg-rose-50 border-2 border-[#1A1A1A] rounded-xl p-3">
+          <div class="font-monopoly text-sm font-bold text-rose-900">PEMAIN 2 (MOBIL)</div>
+          <div id="recapP2Cash" class="text-xs font-semibold text-stone-700 mt-1">Tunai: M$ 1.000</div>
+          <div id="recapP2Prop" class="text-xs font-semibold text-stone-700">Aset: M$ 0</div>
+          <div id="recapP2Total" class="font-monopoly text-base font-bold text-rose-800 border-t border-rose-300 mt-1.5 pt-1">Total: M$ 1.000</div>
+        </div>
+      </div>
+
+      <div id="recapSubsidyBanner" class="bg-amber-100 border-2 border-[#1A1A1A] rounded-xl p-2.5 text-xs font-bold text-amber-950 mb-3">
+        Dana Subsidi Server +M$ 150 diberikan kepada pemain yang tertinggal!
+      </div>
+
+      <div id="nextRoundRuleBox" class="bg-white border-2 border-[#1A1A1A] rounded-xl p-3 text-left text-xs mb-4">
+        <div class="font-monopoly text-sm font-bold text-[#D32F2F] mb-1">ATURAN RONDE BERIKUTNYA:</div>
+        <p id="nextRoundRuleDesc" class="font-semibold text-stone-800"></p>
+      </div>
+
+      <button onclick="continueNextRound()" class="btn-mono w-full py-3 rounded-xl bg-[#2E7D32] text-white font-monopoly text-lg font-bold tracking-wider uppercase cursor-pointer">
+        LANJUT RONDE BERIKUTNYA &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: FINAL GAME OVER ==================== -->
+  <div id="gameOverModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="deed-card rounded-2xl p-5 w-full max-w-md text-center">
+      <div class="monopoly-banner py-2.5 px-4 rounded-xl mb-3">
+        <h2 class="font-monopoly text-2xl sm:text-3xl font-bold uppercase">PERMAINAN SELESAI!</h2>
+        <p id="gameOverReason" class="text-xs font-bold text-amber-200">40 Soal Informatika Telah Tuntas</p>
+      </div>
+
+      <div id="winnerBanner" class="my-3 py-3 px-4 rounded-xl bg-[#FBC02D] border-2 border-[#1A1A1A] shadow">
+        <div class="text-xs font-extrabold uppercase tracking-wider text-stone-900">PEMENANG MONOPOLI INFORMATIKA</div>
+        <div id="winnerName" class="font-monopoly text-2xl sm:text-3xl font-bold text-[#1A1A1A] mt-0.5">PEMAIN 1</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 my-3 text-left">
+        <div class="bg-emerald-50 border-2 border-[#1A1A1A] rounded-xl p-3">
+          <div class="font-monopoly text-sm font-bold text-emerald-900">PEMAIN 1 (TOPI)</div>
+          <div id="finalP1Cash" class="text-xs font-semibold text-stone-700 mt-1">Tunai: M$ 0</div>
+          <div id="finalP1Prop" class="text-xs font-semibold text-stone-700">Properti &amp; Bangunan: M$ 0</div>
+          <div id="finalP1Total" class="font-monopoly text-base font-bold text-emerald-800 border-t border-emerald-300 mt-1.5 pt-1">Kekayaan: M$ 0</div>
+        </div>
+        <div class="bg-rose-50 border-2 border-[#1A1A1A] rounded-xl p-3">
+          <div class="font-monopoly text-sm font-bold text-rose-900">PEMAIN 2 (MOBIL)</div>
+          <div id="finalP2Cash" class="text-xs font-semibold text-stone-700 mt-1">Tunai: M$ 0</div>
+          <div id="finalP2Prop" class="text-xs font-semibold text-stone-700">Properti &amp; Bangunan: M$ 0</div>
+          <div id="finalP2Total" class="font-monopoly text-base font-bold text-rose-800 border-t border-rose-300 mt-1.5 pt-1">Kekayaan: M$ 0</div>
+        </div>
+      </div>
+
+      <button onclick="resetGame()" class="btn-mono w-full py-3 rounded-xl bg-[#1565C0] text-white font-monopoly text-lg font-bold tracking-wider uppercase cursor-pointer">
+        MAIN LAGI DARI AWAL &#8635;
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. WEB AUDIO API & SPEECH SYNTHESIZER (OFFLINE CLASSIC BOARD SOUNDS)
+       ========================================================================= */
+    let audioCtx = null;
+    let isMuted = false;
+
+    function initAudio() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+          }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } catch (e) {
+        // Ignore audio context restriction errors
+      }
+    }
+
+    function playTone(freq, type, duration, delay = 0, gainVal = 0.16) {
+      if (isMuted || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + delay);
+        osc.stop(audioCtx.currentTime + delay + duration);
+      } catch (e) {}
+    }
+
+    const SFX = {
+      correct: () => {
+        playTone(523.25, 'triangle', 0.14, 0, 0.2);
+        playTone(659.25, 'triangle', 0.14, 0.09, 0.2);
+        playTone(783.99, 'triangle', 0.24, 0.18, 0.22);
+      },
+      wrong: () => {
+        playTone(220, 'sawtooth', 0.18, 0, 0.16);
+        playTone(175, 'sawtooth', 0.26, 0.14, 0.16);
+      },
+      dice: () => {
+        for (let i = 0; i < 5; i++) {
+          playTone(300 + (i % 3) * 140, 'square', 0.05, i * 0.07, 0.1);
+        }
+      },
+      step: () => {
+        playTone(440, 'sine', 0.07, 0, 0.15);
+      },
+      cash: () => {
+        playTone(987.77, 'sine', 0.1, 0, 0.18);
+        playTone(1318.51, 'sine', 0.28, 0.08, 0.2);
+      },
+      rent: () => {
+        playTone(493.88, 'triangle', 0.12, 0, 0.16);
+        playTone(392.00, 'triangle', 0.22, 0.1, 0.16);
+      },
+      card: () => {
+        playTone(587.33, 'sine', 0.1, 0, 0.14);
+        playTone(880.00, 'sine', 0.18, 0.08, 0.16);
+      },
+      win: () => {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+        notes.forEach((n, idx) => playTone(n, 'triangle', 0.18, idx * 0.12, 0.22));
+      }
+    };
+
+    function speakText(text) {
+      if (isMuted) return;
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = 'id-ID';
+          utter.rate = 1.12;
+          utter.pitch = 1.05;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {}
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      const btn = document.getElementById('btnMuteToggle');
+      if (btn) btn.innerHTML = isMuted ? '&#128263;' : '&#128266;';
+    }
+
+    function toggleFullscreen() {
+      try {
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          }
+        }
+      } catch (e) {}
+    }
+
+    /* =========================================================================
+       2. BOARD TILES DATA (16 CLASSIC MONOPOLY INFORMATICS TILES)
+       ========================================================================= */
+    // Grid positions in a 5x5 grid (1-indexed row, col) clockwise starting bottom-right
+    const BOARD_TILES = [
+      { id: 0,  row: 5, col: 5, type: 'start',     name: 'START',        sub: 'Gaji M$ 200', color: '#D32F2F' },
+      { id: 1,  row: 5, col: 4, type: 'property',  name: 'Jl. Algoritma',price: 120, rent: 40,  color: '#8B4513' },
+      { id: 2,  row: 5, col: 3, type: 'chest',     name: 'DANA UMUM',    sub: 'Kartu Kas',   color: '#1565C0' },
+      { id: 3,  row: 5, col: 2, type: 'property',  name: 'Jl. Flowchart',price: 140, rent: 50,  color: '#8B4513' },
+      { id: 4,  row: 5, col: 1, type: 'jail',      name: 'KARANTINA',    sub: 'Kunjungan',   color: '#F57C00' },
+      { id: 5,  row: 4, col: 1, type: 'property',  name: 'Stasiun Stack',price: 160, rent: 60,  color: '#87CEEB' },
+      { id: 6,  row: 3, col: 1, type: 'chance',    name: 'KESEMPATAN',   sub: 'Kartu Aksi',  color: '#F57C00' },
+      { id: 7,  row: 2, col: 1, type: 'property',  name: 'Taman Tree',   price: 180, rent: 70,  color: '#87CEEB' },
+      { id: 8,  row: 1, col: 1, type: 'parking',   name: 'PARKIR BEBAS', sub: '+M$ 100',     color: '#D32F2F' },
+      { id: 9,  row: 1, col: 2, type: 'property',  name: 'Kompleks Docs',price: 200, rent: 80,  color: '#D81B60' },
+      { id: 10, row: 1, col: 3, type: 'tax',       name: 'PAJAK DATA',   sub: 'R3-4: 15%',   color: '#455A64' },
+      { id: 11, row: 1, col: 4, type: 'property',  name: 'Menara Excel', price: 220, rent: 90,  color: '#D81B60' },
+      { id: 12, row: 1, col: 5, type: 'gotojail',  name: 'MASUK KARANTINA', sub: 'Ke Petak 4', color: '#1565C0' },
+      { id: 13, row: 2, col: 5, type: 'property',  name: 'Studio Slide', price: 240, rent: 100, color: '#F57C00' },
+      { id: 14, row: 3, col: 5, type: 'chance',    name: 'KESEMPATAN',   sub: 'Kartu Aksi',  color: '#F57C00' },
+      { id: 15, row: 4, col: 5, type: 'property',  name: 'Gedung Vlog',  price: 260, rent: 120, color: '#1565C0' }
+    ];
+
+    const CHANCE_CARDS = [
+      { title: 'KESEMPATAN: Algoritma Efisien!', desc: 'Kode programmu berjalan tanpa bug. Maju langsung ke START & terima gaji!', action: 'goto_start', isFine: false },
+      { title: 'KESEMPATAN: Jalur Terpendek!', desc: 'Menemukan rute graf tercepat. Maju 3 langkah ke depan!', action: 'move_3', isFine: false },
+      { title: 'KESEMPATAN: Hibah Inovasi Digital', desc: 'Karya vlog edukasimu viral! Terima bonus M$ 150.', action: 'gain_150', isFine: false },
+      { title: 'KESEMPATAN: Salah Rumus Spreadsheet', desc: 'Laporan kas tidak seimbang. Bayar denda audit M$ 100.', action: 'fine_100', isFine: true }
+    ];
+
+    const CHEST_CARDS = [
+      { title: 'DANA UMUM: Dividen Server', desc: 'Keuntungan penyimpanan cloud cair! Terima M$ 180.', action: 'gain_180', isFine: false },
+      { title: 'DANA UMUM: Hadiah Lomba Desain', desc: 'Juara 1 infografis presentasi! Terima M$ 120.', action: 'gain_120', isFine: false },
+      { title: 'DANA UMUM: Biaya Pemeliharaan', desc: 'Perbaikan jaringan kabel sekolah. Bayar M$ 90.', action: 'fine_90', isFine: true },
+      { title: 'DANA UMUM: Cek Saldo Kas', desc: 'Kas kelas surplus! Terima bonus M$ 100.', action: 'gain_100', isFine: false }
+    ];
+
+    /* =========================================================================
+       3. SVG DIAGRAMS & SPREADSHEET TABLES FOR VISUAL QUESTIONS
+       ========================================================================= */
+    function getDiagramHTML(type) {
+      switch (type) {
+        case 'tree_org':
+          return `
+            <svg viewBox="0 0 360 155" class="w-full max-h-[115px] bg-white rounded border border-stone-300 p-1">
+              <g stroke="#1A1A1A" stroke-width="1.8" fill="none">
+                <line x1="180" y1="24" x2="180" y2="62"/>
+                <line x1="95" y1="42" x2="265" y2="42"/>
+                <line x1="95" y1="62" x2="265" y2="62"/>
+                <line x1="95" y1="62" x2="95" y2="75"/>
+                <line x1="265" y1="62" x2="265" y2="75"/>
+                <line x1="95" y1="98" x2="95" y2="112"/>
+                <line x1="35" y1="112" x2="155" y2="112"/>
+                <line x1="35" y1="112" x2="35" y2="124"/>
+                <line x1="95" y1="112" x2="95" y2="124"/>
+                <line x1="155" y1="112" x2="155" y2="124"/>
+                <line x1="265" y1="98" x2="265" y2="112"/>
+                <line x1="225" y1="112" x2="305" y2="112"/>
+                <line x1="225" y1="112" x2="225" y2="124"/>
+                <line x1="305" y1="112" x2="305" y2="124"/>
+              </g>
+              <g font-family="Inter, sans-serif" font-size="10" font-weight="700" text-anchor="middle">
+                <rect x="145" y="4" width="70" height="20" rx="5" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.6"/>
+                <text x="180" y="17" fill="#1A1A1A">Ketua</text>
+                <rect x="45" y="32" width="75" height="20" rx="5" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+                <text x="82" y="45">Wakil Ketua</text>
+                <rect x="240" y="32" width="75" height="20" rx="5" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+                <text x="277" y="45">Bendahara</text>
+                <rect x="38" y="75" width="114" height="22" rx="5" fill="#FFF3E0" stroke="#EF6C00" stroke-width="1.5"/>
+                <text x="95" y="89">Koordinator Bid. A</text>
+                <rect x="208" y="75" width="114" height="22" rx="5" fill="#FFF3E0" stroke="#EF6C00" stroke-width="1.5"/>
+                <text x="265" y="89">Koordinator Bid. B</text>
+                <rect x="10" y="124" width="50" height="22" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+                <text x="35" y="138">Divisi 1</text>
+                <rect x="70" y="124" width="50" height="22" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+                <text x="95" y="138">Divisi 2</text>
+                <rect x="130" y="124" width="50" height="22" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+                <text x="155" y="138">Divisi 3</text>
+                <rect x="200" y="124" width="50" height="22" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+                <text x="225" y="138">Divisi 4</text>
+                <rect x="280" y="124" width="50" height="22" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+                <text x="305" y="138">Divisi 5</text>
+              </g>
+            </svg>`;
+
+        case 'arith_expr':
+          return `
+            <svg viewBox="0 0 320 96" class="w-full max-h-[82px] bg-white rounded border border-stone-300 p-1">
+              <g stroke="#D32F2F" stroke-width="2" fill="none">
+                <path d="M52 24 L52 10 L268 10 L268 24"/>
+                <line x1="160" y1="10" x2="160" y2="24"/>
+                <circle cx="52" cy="48" r="21" fill="#FFEBEE"/>
+                <circle cx="160" cy="48" r="21" fill="#FFEBEE"/>
+                <circle cx="268" cy="48" r="21" fill="#FFEBEE"/>
+              </g>
+              <g stroke="#1565C0" stroke-width="2" fill="none">
+                <rect x="88" y="30" width="36" height="36" rx="4" fill="#E3F2FD"/>
+                <rect x="196" y="30" width="36" height="36" rx="4" fill="#E3F2FD"/>
+                <path d="M106 68 L106 84 L214 84 L214 68"/>
+              </g>
+              <g font-family="Oswald, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#1A1A1A">
+                <text x="52" y="57">1</text>
+                <text x="106" y="57">+</text>
+                <text x="160" y="57">2</text>
+                <text x="214" y="57">&times;</text>
+                <text x="268" y="57">3</text>
+              </g>
+            </svg>`;
+
+        case 'grid_bw':
+          // 3x3 Grids A, B, C:
+          // A: [0,1,1; 0,0,1; 0,1,1], B: [1,1,0; 1,0,1; 1,1,0] -> C (XNOR: same=match, diff=white): [0,1,0; 0,1,1; 0,1,0]
+          const gridA = [0,1,1, 0,0,1, 0,1,1];
+          const gridB = [1,1,0, 1,0,1, 1,1,0];
+          const gridC = [0,1,0, 0,1,1, 0,1,0];
+          const drawGrid = (arr, ox, label) => {
+            let s = '';
+            arr.forEach((v, i) => {
+              const r = Math.floor(i / 3), c = i % 3;
+              s += `<rect x="${ox + c*22}" y="${10 + r*22}" width="22" height="22" fill="${v ? '#1A1A1A' : '#FFFFFF'}" stroke="#555" stroke-width="1.5"/>`;
+            });
+            s += `<text x="${ox + 33}" y="92" font-family="Oswald, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1A1A1A">${label}</text>`;
+            return s;
+          };
+          return `
+            <svg viewBox="0 0 310 100" class="w-full max-h-[86px] bg-white rounded border border-stone-300 p-1">
+              ${drawGrid(gridA, 16, 'A')}
+              <text x="98" y="48" font-size="20" font-weight="800" text-anchor="middle">+</text>
+              ${drawGrid(gridB, 114, 'B')}
+              <path d="M192 43 L214 43 M208 37 L215 43 L208 49" stroke="#1A1A1A" stroke-width="2.5" fill="none"/>
+              ${drawGrid(gridC, 226, 'C')}
+            </svg>`;
+
+        case 'circle_houses':
+          // 9 houses clockwise: H, J, A, B, C, D, E, F, G (no I)
+          const houses = ['A','B','C','D','E','F','G','H','J'];
+          // Angle 0 at top (-90 deg), place A near top-left (-110 deg) so H is left-top, J top-left, A, B, C, D, E, F bottom, G bottom-left
+          const startDeg = -110;
+          let nodesSvg = '';
+          houses.forEach((h, idx) => {
+            const rad = ((startDeg + idx * 40) * Math.PI) / 180;
+            const cx = 130 + 50 * Math.cos(rad);
+            const cy = 76 + 50 * Math.sin(rad);
+            const lx = 130 + 67 * Math.cos(rad);
+            const ly = 76 + 67 * Math.sin(rad) + 4;
+            nodesSvg += `
+              <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="8" fill="#FBC02D" stroke="#1A1A1A" stroke-width="1.6"/>
+              <text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-family="Oswald, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1A1A1A">${h}</text>
+            `;
+          });
+          return `
+            <svg viewBox="0 0 260 152" class="w-full max-h-[115px] bg-white rounded border border-stone-300 p-1">
+              <circle cx="130" cy="76" r="50" fill="none" stroke="#8D6E63" stroke-width="7"/>
+              ${nodesSvg}
+              <text x="130" y="74" font-family="Inter, sans-serif" font-size="9" font-weight="700" text-anchor="middle" fill="#333">1 Langkah</text>
+              <text x="130" y="85" font-family="Inter, sans-serif" font-size="9" font-weight="800" text-anchor="middle" fill="#D32F2F">= 10 Menit</text>
+            </svg>`;
+
+        case 'graph_houses':
+          return `
+            <svg viewBox="0 0 340 155" class="w-full max-h-[115px] bg-white rounded border border-stone-300 p-1">
+              <!-- Edges (No direct edge between Anto and Dodo so Boni-Evan-Dodo is shortest valid path) -->
+              <g stroke="#1A1A1A" stroke-width="2">
+                <line x1="285" y1="30" x2="185" y2="75"/>  <!-- Anto - Boni -->
+                <line x1="285" y1="30" x2="255" y2="108"/> <!-- Anto - Cika -->
+                <line x1="185" y1="75" x2="255" y2="108"/> <!-- Boni - Cika (8) -->
+                <line x1="185" y1="75" x2="185" y2="132"/> <!-- Boni - Gani -->
+                <line x1="185" y1="75" x2="115" y2="112"/> <!-- Boni - Fino -->
+                <line x1="185" y1="75" x2="65" y2="95"/>   <!-- Boni - Evan -->
+                <line x1="65" y1="95" x2="45" y2="42"/>    <!-- Evan - Dodo -->
+                <line x1="65" y1="95" x2="115" y2="112"/>  <!-- Evan - Fino -->
+                <line x1="115" y1="112" x2="185" y2="132"/><!-- Fino - Gani -->
+              </g>
+              <!-- Edge Weights Labels -->
+              <g font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#D32F2F">
+                <text x="278" y="75">6</text>
+                <text x="218" y="87">8</text>
+                <text x="230" y="46">7</text>
+                <text x="192" y="108">9</text>
+                <text x="122" y="82">4</text>
+                <text x="42" y="72">5</text>
+              </g>
+              <!-- Nodes -->
+              <g font-family="Inter, sans-serif" font-size="9.5" font-weight="800" text-anchor="middle">
+                <circle cx="285" cy="30" r="18" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="285" y="33">Anto</text>
+
+                <circle cx="185" cy="75" r="18" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="185" y="78">Boni</text>
+
+                <circle cx="255" cy="108" r="17" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="255" y="111">Cika</text>
+
+                <circle cx="45" cy="42" r="17" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="45" y="45">Dodo</text>
+
+                <circle cx="65" cy="95" r="17" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="65" y="98">Evan</text>
+
+                <circle cx="115" cy="112" r="16" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="115" y="115">Fino</text>
+
+                <circle cx="185" cy="132" r="17" fill="#FFF" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="185" y="135">Gani</text>
+              </g>
+            </svg>`;
+
+        case 'maze_yola':
+          // 5 rows x 15 cols grid maze with green ball and X exit + 4 arrow buttons
+          const rows = [
+            '###############',
+            '#G#  #   #   #X',
+            '# # ## # # # # ',
+            '#   #  #   #   ',
+            '###############'
+          ];
+          let cells = '';
+          for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 15; c++) {
+              const ch = rows[r][c];
+              const fill = ch === '#' ? '#757575' : '#FFFFFF';
+              cells += `<rect x="${10 + c*18}" y="${8 + r*18}" width="18" height="18" fill="${fill}" stroke="#1A1A1A" stroke-width="1"/>`;
+              if (ch === 'G') {
+                cells += `<circle cx="${19 + c*18}" cy="${17 + r*18}" r="6" fill="#2E7D32"/>`;
+              } else if (ch === 'X') {
+                cells += `<text x="${19 + c*18}" y="${21 + r*18}" font-size="12" font-weight="800" text-anchor="middle" fill="#1A1A1A">X</text>`;
+              }
+            }
+          }
+          return `
+            <svg viewBox="0 0 290 124" class="w-full max-h-[100px] bg-white rounded border border-stone-300 p-1">
+              ${cells}
+              <g font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#1A1A1A">
+                <text x="12" y="114">Tombol Panah Yola:</text>
+                <rect x="128" y="101" width="18" height="18" rx="3" fill="#FAF6EB" stroke="#1A1A1A"/><text x="137" y="114" text-anchor="middle">&rarr;</text>
+                <rect x="150" y="101" width="18" height="18" rx="3" fill="#FAF6EB" stroke="#1A1A1A"/><text x="159" y="114" text-anchor="middle">&uarr;</text>
+                <rect x="172" y="101" width="18" height="18" rx="3" fill="#FAF6EB" stroke="#1A1A1A"/><text x="181" y="114" text-anchor="middle">&larr;</text>
+                <rect x="194" y="101" width="18" height="18" rx="3" fill="#FAF6EB" stroke="#1A1A1A"/><text x="203" y="114" text-anchor="middle">&darr;</text>
+              </g>
+            </svg>`;
+
+        case 'gdocs_ui':
+          return `
+            <div class="w-full bg-white border border-stone-400 rounded overflow-hidden text-left shadow-sm">
+              <div class="bg-[#F8F9FA] px-2 py-1 border-b border-stone-300 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <div class="w-5 h-6 bg-[#4285F4] rounded-sm flex flex-col justify-center px-1 gap-0.5">
+                    <div class="h-0.5 bg-white w-full"></div>
+                    <div class="h-0.5 bg-white w-full"></div>
+                    <div class="h-0.5 bg-white w-2/3"></div>
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-bold text-stone-800 leading-none">Untitled document &#9734;</div>
+                    <div class="text-[8px] text-stone-500 mt-0.5">File &nbsp; Edit &nbsp; View &nbsp; Insert &nbsp; Format &nbsp; Tools</div>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-[#C2E7FF] text-[#001D35] text-[8px] font-bold">Share</span>
+              </div>
+              <div class="bg-[#EDF2FA] px-2 py-0.5 text-[8px] text-stone-700 border-b border-stone-300 flex gap-2 font-semibold">
+                <span>&#8630; &#8631;</span><span>100%</span><span>Normal text</span><span>Arial</span><span><b>B</b> <i>I</i> <u>U</u></span>
+              </div>
+              <div class="bg-[#F0F4F9] py-1.5 px-6 flex justify-center">
+                <div class="w-full h-10 bg-white border border-stone-300 shadow-inner p-1 text-[8px] text-stone-400">
+                  docs.google.com/document/d/...
+                </div>
+              </div>
+            </div>`;
+
+        case 'kas_table':
+          return `
+            <div class="w-full overflow-x-auto bg-white border border-[#1A1A1A] rounded">
+              <table class="w-full text-[9px] sm:text-[10px] border-collapse text-center font-medium">
+                <thead>
+                  <tr class="bg-stone-200 font-bold border-b border-[#1A1A1A]">
+                    <th class="border-r border-stone-400 px-1"></th>
+                    <th class="border-r border-stone-400 px-1">A</th>
+                    <th class="border-r border-stone-400 px-1">B</th>
+                    <th class="border-r border-stone-400 px-1">C</th>
+                    <th class="border-r border-stone-400 px-1">D</th>
+                    <th class="border-r border-stone-400 px-1">E</th>
+                    <th class="px-1">F</th>
+                  </tr>
+                  <tr class="bg-emerald-100 font-bold border-b border-[#1A1A1A]">
+                    <td class="border-r border-stone-400 bg-stone-200">1</td>
+                    <td class="border-r border-stone-400">No</td>
+                    <td class="border-r border-stone-400">Tanggal</td>
+                    <td class="border-r border-stone-400">Masuk</td>
+                    <td class="border-r border-stone-400">Keluar</td>
+                    <td class="border-r border-stone-400">Jenis</td>
+                    <td>Saldo</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-stone-300">
+                    <td class="border-r border-stone-400 bg-stone-200 font-bold">2</td>
+                    <td class="border-r border-stone-400">1</td>
+                    <td class="border-r border-stone-400">4 Feb 21</td>
+                    <td class="border-r border-stone-400">50.000</td>
+                    <td class="border-r border-stone-400">20.000</td>
+                    <td class="border-r border-stone-400">Kebersihan</td>
+                    <td class="font-bold">30.000</td>
+                  </tr>
+                  <tr class="border-b border-stone-300">
+                    <td class="border-r border-stone-400 bg-stone-200 font-bold">3</td>
+                    <td class="border-r border-stone-400">2</td>
+                    <td class="border-r border-stone-400">5 Feb 21</td>
+                    <td class="border-r border-stone-400">40.000</td>
+                    <td class="border-r border-stone-400">24.000</td>
+                    <td class="border-r border-stone-400">Sosial</td>
+                    <td class="font-bold">46.000</td>
+                  </tr>
+                  <tr class="border-b border-stone-300">
+                    <td class="border-r border-stone-400 bg-stone-200 font-bold">4..6</td>
+                    <td colspan="2" class="border-r border-stone-400 text-stone-500">3 s.d. 5 (6-8 Feb 21)</td>
+                    <td class="border-r border-stone-400">110.000</td>
+                    <td class="border-r border-stone-400">116.000</td>
+                    <td class="border-r border-stone-400">Kas</td>
+                    <td class="font-bold">40.000</td>
+                  </tr>
+                  <tr class="bg-amber-100 font-bold">
+                    <td class="border-r border-stone-400 bg-stone-200">7</td>
+                    <td colspan="2" class="border-r border-stone-400">Jumlah</td>
+                    <td class="border-r border-stone-400">200.000</td>
+                    <td class="border-r border-stone-400">160.000</td>
+                    <td class="border-r border-stone-400"></td>
+                    <td>40.000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>`;
+        default:
+          return '';
+      }
+    }
+
+    /* =========================================================================
+       4. COMPLETE 40 QUESTIONS BANK (RONDE 1 TO RONDE 4)
+       ========================================================================= */
+    const QUESTIONS = [
+      // RONDE 1 (1-10): Berpikir Komputasional & Struktur Data
+      { q: 'Salah satu komponen utama berpikir komputasional adalah …', opts: ['Menggambar dan mewarnai', 'Dekomposisi (memecah masalah menjadi bagian kecil)', 'Mengetik cepat di komputer', 'Mengunduh data dari internet'], ans: 1 },
+      { q: 'Langkah pertama dalam berpikir komputasional untuk menyelesaikan masalah adalah …', opts: ['Menguji solusi', 'Memahami dan mendefinisikan masalah', 'Menulis program komputer', 'Membuat algoritma'], ans: 1 },
+      { q: 'Di bawah ini yang bukan jenis struktur data adalah …', opts: ['Graph', 'Tree', 'Stack', 'Type'], ans: 3 },
+      { q: 'Gambar struktur organisasi kepengurusan di atas merupakan jenis struktur data …', opts: ['Graph', 'Tree', 'Stack', 'Array'], ans: 1, diagram: 'tree_org' },
+      { q: '“Anak” (child) yang hierarkinya lebih rendah hanya mempunyai satu “orang tua” (parent) merupakan ciri dari …', opts: ['Struktur daun', 'Struktur pohon', 'Struktur batang', 'Struktur akar'], ans: 1 },
+      { q: 'Struktur data yang dapat digunakan untuk merepresentasikan data dalam berbagai kasus, misalnya jalan menghubungkan 2 tempat adalah …', opts: ['Struktur data graf', 'Struktur data gref', 'Struktur data gruf', 'Struktur data grif'], ans: 0 },
+      { q: 'Dari ekspresi aritmatika di atas, angka 1, 2, dan 3 disebut …', opts: ['Operator', 'Operand', 'Ekspresi', 'Aritmatika'], ans: 1, diagram: 'arith_expr' },
+      { q: 'Gabungan dari operator dan operand disebut …', opts: ['Perhitungan', 'Operasi logika', 'Ekspresi aritmatika', 'Ekspresi operator'], ans: 2 },
+      { q: 'Proses untuk melakukan perhitungan operand-operand berdasarkan operator terkait disebut …', opts: ['Operasi', 'Ekspresi', 'Aritmatika', 'Logika'], ans: 0 },
+      { q: 'Dalam informatika terdapat berbagai tipe data. Ilustrasi kotak hitam-putih (2 kondisi: hitam/putih) merepresentasikan tipe data …', opts: ['Boolean', 'Numerik', 'Teks', 'Campuran'], ans: 0, diagram: 'grid_bw' },
+
+      // RONDE 2 (11-20): Studi Kasus Graf, Rute & Logika HOTS
+      { q: 'Kompleks melingkar 9 rumah (A s.d. J tanpa I), pindah antar-rumah 10 menit. Jika Hara mulai dari rumah H dan berakhir di rumah F (searah jarum jam), waktu yang dibutuhkan adalah …', opts: ['60 menit', '70 menit', '80 menit', '90 menit'], ans: 1, diagram: 'circle_houses' },
+      { q: 'Jika Hara berjalan searah jarum jam dari rumah H menuju rumah F, maka urutan rumah yang dikunjungi Hara adalah …', opts: ['H – A – C – E – F', 'H – F – D – B – J', 'H – J – A – B – D – F', 'H – J – A – B – C – D – E – F'], ans: 3, diagram: 'circle_houses' },
+      { q: 'Hara memulai perjalanan dari rumah H dan mencatat waktu tempuh berturut-turut 20, 10, 20, dan 40 menit sebelum tiba di rumah F. Banyak rumah yang dikunjungi sebelum tiba di rumah F searah jarum jam adalah …', opts: ['2 rumah', '3 rumah', '4 rumah', '5 rumah'], ans: 1, diagram: 'circle_houses' },
+      { q: 'Jika Hara ingin mengantarkan paket dari Anto ke Dodo dengan jalur penghubung Boni-Evan-Dodo paling pendek tanpa jalur langsung, rute yang dipilih adalah …', opts: ['Anto → Boni → Dodo', 'Anto → Boni → Evan → Dodo', 'Anto → Boni → Fino → Evan → Dodo', 'Anto → Cika → Boni → Dodo'], ans: 1, diagram: 'graph_houses' },
+      { q: 'Urutan jarak terpendek dari Anto ke Gani berdasarkan gambar jaringan rumah adalah …', opts: ['Anto → Cika → Gani', 'Anto → Boni → Gani', 'Anto → Boni → Fino → Gani', 'Anto → Boni → Evan → Fino → Gani'], ans: 1, diagram: 'graph_houses' },
+      { q: 'Jika Hara mulai dari rumah Boni, ke rumah Cika, lalu ke rumah Anto, total jarak yang ditempuh Hara adalah …', opts: ['8', '13', '14', '15'], ans: 2, diagram: 'graph_houses' },
+      { q: 'Jika kotak hitam putih A dan B dikombinasikan menghasilkan kotak C, pernyataan berikut yang TIDAK termasuk pola kombinasi tersebut adalah …', opts: ['Sel sama-sama hitam menghasilkan hitam', 'Sel sama-sama putih menghasilkan putih', 'Sel berbeda warna (hitam dan putih) menghasilkan putih', 'Sel berbeda warna (hitam dan putih) menghasilkan hitam'], ans: 3, diagram: 'grid_bw' },
+      { q: 'Yola memiliki beberapa tanda panah untuk mengarahkan bola hijau menuju pintu keluar X. Jenis tanda panah yang dapat digunakan Yola adalah …', opts: ['Panah kanan, kiri, atas dan bawah', 'Panah maju, mundur dan lompat', 'Panah kanan saja', 'Panah diagonal ke kanan atas dan kanan bawah'], ans: 0, diagram: 'maze_yola' },
+      { q: 'Yola hanya boleh menggunakan 8 tanda panah dan susunan tersebut diulang 4 kali. Tujuan penyusunan tanda panah ini adalah agar …', opts: ['Bola hijau tetap di tempat semula', 'Bola hijau bergerak acak di semua kotak', 'Bola hijau dapat mencapai kotak bertanda X', 'Bola hijau berhenti di tengah lintasan'], ans: 2, diagram: 'maze_yola' },
+      { q: 'Di bawah ini yang BUKAN merupakan tujuan mempelajari Teknologi Informasi dan Komunikasi kelas IX adalah …', opts: ['Memanfaatkan tools untuk menghasilkan dokumen berisi teks, data dan gambar', 'Menganalisis aplikasi paling efisien untuk pembuatan dokumen', 'Membuat blog sederhana', 'Membuat aplikasi sederhana'], ans: 3 },
+
+      // RONDE 3 (21-30): Aplikasi Perkantoran & Spreadsheet
+      { q: 'Di bawah ini yang BUKAN merupakan aplikasi perkantoran yang umum digunakan dan wajib terpasang di komputer kantor adalah …', opts: ['Aplikasi pengolah kata', 'Aplikasi presentasi', 'Aplikasi manajemen', 'Aplikasi pengolah lembar kerja'], ans: 2 },
+      { q: 'Tampilan antarmuka aplikasi pengolah dokumen daring pada gambar di atas merupakan aplikasi …', opts: ['Microsoft Word', 'Google Docs', 'Office 365', 'Pages'], ans: 1, diagram: 'gdocs_ui' },
+      { q: 'Pages, Google Docs, OpenOffice Writer merupakan contoh aplikasi …', opts: ['Pengolah angka', 'Pengolah kata', 'Pengolah gambar', 'Pengolah presentasi'], ans: 1 },
+      { q: 'Aplikasi Microsoft Excel termasuk dalam jenis aplikasi …', opts: ['Pengolah kata', 'Pengolah gambar', 'Pengolah lembar kerja', 'Pengolah presentasi'], ans: 2 },
+      { q: 'Dalam membuat Laporan Kas Kelas, fungsi utama pada perangkat lunak lembar kerja untuk menghitung total keseluruhan uang masuk adalah …', opts: ['Fungsi MAX', 'Fungsi SUM', 'Fungsi AVERAGE', 'Fungsi COUNT'], ans: 1 },
+      { q: 'Untuk menghitung nilai Saldo pada tanggal 4 Februari 2021 (Baris 2: Pemasukan 50.000, Pengeluaran 20.000), operasi matematika yang benar adalah …', opts: ['20.000 − 50.000', '50.000 + 20.000', '50.000 − 20.000', '40.000 − 20.000'], ans: 2, diagram: 'kas_table' },
+      { q: 'Dalam aplikasi spreadsheet/Excel, rumus yang benar untuk mendapatkan nilai Saldo (Rp) di sel F2 (dengan saldo awal nol) adalah …', opts: ['= C2/D2', '= C2−D2', '= F1+C2−D2', '= C2*D2'], ans: 1, diagram: 'kas_table' },
+      { q: 'Untuk menghitung Total Pemasukan di sel C7 (dari baris 2 sampai baris 6), rumus yang benar dalam aplikasi spreadsheet adalah …', opts: ['= SUM(C1:C6)', '= TOTAL(C2:C6)', '= SUM(C2:C6)', '= C2+C3+C4+C5'], ans: 2, diagram: 'kas_table' },
+      { q: 'Tujuan utama memberikan judul pada sebuah grafik adalah …', opts: ['Agar grafik terlihat lebih ramai', 'Untuk memberikan informasi ringkas tentang isi grafik', 'Untuk memenuhi syarat pembuatan grafik', 'Agar grafik memiliki warna yang bagus'], ans: 1 },
+      { q: 'Untuk menyisipkan grafik di PowerPoint, langkah yang benar adalah …', opts: ['Klik menu Insert → Chart', 'Klik menu Design → Theme', 'Klik menu Animations → Add Animation', 'Klik menu Slide Show → From Beginning'], ans: 0 },
+
+      // RONDE 4 (31-40): Integrasi Konten, Blog & Vlog
+      { q: 'Tujuan utama dari Proses Analisis Masalah dalam integrasi konten aplikasi perkantoran adalah …', opts: ['Menemukan alternatif solusi untuk produk dokumen', 'Menentukan produk akhir, target pembaca, tujuan dokumen, dan jenis konten yang dibutuhkan', 'Menyesuaikan jenis konten dengan target pembaca', 'Membuat dokumen tanpa analisis masalah'], ans: 1 },
+      { q: 'Konsep utama pada pembuatan Buku Tahunan dan komik, di mana karya-karya mandiri digabungkan menjadi satu produk utuh oleh seorang integrator adalah …', opts: ['Peningkatan efisiensi melalui pekerjaan mandiri', 'Pentingnya peran integrator yang menyatukan pekerjaan', 'Mendorong pemanfaatan aplikasi kerja kolaboratif', 'Pembagian tugas antara penulis dan desainer'], ans: 1 },
+      { q: 'Urutan langkah pembuatan Blog: (1) Login ke Blogger, (2) Klik panah bawah di kiri, (3) Klik blog baru, (4) Masukkan nama blog, (5) Klik berikutnya, (6) Pilih URL/alamat blog, (7) Klik simpan. Urutan yang benar adalah …', opts: ['1 - 2 - 3 - 4 - 5 - 6 - 7', '4 - 2 - 1 - 3 - 5 - 6 - 7', '6 - 5 - 1 - 2 - 3 - 4 - 7', '3 - 4 - 5 - 6 - 1 - 2 - 7'], ans: 0 },
+      { q: 'Hal-hal berikut yang TIDAK perlu dilakukan dalam merekam video menggunakan smartphone adalah …', opts: ['Gunakan dua bilangan', 'Hindari pemakaian fitur zoom digital', 'Latih pengambilan gambar', 'Pilih lokasi kontras yang tinggi'], ans: 0 },
+      { q: 'Makna dari pernyataan bahwa “Semua konten yang ditampilkan di blog kalian akan terbuka pada publik” adalah …', opts: ['Konten dilindungi kata sandi', 'Hanya teman dekat atau keluarga yang dapat mengakses', 'Hanya mesin pencari yang dapat mengindeks', 'Setiap orang dengan akses internet berpotensi melihat konten tersebut'], ans: 3 },
+      { q: 'Dari pernyataan berikut yang paling tepat untuk menggambarkan hubungan antara vlog dan blog yaitu …', opts: ['Vlog adalah evolusi atau pengembangan format dari blog', 'Vlog adalah pengganti blog dan tidak ada kaitannya sama sekali', 'Vlog dan blog adalah istilah untuk format yang sama', 'Blog adalah format video yang diubah menjadi teks'], ans: 0 },
+      { q: 'Platform daring yang berisi catatan pribadi, informasi, atau opini dalam format tulisan yang diperbarui secara berkala disebut sebagai …', opts: ['Blog', 'E-mail', 'Vlog', 'Podcast'], ans: 0 },
+      { q: 'Perbedaan utama antara blog dan vlog adalah …', opts: ['Blog memerlukan smartphone, sedangkan vlog tidak', 'Blog ditulis menggunakan aplikasi pengolah kata, sedangkan vlog dibuat dengan rekaman video', 'Blog menggunakan kamera depan, sedangkan vlog kamera belakang', 'Blog menggunakan pengolah kata, sedangkan vlog menggunakan dua tangan'], ans: 1 },
+      { q: 'Fitur untuk memperbesar tangkapan gambar dengan melakukan pinch out pada layar ponsel disebut …', opts: ['Mode timelapse', 'Eksposur', 'Mode Dual Screen', 'Zoom Digital'], ans: 3 },
+      { q: 'Fungsi utama post dalam layanan blog WordPress adalah …', opts: ['Menampilkan halaman statis yang jarang berubah', 'Membuat halaman khusus seperti “Tentang” atau “Kontak”', 'Membuat konten blog yang terurut berdasarkan tanggal publikasi', 'Menyembunyikan konten dari mesin pencari'], ans: 2 }
+    ];
+
+    /* =========================================================================
+       5. GAME STATE & ENGINE
+       ========================================================================= */
+    const state = {
+      players: [
+        { id: 0, name: 'PEMAIN 1', money: 1000, pos: 0 },
+        { id: 1, name: 'PEMAIN 2', money: 1000, pos: 0 }
+      ],
+      // Property ownership map: tileId -> { owner: 0|1, level: 1|2|3 }
+      ownership: {},
+      qIndex: 0,          // 0..39
+      activePlayer: 0,    // 0 (P1) or 1 (P2)
+      phase: 'ANSWERING', // ANSWERING | STEAL_WINDOW | ROLL_READY | MOVING | BUY_DECISION | EVENT_CARD
+      boardRotation: 90,  // Outer Monopoly board stays at 90deg (or -90deg)
+      cardFacingPlayer: 0,// Inner card faces active player (0 = Top P1 at 180deg, 1 = Bottom P2 at 0deg)
+      zoomRotation: 180,
+      diceValue: 1,
+      stealTimer: null,
+      stealCountdown: 5,
+      pendingTileId: null
+    };
+
+    let boardResizeObserver = null;
+
+    function getCurrentRound() {
+      return Math.min(4, Math.floor(state.qIndex / 10) + 1);
+    }
+
+    function getRoundInfo(round) {
+      const info = {
+        1: {
+          badge: 'Fase Startup',
+          title: 'RONDE 1: FASE STARTUP',
+          desc: 'Perebutan aset awal! Bebas denda pajak & kartu denda.'
+        },
+        2: {
+          badge: 'Curi Dadu & Lv.2',
+          title: 'RONDE 2: FASE ROUTING',
+          desc: 'Fitur CURI DADU (+2 langkah dalam 5 detik jika lawan salah) & Upgrade Aset Lv.2–3 aktif!'
+        },
+        3: {
+          badge: 'Sewa 1,5x & Pajak',
+          title: 'RONDE 3: FASE AUDIT KAS',
+          desc: 'Tarif sewa naik 1,5x lipat & Pajak Data 15% mulai aktif!'
+        },
+        4: {
+          badge: 'OVERCLOCK 2x!',
+          title: 'RONDE 4: FASE OVERCLOCK',
+          desc: 'Semua tarif sewa 2x lipat & gaji melewati START naik menjadi M$ 400!'
+        }
+      };
+      return info[round] || info[1];
+    }
+
+    function formatM(amount) {
+      const sign = amount < 0 ? '-' : '';
+      return `${sign}M$ ${Math.abs(Math.round(amount)).toLocaleString('id-ID')}`;
+    }
+
+    function calculateTileRent(tile) {
+      const own = state.ownership[tile.id];
+      const levelMult = own ? own.level : 1;
+      const round = getCurrentRound();
+      const roundMult = round === 3 ? 1.5 : (round === 4 ? 2 : 1);
+      return Math.round(tile.rent * levelMult * roundMult);
+    }
+
+    function calculateNetWorth(playerId) {
+      const cash = state.players[playerId].money;
+      let assets = 0;
+      Object.entries(state.ownership).forEach(([tileId, own]) => {
+        if (own.owner === playerId) {
+          const tile = BOARD_TILES[Number(tileId)];
+          if (tile) {
+            assets += tile.price * own.level;
+          }
+        }
+      });
+      return { cash, assets, total: cash + assets };
+    }
+
+    /* =========================================================================
+       6. BOARD & UI RENDERING
+       ========================================================================= */
+    function buildBoardDOM() {
+      const board = document.getElementById('monopolyBoard');
+      if (!board) return;
+      board.innerHTML = '';
+
+      BOARD_TILES.forEach(tile => {
+        const el = document.createElement('div');
+        el.id = `tile-${tile.id}`;
+        el.className = 'board-tile';
+        el.style.gridRow = tile.row;
+        el.style.gridColumn = tile.col;
+
+        if (tile.type === 'property') {
+          el.innerHTML = `
+            <div id="tile-bar-${tile.id}" class="h-3 sm:h-3.5 w-full border-b border-[#1A1A1A] px-1 flex items-center justify-between" style="background-color: ${tile.color};"></div>
+            <div class="px-0.5 text-center text-[7.5px] sm:text-[9px] font-extrabold leading-tight text-[#1A1A1A]">${tile.name}</div>
+            <div id="tile-tokens-${tile.id}" class="flex items-center justify-center gap-0.5 min-h-[18px]"></div>
+            <div id="tile-price-${tile.id}" class="text-center text-[7.5px] sm:text-[8.5px] font-bold text-stone-700 leading-none pb-0.5">M$ ${tile.price}</div>
+          `;
+        } else {
+          el.innerHTML = `
+            <div class="text-center text-[7px] sm:text-[8px] font-black text-white px-0.5 py-0.5 leading-none truncate" style="background-color: ${tile.color};">${tile.name}</div>
+            <div id="tile-tokens-${tile.id}" class="flex items-center justify-center gap-0.5 min-h-[18px] my-auto"></div>
+            <div id="tile-sub-${tile.id}" class="text-center text-[7px] sm:text-[8px] font-bold text-stone-700 leading-none pb-0.5 truncate px-0.5">${tile.sub || ''}</div>
+          `;
+        }
+        board.appendChild(el);
+      });
+
+      const center = document.createElement('div');
+      center.id = 'boardCenterCell';
+      center.className = 'board-center';
+      center.innerHTML = `
+        <div id="centerUprightContainer" class="center-upright-box p-1.5 sm:p-2">
+          <!-- Top Round & Controls Bar -->
+          <div class="flex items-center justify-between gap-1 shrink-0">
+            <div class="flex items-center gap-1 flex-wrap">
+              <span id="roundProgressBadge" class="px-1.5 py-0.5 rounded bg-[#D32F2F] text-white border border-[#1A1A1A] font-monopoly text-[10px] sm:text-xs font-bold leading-none">R1 &bull; 1/40</span>
+              <span id="roundRuleBadge" class="px-1.5 py-0.5 rounded bg-[#FAF6EB] text-[#1A1A1A] border border-[#1A1A1A] text-[9.5px] sm:text-[10.5px] font-extrabold leading-none">Fase Startup</span>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button id="btnFlipCard" onclick="flipCenterCard()" title="Putar Kartu Soal 180°" class="btn-mono px-1.5 py-0.5 rounded bg-amber-300 text-[10px] font-extrabold leading-none cursor-pointer">&#128260; Kartu</button>
+              <button id="btnRotateBoard" onclick="toggleBoardOrientation()" title="Arah Peta 90° Kanan / 90° Kiri" class="btn-mono px-1.5 py-0.5 rounded bg-emerald-100 text-[9.5px] font-extrabold leading-none cursor-pointer">Peta 90&deg;</button>
+              <button id="btnMuteToggle" onclick="toggleMute()" title="Suara" class="btn-mono px-1.5 py-0.5 rounded bg-white text-[11px] font-bold leading-none cursor-pointer">&#128266;</button>
+              <button onclick="toggleFullscreen()" title="Fullscreen" class="btn-mono px-1.5 py-0.5 rounded bg-white text-[11px] font-bold leading-none cursor-pointer">&#9974;</button>
+            </div>
+          </div>
+
+          <!-- Question / Event / Dice Card (Always faces active player upright) -->
+          <div id="centerCardWrapper" class="flex-1 my-1 deed-card rounded-xl p-2 flex flex-col justify-between overflow-hidden relative">
+            <!-- Question View -->
+            <div id="questionView" class="h-full flex flex-col justify-between overflow-y-auto thin-scroll">
+              <div>
+                <div class="flex items-center justify-between gap-1 border-b border-stone-300 pb-1 mb-1">
+                  <span id="qHeaderBadge" class="font-monopoly text-[10px] sm:text-xs font-bold uppercase text-[#1565C0]">SOAL #1 &bull; GILIRAN PEMAIN 1</span>
+                  <button id="btnZoomDiagram" onclick="openZoomModal()" class="hidden px-1.5 py-0.5 rounded bg-amber-300 border border-[#1A1A1A] text-[9px] font-extrabold text-[#1A1A1A] cursor-pointer">&#128269; Perbesar Gambar</button>
+                </div>
+                <div id="qDiagramSlot" class="mb-1 flex justify-center"></div>
+                <p id="qText" class="text-[11px] sm:text-xs font-bold text-[#1A1A1A] leading-snug"></p>
+              </div>
+
+              <!-- Options Summary A, B, C, D -->
+              <div id="qOptionsList" class="grid grid-cols-2 gap-1 mt-1 text-[10px] sm:text-[11px] font-semibold">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Dice & Event Overlay inside Center Card -->
+            <div id="eventOverlay" class="hidden absolute inset-0 bg-[#FAF6EB]/95 p-2.5 flex flex-col items-center justify-center text-center z-10">
+              <div id="diceBox" class="hidden mb-1.5">
+                <div id="diceFace" class="w-12 h-12 rounded-xl bg-white border-2 border-[#1A1A1A] shadow-md flex items-center justify-center font-monopoly text-2xl font-bold text-[#1A1A1A]">
+                  1
+                </div>
+              </div>
+              <div id="eventTitle" class="font-monopoly text-sm sm:text-base font-bold text-[#D32F2F] uppercase leading-tight"></div>
+              <p id="eventDesc" class="text-[11px] sm:text-xs font-semibold text-stone-800 mt-1 leading-snug"></p>
+            </div>
+          </div>
+
+          <!-- Bottom Mini Status Bar -->
+          <div class="flex items-center justify-between text-[9.5px] sm:text-[10.5px] font-bold text-stone-800 px-1 shrink-0">
+            <span>&#127913; P1: <b id="miniP1Pos">START</b></span>
+            <span id="stealCountdownBanner" class="hidden px-2 py-0.5 rounded bg-[#F57C00] text-white border border-[#1A1A1A] animate-pulse">CURI DADU: 5d</span>
+            <span>&#128663; P2: <b id="miniP2Pos">START</b></span>
+          </div>
+        </div>
+      `;
+
+      board.appendChild(center);
+      applyBoardOrientation();
+      applyCardOrientation();
+      fitRotatedBoard();
+    }
+
+    function fitRotatedBoard() {
+      const container = document.getElementById('middleArenaContainer');
+      const board = document.getElementById('monopolyBoard');
+      if (!container || !board) return;
+
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      if (cw <= 0 || ch <= 0) return;
+
+      // Outer Monopoly board is rotated ±90deg:
+      // pre-rotation width maps to visual height; pre-rotation height maps to visual width
+      const preWidth = Math.max(250, ch - 8);
+      const preHeight = Math.max(240, Math.min(cw - 8, 640));
+
+      board.style.width = `${preWidth}px`;
+      board.style.height = `${preHeight}px`;
+
+      // Inner card counter-rotates ±90deg so it faces the user upright (0deg or 180deg on screen).
+      // Swap centerBox layout width/height so the upright inner card fits the 3x3 center hole cleanly.
+      const centerBox = document.getElementById('boardCenterCell');
+      const uprightBox = document.getElementById('centerUprightContainer');
+      if (centerBox && uprightBox) {
+        const bw = centerBox.clientWidth;
+        const bh = centerBox.clientHeight;
+        if (bw > 0 && bh > 0) {
+          uprightBox.style.width = `${bh}px`;
+          uprightBox.style.height = `${bw}px`;
+        }
+      }
+    }
+
+    function applyBoardOrientation() {
+      const board = document.getElementById('monopolyBoard');
+      if (board) {
+        board.style.transform = `rotate(${state.boardRotation}deg)`;
+      }
+      const btn = document.getElementById('btnRotateBoard');
+      if (btn) {
+        btn.innerHTML = state.boardRotation === 90 ? 'Peta 90&deg;R' : 'Peta 90&deg;L';
+      }
+      applyCardOrientation();
+    }
+
+    function toggleBoardOrientation() {
+      state.boardRotation = state.boardRotation === 90 ? -90 : 90;
+      applyBoardOrientation();
+    }
+
+    function applyCardOrientation() {
+      const uprightBox = document.getElementById('centerUprightContainer');
+      if (!uprightBox) return;
+      // Desired screen angle: 180deg for Top Player 1, 0deg for Bottom Player 2
+      const targetScreenDeg = state.cardFacingPlayer === 0 ? 180 : 0;
+      // Counter-rotate relative to outer board's 90deg / -90deg rotation
+      const relativeDeg = targetScreenDeg - state.boardRotation;
+      uprightBox.style.transform = `rotate(${relativeDeg}deg)`;
+    }
+
+    function flipCenterCard() {
+      state.cardFacingPlayer = state.cardFacingPlayer === 0 ? 1 : 0;
+      applyCardOrientation();
+    }
+
+    function renderTokensAndProperties() {
+      const round = getCurrentRound();
+      const startTileSub = document.getElementById('tile-sub-0');
+      if (startTileSub) {
+        startTileSub.textContent = round === 4 ? 'Gaji M$ 400' : 'Gaji M$ 200';
+      }
+
+      BOARD_TILES.forEach(tile => {
+        const tileEl = document.getElementById(`tile-${tile.id}`);
+        const tokensEl = document.getElementById(`tile-tokens-${tile.id}`);
+        if (!tileEl || !tokensEl) return;
+
+        // Highlight active player positions
+        tileEl.classList.remove('tile-active-p1', 'tile-active-p2');
+        if (state.players[0].pos === tile.id) tileEl.classList.add('tile-active-p1');
+        if (state.players[1].pos === tile.id) tileEl.classList.add('tile-active-p2');
+
+        // Render tokens on this tile
+        let tokenHtml = '';
+        if (state.players[0].pos === tile.id) {
+          tokenHtml += `
+            <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-600 border-2 border-white shadow flex items-center justify-center token-hop" title="Pemain 1">
+              <svg viewBox="0 0 64 64" class="w-3.5 h-3.5">
+                <ellipse cx="32" cy="50" rx="24" ry="7" fill="#FFF"/>
+                <path d="M18 16 L46 16 L44 48 L20 48 Z" fill="#1A1A1A"/>
+              </svg>
+            </div>`;
+        }
+        if (state.players[1].pos === tile.id) {
+          tokenHtml += `
+            <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-rose-600 border-2 border-white shadow flex items-center justify-center token-hop" title="Pemain 2">
+              <svg viewBox="0 0 64 64" class="w-4 h-4">
+                <path d="M10 38 L16 26 L36 24 L50 32 L56 38 L54 44 L10 44 Z" fill="#FFF"/>
+                <circle cx="20" cy="44" r="5" fill="#1A1A1A"/>
+                <circle cx="45" cy="44" r="5" fill="#1A1A1A"/>
+              </svg>
+            </div>`;
+        }
+        tokensEl.innerHTML = tokenHtml;
+
+        // Render property ownership, houses/hotels & dynamic rent
+        if (tile.type === 'property') {
+          const barEl = document.getElementById(`tile-bar-${tile.id}`);
+          const priceEl = document.getElementById(`tile-price-${tile.id}`);
+          const own = state.ownership[tile.id];
+
+          if (!own) {
+            barEl.innerHTML = '';
+            priceEl.textContent = `M$ ${tile.price}`;
+            priceEl.className = 'text-[7.5px] sm:text-[8.5px] font-bold text-stone-700 leading-none pb-0.5';
+          } else {
+            const ownerTag = own.owner === 0 ? 'P1' : 'P2';
+            const ownerBg = own.owner === 0 ? 'bg-emerald-700 text-white' : 'bg-rose-700 text-white';
+            let buildingIcons = '';
+            if (own.level === 2) {
+              buildingIcons = `<span class="inline-block w-2 h-2 bg-[#2E7D32] border border-white rounded-[1px]" title="Rumah Hijau Lv.2"></span>`;
+            } else if (own.level === 3) {
+              buildingIcons = `<span class="inline-block w-2.5 h-2 bg-[#D32F2F] border border-white rounded-[1px]" title="Hotel Merah Lv.3"></span>`;
+            }
+            barEl.innerHTML = `<span class="text-[6.5px] font-black px-1 rounded ${ownerBg} leading-none">${ownerTag}</span>${buildingIcons}`;
+            const currentRent = calculateTileRent(tile);
+            priceEl.textContent = `Sewa ${currentRent}`;
+            priceEl.className = `text-[7.5px] sm:text-[8.5px] font-extrabold leading-none pb-0.5 ${own.owner === 0 ? 'text-emerald-800' : 'text-rose-800'}`;
+          }
+        }
+      });
+
+      document.getElementById('miniP1Pos').textContent = BOARD_TILES[state.players[0].pos].name;
+      document.getElementById('miniP2Pos').textContent = BOARD_TILES[state.players[1].pos].name;
+    }
+
+    function updatePlayerPanels() {
+      const round = getCurrentRound();
+      const rInfo = getRoundInfo(round);
+
+      document.getElementById('roundProgressBadge').textContent = `R${round} • ${Math.min(state.qIndex + 1, 40)}/40`;
+      document.getElementById('roundRuleBadge').textContent = rInfo.badge;
+
+      [0, 1].forEach(pid => {
+        const pPrefix = pid === 0 ? 'p1' : 'p2';
+        const player = state.players[pid];
+        const propCount = Object.values(state.ownership).filter(o => o.owner === pid).length;
+
+        document.getElementById(`${pPrefix}Money`).textContent = formatM(player.money);
+        document.getElementById(`${pPrefix}Props`).textContent = `Aset: ${propCount}`;
+
+        const badge = document.getElementById(`${pPrefix}TurnBadge`);
+        const statusMsg = document.getElementById(`${pPrefix}StatusMsg`);
+        const btnDice = document.getElementById(`${pPrefix}BtnDice`);
+        const btnBuy = document.getElementById(`${pPrefix}BtnBuy`);
+        const btnSkip = document.getElementById(`${pPrefix}BtnSkip`);
+        const optBtns = [0, 1, 2, 3].map(i => document.getElementById(`${pPrefix}Opt${i}`));
+
+        // Reset button visibility
+        btnBuy.classList.add('hidden');
+        btnSkip.classList.add('hidden');
+        btnDice.classList.remove('hidden', 'pulse-action');
+        btnDice.disabled = true;
+
+        const isMyTurn = state.activePlayer === pid;
+
+        if (state.phase === 'ANSWERING') {
+          if (isMyTurn) {
+            badge.classList.remove('hidden');
+            badge.textContent = 'GILIRANMU';
+            badge.className = `px-1.5 py-0.5 text-[10px] font-extrabold rounded text-white border border-[#1A1A1A] leading-none ${pid === 0 ? 'bg-emerald-700' : 'bg-rose-700'}`;
+            statusMsg.textContent = 'Pilih A, B, C, atau D!';
+            optBtns.forEach(b => {
+              b.disabled = false;
+              b.className = 'btn-mono rounded-xl bg-[#FAF6EB] hover:bg-amber-100 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none cursor-pointer';
+            });
+          } else {
+            badge.classList.add('hidden');
+            statusMsg.textContent = 'Menunggu lawan...';
+            optBtns.forEach(b => {
+              b.disabled = true;
+              b.className = 'btn-mono rounded-xl bg-stone-200 font-monopoly text-lg sm:text-xl font-bold text-stone-400 flex flex-col items-center justify-center leading-none';
+            });
+          }
+        } else if (state.phase === 'STEAL_WINDOW') {
+          const stealer = 1 - state.activePlayer;
+          if (pid === stealer) {
+            badge.classList.remove('hidden');
+            badge.textContent = 'CURI DADU!';
+            badge.className = 'px-1.5 py-0.5 text-[10px] font-extrabold rounded bg-[#F57C00] text-white border border-[#1A1A1A] leading-none animate-bounce';
+            statusMsg.textContent = `Curi! Bonus +2 langkah (${state.stealCountdown}d)`;
+            optBtns.forEach(b => {
+              b.disabled = false;
+              b.className = 'btn-mono rounded-xl bg-amber-200 hover:bg-amber-300 font-monopoly text-lg sm:text-xl font-bold text-[#1A1A1A] flex flex-col items-center justify-center leading-none cursor-pointer pulse-action';
+            });
+          } else {
+            badge.classList.add('hidden');
+            statusMsg.textContent = 'Salah! Lawan mencuri dadu...';
+            optBtns.forEach(b => b.disabled = true);
+          }
+        } else if (state.phase === 'ROLL_READY') {
+          optBtns.forEach(b => b.disabled = true);
+          if (isMyTurn) {
+            badge.classList.remove('hidden');
+            badge.textContent = 'BENAR!';
+            statusMsg.textContent = 'Tekan tombol DADU!';
+            btnDice.disabled = false;
+            btnDice.classList.add('pulse-action', 'cursor-pointer');
+          } else {
+            badge.classList.add('hidden');
+            statusMsg.textContent = 'Lawan mengocok dadu...';
+          }
+        } else if (state.phase === 'BUY_DECISION') {
+          optBtns.forEach(b => b.disabled = true);
+          if (isMyTurn && state.pendingTileId !== null) {
+            const tile = BOARD_TILES[state.pendingTileId];
+            badge.classList.remove('hidden');
+            badge.textContent = 'BELI ASET?';
+            statusMsg.textContent = `${tile.name} (M$ ${tile.price})`;
+            btnDice.classList.add('hidden');
+            btnBuy.classList.remove('hidden');
+            btnSkip.classList.remove('hidden');
+            document.getElementById(`${pPrefix}BuyPrice`).textContent = `M$ ${tile.price}`;
+            btnBuy.disabled = player.money < tile.price;
+          } else {
+            badge.classList.add('hidden');
+            statusMsg.textContent = 'Lawan memilih properti...';
+          }
+        } else {
+          // MOVING or EVENT_CARD
+          optBtns.forEach(b => b.disabled = true);
+          statusMsg.textContent = isMyTurn ? 'Bidak bergerak...' : 'Perhatikan papan...';
+        }
+      });
+
+      renderTokensAndProperties();
+    }
+
+    function renderCurrentQuestion() {
+      hideEventOverlay();
+      state.cardFacingPlayer = state.activePlayer;
+      applyCardOrientation();
+
+      const qObj = QUESTIONS[state.qIndex];
+      const pName = state.activePlayer === 0 ? 'PEMAIN 1 (ATAS)' : 'PEMAIN 2 (BAWAH)';
+      const headerEl = document.getElementById('qHeaderBadge');
+      headerEl.textContent = `SOAL #${state.qIndex + 1} • GILIRAN ${pName}`;
+      headerEl.className = `font-monopoly text-[10px] sm:text-xs font-bold uppercase ${state.activePlayer === 0 ? 'text-emerald-800' : 'text-rose-800'}`;
+
+      // Diagram slot
+      const diagSlot = document.getElementById('qDiagramSlot');
+      const zoomBtn = document.getElementById('btnZoomDiagram');
+      if (qObj.diagram) {
+        diagSlot.innerHTML = getDiagramHTML(qObj.diagram);
+        diagSlot.classList.remove('hidden');
+        zoomBtn.classList.remove('hidden');
+      } else {
+        diagSlot.innerHTML = '';
+        diagSlot.classList.add('hidden');
+        zoomBtn.classList.add('hidden');
+      }
+
+      document.getElementById('qText').textContent = qObj.q;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const optList = document.getElementById('qOptionsList');
+      optList.innerHTML = qObj.opts.map((optText, i) => `
+        <div class="bg-white border border-stone-400 rounded-lg px-2 py-1 flex items-start gap-1.5 leading-tight">
+          <span class="font-monopoly font-bold text-xs px-1 rounded bg-stone-200 border border-[#1A1A1A] shrink-0">${letters[i]}</span>
+          <span class="text-[#1A1A1A]">${optText}</span>
+        </div>
+      `).join('');
+
+      updatePlayerPanels();
+    }
+
+    function showEventOverlay(title, desc, showDice = false, diceNum = 1) {
+      const overlay = document.getElementById('eventOverlay');
+      const diceBox = document.getElementById('diceBox');
+      const diceFace = document.getElementById('diceFace');
+      document.getElementById('eventTitle').textContent = title;
+      document.getElementById('eventDesc').textContent = desc;
+
+      if (showDice) {
+        diceBox.classList.remove('hidden');
+        diceFace.textContent = diceNum;
+      } else {
+        diceBox.classList.add('hidden');
+      }
+      overlay.classList.remove('hidden');
+    }
+
+    function hideEventOverlay() {
+      document.getElementById('eventOverlay').classList.add('hidden');
+      document.getElementById('diceBox').classList.add('hidden');
+    }
+
+    /* =========================================================================
+       7. GAMEPLAY FLOW: ANSWER -> STEAL / DICE -> MOVE -> TILE ACTION
+       ========================================================================= */
+    function startGame() {
+      initAudio();
+      // Attempt immediate fullscreen on user interaction
+      try {
+        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } catch (e) {}
+
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameArena').classList.remove('hidden');
+
+      buildBoardDOM();
+
+      // Observe middle arena container size changes to keep 90-deg board perfectly fitted
+      const container = document.getElementById('middleArenaContainer');
+      if (container && 'ResizeObserver' in window) {
+        if (boardResizeObserver) boardResizeObserver.disconnect();
+        boardResizeObserver = new ResizeObserver(() => fitRotatedBoard());
+        boardResizeObserver.observe(container);
+      }
+      window.addEventListener('resize', fitRotatedBoard);
+      document.addEventListener('fullscreenchange', () => setTimeout(fitRotatedBoard, 80));
+
+      renderCurrentQuestion();
+      speakText('Ronde satu dimulai. Giliran Pemain satu.');
+    }
+
+    function handleAnswer(playerId, optIdx) {
+      initAudio();
+      const qObj = QUESTIONS[state.qIndex];
+      const letters = ['A', 'B', 'C', 'D'];
+
+      // Case 1: Active player answering their turn question
+      if (state.phase === 'ANSWERING' && playerId === state.activePlayer) {
+        const btn = document.getElementById(`${playerId === 0 ? 'p1' : 'p2'}Opt${optIdx}`);
+        if (optIdx === qObj.ans) {
+          // CORRECT!
+          SFX.correct();
+          if (btn) btn.classList.add('!bg-emerald-400');
+          state.phase = 'ROLL_READY';
+          showEventOverlay(
+            'JAWABAN BENAR!',
+            `${state.players[playerId].name} berhak mengocok dadu!`,
+            true,
+            '?'
+          );
+          updatePlayerPanels();
+        } else {
+          // WRONG!
+          SFX.wrong();
+          if (btn) btn.classList.add('!bg-rose-400');
+          const round = getCurrentRound();
+          const correctText = `${letters[qObj.ans]}. ${qObj.opts[qObj.ans]}`;
+
+          if (round >= 2) {
+            // Activate 5-second CURI DADU window for opponent
+            startStealWindow();
+          } else {
+            state.phase = 'EVENT_CARD';
+            showEventOverlay(
+              'JAWABAN SALAH! DADU HANGUS',
+              `Jawaban yang benar: ${correctText}. Giliran berpindah ke lawan.`
+            );
+            updatePlayerPanels();
+            setTimeout(() => advanceTurn(), 2100);
+          }
+        }
+        return;
+      }
+
+      // Case 2: Opponent answering during STEAL_WINDOW (Ronde 2-4)
+      if (state.phase === 'STEAL_WINDOW' && playerId === (1 - state.activePlayer)) {
+        clearStealTimer();
+        if (optIdx === qObj.ans) {
+          SFX.correct();
+          state.phase = 'MOVING';
+          showEventOverlay(
+            'CURI DADU BERHASIL!',
+            `${state.players[playerId].name} menjawab benar & mendapat bonus maju +2 langkah!`,
+            true,
+            '+2'
+          );
+          updatePlayerPanels();
+          setTimeout(() => {
+            movePlayerSteps(playerId, 2, () => {
+              // After steal movement resolves, proceed to next turn (which is this stealer's normal turn!)
+              advanceTurn();
+            });
+          }, 900);
+        } else {
+          SFX.wrong();
+          state.phase = 'EVENT_CARD';
+          showEventOverlay(
+            'CURI DADU GAGAL!',
+            `Jawaban benar: ${letters[qObj.ans]}. ${qObj.opts[qObj.ans]}`
+          );
+          updatePlayerPanels();
+          setTimeout(() => advanceTurn(), 1900);
+        }
+      }
+    }
+
+    function startStealWindow() {
+      state.phase = 'STEAL_WINDOW';
+      state.stealCountdown = 5;
+      // Flip inner card toward the opponent who gets the 5-second steal chance
+      state.cardFacingPlayer = 1 - state.activePlayer;
+      applyCardOrientation();
+
+      const banner = document.getElementById('stealCountdownBanner');
+      banner.classList.remove('hidden');
+      banner.textContent = `CURI DADU: ${state.stealCountdown}d`;
+      updatePlayerPanels();
+
+      state.stealTimer = setInterval(() => {
+        state.stealCountdown--;
+        if (state.stealCountdown > 0) {
+          banner.textContent = `CURI DADU: ${state.stealCountdown}d`;
+        } else {
+          clearStealTimer();
+          const qObj = QUESTIONS[state.qIndex];
+          const letters = ['A', 'B', 'C', 'D'];
+          state.phase = 'EVENT_CARD';
+          showEventOverlay(
+            'WAKTU CURI DADU HABIS!',
+            `Jawaban benar: ${letters[qObj.ans]}. ${qObj.opts[qObj.ans]}`
+          );
+          updatePlayerPanels();
+          setTimeout(() => advanceTurn(), 1900);
+        }
+      }, 1000);
+    }
+
+    function clearStealTimer() {
+      if (state.stealTimer) {
+        clearInterval(state.stealTimer);
+        state.stealTimer = null;
+      }
+      const banner = document.getElementById('stealCountdownBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    function rollDice(playerId) {
+      if (state.phase !== 'ROLL_READY' || playerId !== state.activePlayer) return;
+      initAudio();
+      SFX.dice();
+      state.phase = 'MOVING';
+      updatePlayerPanels();
+
+      const diceFace = document.getElementById('diceFace');
+      diceFace.classList.add('dice-rolling');
+
+      let ticks = 0;
+      const rollAnim = setInterval(() => {
+        diceFace.textContent = Math.floor(Math.random() * 6) + 1;
+        ticks++;
+        if (ticks >= 8) {
+          clearInterval(rollAnim);
+          diceFace.classList.remove('dice-rolling');
+          const finalRoll = Math.floor(Math.random() * 6) + 1;
+          state.diceValue = finalRoll;
+          diceFace.textContent = finalRoll;
+          document.getElementById('eventTitle').textContent = `DADU KELUAR: ${finalRoll}`;
+          document.getElementById('eventDesc').textContent = `${state.players[playerId].name} melangkah ${finalRoll} petak...`;
+
+          setTimeout(() => {
+            movePlayerSteps(playerId, finalRoll, () => {
+              advanceTurn();
+            });
+          }, 550);
+        }
+      }, 65);
+    }
+
+    function movePlayerSteps(playerId, steps, onComplete) {
+      let remaining = steps;
+      const player = state.players[playerId];
+      const round = getCurrentRound();
+      const startSalary = round === 4 ? 400 : 200;
+
+      const stepInterval = setInterval(() => {
+        player.pos = (player.pos + 1) % BOARD_TILES.length;
+        SFX.step();
+
+        // Passed or landed on START (tile 0)
+        if (player.pos === 0) {
+          player.money += startSalary;
+          SFX.cash();
+        }
+
+        renderTokensAndProperties();
+        updatePlayerPanels();
+
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(stepInterval);
+          setTimeout(() => resolveTileLanding(playerId, onComplete), 300);
+        }
+      }, 240);
+    }
+
+    function resolveTileLanding(playerId, onComplete) {
+      const player = state.players[playerId];
+      const tile = BOARD_TILES[player.pos];
+      const round = getCurrentRound();
+
+      if (tile.type === 'start') {
+        const salary = round === 4 ? 400 : 200;
+        showEventOverlay('MENDARAT DI START!', `${player.name} menerima gaji +M$ ${salary}!`);
+        setTimeout(onComplete, 1600);
+        return;
+      }
+
+      if (tile.type === 'jail') {
+        showEventOverlay('KARANTINA (KUNJUNGAN)', `${player.name} hanya berkunjung. Aman tanpa denda.`);
+        setTimeout(onComplete, 1500);
+        return;
+      }
+
+      if (tile.type === 'parking') {
+        player.money += 100;
+        SFX.cash();
+        updatePlayerPanels();
+        showEventOverlay('PARKIR BEBAS!', `${player.name} mendapat bonus kas parkir +M$ 100!`);
+        setTimeout(onComplete, 1600);
+        return;
+      }
+
+      if (tile.type === 'tax') {
+        if (round <= 2) {
+          showEventOverlay('PAJAK DATA (BEBAS RONDE 1-2)', `Aturan Ronde ${round} melindungi ${player.name} dari potongan pajak!`);
+          setTimeout(onComplete, 1700);
+        } else {
+          const tax = Math.round(player.money * 0.15);
+          player.money -= tax;
+          SFX.rent();
+          updatePlayerPanels();
+          showEventOverlay('PAJAK DATA 15%!', `${player.name} membayar pajak audit sistem sebesar M$ ${tax}.`);
+          setTimeout(onComplete, 1800);
+        }
+        return;
+      }
+
+      if (tile.type === 'gotojail') {
+        player.pos = 4; // Move to Karantina
+        renderTokensAndProperties();
+        if (round >= 3) {
+          player.money -= 80;
+          SFX.rent();
+          updatePlayerPanels();
+          showEventOverlay('MASUK KARANTINA!', `Bidak dipindah ke Karantina & denda pemulihan sistem M$ 80.`);
+        } else {
+          SFX.wrong();
+          showEventOverlay('MASUK KARANTINA!', `Bidak dipindah ke petak Karantina (Bebas denda di Ronde ${round}).`);
+        }
+        setTimeout(onComplete, 1900);
+        return;
+      }
+
+      if (tile.type === 'chance' || tile.type === 'chest') {
+        const deck = tile.type === 'chance' ? CHANCE_CARDS : CHEST_CARDS;
+        const card = deck[Math.floor(Math.random() * deck.length)];
+        SFX.card();
+
+        if (card.isFine && round === 1) {
+          showEventOverlay(card.title, `${card.desc} (Bebas denda di Ronde 1!)`);
+          setTimeout(onComplete, 1900);
+          return;
+        }
+
+        showEventOverlay(card.title, card.desc);
+        setTimeout(() => {
+          if (card.action === 'goto_start') {
+            player.pos = 0;
+            player.money += (round === 4 ? 400 : 200);
+            SFX.cash();
+          } else if (card.action === 'move_3') {
+            movePlayerSteps(playerId, 3, onComplete);
+            return;
+          } else if (card.action === 'gain_150') {
+            player.money += 150;
+            SFX.cash();
+          } else if (card.action === 'gain_180') {
+            player.money += 180;
+            SFX.cash();
+          } else if (card.action === 'gain_120') {
+            player.money += 120;
+            SFX.cash();
+          } else if (card.action === 'gain_100') {
+            player.money += 100;
+            SFX.cash();
+          } else if (card.action === 'fine_100') {
+            player.money -= 100;
+            SFX.rent();
+          } else if (card.action === 'fine_90') {
+            player.money -= 90;
+            SFX.rent();
+          }
+          updatePlayerPanels();
+          setTimeout(onComplete, 1100);
+        }, 1200);
+        return;
+      }
+
+      if (tile.type === 'property') {
+        const own = state.ownership[tile.id];
+
+        if (!own) {
+          // Unowned property -> Offer to buy!
+          if (player.money >= tile.price) {
+            state.phase = 'BUY_DECISION';
+            state.pendingTileId = tile.id;
+            showEventOverlay(
+              `PROPERTI KOSONG: ${tile.name}`,
+              `Harga beli M$ ${tile.price} (Sewa dasar M$ ${tile.rent}). Tekan BELI atau LEWATI di panelmu!`
+            );
+            updatePlayerPanels();
+          } else {
+            showEventOverlay(
+              `PROPERTI KOSONG: ${tile.name}`,
+              `Saldo ${player.name} tidak cukup untuk membeli (Harga M$ ${tile.price}).`
+            );
+            setTimeout(onComplete, 1700);
+          }
+          return;
+        }
+
+        if (own.owner === playerId) {
+          // Own property -> Auto-upgrade in Ronde 2-4!
+          if (round >= 2 && own.level < 3) {
+            own.level += 1;
+            SFX.cash();
+            const bName = own.level === 2 ? 'Rumah Hijau (Lv.2 - Sewa 2x)' : 'Hotel Merah (Lv.3 - Sewa 3x)';
+            showEventOverlay(
+              `UPGRADE ASET: ${tile.name}!`,
+              `Otomatis naik menjadi ${bName}!`
+            );
+          } else {
+            showEventOverlay(
+              `PROPERTI SENDIRI: ${tile.name}`,
+              `Selamat datang kembali di aset milikmu (Level ${own.level}).`
+            );
+          }
+          updatePlayerPanels();
+          setTimeout(onComplete, 1700);
+          return;
+        }
+
+        // Owned by opponent -> Pay rent automatically!
+        const opponentId = own.owner;
+        const rentDue = calculateTileRent(tile);
+        player.money -= rentDue;
+        state.players[opponentId].money += rentDue;
+        SFX.rent();
+        updatePlayerPanels();
+        showEventOverlay(
+          `BAYAR SEWA KE ${state.players[opponentId].name}!`,
+          `${player.name} berhenti di ${tile.name} (Lv.${own.level}) & membayar sewa M$ ${rentDue}.`
+        );
+        setTimeout(onComplete, 1900);
+      }
+    }
+
+    function buyProperty(playerId) {
+      if (state.phase !== 'BUY_DECISION' || playerId !== state.activePlayer || state.pendingTileId === null) return;
+      const player = state.players[playerId];
+      const tile = BOARD_TILES[state.pendingTileId];
+      if (player.money < tile.price) return;
+
+      player.money -= tile.price;
+      state.ownership[tile.id] = { owner: playerId, level: 1 };
+      SFX.cash();
+      state.pendingTileId = null;
+      state.phase = 'EVENT_CARD';
+
+      showEventOverlay(
+        `SERTIFIKAT DIBELI!`,
+        `${player.name} resmi memiliki ${tile.name} seharga M$ ${tile.price}!`
+      );
+      updatePlayerPanels();
+      setTimeout(() => advanceTurn(), 1400);
+    }
+
+    function skipProperty(playerId) {
+      if (state.phase !== 'BUY_DECISION' || playerId !== state.activePlayer) return;
+      state.pendingTileId = null;
+      state.phase = 'EVENT_CARD';
+      advanceTurn();
+    }
+
+    /* =========================================================================
+       8. TURN PROGRESSION, ROUND RECAP & GAME OVER
+       ========================================================================= */
+    function advanceTurn() {
+      clearStealTimer();
+      state.pendingTileId = null;
+
+      // Check bankruptcy condition (cash < 0 and no properties)
+      for (let pid = 0; pid < 2; pid++) {
+        const nw = calculateNetWorth(pid);
+        if (state.players[pid].money < 0 && nw.assets === 0) {
+          endGame(`${state.players[pid].name} mengalami kebangkrutan!`);
+          return;
+        }
+      }
+
+      const completedCount = state.qIndex + 1;
+
+      // Check if all 40 questions are completed
+      if (completedCount >= QUESTIONS.length) {
+        endGame('Seluruh 40 Soal (4 Ronde) Telah Selesai Dimainkan!');
+        return;
+      }
+
+      // Check end of Ronde 1 (10), Ronde 2 (20), Ronde 3 (30)
+      if (completedCount % 10 === 0) {
+        showRoundSummaryModal(completedCount / 10);
+        return;
+      }
+
+      // Proceed to next question and switch active player
+      state.qIndex = completedCount;
+      state.activePlayer = state.qIndex % 2;
+      state.phase = 'ANSWERING';
+      renderCurrentQuestion();
+    }
+
+    function showRoundSummaryModal(finishedRound) {
+      SFX.cash();
+      const nw1 = calculateNetWorth(0);
+      const nw2 = calculateNetWorth(1);
+
+      document.getElementById('roundModalTitle').textContent = `REKAP RONDE ${finishedRound} SELESAI`;
+      document.getElementById('roundModalSub').textContent = `${finishedRound * 10} dari 40 Soal Telah Selesai`;
+
+      document.getElementById('recapP1Cash').textContent = `Tunai: ${formatM(nw1.cash)}`;
+      document.getElementById('recapP1Prop').textContent = `Aset: ${formatM(nw1.assets)}`;
+      document.getElementById('recapP1Total').textContent = `Total: ${formatM(nw1.total)}`;
+
+      document.getElementById('recapP2Cash').textContent = `Tunai: ${formatM(nw2.cash)}`;
+      document.getElementById('recapP2Prop').textContent = `Aset: ${formatM(nw2.assets)}`;
+      document.getElementById('recapP2Total').textContent = `Total: ${formatM(nw2.total)}`;
+
+      // Catch-up subsidy +M$ 150 to trailing player
+      const subsidyBanner = document.getElementById('recapSubsidyBanner');
+      if (nw1.total < nw2.total) {
+        state.players[0].money += 150;
+        subsidyBanner.textContent = 'Dana Subsidi Server +M$ 150 otomatis diberikan kepada PEMAIN 1!';
+      } else if (nw2.total < nw1.total) {
+        state.players[1].money += 150;
+        subsidyBanner.textContent = 'Dana Subsidi Server +M$ 150 otomatis diberikan kepada PEMAIN 2!';
+      } else {
+        state.players[0].money += 100;
+        state.players[1].money += 100;
+        subsidyBanner.textContent = 'Skor imbang! Kedua pemain menerima bonus +M$ 100!';
+      }
+
+      const nextRound = finishedRound + 1;
+      const nextInfo = getRoundInfo(nextRound);
+      document.getElementById('nextRoundRuleDesc').textContent = `${nextInfo.title} — ${nextInfo.desc}`;
+
+      document.getElementById('roundModal').classList.remove('hidden');
+      speakText(`Ronde ${finishedRound} selesai. Bersiap memasuki Ronde ${nextRound}.`);
+    }
+
+    function continueNextRound() {
+      document.getElementById('roundModal').classList.add('hidden');
+      state.qIndex += 1;
+      state.activePlayer = state.qIndex % 2;
+      state.phase = 'ANSWERING';
+      renderCurrentQuestion();
+    }
+
+    function endGame(reasonText) {
+      SFX.win();
+      const nw1 = calculateNetWorth(0);
+      const nw2 = calculateNetWorth(1);
+
+      document.getElementById('gameOverReason').textContent = reasonText;
+
+      document.getElementById('finalP1Cash').textContent = `Tunai: ${formatM(nw1.cash)}`;
+      document.getElementById('finalP1Prop').textContent = `Properti & Bangunan: ${formatM(nw1.assets)}`;
+      document.getElementById('finalP1Total').textContent = `Kekayaan: ${formatM(nw1.total)}`;
+
+      document.getElementById('finalP2Cash').textContent = `Tunai: ${formatM(nw2.cash)}`;
+      document.getElementById('finalP2Prop').textContent = `Properti & Bangunan: ${formatM(nw2.assets)}`;
+      document.getElementById('finalP2Total').textContent = `Kekayaan: ${formatM(nw2.total)}`;
+
+      const winnerEl = document.getElementById('winnerName');
+      if (nw1.total > nw2.total) {
+        winnerEl.textContent = 'PEMAIN 1 (TOPI TINGGI)';
+        speakText('Selamat! Pemain satu memenangkan Monopoli Informatika!');
+      } else if (nw2.total > nw1.total) {
+        winnerEl.textContent = 'PEMAIN 2 (MOBIL BALAP)';
+        speakText('Selamat! Pemain dua memenangkan Monopoli Informatika!');
+      } else {
+        winnerEl.textContent = 'HASIL SERI (IMBANG)!';
+        speakText('Permainan berakhir imbang!');
+      }
+
+      document.getElementById('gameOverModal').classList.remove('hidden');
+    }
+
+    function resetGame() {
+      document.getElementById('gameOverModal').classList.add('hidden');
+      state.players[0].money = 1000;
+      state.players[0].pos = 0;
+      state.players[1].money = 1000;
+      state.players[1].pos = 0;
+      state.ownership = {};
+      state.qIndex = 0;
+      state.activePlayer = 0;
+      state.phase = 'ANSWERING';
+      state.pendingTileId = null;
+      renderCurrentQuestion();
+    }
+
+    /* =========================================================================
+       9. ZOOM MODAL FOR DIAGRAMS / TABLES (FACING ACTIVE PLAYER)
+       ========================================================================= */
+    function openZoomModal() {
+      const qObj = QUESTIONS[state.qIndex];
+      if (!qObj || !qObj.diagram) return;
+      const body = document.getElementById('zoomModalBody');
+      const card = document.getElementById('zoomModalCard');
+      body.innerHTML = getDiagramHTML(qObj.diagram);
+      state.zoomRotation = state.cardFacingPlayer === 0 ? 180 : 0;
+      card.style.transform = `rotate(${state.zoomRotation}deg)`;
+      document.getElementById('zoomModal').classList.remove('hidden');
+    }
+
+    function toggleZoomFlip() {
+      state.zoomRotation = state.zoomRotation === 0 ? 180 : 0;
+      const card = document.getElementById('zoomModalCard');
+      card.style.transform = `rotate(${state.zoomRotation}deg)`;
+    }
+
+    function closeZoomModal() {
+      document.getElementById('zoomModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
