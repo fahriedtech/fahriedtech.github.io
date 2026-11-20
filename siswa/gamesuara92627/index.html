@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber-Runner 2099: Misi Menembus 40 Firewall Neo-Data (Informatika Kelas 9)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =====================================================================
+       GAYA VISUAL CYBER-SCI-FI, TIPOGRAFI & ATURAN NON-INTERAKTIF OPSI
+       ===================================================================== */
+    :root {
+      --font-display: 'Fredoka', 'Trebuchet MS', sans-serif;
+      --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: #050814;
+      color: #f8fafc;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: var(--font-display);
+    }
+
+    /* Kartu pilihan A, B, C, D murni tampilan visual (hanya merespons suara) */
+    .option-card {
+      pointer-events: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 4px 0 rgba(2, 6, 23, 0.85);
+    }
+
+    /* Panggung Canvas 2.5D Cyber-Runner */
+    #stage-container {
+      position: relative;
+      width: 100%;
+      height: 195px;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 2px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(14, 165, 233, 0.15);
+    }
+
+    @media (min-width: 640px) {
+      #stage-container {
+        height: 225px;
+      }
+    }
+
+    #cyber-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Efek Denyut Merah Saat 5 Detik Terakhir (Mode Panik Drone Virus) */
+    @keyframes panicGlow {
+      0%, 100% { box-shadow: inset 0 0 0px rgba(239, 68, 68, 0); }
+      50% { box-shadow: inset 0 0 42px rgba(239, 68, 68, 0.9); }
+    }
+    .stage-panic {
+      animation: panicGlow 0.45s infinite;
+    }
+
+    /* Animasi Lencana Tes Huruf A/B/C/D di Layar Awal */
+    @keyframes badgePop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.24); }
+      100% { transform: scale(1.06); }
+    }
+    .test-badge-hit {
+      animation: badgePop 0.35s ease-out forwards;
+    }
+
+    /* Scrollbar rapi */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 999px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+  <!-- =====================================================================
+       BAR UTILITAS ATAS (TANPA TOMBOL UNDUH OFFLINE)
+       ===================================================================== -->
+  <div class="w-full bg-slate-900/95 border-b border-cyan-500/25 px-3 sm:px-5 py-2 flex items-center justify-between gap-2 z-30">
+    <div class="flex items-center gap-2">
+      <span class="text-lg">🤖</span>
+      <span class="font-display font-bold text-xs sm:text-sm text-cyan-300 tracking-wide">
+        CYBER-RUNNER 2099 • INFORMATIKA KELAS 9 (40 SOAL)
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button type="button" id="btn-global-mute" title="Suara Efek Game" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 text-xs sm:text-sm font-bold text-cyan-100 transition">
+        🔊 <span class="hidden sm:inline">SFX Aktif</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       1. LAYAR AWAL & AREA UJI MIKROFON REAL-TIME
+       ===================================================================== -->
+  <div id="start-screen" class="flex-1 flex items-center justify-center p-3 sm:p-6 bg-gradient-to-br from-slate-950 via-cyan-950/70 to-indigo-950">
+    <div class="w-full max-w-4xl bg-slate-900/90 border-2 border-cyan-400/35 rounded-3xl p-4 sm:p-7 shadow-2xl backdrop-blur-md">
+
+      <!-- Header Judul & Emblem Helm Cyber-Agent -->
+      <div class="flex flex-col md:flex-row items-center gap-4 mb-5 text-center md:text-left">
+        <div class="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-gradient-to-tr from-cyan-500 via-blue-600 to-fuchsia-600 rounded-3xl p-2 flex items-center justify-center shadow-lg shadow-cyan-500/25 border-2 border-cyan-300/70">
+          <!-- Emblem SVG Helm & Visor Cyber-Agent -->
+          <svg viewBox="0 0 120 120" class="w-full h-full">
+            <defs>
+              <linearGradient id="visorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22d3ee" />
+                <stop offset="50%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#e879f9" />
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="54" fill="#090d1e" stroke="#22d3ee" stroke-width="2" />
+            <!-- Antena Sinyal Cyber -->
+            <line x1="60" y1="12" x2="60" y2="25" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round" />
+            <circle cx="60" cy="10" r="4.5" fill="#f43f5e" />
+            <!-- Cangkang Helm Futuristik -->
+            <path d="M26 66 C26 36, 42 24, 60 24 C78 24, 94 36, 94 66 L88 88 C78 98, 42 98, 32 88 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3" />
+            <!-- Ear Pods Samping -->
+            <rect x="18" y="50" width="9" height="24" rx="4" fill="#0284c7" stroke="#bae6fd" stroke-width="1.5" />
+            <rect x="93" y="50" width="9" height="24" rx="4" fill="#0284c7" stroke="#bae6fd" stroke-width="1.5" />
+            <!-- Visor Neon Holografik -->
+            <path d="M32 54 Q60 47 88 54 L84 72 Q60 79 36 72 Z" fill="url(#visorGrad)" stroke="#ffffff" stroke-width="2" />
+            <!-- Kilau HUD di dalam Visor -->
+            <line x1="42" y1="61" x2="54" y2="61" stroke="#0f172a" stroke-width="3" stroke-linecap="round" />
+            <line x1="66" y1="61" x2="78" y2="61" stroke="#0f172a" stroke-width="3" stroke-linecap="round" />
+            <path d="M40 53 L52 53" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+            <!-- Pelindung Dagu -->
+            <path d="M42 82 L60 87 L78 82" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div class="flex-1">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/40 text-cyan-300 text-xs font-extrabold uppercase tracking-wider mb-1.5">
+            🎙️ 100% KONTROL SUARA • 40 GERBANG FIREWALL
+          </div>
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight">
+            Cyber-Runner 2099: <span class="text-cyan-300">Misi Menembus 40 Firewall Neo-Data</span>
+          </h1>
+          <p class="text-slate-300 text-xs sm:text-sm mt-1.5">
+            Semua gerbang keamanan diretas memakai <strong>suara mikrofon</strong>! Ucapkan lantang <strong class="text-emerald-300">"A (Ayam)"</strong>, <strong class="text-sky-300">"B (Bebek)"</strong>, <strong class="text-amber-300">"C (Cicak)"</strong>, atau <strong class="text-rose-300">"D (Domba)"</strong> untuk menembakkan laser sonik!
+          </p>
+        </div>
+      </div>
+
+      <!-- BANNER DIAGNOSTIK IZIN MIKROFON TAUTAN DIBAGIKAN / IFRAME -->
+      <div id="shared-frame-notice" class="hidden bg-amber-950/85 border-2 border-amber-400/70 rounded-2xl p-3.5 mb-4 text-xs sm:text-sm text-amber-100">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+          <div>
+            <div class="font-display font-bold text-amber-300 text-sm mb-0.5">
+              ⚠️ Info Mikrofon pada Tautan Pratinjau / Frame
+            </div>
+            <p id="shared-frame-notice-text" class="leading-relaxed text-amber-100/90">
+              Jika suara belum terdeteksi di dalam frame pratinjau, buka tautan di <strong>Tab Baru / Layar Penuh</strong> (ikon panah keluar di pojok kanan atas) atau klik <strong>ikon gembok 🔒 di bilah alamat browser &rarr; Izinkan Mikrofon</strong>.
+            </p>
+          </div>
+          <button type="button" id="btn-reinit-mic-top" class="shrink-0 px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-display font-bold text-xs shadow transition">
+            🔄 Sambungkan Ulang Mic
+          </button>
+        </div>
+      </div>
+
+      <!-- AREA UJI & KALIBRASI DUAL-ENGINE MIKROFON DI LAYAR AWAL -->
+      <div class="bg-slate-950/90 border-2 border-cyan-400/40 rounded-2xl p-4 mb-5 shadow-inner">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 mb-3">
+          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <button type="button" id="btn-test-mic" class="flex-1 sm:flex-none px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-display font-bold text-sm shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transition">
+              <span>🎙️</span>
+              <span id="btn-test-mic-label">Aktifkan &amp; Uji Mikrofon</span>
+            </button>
+
+            <button type="button" id="btn-calibrate-mic" title="Cek level sinyal mikrofon selama 2 detik lalu bebaskan perangkat untuk pengenal suara" class="px-3.5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold text-xs sm:text-sm transition">
+              🎚️ Kalibrasi 2 Detik
+            </button>
+          </div>
+
+          <!-- Status Engine & Bar Gelombang Suara 8-Bar -->
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+            <span id="start-engine-badge" class="px-2.5 py-1 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-[11px] font-extrabold">
+              🌐 Engine 1: Speech (ID)
+            </span>
+
+            <div id="start-mic-bars" class="flex items-end gap-1 h-8 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700">
+              <span class="w-1.5 bg-cyan-400 rounded-full transition-all duration-75" style="height: 18%"></span>
+              <span class="w-1.5 bg-cyan-400 rounded-full transition-all duration-75" style="height: 22%"></span>
+              <span class="w-1.5 bg-emerald-400 rounded-full transition-all duration-75" style="height: 18%"></span>
+              <span class="w-1.5 bg-emerald-400 rounded-full transition-all duration-75" style="height: 26%"></span>
+              <span class="w-1.5 bg-fuchsia-400 rounded-full transition-all duration-75" style="height: 20%"></span>
+              <span class="w-1.5 bg-fuchsia-400 rounded-full transition-all duration-75" style="height: 28%"></span>
+              <span class="w-1.5 bg-indigo-400 rounded-full transition-all duration-75" style="height: 22%"></span>
+              <span class="w-1.5 bg-indigo-400 rounded-full transition-all duration-75" style="height: 18%"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teks Transkrip Langsung & 4 Indikator Huruf A, B, C, D -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 pt-2.5 border-t border-slate-800">
+          <div id="start-transcript-text" class="text-xs sm:text-sm font-bold text-cyan-100 text-center md:text-left">
+            🎙️ Terdengar: <span class="text-slate-400 italic">(Klik "Aktifkan &amp; Uji Mikrofon" lalu ucapkan A, B, C, atau D)</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-slate-400 mr-1">Indikator Uji:</span>
+            <div id="test-pill-0" class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-600 font-display font-bold text-base flex items-center justify-center text-slate-300 transition-all">
+              A
+            </div>
+            <div id="test-pill-1" class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-600 font-display font-bold text-base flex items-center justify-center text-slate-300 transition-all">
+              B
+            </div>
+            <div id="test-pill-2" class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-600 font-display font-bold text-base flex items-center justify-center text-slate-300 transition-all">
+              C
+            </div>
+            <div id="test-pill-3" class="w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-600 font-display font-bold text-base flex items-center justify-center text-slate-300 transition-all">
+              D
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PILIHAN 3 MODE BERMAIN KELAS -->
+      <div class="mb-5">
+        <label class="block text-xs font-extrabold uppercase tracking-wider text-cyan-300 mb-2.5">
+          Pilih Mode Misi Kelas (40 Gerbang Firewall):
+        </label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <button type="button" data-mode="survival" class="mode-card-btn bg-cyan-600 border-2 border-cyan-200 text-white p-3.5 rounded-2xl text-left shadow-lg transition">
+            <div class="font-display font-bold text-base mb-1">🛡️ Mode Bertahan Hidup</div>
+            <p class="text-xs text-cyan-50 leading-relaxed">
+              5 Perisai Energi untuk menembus seluruh 40 gerbang firewall bersama-sama.
+            </p>
+          </button>
+
+          <button type="button" data-mode="relay4" class="mode-card-btn bg-slate-800/90 border-2 border-slate-700 hover:border-slate-500 text-slate-200 p-3.5 rounded-2xl text-left transition">
+            <div class="font-display font-bold text-base mb-1">🚩 Mode Estafet 4 Kelompok</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Soal 1–10 Kel. 1, 11–20 Kel. 2, 21–30 Kel. 3, 31–40 Kel. 4 + rekap skor kelompok.
+            </p>
+          </button>
+
+          <button type="button" data-mode="turn2" class="mode-card-btn bg-slate-800/90 border-2 border-slate-700 hover:border-slate-500 text-slate-200 p-3.5 rounded-2xl text-left transition">
+            <div class="font-display font-bold text-base mb-1">🎤 Tantangan 2 Soal / Siswa</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Setiap siswa maju menjawab 2 gerbang firewall lalu bergantian ke teman berikutnya.
+            </p>
+          </button>
+        </div>
+      </div>
+
+      <!-- TOMBOL MULAI MISI CYBER (LAYAR PENUH) -->
+      <button type="button" id="btn-start-game" class="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 hover:from-cyan-300 hover:to-fuchsia-400 text-slate-950 font-display font-bold text-lg sm:text-xl shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-3 transform hover:scale-[1.01] active:scale-[0.99] transition">
+        <span>🚀</span>
+        <span>Mulai Misi Cyber (Layar Penuh)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       2. LAYAR PERMAINAN UTAMA (GAMEPLAY SCREEN)
+       ===================================================================== -->
+  <div id="game-screen" class="hidden flex-1 flex flex-col max-w-6xl w-full mx-auto p-2 sm:p-3 gap-2">
+
+    <!-- HUD ATAS: PETA PROGRES 40 TITIK + SKOR, STREAK & PERISAI ENERGI -->
+    <header class="bg-slate-900/95 border border-cyan-500/30 rounded-2xl p-2.5 sm:px-4 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+        <!-- Info Zona & Nomor Gerbang Firewall -->
+        <div class="flex items-center gap-2">
+          <span id="hud-zone-badge" class="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+            🌳 Pos 1–10: Hutan Jaringan Graf &amp; Pohon
+          </span>
+          <span id="hud-gate-counter" class="text-sm sm:text-base font-display font-bold text-white">
+            Firewall 1 / 40
+          </span>
+        </div>
+
+        <!-- Sisa Perisai / Kelompok, Streak Combo & Skor -->
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+          <div id="hud-mode-status" class="px-2.5 py-1 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-xs sm:text-sm font-extrabold">
+            🛡️🛡️🛡️🛡️🛡️
+          </div>
+
+          <div id="hud-streak-badge" class="px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-600 text-slate-300 text-xs sm:text-sm font-extrabold transition-all">
+            ⚡ Streak: 0
+          </div>
+
+          <div class="px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 text-xs sm:text-sm font-display font-bold">
+            💎 <span id="hud-score">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Peta Progres 40 Titik dengan Ikon Robot Cyber-Runner Maju -->
+      <div class="relative pt-3 pb-1 px-1">
+        <div id="map-runner-icon" class="absolute -top-1.5 -translate-x-1/2 transition-all duration-500 z-10 pointer-events-none" style="left: 1.25%;">
+          <span class="text-base sm:text-lg drop-shadow">🤖</span>
+        </div>
+        <div id="progress-dots" class="flex items-center gap-[2px] sm:gap-1 w-full"></div>
+      </div>
+    </header>
+
+    <!-- PANGGUNG VISUAL 2.5D AGEN BYTE MENEMBUS FIREWALL -->
+    <section id="stage-container">
+      <canvas id="cyber-canvas"></canvas>
+      <!-- Indikator Bom EMP & Drone Virus Pengejar -->
+      <div class="absolute top-2.5 left-3 right-3 flex items-center justify-between pointer-events-none">
+        <div class="px-3 py-1 rounded-full bg-slate-950/85 border border-cyan-400/30 text-xs sm:text-sm font-extrabold text-cyan-300">
+          💣 Bom EMP: <span id="hud-timer-text" class="text-white">20s</span>
+        </div>
+        <div id="hud-panic-badge" class="hidden px-3 py-1 rounded-full bg-rose-600 text-white text-xs font-extrabold animate-bounce shadow-lg">
+          👾 DRONE VIRUS MENGEJAR!
+        </div>
+      </div>
+    </section>
+
+    <!-- HUD SUARA REAL-TIME DI BAWAH PANGGUNG -->
+    <section class="bg-slate-900/95 border border-cyan-500/40 rounded-2xl px-3 py-2 flex flex-col lg:flex-row items-center justify-between gap-2 shadow">
+      <div class="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-start">
+        <div class="flex items-center gap-1.5">
+          <span id="hud-mic-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-extrabold text-[11px] sm:text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            MIC AKTIF (ID)
+          </span>
+
+          <!-- Visualizer Gelombang Suara -->
+          <div id="hud-mic-bars" class="flex items-end gap-1 h-6 px-2 py-1 rounded-xl bg-slate-950 border border-slate-800">
+            <span class="w-1 bg-cyan-400 rounded-full transition-all duration-75" style="height: 20%"></span>
+            <span class="w-1 bg-cyan-400 rounded-full transition-all duration-75" style="height: 25%"></span>
+            <span class="w-1 bg-emerald-400 rounded-full transition-all duration-75" style="height: 20%"></span>
+            <span class="w-1 bg-emerald-400 rounded-full transition-all duration-75" style="height: 30%"></span>
+            <span class="w-1 bg-fuchsia-400 rounded-full transition-all duration-75" style="height: 22%"></span>
+            <span class="w-1 bg-fuchsia-400 rounded-full transition-all duration-75" style="height: 28%"></span>
+            <span class="w-1 bg-indigo-400 rounded-full transition-all duration-75" style="height: 20%"></span>
+            <span class="w-1 bg-indigo-400 rounded-full transition-all duration-75" style="height: 24%"></span>
+          </div>
+
+          <button type="button" id="btn-hud-reset-mic" title="Segarkan Koneksi Mikrofon" class="px-2 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 transition">
+            🔄 Reset Mic
+          </button>
+        </div>
+
+        <div id="hud-transcript-text" class="text-xs sm:text-sm font-bold text-cyan-100 truncate max-w-[230px] sm:max-w-[320px]">
+          🎙️ Terdengar: <span class="text-slate-300">Menunggu suara...</span>
+        </div>
+      </div>
+
+      <div id="hud-voice-guide" class="text-[11px] sm:text-xs font-extrabold text-cyan-300 bg-slate-950/90 border border-cyan-400/30 px-3 py-1 rounded-xl text-center">
+        Ucapkan: <span class="text-emerald-300">A / Ayam / 1</span> • <span class="text-sky-300">B / Bebek / 2</span> • <span class="text-amber-300">C / Cicak / 3</span> • <span class="text-rose-300">D / Domba / 4</span>
+      </div>
+    </section>
+
+    <!-- KARTU SOAL & 4 PILIHAN JAWABAN NON-INTERAKTIF (HANYA SUARA) -->
+    <main class="flex-1 flex flex-col justify-between bg-slate-900/95 border border-slate-700/80 rounded-2xl p-3 sm:p-5 shadow-xl gap-3">
+      <div class="flex flex-col md:flex-row items-center gap-3 sm:gap-5">
+        <div class="flex-1 w-full">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span id="q-number-pill" class="px-2.5 py-0.5 rounded-lg bg-cyan-600 text-white font-display font-bold text-xs sm:text-sm">
+              Soal #1
+            </span>
+            <span id="q-topic-pill" class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-cyan-200 font-bold text-xs border border-slate-700">
+              Berpikir Komputasional
+            </span>
+          </div>
+          <h2 id="question-text" class="text-base sm:text-xl font-bold text-white leading-snug">
+            Memuat soal...
+          </h2>
+        </div>
+
+        <!-- Wadah Ilustrasi Diagram SVG Khusus Soal Visual -->
+        <div id="question-diagram-box" class="hidden shrink-0 bg-white rounded-2xl p-2 border-2 border-cyan-400/60 shadow-md max-w-full overflow-x-auto">
+        </div>
+      </div>
+
+      <!-- 4 Kartu Pilihan A, B, C, D (pointer-events: none; user-select: none; murni visual) -->
+      <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 mt-auto">
+        <div data-choice="0" class="option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800 border-2 border-emerald-500/50 text-left">
+          <span class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-emerald-500 text-slate-950 font-display font-bold text-lg sm:text-xl flex items-center justify-center shadow">
+            A
+          </span>
+          <span class="opt-text flex-1 text-sm sm:text-base font-bold text-slate-100 leading-snug">Opsi A</span>
+          <span class="hidden sm:inline-block text-[10px] font-extrabold text-emerald-300/90 bg-emerald-950/90 px-2 py-0.5 rounded-md border border-emerald-500/30">
+            🎙️ "A / AYAM"
+          </span>
+        </div>
+
+        <div data-choice="1" class="option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800 border-2 border-sky-500/50 text-left">
+          <span class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-sky-500 text-slate-950 font-display font-bold text-lg sm:text-xl flex items-center justify-center shadow">
+            B
+          </span>
+          <span class="opt-text flex-1 text-sm sm:text-base font-bold text-slate-100 leading-snug">Opsi B</span>
+          <span class="hidden sm:inline-block text-[10px] font-extrabold text-sky-300/90 bg-sky-950/90 px-2 py-0.5 rounded-md border border-sky-500/30">
+            🎙️ "B / BEBEK"
+          </span>
+        </div>
+
+        <div data-choice="2" class="option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800 border-2 border-amber-500/50 text-left">
+          <span class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-amber-400 text-slate-950 font-display font-bold text-lg sm:text-xl flex items-center justify-center shadow">
+            C
+          </span>
+          <span class="opt-text flex-1 text-sm sm:text-base font-bold text-slate-100 leading-snug">Opsi C</span>
+          <span class="hidden sm:inline-block text-[10px] font-extrabold text-amber-300/90 bg-amber-950/90 px-2 py-0.5 rounded-md border border-amber-500/30">
+            🎙️ "C / CICAK"
+          </span>
+        </div>
+
+        <div data-choice="3" class="option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800 border-2 border-rose-500/50 text-left">
+          <span class="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-rose-500 text-white font-display font-bold text-lg sm:text-xl flex items-center justify-center shadow">
+            D
+          </span>
+          <span class="opt-text flex-1 text-sm sm:text-base font-bold text-slate-100 leading-snug">Opsi D</span>
+          <span class="hidden sm:inline-block text-[10px] font-extrabold text-rose-300/90 bg-rose-950/90 px-2 py-0.5 rounded-md border border-rose-500/30">
+            🎙️ "D / DOMBA"
+          </span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       3. BANNER PEMBAHASAN SINGKAT (2.8 DETIK OTOMATIS / SUARA "LANJUT")
+       ===================================================================== -->
+  <div id="feedback-overlay" class="hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="feedback-card" class="w-full max-w-lg bg-slate-900 border-2 border-emerald-400 rounded-3xl p-5 sm:p-6 shadow-2xl text-center">
+      <div id="fb-emoji" class="text-5xl sm:text-6xl mb-2">⚡</div>
+      <h3 id="fb-title" class="text-2xl sm:text-3xl font-display font-bold text-emerald-300 mb-1">
+        Firewall Tembus!
+      </h3>
+      <p id="fb-comedy" class="text-sm sm:text-base font-bold text-cyan-200 mb-3">
+        Laser sonik tepat sasaran! Gerbang Firewall langsung meledak jadi kepingan piksel!
+      </p>
+
+      <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5 text-left mb-3">
+        <div class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-1">
+          Kunci &amp; Pembahasan Kilat:
+        </div>
+        <div id="fb-correct-answer" class="text-sm sm:text-base font-extrabold text-emerald-300 mb-1">
+          B. Memecahkan masalah dengan cara berpikir logis dan sistematis
+        </div>
+        <p id="fb-explanation" class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+          Berpikir komputasional adalah metode memecahkan masalah secara logis, terstruktur, dan sistematis.
+        </p>
+      </div>
+
+      <div class="text-xs font-bold text-cyan-200 bg-cyan-950/80 border border-cyan-500/30 rounded-xl py-2 px-3">
+        ⏩ Lanjut otomatis dalam <span id="fb-countdown-text" class="text-amber-300 font-extrabold">2.8 detik</span> (atau ucapkan <strong>"Lanjut"</strong> / <strong>"Berikutnya"</strong>)
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       4. OVERLAY PERGANTIAN KELOMPOK / SISWA (MODE ESTAFET & TANTANGAN)
+       ===================================================================== -->
+  <div id="relay-overlay" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-slate-900 border-2 border-cyan-400 rounded-3xl p-6 text-center shadow-2xl">
+      <div class="text-5xl mb-3">🤖🚩</div>
+      <span class="px-3 py-1 rounded-full bg-cyan-400/20 border border-cyan-400/40 text-cyan-300 text-xs font-extrabold uppercase">
+        Estafet Cyber-Runner
+      </span>
+      <h3 id="relay-title" class="text-2xl sm:text-3xl font-display font-bold text-white mt-2 mb-2">
+        Giliran Kelompok 2!
+      </h3>
+      <p id="relay-subtitle" class="text-slate-300 text-sm mb-5">
+        Silakan anggota Kelompok 2 maju ke depan mikrofon untuk menembus 10 gerbang firewall zona berikutnya!
+      </p>
+      <button type="button" id="btn-relay-ready" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 hover:from-cyan-300 hover:to-fuchsia-400 text-slate-950 font-display font-bold text-lg shadow-lg">
+        🏃‍♂️ Tim Berikutnya Siap!
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       5. LAYAR AKHIR (SKOR, REKAP KELOMPOK & MAIN LAGI)
+       ===================================================================== -->
+  <div id="end-screen" class="hidden flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-cyan-950 to-indigo-950">
+    <div class="w-full max-w-xl bg-slate-900/95 border-2 border-cyan-400/50 rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
+      <div id="end-trophy" class="text-6xl sm:text-7xl mb-3">🏆</div>
+      <h2 id="end-title" class="text-3xl sm:text-4xl font-display font-bold text-cyan-300 mb-2">
+        Misi Berhasil! Neo-Data Aman!
+      </h2>
+      <p id="end-subtitle" class="text-slate-300 text-sm sm:text-base mb-5">
+        Luar biasa! Agen Byte berhasil menembus seluruh 40 gerbang firewall Informatika Kelas 9!
+      </p>
+
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3">
+          <div class="text-xs text-slate-400 font-bold">Total Skor</div>
+          <div id="end-score" class="text-xl sm:text-2xl font-display font-bold text-amber-300">0</div>
+        </div>
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3">
+          <div class="text-xs text-slate-400 font-bold">Firewall Tembus</div>
+          <div id="end-correct" class="text-xl sm:text-2xl font-display font-bold text-emerald-400">0/40</div>
+        </div>
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3">
+          <div class="text-xs text-slate-400 font-bold">Streak Tertinggi</div>
+          <div id="end-max-streak" class="text-xl sm:text-2xl font-display font-bold text-cyan-300">0⚡</div>
+        </div>
+      </div>
+
+      <!-- Rekap Skor Per Kelompok (Muncul pada Mode Estafet 4 Kelompok) -->
+      <div id="end-group-recap" class="hidden bg-slate-800/80 border border-cyan-400/30 rounded-2xl p-4 mb-5 text-left">
+        <div class="text-xs font-extrabold uppercase tracking-wider text-cyan-300 mb-2.5 text-center">
+          🏆 Rekap Skor Estafet 4 Kelompok
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+          <div class="bg-slate-900 rounded-xl p-2.5 border border-emerald-500/40">
+            <div class="text-[11px] font-bold text-emerald-300">Kelompok 1 (1–10)</div>
+            <div id="grp-score-0" class="text-lg font-display font-bold text-white">0</div>
+          </div>
+          <div class="bg-slate-900 rounded-xl p-2.5 border border-amber-500/40">
+            <div class="text-[11px] font-bold text-amber-300">Kelompok 2 (11–20)</div>
+            <div id="grp-score-1" class="text-lg font-display font-bold text-white">0</div>
+          </div>
+          <div class="bg-slate-900 rounded-xl p-2.5 border border-cyan-500/40">
+            <div class="text-[11px] font-bold text-cyan-300">Kelompok 3 (21–30)</div>
+            <div id="grp-score-2" class="text-lg font-display font-bold text-white">0</div>
+          </div>
+          <div class="bg-slate-900 rounded-xl p-2.5 border border-fuchsia-500/40">
+            <div class="text-[11px] font-bold text-fuchsia-300">Kelompok 4 (31–40)</div>
+            <div id="grp-score-3" class="text-lg font-display font-bold text-white">0</div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" id="btn-restart" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-display font-bold text-lg shadow-lg">
+        🔄 Main Lagi dari Awal
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       SCRIPT UTAMA:
+       1. ILUSTRASI DIAGRAM SVG KHUSUS SOAL VISUAL
+       2. BANK 40 SOAL LENGKAP INFORMATIKA KELAS 9
+       3. DUAL-ENGINE VOICE RECOGNITION + AKUSTIK OFFLINE
+       4. PANGGUNG 2.5D PARALLAX 4 ZONA CYBER, AGEN BYTE, DRONE VIRUS & BOM EMP
+       5. WEB AUDIO SFX SYNTHESIZER
+       ===================================================================== -->
+  <script>
+    /* ---------------------------------------------------------------------
+       A. ILUSTRASI DIAGRAM SVG KHUSUS SOAL VISUAL INFORMATIKA KELAS 9
+       --------------------------------------------------------------------- */
+    const DIAGRAM_SVGS = {
+      // Soal #7: Struktur Data Pohon (Tree) Organisasi
+      tree_org: `
+        <svg viewBox="0 0 430 165" class="w-full max-w-[390px] h-auto">
+          <rect width="430" height="165" rx="10" fill="#f8fafc" />
+          <text x="215" y="16" font-size="10" font-weight="bold" text-anchor="middle" fill="#0f172a">Struktur Kepengurusan Organisasi</text>
+          <!-- Garis Penghubung Hierarki -->
+          <line x1="215" y1="42" x2="215" y2="82" stroke="#334155" stroke-width="2" />
+          <line x1="125" y1="54" x2="305" y2="54" stroke="#334155" stroke-width="2" />
+          <line x1="125" y1="82" x2="305" y2="82" stroke="#334155" stroke-width="2" />
+          <line x1="125" y1="82" x2="125" y2="94" stroke="#334155" stroke-width="2" />
+          <line x1="305" y1="82" x2="305" y2="94" stroke="#334155" stroke-width="2" />
+          <!-- Garis ke Divisi 1..5 -->
+          <line x1="125" y1="114" x2="125" y2="128" stroke="#334155" stroke-width="1.8" />
+          <line x1="55" y1="128" x2="195" y2="128" stroke="#334155" stroke-width="1.8" />
+          <line x1="55" y1="128" x2="55" y2="138" stroke="#334155" stroke-width="1.8" />
+          <line x1="125" y1="128" x2="125" y2="138" stroke="#334155" stroke-width="1.8" />
+          <line x1="195" y1="128" x2="195" y2="138" stroke="#334155" stroke-width="1.8" />
+          <line x1="305" y1="114" x2="305" y2="128" stroke="#334155" stroke-width="1.8" />
+          <line x1="268" y1="128" x2="342" y2="128" stroke="#334155" stroke-width="1.8" />
+          <line x1="268" y1="128" x2="268" y2="138" stroke="#334155" stroke-width="1.8" />
+          <line x1="342" y1="128" x2="342" y2="138" stroke="#334155" stroke-width="1.8" />
+
+          <!-- Simpul (Node) -->
+          <rect x="180" y="22" width="70" height="22" rx="11" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.8" />
+          <text x="215" y="36" font-size="10" font-weight="bold" text-anchor="middle" fill="#1e3a8a">Ketua</text>
+
+          <rect x="75" y="44" width="84" height="20" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+          <text x="117" y="57" font-size="9" font-weight="bold" text-anchor="middle" fill="#0369a1">Wakil Ketua</text>
+
+          <rect x="271" y="44" width="84" height="20" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+          <text x="313" y="57" font-size="9" font-weight="bold" text-anchor="middle" fill="#0369a1">Bendahara</text>
+
+          <rect x="65" y="94" width="120" height="20" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="1.5" />
+          <text x="125" y="107" font-size="9" font-weight="bold" text-anchor="middle" fill="#14532d">Koordinator Bidang A</text>
+
+          <rect x="245" y="94" width="120" height="20" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="1.5" />
+          <text x="305" y="107" font-size="9" font-weight="bold" text-anchor="middle" fill="#14532d">Koordinator Bidang B</text>
+
+          <rect x="26" y="138" width="58" height="19" rx="9" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.4" />
+          <text x="55" y="150" font-size="8.5" font-weight="bold" text-anchor="middle" fill="#713f12">Divisi 1</text>
+
+          <rect x="96" y="138" width="58" height="19" rx="9" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.4" />
+          <text x="125" y="150" font-size="8.5" font-weight="bold" text-anchor="middle" fill="#713f12">Divisi 2</text>
+
+          <rect x="166" y="138" width="58" height="19" rx="9" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.4" />
+          <text x="195" y="150" font-size="8.5" font-weight="bold" text-anchor="middle" fill="#713f12">Divisi 3</text>
+
+          <rect x="239" y="138" width="58" height="19" rx="9" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.4" />
+          <text x="268" y="150" font-size="8.5" font-weight="bold" text-anchor="middle" fill="#713f12">Divisi 4</text>
+
+          <rect x="313" y="138" width="58" height="19" rx="9" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.4" />
+          <text x="342" y="150" font-size="8.5" font-weight="bold" text-anchor="middle" fill="#713f12">Divisi 5</text>
+        </svg>
+      `,
+
+      // Soal #10, #11, #12: Graf Melingkar 9 Rumah (A s.d. J)
+      circular_houses: `
+        <svg viewBox="0 0 260 185" class="w-full max-w-[240px] h-auto">
+          <rect width="260" height="185" rx="10" fill="#fffbeb" />
+          <!-- Jalan Melingkar -->
+          <circle cx="130" cy="94" r="56" fill="none" stroke="#92400e" stroke-width="9" />
+          <circle cx="130" cy="94" r="56" fill="none" stroke="#fde68a" stroke-width="1.5" stroke-dasharray="5,5" />
+          <text x="130" y="91" font-size="9" font-weight="bold" text-anchor="middle" fill="#78350f">10 Menit</text>
+          <text x="130" y="102" font-size="8.5" text-anchor="middle" fill="#92400e">antar rumah</text>
+
+          <!-- 9 Rumah Searah Jarum Jam: A(-110), B(-70), C(-30), D(10), E(50), F(90), G(130), H(170), J(210) -->
+          <g font-size="11" font-weight="900" font-family="sans-serif" fill="#0f172a">
+            <!-- A -->
+            <circle cx="111" cy="41" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="97" y="27">A</text>
+            <!-- B -->
+            <circle cx="149" cy="41" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="155" y="27">B</text>
+            <!-- C -->
+            <circle cx="178" cy="66" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="191" y="64">C</text>
+            <!-- D -->
+            <circle cx="185" cy="104" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="198" y="108">D</text>
+            <!-- E -->
+            <circle cx="166" cy="137" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="178" y="151">E</text>
+            <!-- F -->
+            <circle cx="130" cy="150" r="9" fill="#34d399" stroke="#065f46" stroke-width="2" />
+            <text x="126" y="172" fill="#065f46">F</text>
+            <!-- G -->
+            <circle cx="94" cy="137" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="74" y="151">G</text>
+            <!-- H -->
+            <circle cx="75" cy="104" r="9" fill="#38bdf8" stroke="#0369a1" stroke-width="2" />
+            <text x="53" y="108" fill="#0369a1">H</text>
+            <!-- J -->
+            <circle cx="82" cy="66" r="9" fill="#facc15" stroke="#78350f" stroke-width="1.8" />
+            <text x="61" y="64">J</text>
+          </g>
+        </svg>
+      `,
+
+      // Soal #13 & #14: Graf Jaringan 7 Rumah Kurir Hara
+      network_graph: `
+        <svg viewBox="0 0 360 175" class="w-full max-w-[340px] h-auto">
+          <rect width="360" height="175" rx="10" fill="#f8fafc" />
+          <!-- Garis Jalan Penghubung (Edges) -->
+          <g stroke="#334155" stroke-width="2.2">
+            <line x1="305" y1="36" x2="62" y2="66" />
+            <line x1="305" y1="36" x2="210" y2="86" />
+            <line x1="305" y1="36" x2="275" y2="122" />
+            <line x1="210" y1="86" x2="62" y2="66" />
+            <line x1="210" y1="86" x2="275" y2="122" />
+            <line x1="210" y1="86" x2="78" y2="116" />
+            <line x1="210" y1="86" x2="138" y2="134" />
+            <line x1="210" y1="86" x2="205" y2="148" />
+            <line x1="62" y1="66" x2="78" y2="116" />
+            <line x1="78" y1="116" x2="138" y2="134" />
+            <line x1="138" y1="134" x2="205" y2="148" />
+          </g>
+
+          <!-- 7 Simpul Rumah -->
+          <g font-family="sans-serif" text-anchor="middle">
+            <!-- Anto -->
+            <circle cx="305" cy="36" r="21" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2" />
+            <text x="305" y="34" font-size="9.5" font-weight="bold" fill="#0f172a">Anto</text>
+            <text x="305" y="45" font-size="9" font-weight="bold" fill="#1e40af">11</text>
+
+            <!-- Dodo -->
+            <circle cx="62" cy="66" r="21" fill="#fef3c7" stroke="#b45309" stroke-width="2" />
+            <text x="62" y="64" font-size="9.5" font-weight="bold" fill="#0f172a">Dodo</text>
+            <text x="62" y="75" font-size="9" font-weight="bold" fill="#92400e">17</text>
+
+            <!-- Boni -->
+            <circle cx="210" cy="86" r="21" fill="#dcfce7" stroke="#15803d" stroke-width="2" />
+            <text x="210" y="84" font-size="9.5" font-weight="bold" fill="#0f172a">Boni</text>
+            <text x="210" y="95" font-size="9" font-weight="bold" fill="#166534">10</text>
+
+            <!-- Evan -->
+            <circle cx="78" cy="116" r="20" fill="#f1f5f9" stroke="#334155" stroke-width="2" />
+            <text x="78" y="114" font-size="9" font-weight="bold" fill="#0f172a">Evan</text>
+            <text x="78" y="125" font-size="8.5" font-weight="bold" fill="#334155">10</text>
+
+            <!-- Fino -->
+            <circle cx="138" cy="134" r="20" fill="#f1f5f9" stroke="#334155" stroke-width="2" />
+            <text x="138" y="132" font-size="9" font-weight="bold" fill="#0f172a">Fino</text>
+            <text x="138" y="143" font-size="8.5" font-weight="bold" fill="#334155">9</text>
+
+            <!-- Gani -->
+            <circle cx="205" cy="148" r="20" fill="#ffe4e6" stroke="#be123c" stroke-width="2" />
+            <text x="205" y="146" font-size="9" font-weight="bold" fill="#0f172a">Gani</text>
+            <text x="205" y="157" font-size="8.5" font-weight="bold" fill="#9f1239">18</text>
+
+            <!-- Cika -->
+            <circle cx="275" cy="122" r="20" fill="#f1f5f9" stroke="#334155" stroke-width="2" />
+            <text x="275" y="120" font-size="9" font-weight="bold" fill="#0f172a">Cika</text>
+            <text x="275" y="131" font-size="8.5" font-weight="bold" fill="#334155">12</text>
+          </g>
+        </svg>
+      `,
+
+      // Soal #15, #16, #17: Ekspresi Aritmatika 1 + 2 x 3
+      arithmetic_expr: `
+        <svg viewBox="0 0 330 125" class="w-full max-w-[310px] h-auto">
+          <rect width="330" height="125" rx="10" fill="#f8fafc" />
+          <!-- Panah Atas (Lingkaran Merah = Operand) -->
+          <path d="M52 34 L52 20 L278 20 L278 34 M165 12 L165 34" fill="none" stroke="#dc2626" stroke-width="2" />
+          <text x="165" y="11" font-size="9" font-weight="bold" text-anchor="middle" fill="#dc2626">Komponen Lingkaran Merah (?)</text>
+
+          <!-- Lingkaran Merah 1, 2, 3 -->
+          <circle cx="52" cy="62" r="22" fill="#fee2e2" stroke="#dc2626" stroke-width="3" />
+          <text x="52" y="70" font-size="22" font-weight="900" text-anchor="middle" fill="#0f172a">1</text>
+
+          <circle cx="165" cy="62" r="22" fill="#fee2e2" stroke="#dc2626" stroke-width="3" />
+          <text x="165" y="70" font-size="22" font-weight="900" text-anchor="middle" fill="#0f172a">2</text>
+
+          <circle cx="278" cy="62" r="22" fill="#fee2e2" stroke="#dc2626" stroke-width="3" />
+          <text x="278" y="70" font-size="22" font-weight="900" text-anchor="middle" fill="#0f172a">3</text>
+
+          <!-- Kotak Biru + dan x -->
+          <rect x="91" y="45" width="34" height="34" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="3" />
+          <text x="108" y="69" font-size="22" font-weight="900" text-anchor="middle" fill="#0f172a">+</text>
+
+          <rect x="204" y="45" width="34" height="34" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="3" />
+          <text x="221" y="69" font-size="22" font-weight="900" text-anchor="middle" fill="#0f172a">&times;</text>
+
+          <!-- Panah Bawah (Kotak Biru = Operator) -->
+          <path d="M108 82 L108 102 L221 102 L221 82 M165 102 L165 110" fill="none" stroke="#2563eb" stroke-width="2" />
+          <text x="165" y="120" font-size="9" font-weight="bold" text-anchor="middle" fill="#2563eb">Simbol Kotak Biru (Operator)</text>
+        </svg>
+      `,
+
+      // Soal #18 & #19: Matriks Hitam Putih 3x3 (A + B -> C)
+      matrix_3x3: `
+        <svg viewBox="0 0 340 125" class="w-full max-w-[320px] h-auto">
+          <rect width="340" height="125" rx="10" fill="#f8fafc" />
+          <!-- Grid A: [W,B,B / W,W,B / W,B,B] -->
+          <g transform="translate(16, 16)">
+            <rect x="0" y="0" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="0" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="0" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="24" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="24" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="24" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="48" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="48" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="48" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <text x="36" y="92" font-size="15" font-weight="900" text-anchor="middle" fill="#0f172a">A</text>
+          </g>
+
+          <!-- Grid B: [B,B,W / B,W,B / B,B,W] -->
+          <g transform="translate(112, 16)">
+            <rect x="0" y="0" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="0" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="0" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="24" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="24" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="24" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="48" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="48" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="48" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="36" y="92" font-size="15" font-weight="900" text-anchor="middle" fill="#0f172a">B</text>
+          </g>
+
+          <!-- Panah -->
+          <path d="M196 52 L226 52 M220 46 L228 52 L220 58" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Grid C: [W,B,W / W,B,B / W,B,W] -->
+          <g transform="translate(242, 16)">
+            <rect x="0" y="0" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="0" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="0" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="24" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="24" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="24" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="0" y="48" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <rect x="24" y="48" width="24" height="24" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+            <rect x="48" y="48" width="24" height="24" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="36" y="92" font-size="15" font-weight="900" text-anchor="middle" fill="#0f172a">C</text>
+          </g>
+        </svg>
+      `,
+
+      // Soal #20 & #21: Labirin Bola Hijau Yola
+      yola_maze: `
+        <svg viewBox="0 0 380 128" class="w-full max-w-[350px] h-auto">
+          <rect width="380" height="128" rx="10" fill="#f8fafc" />
+          <!-- Grid Labirin 18x5 (sel 18x16) -->
+          <g transform="translate(28, 10)" stroke="#1e293b" stroke-width="1.2">
+            <!-- Baris 0: semua abu-abu dinding -->
+            <rect x="0" y="0" width="324" height="16" fill="#64748b" />
+            <!-- Baris 4: semua abu-abu dinding -->
+            <rect x="0" y="64" width="324" height="16" fill="#64748b" />
+            <!-- Kolom kiri dinding -->
+            <rect x="0" y="16" width="18" height="48" fill="#64748b" />
+
+            <!-- Lintasan Zig-Zag Bola Hijau ke X -->
+            <rect x="18" y="16" width="18" height="48" fill="#ffffff" />
+            <rect x="36" y="16" width="18" height="32" fill="#64748b" />
+            <rect x="36" y="48" width="54" height="16" fill="#ffffff" />
+            <rect x="54" y="16" width="36" height="32" fill="#ffffff" />
+            <rect x="72" y="32" width="18" height="32" fill="#64748b" />
+            <rect x="90" y="16" width="18" height="48" fill="#ffffff" />
+            <rect x="108" y="16" width="18" height="32" fill="#64748b" />
+            <rect x="108" y="48" width="54" height="16" fill="#ffffff" />
+            <rect x="126" y="16" width="36" height="32" fill="#ffffff" />
+            <rect x="144" y="32" width="18" height="32" fill="#64748b" />
+            <rect x="162" y="16" width="18" height="48" fill="#ffffff" />
+            <rect x="180" y="16" width="18" height="32" fill="#64748b" />
+            <rect x="180" y="48" width="54" height="16" fill="#ffffff" />
+            <rect x="198" y="16" width="36" height="32" fill="#ffffff" />
+            <rect x="216" y="32" width="18" height="32" fill="#64748b" />
+            <rect x="234" y="16" width="18" height="48" fill="#ffffff" />
+            <rect x="252" y="16" width="18" height="32" fill="#64748b" />
+            <rect x="252" y="48" width="54" height="16" fill="#ffffff" />
+            <rect x="270" y="16" width="36" height="32" fill="#ffffff" />
+            <rect x="288" y="32" width="18" height="32" fill="#64748b" />
+            <rect x="306" y="16" width="18" height="16" fill="#ffffff" />
+            <rect x="306" y="32" width="18" height="32" fill="#64748b" />
+
+            <!-- Bola Hijau & Target X -->
+            <circle cx="27" cy="24" r="6" fill="#16a34a" stroke="none" />
+            <text x="315" y="28" font-size="11" font-weight="bold" text-anchor="middle" fill="#0f172a" stroke="none">X</text>
+          </g>
+
+          <!-- 4 Ikon Tanda Panah di Bawah -->
+          <g transform="translate(215, 98)" font-family="sans-serif">
+            <text x="-175" y="14" font-size="10.5" font-weight="bold" fill="#0f172a">Tanda panah yang dimiliki Yola:</text>
+            <rect x="0" y="0" width="22" height="20" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="11" y="15" font-size="13" font-weight="bold" text-anchor="middle" fill="#0f172a">&rarr;</text>
+            <rect x="26" y="0" width="22" height="20" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="37" y="15" font-size="13" font-weight="bold" text-anchor="middle" fill="#0f172a">&uarr;</text>
+            <rect x="52" y="0" width="22" height="20" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="63" y="15" font-size="13" font-weight="bold" text-anchor="middle" fill="#0f172a">&larr;</text>
+            <rect x="78" y="0" width="22" height="20" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.5" />
+            <text x="89" y="15" font-size="13" font-weight="bold" text-anchor="middle" fill="#0f172a">&darr;</text>
+          </g>
+        </svg>
+      `,
+
+      // Soal #26: Antarmuka Google Docs
+      google_docs_ui: `
+        <svg viewBox="0 0 380 155" class="w-full max-w-[350px] h-auto">
+          <rect width="380" height="155" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5" />
+          <!-- Address Bar -->
+          <rect x="8" y="8" width="364" height="20" rx="10" fill="#e2e8f0" />
+          <text x="22" y="21" font-size="9.5" font-family="monospace" fill="#1e293b">🔒 docs.google.com/document/d/1hLd65...</text>
+          <!-- Header Dokumen -->
+          <rect x="14" y="34" width="18" height="22" rx="3" fill="#2563eb" />
+          <line x1="18" y1="41" x2="28" y2="41" stroke="#ffffff" stroke-width="1.8" />
+          <line x1="18" y1="45" x2="28" y2="45" stroke="#ffffff" stroke-width="1.8" />
+          <line x1="18" y1="49" x2="24" y2="49" stroke="#ffffff" stroke-width="1.8" />
+          <text x="38" y="45" font-size="11" font-weight="bold" fill="#0f172a">Untitled document</text>
+          <text x="38" y="56" font-size="8.5" fill="#475569">File   Edit   View   Insert   Format   Tools   Extensions   Help</text>
+          <rect x="315" y="36" width="52" height="18" rx="9" fill="#bae6fd" />
+          <text x="341" y="48" font-size="9" font-weight="bold" text-anchor="middle" fill="#0369a1">Share</text>
+          <!-- Toolbar -->
+          <rect x="10" y="62" width="360" height="18" rx="9" fill="#e0f2fe" />
+          <text x="22" y="74" font-size="8.5" font-weight="bold" fill="#1e293b">100%  |  Normal text  |  Arial  |  11  |  B  I  U  A  🔗  🖼️</text>
+          <!-- Ruler & Kertas Kosong -->
+          <rect x="10" y="83" width="360" height="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.8" />
+          <rect x="65" y="96" width="250" height="54" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+        </svg>
+      `,
+
+      // Soal #33, #34, #35: Tabel Laporan Kas Kelas A1:F7
+      kas_kelas_table: `
+        <svg viewBox="0 0 430 148" class="w-full max-w-[400px] h-auto">
+          <rect width="430" height="148" rx="8" fill="#ffffff" />
+          <g font-size="8.5" font-family="sans-serif" text-anchor="middle">
+            <!-- Header Kolom A-F -->
+            <rect x="4" y="4" width="22" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <rect x="26" y="4" width="26" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="39" y="15" font-weight="bold" fill="#0f172a">A</text>
+            <rect x="52" y="4" width="84" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="94" y="15" font-weight="bold" fill="#0f172a">B</text>
+            <rect x="136" y="4" width="74" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="173" y="15" font-weight="bold" fill="#0f172a">C</text>
+            <rect x="210" y="4" width="76" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="248" y="15" font-weight="bold" fill="#0f172a">D</text>
+            <rect x="286" y="4" width="74" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="323" y="15" font-weight="bold" fill="#0f172a">E</text>
+            <rect x="360" y="4" width="66" height="16" fill="#e2e8f0" stroke="#94a3b8" />
+            <text x="393" y="15" font-weight="bold" fill="#0f172a">F</text>
+
+            <!-- Baris 1 -->
+            <rect x="4" y="20" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="31" font-weight="bold" fill="#0f172a">1</text>
+            <rect x="26" y="20" width="26" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="39" y="31" font-weight="bold" fill="#0f172a">No</text>
+            <rect x="52" y="20" width="84" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="94" y="31" font-weight="bold" fill="#0f172a">Hari/Tanggal</text>
+            <rect x="136" y="20" width="74" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="173" y="31" font-weight="bold" fill="#0f172a">Pemasukan</text>
+            <rect x="210" y="20" width="76" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="248" y="31" font-weight="bold" fill="#0f172a">Pengeluaran</text>
+            <rect x="286" y="20" width="74" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="323" y="31" font-weight="bold" fill="#0f172a">Jenis</text>
+            <rect x="360" y="20" width="66" height="17" fill="#dbeafe" stroke="#94a3b8" /><text x="393" y="31" font-weight="bold" fill="#0f172a">Saldo (Rp)</text>
+
+            <!-- Baris 2 -->
+            <rect x="4" y="37" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="48" font-weight="bold" fill="#0f172a">2</text>
+            <rect x="26" y="37" width="26" height="17" fill="#fff" stroke="#cbd5e1" /><text x="39" y="48" fill="#0f172a">1</text>
+            <rect x="52" y="37" width="84" height="17" fill="#fff" stroke="#cbd5e1" /><text x="94" y="48" fill="#0f172a">4 Feb 2021</text>
+            <rect x="136" y="37" width="74" height="17" fill="#fef9c3" stroke="#cbd5e1" /><text x="173" y="48" font-weight="bold" fill="#0f172a">50.000</text>
+            <rect x="210" y="37" width="76" height="17" fill="#fef9c3" stroke="#cbd5e1" /><text x="248" y="48" font-weight="bold" fill="#0f172a">20.000</text>
+            <rect x="286" y="37" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="323" y="48" fill="#0f172a">Kebersihan</text>
+            <rect x="360" y="37" width="66" height="17" fill="#dcfce7" stroke="#cbd5e1" /><text x="393" y="48" font-weight="bold" fill="#065f46">30.000</text>
+
+            <!-- Baris 3 -->
+            <rect x="4" y="54" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="65" font-weight="bold" fill="#0f172a">3</text>
+            <rect x="26" y="54" width="26" height="17" fill="#fff" stroke="#cbd5e1" /><text x="39" y="65" fill="#0f172a">2</text>
+            <rect x="52" y="54" width="84" height="17" fill="#fff" stroke="#cbd5e1" /><text x="94" y="65" fill="#0f172a">5 Feb 2021</text>
+            <rect x="136" y="54" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="173" y="65" fill="#0f172a">40.000</text>
+            <rect x="210" y="54" width="76" height="17" fill="#fff" stroke="#cbd5e1" /><text x="248" y="65" fill="#0f172a">24.000</text>
+            <rect x="286" y="54" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="323" y="65" fill="#0f172a">Sosial</text>
+            <rect x="360" y="54" width="66" height="17" fill="#fff" stroke="#cbd5e1" /><text x="393" y="65" fill="#0f172a">46.000</text>
+
+            <!-- Baris 4 -->
+            <rect x="4" y="71" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="82" font-weight="bold" fill="#0f172a">4</text>
+            <rect x="26" y="71" width="26" height="17" fill="#fff" stroke="#cbd5e1" /><text x="39" y="82" fill="#0f172a">3</text>
+            <rect x="52" y="71" width="84" height="17" fill="#fff" stroke="#cbd5e1" /><text x="94" y="82" fill="#0f172a">6 Feb 2021</text>
+            <rect x="136" y="71" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="173" y="82" fill="#0f172a">10.000</text>
+            <rect x="210" y="71" width="76" height="17" fill="#fff" stroke="#cbd5e1" /><text x="248" y="82" fill="#0f172a">6.000</text>
+            <rect x="286" y="71" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="323" y="82" fill="#0f172a">Kebersihan</text>
+            <rect x="360" y="71" width="66" height="17" fill="#fff" stroke="#cbd5e1" /><text x="393" y="82" fill="#0f172a">50.000</text>
+
+            <!-- Baris 5 -->
+            <rect x="4" y="88" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="99" font-weight="bold" fill="#0f172a">5</text>
+            <rect x="26" y="88" width="26" height="17" fill="#fff" stroke="#cbd5e1" /><text x="39" y="99" fill="#0f172a">4</text>
+            <rect x="52" y="88" width="84" height="17" fill="#fff" stroke="#cbd5e1" /><text x="94" y="99" fill="#0f172a">7 Feb 2021</text>
+            <rect x="136" y="88" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="173" y="99" fill="#0f172a">50.000</text>
+            <rect x="210" y="88" width="76" height="17" fill="#fff" stroke="#cbd5e1" /><text x="248" y="99" fill="#0f172a">60.000</text>
+            <rect x="286" y="88" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="323" y="99" fill="#0f172a">Kebersihan</text>
+            <rect x="360" y="88" width="66" height="17" fill="#fff" stroke="#cbd5e1" /><text x="393" y="99" fill="#0f172a">40.000</text>
+
+            <!-- Baris 6 -->
+            <rect x="4" y="105" width="22" height="17" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="116" font-weight="bold" fill="#0f172a">6</text>
+            <rect x="26" y="105" width="26" height="17" fill="#fff" stroke="#cbd5e1" /><text x="39" y="116" fill="#0f172a">5</text>
+            <rect x="52" y="105" width="84" height="17" fill="#fff" stroke="#cbd5e1" /><text x="94" y="116" fill="#0f172a">8 Feb 2021</text>
+            <rect x="136" y="105" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="173" y="116" fill="#0f172a">50.000</text>
+            <rect x="210" y="105" width="76" height="17" fill="#fff" stroke="#cbd5e1" /><text x="248" y="116" fill="#0f172a">50.000</text>
+            <rect x="286" y="105" width="74" height="17" fill="#fff" stroke="#cbd5e1" /><text x="323" y="116" fill="#0f172a">Sosial</text>
+            <rect x="360" y="105" width="66" height="17" fill="#fff" stroke="#cbd5e1" /><text x="393" y="116" fill="#0f172a">40.000</text>
+
+            <!-- Baris 7 (Jumlah) -->
+            <rect x="4" y="122" width="22" height="18" fill="#e2e8f0" stroke="#94a3b8" /><text x="15" y="134" font-weight="bold" fill="#0f172a">7</text>
+            <rect x="26" y="122" width="110" height="18" fill="#f1f5f9" stroke="#94a3b8" /><text x="81" y="134" font-weight="bold" fill="#0f172a">Jumlah</text>
+            <rect x="136" y="122" width="74" height="18" fill="#fde68a" stroke="#94a3b8" /><text x="173" y="134" font-weight="bold" fill="#92400e">200.000</text>
+            <rect x="210" y="122" width="76" height="18" fill="#f1f5f9" stroke="#94a3b8" /><text x="248" y="134" font-weight="bold" fill="#0f172a">160.000</text>
+            <rect x="286" y="122" width="74" height="18" fill="#f1f5f9" stroke="#94a3b8" />
+            <rect x="360" y="122" width="66" height="18" fill="#f1f5f9" stroke="#94a3b8" /><text x="393" y="134" font-weight="bold" fill="#0f172a">40.000</text>
+          </g>
+        </svg>
+      `
+    };
+
+    /* ---------------------------------------------------------------------
+       B. BANK 40 SOAL LENGKAP INFORMATIKA KELAS 9
+       --------------------------------------------------------------------- */
+    const QUESTION_BANK = [
+      { id: 1, topic: "Berpikir Komputasional", q: "Berpikir komputasional adalah kemampuan untuk …", opts: ["Menghafal langkah-langkah penggunaan komputer", "Memecahkan masalah dengan cara berpikir logis dan sistematis", "Mengoperasikan perangkat keras komputer", "Menginstal aplikasi di komputer"], ans: 1, exp: "Berpikir komputasional adalah metode memecahkan masalah secara logis, terstruktur, dan sistematis." },
+      { id: 2, topic: "Komponen Berpikir Komputasional", q: "Salah satu komponen utama berpikir komputasional adalah …", opts: ["Menggambar dan mewarnai", "Dekomposisi (memecah masalah menjadi bagian kecil)", "Mengetik cepat di komputer", "Mengunduh data dari internet"], ans: 1, exp: "Dekomposisi memecah masalah besar dan kompleks menjadi sub-masalah kecil agar lebih mudah diselesaikan." },
+      { id: 3, topic: "Penerapan Sehari-hari", q: "Contoh penerapan berpikir komputasional dalam kehidupan sehari-hari adalah …", opts: ["Menyalin pekerjaan teman tanpa berpikir", "Menyusun langkah-langkah memasak agar hasilnya sesuai resep", "Membiarkan masalah tanpa mencari solusi", "Menghafal semua rumus tanpa memahami maknanya"], ans: 1, exp: "Menyusun langkah memasak secara berurutan merupakan penerapan berpikir algoritmik." },
+      { id: 4, topic: "Algoritma", q: "Dalam membuat algoritma, langkah-langkah harus disusun secara …", opts: ["Acak", "Terbalik", "Logis dan Sistematis", "Bebas sesuai keinginan"], ans: 2, exp: "Algoritma menuntut urutan instruksi yang logis dan sistematis agar menghasilkan solusi yang tepat." },
+      { id: 5, topic: "Tahapan Berpikir Komputasional", q: "Langkah pertama dalam berpikir komputasional untuk menyelesaikan masalah adalah …", opts: ["Menguji solusi", "Memahami dan mendefinisikan masalah", "Menulis program komputer", "Membuat algoritma"], ans: 1, exp: "Sebelum merancang solusi atau algoritma, kita harus memahami dan mendefinisikan masalah terlebih dahulu." },
+      { id: 6, topic: "Struktur Data", q: "Di bawah ini yang bukan termasuk jenis struktur data adalah …", opts: ["Graph", "Tree", "Stack", "Type"], ans: 3, exp: "Graph, Tree, dan Stack merupakan struktur data dalam informatika, sedangkan Type bukan struktur data." },
+      { id: 7, diagram: "tree_org", topic: "Struktur Data Hierarkis", q: "Gambar struktur organisasi kepengurusan di samping merupakan contoh jenis struktur data …", opts: ["Graph", "Tree", "Stack", "Array"], ans: 1, exp: "Struktur organisasi hierarkis yang bercabang dari satu puncak (Ketua) ke bawah merupakan struktur data Tree (pohon)." },
+      { id: 8, topic: "Struktur Pohon (Tree)", q: "“Anak” (child) yang hierarkinya lebih rendah hanya mempunyai satu “orang tua” (parent) merupakan ciri dari …", opts: ["Struktur daun", "Struktur pohon", "Struktur batang", "Struktur akar"], ans: 1, exp: "Dalam struktur data pohon (Tree), setiap simpul anak (child) hanya memiliki tepat satu simpul induk (parent)." },
+      { id: 9, topic: "Struktur Graf (Graph)", q: "Struktur data yang dapat digunakan untuk merepresentasikan data dalam berbagai kasus, misalnya jalan yang menghubungkan 2 tempat adalah …", opts: ["Struktur data graf", "Struktur data gref", "Struktur data gruf", "Struktur data grif"], ans: 0, exp: "Struktur data graf (Graph) terdiri dari simpul (node) dan sisi (edge) untuk memodelkan jaringan seperti jalan antartempat." },
+      { id: 10, diagram: "circular_houses", topic: "Graf Melingkar: Kurir Hara", q: "Kompleks melingkar terdiri dari 9 rumah (A s.d. J) dengan waktu tempuh antar rumah 10 menit. Jika Hara berjalan searah jarum jam dari rumah H dan berakhir di rumah F, waktu yang dibutuhkan Hara adalah …", opts: ["60 menit", "70 menit", "80 menit", "90 menit"], ans: 1, exp: "Searah jarum jam dari H ke F melewati 7 ruas jalan (H→J→A→B→C→D→E→F), yaitu 7 × 10 menit = 70 menit." },
+      { id: 11, diagram: "circular_houses", topic: "Graf Melingkar: Rute Hara", q: "Perhatikan denah melingkar di samping. Jika Hara berjalan searah jarum jam dari rumah H menuju rumah F, maka urutan rumah yang dikunjungi Hara adalah …", opts: ["H – A – C – E – F", "H – F – D – B – J", "H – J – A – B – D – F", "H – J – A – B – C – D – E – F"], ans: 3, exp: "Mengikuti arah jarum jam dari rumah H ke F secara berurutan melewati H – J – A – B – C – D – E – F." },
+      { id: 12, diagram: "circular_houses", topic: "Graf Melingkar: Perhitungan Langkah", q: "Hara memulai perjalanan dari rumah H dan mencatat waktu tempuh berturut-turut 20, 10, 20, dan 40 menit sebelum tiba di rumah F (10 menit per rumah). Banyak rumah pemberhentian yang dikunjungi sebelum tiba di rumah F searah jarum jam adalah …", opts: ["2 rumah", "3 rumah", "4 rumah", "5 rumah"], ans: 2, exp: "Terdapat 4 segmen waktu (20, 10, 20, dan 40 menit) yang menandakan 4 titik pemberhentian rumah selama pengantaran paket." },
+      { id: 13, diagram: "network_graph", topic: "Jaringan Graf: Rute Terpendek", q: "Perhatikan jaringan rumah di samping. Jika Hara ingin mengantarkan paket dari Anto ke Dodo melalui rute dengan jumlah lintasan paling sedikit, jalur yang dipilih adalah …", opts: ["Anto → Boni → Dodo", "Anto → Boni → Evan → Dodo", "Anto → Boni → Fino → Evan → Dodo", "Anto → Cika → Boni → Dodo"], ans: 0, exp: "Di antara pilihan yang tersedia, rute Anto → Boni → Dodo hanya melewati 2 segmen jalan (paling singkat)." },
+      { id: 14, diagram: "network_graph", topic: "Jaringan Graf: Anto ke Gani", q: "Urutan rute terpendek dari rumah Anto ke rumah Gani berdasarkan jaringan graf di samping adalah …", opts: ["Anto → Cika → Gani", "Anto → Boni → Gani", "Anto → Boni → Fino → Gani", "Anto → Boni → Evan → Fino → Gani"], ans: 1, exp: "Cika tidak terhubung langsung ke Gani, sehingga jalur tercepat adalah Anto → Boni → Gani." },
+      { id: 15, diagram: "arithmetic_expr", topic: "Ekspresi Aritmatika: Operand", q: "Perhatikan diagram ekspresi aritmatika di samping. Angka 1, 2, dan 3 yang dilingkari merah disebut …", opts: ["Operator", "Operand", "Ekspresi", "Aritmatika"], ans: 1, exp: "Operand adalah nilai atau angka (seperti 1, 2, dan 3) yang menjadi objek perhitungan." },
+      { id: 16, diagram: "arithmetic_expr", topic: "Ekspresi Aritmatika", q: "Gabungan dari operator (+, ×) dan operand (1, 2, 3) seperti pada gambar di samping disebut …", opts: ["Perhitungan", "Operasi logika", "Ekspresi aritmatika", "Ekspresi operator"], ans: 2, exp: "Gabungan antara operand dan operator matematika membentuk sebuah ekspresi aritmatika." },
+      { id: 17, diagram: "arithmetic_expr", topic: "Operasi Perhitungan", q: "Proses untuk melakukan perhitungan operand-operand berdasarkan operator terkait disebut …", opts: ["Operasi", "Ekspresi", "Aritmatika", "Logika"], ans: 0, exp: "Operasi adalah tindakan atau proses memproses operand sesuai operator yang diberikan." },
+      { id: 18, diagram: "matrix_3x3", topic: "Logika Pola Matriks 3×3", q: "Jika kotak hitam putih A dan B dikombinasikan menghasilkan kotak C seperti gambar, pernyataan yang TIDAK sesuai dengan pola kombinasi tersebut adalah …", opts: ["Sel posisi sama berwarna hitam dan hitam menghasilkan hitam", "Sel posisi sama berwarna putih dan putih menghasilkan putih", "Sel posisi sama berwarna berbeda (hitam dan putih) menghasilkan putih", "Sel posisi sama berwarna berbeda (hitam dan putih) menghasilkan hitam"], ans: 3, exp: "Pada pola C, warna yang sama menghasilkan hitam sedangkan warna berbeda menghasilkan putih; jadi warna berbeda menghasilkan hitam adalah salah." },
+      { id: 19, diagram: "matrix_3x3", topic: "Tipe Data Boolean", q: "Dalam informatika terdapat berbagai tipe data. Ilustrasi kotak dua kondisi warna (hitam dan putih) di samping merepresentasikan tipe data …", opts: ["Boolean", "Numerik", "Teks", "Campuran"], ans: 0, exp: "Tipe data Boolean hanya memiliki dua nilai logika biner (Benar/Salah atau Hitam/Putih)." },
+      { id: 20, diagram: "yola_maze", topic: "Labirin & Perintah Panah", q: "Perhatikan labirin Yola di samping. Jenis tanda panah yang dapat digunakan Yola untuk mengarahkan bola hijau menuju pintu keluar X adalah …", opts: ["Panah kanan, kiri, atas, dan bawah", "Panah maju, mundur, dan lompat", "Panah kanan saja", "Panah diagonal ke kanan atas dan kanan bawah"], ans: 0, exp: "Pada bagian bawah ilustrasi tersedia empat arah navigasi standar: panah kanan, atas, kiri, dan bawah." },
+      { id: 21, diagram: "yola_maze", topic: "Perulangan (Loop) Labirin", q: "Yola hanya boleh menggunakan 8 tanda panah dan susunan tersebut diulang sebanyak 4 kali. Tujuan dari perulangan susunan tanda panah ini adalah agar …", opts: ["Bola hijau tetap berada di tempat semula", "Bola hijau bergerak secara acak di semua kotak", "Bola hijau dapat mencapai kotak yang bertanda X", "Bola hijau berhenti di tengah lintasan"], ans: 2, exp: "Pola lintasan terdiri dari 4 gelombang berulang, sehingga pengulangan 8 perintah sebanyak 4 kali membawa bola tepat ke titik keluar X." },
+      { id: 22, topic: "Karakteristik Berpikir Komputasional", q: "Landasan berpikir dalam pembelajaran informatika adalah berpikir komputasional. Berikut ini yang BUKAN merupakan ciri atau komponen berpikir komputasional adalah …", opts: ["Efisien", "Efektif", "Lambat", "Bernalar logika"], ans: 2, exp: "Berpikir komputasional bertujuan menghasilkan solusi yang efektif, efisien, dan logis, bukan lambat." },
+      { id: 23, topic: "Manfaat Berpikir Komputasional", q: "Berikut ini yang BUKAN merupakan manfaat dari penerapan berpikir komputasional adalah …", opts: ["Menyelesaikan masalah lebih cepat dan efektif", "Memecahkan masalah kompleks menjadi lebih terstruktur", "Mengembangkan cara berpikir yang sistematis dan logis", "Menjadikan cara berpikir lebih panjang sehingga penyelesaian menjadi tidak efisien"], ans: 3, exp: "Berpikir komputasional justru menyederhanakan langkah agar penyelesaian menjadi efisien, bukan berbelit-belit." },
+      { id: 24, topic: "Aplikasi Perkantoran", q: "Aplikasi perkantoran untuk mengolah data berupa angka yang dikeluarkan oleh Microsoft adalah …", opts: ["Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint", "Microsoft Access"], ans: 1, exp: "Microsoft Excel adalah aplikasi lembar kerja (spreadsheet) untuk mengolah data angka dan rumus." },
+      { id: 25, topic: "Jenis Aplikasi Perkantoran", q: "Di bawah ini yang BUKAN merupakan kategori utama aplikasi perkantoran yang umum digunakan untuk mengolah dokumen kantor adalah …", opts: ["Aplikasi pengolah kata", "Aplikasi presentasi", "Aplikasi manajemen", "Aplikasi pengolah lembar kerja"], ans: 2, exp: "Tiga pilar utama aplikasi perkantoran adalah pengolah kata, pengolah lembar kerja (angka), dan presentasi." },
+      { id: 26, diagram: "google_docs_ui", topic: "Antarmuka Pengolah Kata Web", q: "Perhatikan tampilan antarmuka aplikasi di samping. Gambar tersebut merupakan antarmuka dari aplikasi …", opts: ["Microsoft Word", "Google Docs", "Office 365", "Apple Pages"], ans: 1, exp: "Terlihat bilah alamat docs.google.com/document beserta ikon biru khas dokumen Google Docs." },
+      { id: 27, topic: "Ciri Pengolah Kata", q: "“Konten lebih banyak mengandung teks” merupakan ciri utama dari aplikasi …", opts: ["Pengolah kata", "Pengolah angka", "Pengolah presentasi", "Pengolah gambar"], ans: 0, exp: "Aplikasi pengolah kata (word processor) dirancang khusus untuk menyusun dokumen berbasis teks." },
+      { id: 28, topic: "Contoh Aplikasi Pengolah Kata", q: "Pages, Google Docs, dan OpenOffice Writer merupakan contoh aplikasi …", opts: ["Pengolah angka", "Pengolah kata", "Pengolah gambar", "Pengolah presentasi"], ans: 1, exp: "Apple Pages, Google Docs, dan OpenOffice Writer semuanya adalah aplikasi pengolah kata." },
+      { id: 29, topic: "Aplikasi Lembar Kerja", q: "Aplikasi Microsoft Excel termasuk dalam jenis aplikasi …", opts: ["Pengolah kata", "Pengolah gambar", "Pengolah lembar kerja", "Pengolah presentasi"], ans: 2, exp: "Microsoft Excel termasuk kategori aplikasi pengolah lembar kerja (spreadsheet)." },
+      { id: 30, topic: "Aplikasi Presentasi", q: "Contoh aplikasi pengolah presentasi adalah …", opts: ["Microsoft Excel", "Microsoft PowerPoint", "Microsoft Paint", "Google Sheets"], ans: 1, exp: "Microsoft PowerPoint digunakan untuk menyusun dan menampilkan salindia (slide) presentasi." },
+      { id: 31, topic: "Fungsi Spreadsheet Kas Kelas", q: "Dalam aktivitas membuat Laporan Kas Kelas, fungsi utama pada spreadsheet untuk menghitung total keseluruhan uang masuk dari seluruh siswa adalah …", opts: ["Fungsi MAX", "Fungsi SUM", "Fungsi AVERAGE", "Fungsi COUNT"], ans: 1, exp: "Fungsi SUM digunakan untuk menjumlahkan seluruh nilai angka dalam rentang sel tertentu." },
+      { id: 32, topic: "Pencatatan Kas Harian", q: "Untuk mencatat dan menampilkan semua pemasukan serta pengeluaran uang kas dari hari ke hari secara terstruktur, aplikasi yang paling sesuai adalah …", opts: ["Snipping Tool", "Kalkulator", "Clock", "Microsoft Excel"], ans: 3, exp: "Microsoft Excel menyediakan tabel baris-kolom dan perhitungan otomatis untuk pembukuan kas harian." },
+      { id: 33, diagram: "kas_kelas_table", topic: "Laporan Kas Kelas: Operasi Saldo", q: "Perhatikan tabel Kas Kelas di samping. Untuk menghitung nilai Saldo pada tanggal 4 Februari 2021 (Baris 2) dengan saldo awal nol, operasi matematika yang benar adalah …", opts: ["20.000 − 50.000", "50.000 + 20.000", "50.000 − 20.000", "40.000 − 20.000"], ans: 2, exp: "Saldo diperoleh dari Pemasukan dikurangi Pengeluaran: 50.000 − 20.000 = 30.000." },
+      { id: 34, diagram: "kas_kelas_table", topic: "Laporan Kas Kelas: Rumus Sel F2", q: "Dalam aplikasi pengolah data seperti spreadsheet maupun Excel, rumus yang benar untuk mendapatkan nilai Saldo (Rp) di sel F2 adalah …", opts: ["= C2/D2", "= C2−D2", "= F1+C2−D2", "= C2*D2"], ans: 1, exp: "Karena F1 berisi teks judul kolom 'Saldo (Rp)', rumus di sel F2 adalah =C2-D2." },
+      { id: 35, diagram: "kas_kelas_table", topic: "Laporan Kas Kelas: Rumus Total C7", q: "Untuk menghitung Total Pemasukan di sel C7 (dari baris 2 sampai baris 6), rumus yang benar dalam aplikasi spreadsheet adalah …", opts: ["= SUM(C1:C6)", "= TOTAL(C2:C6)", "= SUM(C2:C6)", "= C2+C3+C4+C5"], ans: 2, exp: "Rentang data pemasukan berada pada sel C2 hingga C6, sehingga rumusnya adalah =SUM(C2:C6)." },
+      { id: 36, topic: "Visualisasi Grafik", q: "Tujuan utama memberikan judul pada sebuah grafik (chart) adalah …", opts: ["Agar grafik terlihat lebih ramai", "Untuk memberikan informasi ringkas tentang isi grafik", "Untuk memenuhi syarat pembuatan grafik", "Agar grafik memiliki warna yang bagus"], ans: 1, exp: "Judul grafik membantu pembaca langsung memahami topik dan isi data yang ditampilkan." },
+      { id: 37, topic: "Menyisipkan Grafik di PowerPoint", q: "Untuk menyisipkan grafik di PowerPoint, langkah yang benar adalah …", opts: ["Klik menu Insert → Chart", "Klik menu Design → Theme", "Klik menu Animations → Add Animation", "Klik menu Slide Show → From Beginning"], ans: 0, exp: "Tab Insert lalu tombol Chart digunakan untuk menyisipkan berbagai jenis grafik pada slide." },
+      { id: 38, topic: "Analisis Masalah & Kolaborasi", q: "Tujuan utama dari Proses Analisis Masalah sebelum membuat produk dokumen adalah …", opts: ["Menemukan alternatif solusi tanpa melihat pembaca", "Menentukan produk akhir, target pembaca, tujuan dokumen, dan jenis konten yang dibutuhkan", "Menghapus kebutuhan desain visual", "Membuat dokumen langsung tanpa perencanaan"], ans: 1, exp: "Analisis masalah menetapkan bentuk produk akhir, sasaran pembaca, tujuan, serta jenis konten yang diperlukan." },
+      { id: 39, topic: "Blog & Vlog", q: "Dari pernyataan berikut yang paling tepat untuk menggambarkan hubungan antara vlog dan blog yaitu …", opts: ["Vlog adalah evolusi atau pengembangan format dari blog", "Vlog adalah pengganti blog dan tidak ada kaitannya sama sekali", "Vlog dan blog adalah dua istilah yang merujuk pada format konten yang sama", "Blog adalah format video yang diubah menjadi teks"], ans: 0, exp: "Vlog (video blog) adalah pengembangan format blog yang semula berbasis tulisan menjadi konten audio-visual." },
+      { id: 40, topic: "Perbedaan Blog & Vlog", q: "Perbedaan utama antara blog dan vlog adalah …", opts: ["Blog memerlukan smartphone, sedangkan vlog tidak", "Blog ditulis menggunakan aplikasi pengolah kata/tulisan, sedangkan vlog dibuat dengan rekaman video", "Blog menggunakan kamera depan, sedangkan vlog menggunakan kamera belakang", "Blog menggunakan aplikasi pengolah kata, sedangkan vlog menggunakan dua tangan"], ans: 1, exp: "Blog berfokus pada konten tulisan/artikel, sedangkan vlog menyampaikan cerita atau informasi melalui rekaman video." }
+    ];
+
+    /* ---------------------------------------------------------------------
+       C. DATA 4 ZONA CYBER-BIOMA & PESAN KOMEDI SLAPSTICK FUTURISTIK
+       --------------------------------------------------------------------- */
+    const BIOMES = [
+      {
+        id: 0,
+        badge: "🌳 Pos 1–10: Hutan Jaringan Graf & Pohon",
+        badgeClass: "bg-emerald-500/20 text-emerald-300 border-emerald-400/40",
+        dotColor: "bg-emerald-400",
+        skyTop: "#022c22",
+        skyBot: "#0d9488",
+        groundTop: "#065f46",
+        groundBot: "#021814",
+        firewallColor: "#10b981"
+      },
+      {
+        id: 1,
+        badge: "⚙️ Pos 11–20: Pabrik Logika & Piksel Biner",
+        badgeClass: "bg-amber-500/20 text-amber-300 border-amber-400/40",
+        dotColor: "bg-amber-400",
+        skyTop: "#451a03",
+        skyBot: "#d97706",
+        groundTop: "#92400e",
+        groundBot: "#270e02",
+        firewallColor: "#f59e0b"
+      },
+      {
+        id: 2,
+        badge: "📊 Pos 21–30: Menara Kantor Cloud & Kas Data",
+        badgeClass: "bg-cyan-500/20 text-cyan-300 border-cyan-400/40",
+        dotColor: "bg-cyan-400",
+        skyTop: "#0c1938",
+        skyBot: "#0284c7",
+        groundTop: "#1e3a8a",
+        groundBot: "#090f24",
+        firewallColor: "#38bdf8"
+      },
+      {
+        id: 3,
+        badge: "🎬 Pos 31–40: Studio Kreator Blog & Vlog",
+        badgeClass: "bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-400/40",
+        dotColor: "bg-fuchsia-400",
+        skyTop: "#2e054d",
+        skyBot: "#c026d3",
+        groundTop: "#581c87",
+        groundBot: "#1b0330",
+        firewallColor: "#e879f9"
+      }
+    ];
+
+    const COMEDY_WIN = [
+      "Tembakan Laser Sonik 9000 Megawatt! Gerbang Firewall meledak jadi hujan piksel!",
+      "Akses Root Berhasil! Penjaga Firewall langsung mengalami Kernel Panic!",
+      "Sinyal suara super jernih! Perisai enkripsi musuh langsung retak berkeping-keping!",
+      "Combo Cyber Aktif! Agen Byte melesat menembus gerbang Neo-Data tanpa hambatan!",
+      "Kunci algoritma cocok 100%! Firewall langsung padam dan terbuka lebar!"
+    ];
+
+    const COMEDY_LOSE = [
+      "ZAP! Agen Byte terpeleset kulit pisang holografik dan berasap statis!",
+      "ERROR 404! Pistol sonik malah menembakkan gelembung emoji ketawa!",
+      "BZZZT! Firewall memantulkan sinyal, helm Agen Byte berputar kebalik!",
+      "Waduh! Agen Byte tersandung kabel LAN raksasa sebelum sempat menembak!"
+    ];
+
+    /* ---------------------------------------------------------------------
+       D. MESIN EFEK SUARA SINTETIS WEB AUDIO API (OFFLINE)
+       --------------------------------------------------------------------- */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+      }
+
+      playTone(freq, type, duration, delay = 0, vol = 0.16, slideTo = null) {
+        if (this.muted || !this.ctx) return;
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        if (slideTo) {
+          osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+        }
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      playPing() {
+        this.init();
+        this.playTone(920, "sine", 0.13, 0, 0.15, 1480);
+      }
+
+      playLaserBlast() {
+        this.init();
+        this.playTone(1150, "sawtooth", 0.28, 0, 0.18, 190);
+        this.playTone(620, "sine", 0.24, 0.04, 0.14, 1420);
+      }
+
+      playSuccess() {
+        this.init();
+        this.playTone(523.25, "triangle", 0.14, 0.0, 0.18);
+        this.playTone(659.25, "triangle", 0.14, 0.1, 0.18);
+        this.playTone(783.99, "triangle", 0.14, 0.2, 0.18);
+        this.playTone(1046.5, "triangle", 0.32, 0.3, 0.22);
+      }
+
+      playTurbo() {
+        this.init();
+        [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => {
+          this.playTone(f, "sine", 0.16, i * 0.05, 0.14);
+        });
+      }
+
+      playFail() {
+        this.init();
+        this.playTone(293.66, "sawtooth", 0.22, 0.0, 0.14, 280);
+        this.playTone(277.18, "sawtooth", 0.22, 0.24, 0.14, 265);
+        this.playTone(261.63, "sawtooth", 0.22, 0.48, 0.14, 250);
+        this.playTone(246.94, "sawtooth", 0.6, 0.72, 0.16, 185);
+      }
+
+      playTick(urgent = false) {
+        this.init();
+        if (urgent) {
+          this.playTone(1020, "square", 0.06, 0, 0.09);
+        } else {
+          this.playTone(540, "sine", 0.04, 0, 0.04);
+        }
+      }
+
+      playVictoryFanfare() {
+        this.init();
+        const notes = [523, 523, 523, 659, 784, 659, 784, 1046];
+        const times = [0, 0.14, 0.28, 0.42, 0.6, 0.82, 0.98, 1.16];
+        notes.forEach((n, idx) => {
+          this.playTone(n, "triangle", idx === notes.length - 1 ? 0.5 : 0.15, times[idx], 0.2);
+        });
+      }
+    }
+
+    const sfx = new SoundEngine();
+
+    /* ---------------------------------------------------------------------
+       E. DUAL-ENGINE PENGENALAN SUARA (SPEECH ID/EN + KETUKAN OFFLINE)
+       --------------------------------------------------------------------- */
+    const VOICE_KEYWORDS = {
+      0: ["a", "aa", "ah", "ha", "eh", "ay", "ey", "alfa", "alpha", "ayam", "apel", "satu", "1", "opsi a", "pilihan a", "jawaban a", "huruf a", "yang a"],
+      1: ["b", "be", "bi", "beh", "bee", "bay", "bravo", "bebek", "bola", "dua", "2", "opsi b", "pilihan b", "jawaban b", "huruf b", "yang b"],
+      2: ["c", "ce", "ci", "si", "seh", "see", "say", "che", "charlie", "cicak", "cacing", "tiga", "3", "opsi c", "pilihan c", "jawaban c", "huruf c", "yang c"],
+      3: ["d", "de", "di", "deh", "dee", "day", "delta", "domba", "dadu", "empat", "4", "opsi d", "pilihan d", "jawaban d", "huruf d", "yang d"]
+    };
+
+    const LETTER_NAMES = ["A", "B", "C", "D"];
+
+    function matchVoiceChoice(rawTranscript) {
+      if (!rawTranscript) return null;
+      const clean = rawTranscript
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (!clean) return null;
+
+      // 1. Cek frasa eksplisit terlebih dahulu
+      for (let idx = 0; idx < 4; idx++) {
+        for (const phrase of VOICE_KEYWORDS[idx]) {
+          if (phrase.includes(" ")) {
+            const regex = new RegExp(`(?:^|\\s)${phrase}(?:$|\\s)`);
+            if (regex.test(clean)) {
+              return { choice: idx, token: phrase };
+            }
+          }
+        }
+      }
+
+      // 2. Cek per kata dari belakang (ucapan terbaru pemain)
+      const words = clean.split(" ");
+      if (words.length <= 6) {
+        for (let i = words.length - 1; i >= 0; i--) {
+          const w = words[i];
+          for (let idx = 0; idx < 4; idx++) {
+            if (VOICE_KEYWORDS[idx].includes(w)) {
+              return { choice: idx, token: w };
+            }
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function matchNextCommand(rawTranscript) {
+      if (!rawTranscript) return false;
+      const clean = rawTranscript.toLowerCase().replace(/[^a-z\s]/g, " ").trim();
+      return /\b(lanjut|berikutnya|next|terus|maju|siap)\b/.test(clean);
+    }
+
+    /* ---------------------------------------------------------------------
+       F. STATE PERMAINAN (40 SOAL PENUH INFORMATIKA KELAS 9)
+       --------------------------------------------------------------------- */
+    const state = {
+      totalQuestions: 40,
+      timePerQuestion: 20,
+      mode: "survival", // 'survival' | 'relay4' | 'turn2'
+      questions: QUESTION_BANK,
+      currentIndex: 0,
+      score: 0,
+      groupScores: [0, 0, 0, 0],
+      correctCount: 0,
+      streak: 0,
+      maxStreak: 0,
+      lives: 5,
+      timeLeft: 20,
+      timerInterval: null,
+      autoNextInterval: null,
+      screen: "start", // 'start' | 'game' | 'end'
+      isAnswering: false,
+      isFeedbackOpen: false,
+      isRelayOpen: false,
+      // State Dual-Engine Mikrofon
+      micActive: false,
+      engineMode: "speech", // 'speech' (Engine 1) | 'acoustic' (Engine 2 Offline Pulse)
+      speechLang: "id-ID",
+      silentSpeechCount: 0,
+      gotResultThisSession: false,
+      speechHeardActive: false,
+      micVolume: 0,
+      lastShotVolume: 0.7,
+      recognition: null,
+      watchdogTimer: null,
+      // Engine 2 & Kalibrasi eksklusif
+      mediaStream: null,
+      analyser: null,
+      audioCtxMic: null,
+      pulseCount: 0,
+      pulseTimer: null,
+      lastPulseAt: 0,
+      // Animasi Canvas 2.5D
+      animTime: 0,
+      groundOffset: 0,
+      agentState: "run", // 'run' | 'jump' | 'slip'
+      laserActive: false,
+      laserX: 0,
+      laserScale: 1,
+      firewallBlasted: false,
+      firewallBlastX: 0,
+      firewallBlastY: 0,
+      firewallBlastRot: 0,
+      particles: []
+    };
+
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    /* ---------------------------------------------------------------------
+       G. MANAJER MIKROFON DUAL-ENGINE & DETEKSI TAUTAN DIBAGIKAN
+       --------------------------------------------------------------------- */
+    function checkSharedFramePermissions() {
+      const noticeBox = document.getElementById("shared-frame-notice");
+      const noticeText = document.getElementById("shared-frame-notice-text");
+      if (!noticeBox || !noticeText) return;
+
+      const isInIframe = (() => {
+        try {
+          return window.self !== window.top;
+        } catch (_) {
+          return true;
+        }
+      })();
+
+      let policyBlocked = false;
+      try {
+        if (document.permissionsPolicy && typeof document.permissionsPolicy.allowsFeature === "function") {
+          policyBlocked = !document.permissionsPolicy.allowsFeature("microphone");
+        }
+      } catch (_) {}
+
+      if (policyBlocked) {
+        noticeBox.classList.remove("hidden");
+        noticeText.innerHTML =
+          `Frame tautan pratinjau memblokir izin mikrofon (<strong>Permissions-Policy</strong>). Klik ikon <strong>Buka di Tab Baru / Layar Penuh (↗)</strong> di pojok kanan atas layar, lalu klik <strong>Aktifkan &amp; Uji Mikrofon</strong>.`;
+      } else if (isInIframe) {
+        noticeBox.classList.remove("hidden");
+      }
+    }
+
+    function stopHardwareAudioStream() {
+      if (state.mediaStream) {
+        try {
+          state.mediaStream.getTracks().forEach((track) => track.stop());
+        } catch (_) {}
+        state.mediaStream = null;
+      }
+      if (state.audioCtxMic) {
+        try {
+          state.audioCtxMic.close();
+        } catch (_) {}
+        state.audioCtxMic = null;
+      }
+      state.analyser = null;
+    }
+
+    function updateVoiceEngineBadges() {
+      const shortLang = state.speechLang === "id-ID" ? "ID" : "EN";
+      const startBadge = document.getElementById("start-engine-badge");
+      const hudPill = document.getElementById("hud-mic-status-pill");
+      const hudGuide = document.getElementById("hud-voice-guide");
+
+      if (state.engineMode === "speech") {
+        if (startBadge) {
+          startBadge.textContent = `🌐 Engine 1: Speech (${shortLang})`;
+          startBadge.className = "px-2.5 py-1 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-[11px] font-extrabold";
+        }
+        if (hudPill) {
+          hudPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> MIC AKTIF (${shortLang})`;
+          hudPill.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-extrabold text-[11px] sm:text-xs";
+        }
+        if (hudGuide) {
+          hudGuide.innerHTML = `Ucapkan: <span class="text-emerald-300">A / Ayam / 1</span> • <span class="text-sky-300">B / Bebek / 2</span> • <span class="text-amber-300">C / Cicak / 3</span> • <span class="text-rose-300">D / Domba / 4</span>`;
+        }
+      } else {
+        if (startBadge) {
+          startBadge.textContent = `⚡ Engine 2: Ketukan Suara Offline`;
+          startBadge.className = "px-2.5 py-1 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 text-[11px] font-extrabold";
+        }
+        if (hudPill) {
+          hudPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> KETUKAN SUARA (1–4x)`;
+          hudPill.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 font-extrabold text-[11px] sm:text-xs";
+        }
+        if (hudGuide) {
+          hudGuide.innerHTML = `Mode Offline: <span class="text-emerald-300">1x Suara = A</span> • <span class="text-sky-300">2x Cepat = B</span> • <span class="text-amber-300">3x Cepat = C</span> • <span class="text-rose-300">4x Cepat = D</span>`;
+        }
+      }
+    }
+
+    function startReactiveBarsLoop() {
+      const startBars = document.querySelectorAll("#start-mic-bars span");
+      const hudBars = document.querySelectorAll("#hud-mic-bars span");
+      const dataArray = state.analyser ? new Uint8Array(state.analyser.frequencyBinCount) : null;
+
+      function tickBars() {
+        if (!state.micActive && !state.analyser) return;
+
+        if (state.analyser && dataArray) {
+          state.analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+          const avg = sum / dataArray.length;
+          state.micVolume = Math.min(1, avg / 95);
+
+          startBars.forEach((bar, idx) => {
+            const val = dataArray[idx * 2] || avg;
+            bar.style.height = `${Math.max(16, Math.min(100, (val / 160) * 100))}%`;
+          });
+          hudBars.forEach((bar, idx) => {
+            const val = dataArray[idx * 2] || avg;
+            bar.style.height = `${Math.max(18, Math.min(100, (val / 160) * 100))}%`;
+          });
+        } else {
+          const targetVol = state.speechHeardActive ? 0.82 : 0.16;
+          state.micVolume += (targetVol - state.micVolume) * 0.25;
+          const now = performance.now() * 0.012;
+
+          startBars.forEach((bar, idx) => {
+            const wave = state.speechHeardActive
+              ? 35 + Math.abs(Math.sin(now + idx * 0.9)) * 65
+              : 16 + Math.abs(Math.sin(now * 0.25 + idx)) * 10;
+            bar.style.height = `${wave}%`;
+          });
+          hudBars.forEach((bar, idx) => {
+            const wave = state.speechHeardActive
+              ? 35 + Math.abs(Math.sin(now + idx * 0.9)) * 65
+              : 18 + Math.abs(Math.sin(now * 0.25 + idx)) * 10;
+            bar.style.height = `${wave}%`;
+          });
+        }
+
+        requestAnimationFrame(tickBars);
+      }
+      requestAnimationFrame(tickBars);
+    }
+
+    function activateMicrophoneAndSpeech(forceAcoustic = false) {
+      sfx.init();
+      state.micActive = true;
+      clearTimeout(state.watchdogTimer);
+
+      // Bebaskan stream getUserMedia sebelum SpeechRecognition berjalan agar tidak terkunci
+      stopHardwareAudioStream();
+      stopSpeechRecognitionEngine();
+
+      const btnTest = document.getElementById("btn-test-mic");
+      const lblTest = document.getElementById("btn-test-mic-label");
+      if (btnTest && lblTest) {
+        btnTest.className = "flex-1 sm:flex-none px-4 py-2.5 rounded-2xl bg-emerald-400 text-slate-950 font-display font-bold text-sm shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 ring-2 ring-cyan-200";
+        lblTest.textContent = "Mikrofon Aktif — Ucapkan A, B, C, D!";
+      }
+
+      if (!forceAcoustic && SpeechRecognitionAPI) {
+        state.engineMode = "speech";
+        updateVoiceEngineBadges();
+        startSpeechRecognitionEngine();
+        startReactiveBarsLoop();
+      } else {
+        startAcousticFallbackEngine();
+      }
+    }
+
+    async function runMicCalibration2Sec() {
+      sfx.init();
+      stopSpeechRecognitionEngine();
+      stopHardwareAudioStream();
+
+      const startTxt = document.getElementById("start-transcript-text");
+      if (startTxt) {
+        startTxt.innerHTML = `🎚️ Kalibrasi: <span class="text-amber-300">Bicaralah "A B C D" selama 2 detik...</span>`;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (startTxt) {
+          startTxt.innerHTML = `🎚️ Kalibrasi: <span class="text-rose-300">Browser tidak mendukung akses perangkat audio.</span>`;
+        }
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.mediaStream = stream;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioCtx();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+        state.audioCtxMic = audioCtx;
+        state.analyser = analyser;
+
+        let peak = 0;
+        const buf = new Uint8Array(analyser.frequencyBinCount);
+        const sampleInterval = setInterval(() => {
+          if (!state.analyser) return;
+          state.analyser.getByteFrequencyData(buf);
+          let sum = 0;
+          for (let i = 0; i < buf.length; i++) sum += buf[i];
+          const avg = sum / buf.length;
+          if (avg > peak) peak = avg;
+        }, 60);
+
+        startReactiveBarsLoop();
+
+        setTimeout(() => {
+          clearInterval(sampleInterval);
+          stopHardwareAudioStream();
+          if (startTxt) {
+            if (peak > 8) {
+              startTxt.innerHTML = `✅ Kalibrasi Berhasil (Level Sinyal: ${Math.round(peak)})! <span class="text-emerald-300">Silakan ucapkan A, B, C, atau D!</span>`;
+            } else {
+              startTxt.innerHTML = `⚠️ Sinyal mikrofon sangat pelan (Level: ${Math.round(peak)}). <span class="text-amber-300">Pastikan mikrofon tidak di-mute di sistem laptop/HP.</span>`;
+            }
+          }
+          activateMicrophoneAndSpeech(false);
+        }, 2100);
+      } catch (err) {
+        document.getElementById("shared-frame-notice")?.classList.remove("hidden");
+        if (startTxt) {
+          startTxt.innerHTML = `🎙️ Terdengar: <span class="text-rose-300">Izin mikrofon ditolak browser. Klik ikon gembok 🔒 di address bar &rarr; Izinkan Mikrofon.</span>`;
+        }
+      }
+    }
+
+    function startSpeechRecognitionEngine() {
+      if (!SpeechRecognitionAPI || !state.micActive || state.engineMode !== "speech") return;
+
+      if (state.recognition) {
+        try {
+          state.recognition.onend = null;
+          state.recognition.abort();
+        } catch (_) {}
+        state.recognition = null;
+      }
+
+      const recog = new SpeechRecognitionAPI();
+      recog.lang = state.speechLang;
+      recog.continuous = true;
+      recog.interimResults = true;
+      recog.maxAlternatives = 5;
+      state.gotResultThisSession = false;
+
+      recog.onstart = () => {
+        updateVoiceEngineBadges();
+        if (state.screen === "start") {
+          document.getElementById("start-transcript-text").innerHTML =
+            `🎙️ Terdengar: <span class="text-emerald-300">Mendengarkan (${state.speechLang === "id-ID" ? "Indonesia" : "English"})... Ucapkan A, B, C, atau D!</span>`;
+        }
+      };
+
+      recog.onsoundstart = () => {
+        state.speechHeardActive = true;
+      };
+
+      recog.onspeechstart = () => {
+        state.speechHeardActive = true;
+        if (state.screen === "game" && state.isAnswering) {
+          document.getElementById("hud-transcript-text").innerHTML =
+            `🎙️ Terdengar: <span class="text-amber-300 animate-pulse">Mendengar suara...</span>`;
+        }
+      };
+
+      recog.onspeechend = () => {
+        state.speechHeardActive = false;
+      };
+
+      recog.onresult = (event) => {
+        state.gotResultThisSession = true;
+        state.silentSpeechCount = 0;
+        state.speechHeardActive = true;
+        clearTimeout(state._speechGlowTimeout);
+        state._speechGlowTimeout = setTimeout(() => {
+          state.speechHeardActive = false;
+        }, 350);
+
+        let latestRaw = "";
+        let matchedChoice = null;
+        let saidNext = false;
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          if (res[0] && res[0].transcript) {
+            latestRaw = res[0].transcript.trim();
+          }
+
+          for (let alt = 0; alt < res.length; alt++) {
+            const candidate = res[alt].transcript;
+            if ((state.isFeedbackOpen || state.isRelayOpen) && matchNextCommand(candidate)) {
+              saidNext = true;
+              break;
+            }
+            const hit = matchVoiceChoice(candidate);
+            if (hit !== null) {
+              matchedChoice = { ...hit, raw: candidate.trim() };
+              break;
+            }
+          }
+          if (matchedChoice || saidNext) break;
+        }
+
+        // Layar Awal: Uji Mikrofon
+        if (state.screen === "start") {
+          const startTxt = document.getElementById("start-transcript-text");
+          if (matchedChoice) {
+            const letter = LETTER_NAMES[matchedChoice.choice];
+            startTxt.innerHTML = `🎙️ Terdengar: <span class="text-amber-300">"${matchedChoice.raw}"</span> &rarr; <span class="text-emerald-300 font-extrabold">Terdeteksi ${letter}!</span>`;
+            flashStartTestPill(matchedChoice.choice);
+          } else if (latestRaw) {
+            startTxt.innerHTML = `🎙️ Terdengar: <span class="text-white">"${latestRaw}"</span>`;
+          }
+          return;
+        }
+
+        // Layar Gameplay: Suara "Lanjut" / "Siap" pada banner pembahasan atau pergantian giliran
+        if (state.screen === "game" && saidNext) {
+          if (state.isFeedbackOpen) {
+            proceedNextQuestion();
+            return;
+          }
+          if (state.isRelayOpen) {
+            state.isRelayOpen = false;
+            document.getElementById("relay-overlay").classList.add("hidden");
+            renderCurrentQuestion();
+            return;
+          }
+        }
+
+        // Layar Gameplay: Deteksi Jawaban A, B, C, D
+        if (state.screen === "game" && state.isAnswering && !state.isFeedbackOpen && !state.isRelayOpen) {
+          const hudTxt = document.getElementById("hud-transcript-text");
+          if (matchedChoice) {
+            const letter = LETTER_NAMES[matchedChoice.choice];
+            hudTxt.innerHTML = `🎙️ Terdengar: <span class="text-amber-300">"${matchedChoice.raw}"</span> &rarr; <span class="text-emerald-300 font-extrabold">Tembak ${letter}!</span>`;
+            state.lastShotVolume = 0.88;
+            handleVoiceAnswer(matchedChoice.choice, matchedChoice.raw);
+          } else if (latestRaw) {
+            hudTxt.innerHTML = `🎙️ Terdengar: <span class="text-white">"${latestRaw}"</span>`;
+          }
+        }
+      };
+
+      recog.onerror = (event) => {
+        state.speechHeardActive = false;
+        if (event.error === "not-allowed") {
+          document.getElementById("shared-frame-notice")?.classList.remove("hidden");
+          if (state.screen === "start") {
+            document.getElementById("start-transcript-text").innerHTML =
+              `🎙️ Terdengar: <span class="text-rose-300">Izin mikrofon ditolak browser atau frame pratinjau. Buka di Tab Baru atau izinkan mikrofon di ikon gembok 🔒.</span>`;
+          }
+        } else if (event.error === "network" || event.error === "service-not-allowed") {
+          startAcousticFallbackEngine();
+        }
+      };
+
+      recog.onend = () => {
+        const heardWithoutText = state.speechHeardActive && !state.gotResultThisSession;
+        state.speechHeardActive = false;
+
+        if (heardWithoutText) {
+          state.silentSpeechCount += 1;
+          if (state.silentSpeechCount >= 2) {
+            state.silentSpeechCount = 0;
+            state.speechLang = state.speechLang === "id-ID" ? "en-US" : "id-ID";
+            updateVoiceEngineBadges();
+          }
+        }
+
+        if (state.micActive && state.engineMode === "speech" && (state.screen === "start" || state.screen === "game")) {
+          clearTimeout(state.watchdogTimer);
+          state.watchdogTimer = setTimeout(() => {
+            if (state.micActive && state.engineMode === "speech" && (state.screen === "start" || state.screen === "game")) {
+              startSpeechRecognitionEngine();
+            }
+          }, 150);
+        }
+      };
+
+      state.recognition = recog;
+      try {
+        recog.start();
+      } catch (_) {}
+    }
+
+    // Engine 2: Fallback Akustik Lokal 100% Offline via Web Audio API (1-4 Ketukan Suara)
+    async function startAcousticFallbackEngine() {
+      stopSpeechRecognitionEngine();
+      stopHardwareAudioStream();
+      state.engineMode = "acoustic";
+      updateVoiceEngineBadges();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.mediaStream = stream;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioCtx();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+        state.audioCtxMic = audioCtx;
+        state.analyser = analyser;
+
+        startReactiveBarsLoop();
+
+        const buf = new Uint8Array(analyser.frequencyBinCount);
+        let wasLoud = false;
+
+        const detectPulses = () => {
+          if (state.engineMode !== "acoustic" || !state.analyser) return;
+          state.analyser.getByteFrequencyData(buf);
+          let sum = 0;
+          for (let i = 0; i < buf.length; i++) sum += buf[i];
+          const avg = sum / buf.length;
+
+          const isLoud = avg > 36;
+          const now = Date.now();
+          if (isLoud && !wasLoud && now - state.lastPulseAt > 170) {
+            state.lastPulseAt = now;
+            state.pulseCount = Math.min(4, state.pulseCount + 1);
+            sfx.playPing();
+
+            const label = `${state.pulseCount}x Suara (${LETTER_NAMES[state.pulseCount - 1]})`;
+            if (state.screen === "start") {
+              document.getElementById("start-transcript-text").innerHTML =
+                `⚡ Terdeteksi: <span class="text-emerald-300 font-extrabold">${label}</span>`;
+              flashStartTestPill(state.pulseCount - 1);
+            } else if (state.screen === "game" && state.isAnswering) {
+              document.getElementById("hud-transcript-text").innerHTML =
+                `⚡ Terdeteksi: <span class="text-emerald-300 font-extrabold">${label}</span>`;
+            }
+
+            clearTimeout(state.pulseTimer);
+            state.pulseTimer = setTimeout(() => {
+              const finalChoice = state.pulseCount - 1;
+              state.pulseCount = 0;
+              if (state.screen === "game" && state.isAnswering && !state.isFeedbackOpen && !state.isRelayOpen && finalChoice >= 0 && finalChoice <= 3) {
+                state.lastShotVolume = Math.max(0.55, state.micVolume);
+                handleVoiceAnswer(finalChoice, `${finalChoice + 1}x Ketukan Suara`);
+              }
+            }, 950);
+          }
+          wasLoud = isLoud;
+          requestAnimationFrame(detectPulses);
+        };
+        requestAnimationFrame(detectPulses);
+      } catch (err) {
+        document.getElementById("shared-frame-notice")?.classList.remove("hidden");
+      }
+    }
+
+    function stopSpeechRecognitionEngine() {
+      clearTimeout(state.watchdogTimer);
+      if (state.recognition) {
+        try {
+          state.recognition.onend = null;
+          state.recognition.abort();
+        } catch (_) {}
+        state.recognition = null;
+      }
+    }
+
+    let lastTestPing = 0;
+    function flashStartTestPill(choiceIdx) {
+      const now = Date.now();
+      if (now - lastTestPing > 420) {
+        sfx.playPing();
+        lastTestPing = now;
+      }
+      for (let i = 0; i < 4; i++) {
+        const pill = document.getElementById(`test-pill-${i}`);
+        if (!pill) continue;
+        if (i === choiceIdx) {
+          pill.className = "test-badge-hit w-10 h-10 rounded-xl bg-cyan-400 border-2 border-white font-display font-bold text-base flex items-center justify-center text-slate-950 shadow-lg shadow-cyan-400/50";
+        } else {
+          pill.className = "w-10 h-10 rounded-xl bg-slate-800 border-2 border-slate-600 font-display font-bold text-base flex items-center justify-center text-slate-300 transition-all";
+        }
+      }
+    }
+
+    /* ---------------------------------------------------------------------
+       H. PANGGUNG VISUAL 2.5D (#cyber-canvas): 4 ZONA BIOMA, AGEN BYTE,
+          HOVERBOARD TURBO, DRONE VIRUS, BOM EMP & FIREWALL BOSS
+       --------------------------------------------------------------------- */
+    let canvasEl = null;
+    let ctx2d = null;
+
+    function initCanvas() {
+      canvasEl = document.getElementById("cyber-canvas");
+      ctx2d = canvasEl.getContext("2d");
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+    }
+
+    function resizeCanvas() {
+      if (!canvasEl) return;
+      const rect = canvasEl.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvasEl.width = Math.max(300, rect.width * dpr);
+      canvasEl.height = Math.max(160, rect.height * dpr);
+      ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function spawnParticles(x, y, color, count = 20) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.6 + Math.random() * 5.6;
+        state.particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.5,
+          life: 1,
+          size: 3 + Math.random() * 5,
+          color
+        });
+      }
+    }
+
+    function drawCyberBiomeParallax(ctx, w, h, floorY, biomeIdx, offset) {
+      if (biomeIdx === 0) {
+        // Pos 1-10: Hutan Jaringan Graf & Pohon (Simpul Tree & Edge bercahaya)
+        for (let i = 0; i < 6; i++) {
+          const nx = ((i * 195 - offset * 0.42) % (w + 195) + (w + 195)) % (w + 195) - 85;
+          const ny = 42 + (i % 2) * 26;
+          ctx.strokeStyle = "rgba(52, 211, 153, 0.35)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(nx, ny);
+          ctx.lineTo(nx - 22, ny + 26);
+          ctx.moveTo(nx, ny);
+          ctx.lineTo(nx + 22, ny + 26);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(16, 185, 129, 0.25)";
+          ctx.strokeStyle = "#6ee7b7";
+          ctx.lineWidth = 1.5;
+          [[nx, ny], [nx - 22, ny + 26], [nx + 22, ny + 26]].forEach(([px, py]) => {
+            ctx.beginPath();
+            ctx.arc(px, py, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+          });
+        }
+      } else if (biomeIdx === 1) {
+        // Pos 11-20: Pabrik Logika & Piksel Biner (Roda Gigi & Grid Biner)
+        for (let i = 0; i < 5; i++) {
+          const gx = ((i * 210 - offset * 0.36) % (w + 210) + (w + 210)) % (w + 210) - 80;
+          const gy = 52 + (i % 2) * 28;
+          ctx.save();
+          ctx.translate(gx, gy);
+          ctx.rotate(state.animTime * (i % 2 === 0 ? 1.3 : -1.3));
+          ctx.strokeStyle = "rgba(253, 224, 71, 0.32)";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(0, 0, 18, 0, Math.PI * 2);
+          ctx.stroke();
+          for (let t = 0; t < 6; t++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.fillStyle = "rgba(253, 224, 71, 0.34)";
+            ctx.fillRect(-3, -24, 6, 7);
+          }
+          ctx.restore();
+
+          // Kotak piksel biner kecil melayang
+          ctx.fillStyle = "rgba(254, 240, 138, 0.2)";
+          ctx.fillRect(gx + 34, gy - 12, 12, 12);
+          ctx.strokeStyle = "rgba(254, 240, 138, 0.45)";
+          ctx.strokeRect(gx + 46, gy - 12, 12, 12);
+        }
+      } else if (biomeIdx === 2) {
+        // Pos 21-30: Menara Kantor Cloud & Kas Data (Sel Spreadsheet & Grafik Batang)
+        const tags = ["=SUM(C2:C6)", "SALDO", "CHART", "DOCS", "CLOUD"];
+        for (let i = 0; i < 6; i++) {
+          const cx = ((i * 190 - offset * 0.45) % (w + 190) + (w + 190)) % (w + 190) - 85;
+          const cy = 36 + (i % 2) * 30;
+          ctx.fillStyle = "rgba(56, 189, 248, 0.16)";
+          ctx.strokeStyle = "rgba(125, 211, 252, 0.42)";
+          ctx.lineWidth = 1.5;
+          ctx.fillRect(cx, cy, 78, 26);
+          ctx.strokeRect(cx, cy, 78, 26);
+          ctx.fillStyle = "rgba(224, 242, 254, 0.72)";
+          ctx.font = "bold 9px monospace";
+          ctx.fillText(tags[i % tags.length], cx + 8, cy + 16);
+        }
+      } else {
+        // Pos 31-40: Studio Kreator Blog & Vlog (Kamera, Sinyal Wi-Fi & Tombol Play)
+        for (let i = 0; i < 6; i++) {
+          const vx = ((i * 185 - offset * 0.4) % (w + 185) + (w + 185)) % (w + 185) - 70;
+          const vy = 42 + (i % 2) * 28;
+          ctx.strokeStyle = "rgba(240, 171, 252, 0.45)";
+          ctx.fillStyle = "rgba(232, 121, 249, 0.18)";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.roundRect(vx, vy, 44, 28, 7);
+          ctx.fill();
+          ctx.stroke();
+
+          // Segitiga Play di tengah layar Vlog
+          ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+          ctx.beginPath();
+          ctx.moveTo(vx + 18, vy + 8);
+          ctx.lineTo(vx + 18, vy + 20);
+          ctx.lineTo(vx + 29, vy + 14);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+    }
+
+    function drawStageFrame(timestamp) {
+      state.animTime = timestamp * 0.001;
+      if (ctx2d && canvasEl && state.screen === "game") {
+        const w = canvasEl.parentElement.clientWidth;
+        const h = canvasEl.parentElement.clientHeight;
+        const biomeIdx = Math.min(3, Math.floor(state.currentIndex / 10));
+        const biome = BIOMES[biomeIdx];
+
+        // 1. Langit Gradien Cyber-Bioma
+        const skyGrad = ctx2d.createLinearGradient(0, 0, 0, h);
+        skyGrad.addColorStop(0, biome.skyTop);
+        skyGrad.addColorStop(1, biome.skyBot);
+        ctx2d.fillStyle = skyGrad;
+        ctx2d.fillRect(0, 0, w, h);
+
+        // 2. Ornamen Parallax Bioma
+        const speedMult = state.isAnswering ? (state.timeLeft <= 5 ? 4.6 : 2.5) : 0;
+        state.groundOffset = (state.groundOffset + speedMult) % 1200;
+        const floorY = h - 38;
+        drawCyberBiomeParallax(ctx2d, w, h, floorY, biomeIdx, state.groundOffset);
+
+        // 3. Lintasan Cyber 2.5D dengan Garis Laser Berjalan
+        ctx2d.fillStyle = biome.groundTop;
+        ctx2d.fillRect(0, floorY, w, 38);
+        ctx2d.fillStyle = biome.groundBot;
+        ctx2d.fillRect(0, floorY + 12, w, 26);
+
+        ctx2d.strokeStyle = "#38bdf8";
+        ctx2d.lineWidth = 2;
+        ctx2d.beginPath();
+        ctx2d.moveTo(0, floorY);
+        ctx2d.lineTo(w, floorY);
+        ctx2d.stroke();
+
+        ctx2d.fillStyle = "rgba(125, 211, 252, 0.35)";
+        const tileStep = state.groundOffset % 60;
+        for (let gx = -tileStep; gx < w + 60; gx += 60) {
+          ctx2d.fillRect(gx, floorY + 4, 28, 4);
+        }
+
+        // 4. Bom EMP 20 Detik & Sumbu Listrik di Belakang Agen Byte
+        const empX = 16;
+        const empY = floorY - 26;
+        ctx2d.fillStyle = "#1e293b";
+        ctx2d.strokeStyle = "#38bdf8";
+        ctx2d.lineWidth = 2;
+        ctx2d.beginPath();
+        ctx2d.roundRect(empX, empY, 28, 26, 6);
+        ctx2d.fill();
+        ctx2d.stroke();
+        ctx2d.fillStyle = "#38bdf8";
+        ctx2d.font = "bold 8px monospace";
+        ctx2d.fillText("EMP", empX + 5, empY + 16);
+
+        const maxFuseLen = Math.max(45, w * 0.16);
+        const ratio = Math.max(0, state.timeLeft / state.timePerQuestion);
+        const curFuseLen = maxFuseLen * ratio;
+        ctx2d.strokeStyle = "#22d3ee";
+        ctx2d.lineWidth = 3;
+        ctx2d.beginPath();
+        ctx2d.moveTo(empX + 28, empY + 13);
+        ctx2d.lineTo(empX + 28 + curFuseLen, empY + 13);
+        ctx2d.stroke();
+
+        // Percikan plasma ujung sumbu EMP
+        const sparkR = 5 + Math.sin(state.animTime * 28) * 2.5;
+        ctx2d.fillStyle = "#f43f5e";
+        ctx2d.beginPath();
+        ctx2d.arc(empX + 28 + curFuseLen, empY + 13, sparkR + 2, 0, Math.PI * 2);
+        ctx2d.fill();
+        ctx2d.fillStyle = "#fef08a";
+        ctx2d.beginPath();
+        ctx2d.arc(empX + 28 + curFuseLen, empY + 13, sparkR * 0.6, 0, Math.PI * 2);
+        ctx2d.fill();
+
+        // 5. Drone Virus Raksasa Pengejar Saat Waktu <= 5 Detik
+        const isPanicking = state.isAnswering && state.timeLeft <= 5 && state.timeLeft > 0;
+        if (isPanicking) {
+          const panicProgress = (6 - state.timeLeft) / 5;
+          const droneX = 24 + panicProgress * (w * 0.16);
+          const droneY = floorY - 46 + Math.sin(state.animTime * 18) * 7;
+          drawMalwareDrone(ctx2d, droneX, droneY);
+        }
+
+        // 6. Karakter Utama: Agen Byte
+        const agentBaseX = Math.max(105, w * 0.30);
+        let agentY = floorY - 46;
+        let agentRot = 0;
+
+        if (state.agentState === "jump") {
+          agentY -= 38;
+          agentRot = -0.12;
+        } else if (state.agentState === "slip") {
+          agentY += 6;
+          agentRot = -1.35;
+        } else if (state.streak >= 3) {
+          // Melayang di atas Neon Hoverboard Turbo 2x Poin
+          agentY -= 16 + Math.sin(state.animTime * 9) * 5;
+          agentRot = 0.08;
+        } else if (isPanicking) {
+          agentY -= Math.abs(Math.sin(state.animTime * 18)) * 12;
+          agentRot = Math.sin(state.animTime * 22) * 0.12;
+        } else {
+          agentY -= Math.abs(Math.sin(state.animTime * 10)) * 8;
+        }
+
+        drawAgenByte(ctx2d, agentBaseX, agentY, agentRot, isPanicking);
+
+        // 7. Tembakan Sonic Laser Blast Saat Jawaban Benar
+        if (state.laserActive) {
+          state.laserX += Math.max(14, w * 0.036);
+          const beamY = floorY - 36;
+          const radius = 14 + state.laserScale * 20;
+
+          // Jejak sinar laser horizontal
+          ctx2d.strokeStyle = "rgba(34, 211, 238, 0.7)";
+          ctx2d.lineWidth = 8;
+          ctx2d.beginPath();
+          ctx2d.moveTo(agentBaseX + 26, beamY);
+          ctx2d.lineTo(state.laserX, beamY);
+          ctx2d.stroke();
+
+          // Kepala ledakan sonik
+          const gradBeam = ctx2d.createRadialGradient(state.laserX, beamY, 2, state.laserX, beamY, radius);
+          gradBeam.addColorStop(0, "#ffffff");
+          gradBeam.addColorStop(0.45, "#22d3ee");
+          gradBeam.addColorStop(1, "rgba(34, 211, 238, 0)");
+          ctx2d.fillStyle = gradBeam;
+          ctx2d.beginPath();
+          ctx2d.arc(state.laserX, beamY, radius, 0, Math.PI * 2);
+          ctx2d.fill();
+
+          const gateX = w - 68;
+          if (state.laserX >= gateX) {
+            state.laserActive = false;
+            state.firewallBlasted = true;
+            spawnParticles(gateX, beamY, "#22d3ee", 28);
+            spawnParticles(gateX, beamY, "#f472b6", 20);
+          }
+        }
+
+        // 8. Gerbang Penjaga Firewall (#1 s.d. #40) di Kanan
+        const gateX = w - 72;
+        let gateY = floorY - 48;
+        if (state.firewallBlasted) {
+          state.firewallBlastX += 9.5;
+          state.firewallBlastY -= 7.5;
+          state.firewallBlastRot += 0.26;
+        } else {
+          gateY += Math.sin(state.animTime * 5) * 4;
+        }
+        drawFirewallGuardian(
+          ctx2d,
+          gateX + state.firewallBlastX,
+          gateY + state.firewallBlastY,
+          state.firewallBlastRot,
+          biome,
+          state.currentIndex + 1
+        );
+
+        // 9. Update & Gambar Partikel Piksel Neon
+        for (let i = state.particles.length - 1; i >= 0; i--) {
+          const p = state.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.18;
+          p.life -= 0.03;
+          if (p.life <= 0) {
+            state.particles.splice(i, 1);
+          } else {
+            ctx2d.globalAlpha = p.life;
+            ctx2d.fillStyle = p.color;
+            ctx2d.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            ctx2d.globalAlpha = 1;
+          }
+        }
+      }
+      requestAnimationFrame(drawStageFrame);
+    }
+
+    function drawAgenByte(ctx, x, y, rot, isPanicking) {
+      ctx.save();
+      ctx.translate(x, y + 24);
+      ctx.rotate(rot);
+
+      // Neon Hoverboard Turbo jika Streak >= 3
+      if (state.streak >= 3 && state.agentState !== "slip") {
+        ctx.fillStyle = "#0f172a";
+        ctx.strokeStyle = "#22d3ee";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(-34, 17, 68, 9, 5);
+        ctx.fill();
+        ctx.stroke();
+
+        // Semburan api plasma hoverboard
+        ctx.fillStyle = "#f43f5e";
+        ctx.beginPath();
+        ctx.moveTo(-34, 19);
+        ctx.lineTo(-52 - Math.sin(state.animTime * 30) * 6, 21.5);
+        ctx.lineTo(-34, 24);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Armor Jaket Cyber-Runner
+      ctx.fillStyle = "#0284c7";
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-14, -4, 28, 25, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      // Inti Reaktor Dada
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(2, 7, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Helm Cyber-Agent
+      ctx.fillStyle = "#1e293b";
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, -15, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Antena Helm
+      ctx.strokeStyle = "#22d3ee";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-4, -28);
+      ctx.lineTo(-7, -37);
+      ctx.stroke();
+      ctx.fillStyle = "#f43f5e";
+      ctx.beginPath();
+      ctx.arc(-7, -38, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Visor Holografik Bercahaya
+      ctx.fillStyle = "#22d3ee";
+      ctx.beginPath();
+      ctx.roundRect(-2, -20, 15, 9, 4);
+      ctx.fill();
+
+      // Efek Asap Statis & Kulit Pisang Holografik saat Salah
+      if (state.agentState === "slip") {
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(16, 18, 6, 0.2, Math.PI);
+        ctx.fill();
+      }
+
+      // Tetesan Data Panik saat <= 5 detik
+      if (isPanicking && state.agentState === "run") {
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(-17, -18 + Math.sin(state.animTime * 15) * 3, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Sonic Pulse Blaster & Kristal Reaktif Volume Mikrofon
+      ctx.fillStyle = "#334155";
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.roundRect(10, 1, 22, 9, 3);
+      ctx.fill();
+      ctx.stroke();
+
+      const glowRadius = 7 + state.micVolume * 22;
+      ctx.fillStyle = "rgba(34, 211, 238, 0.45)";
+      ctx.beginPath();
+      ctx.arc(34, 5.5, glowRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(34, 5.5, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawMalwareDrone(ctx, x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+      // Baling-baling drone
+      ctx.strokeStyle = "#fda4af";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-22, -16);
+      ctx.lineTo(22, -16);
+      ctx.stroke();
+
+      // Badan Drone Virus Merah
+      ctx.fillStyle = "#e11d48";
+      ctx.strokeStyle = "#4c0519";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-20, -12, 40, 26, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Mata Laser Merah Menyala
+      ctx.fillStyle = "#fef08a";
+      ctx.beginPath();
+      ctx.arc(-7, -1, 4, 0, Math.PI * 2);
+      ctx.arc(9, -1, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Gigi Gerigi Malware
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-10, 7, 22, 4);
+      ctx.restore();
+    }
+
+    function drawFirewallGuardian(ctx, x, y, rot, biome, gateNum) {
+      ctx.save();
+      ctx.translate(x, y + 24);
+      ctx.rotate(rot);
+
+      // Perisai Hologram Firewall
+      ctx.fillStyle = biome.firewallColor;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(-30, -26, 60, 52, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      // Pola Garis Digital di dalam Gerbang
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-24, -20, 48, 40);
+
+      // Mata Penjaga Firewall
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(-16, -12, 11, 7);
+      ctx.fillRect(5, -12, 11, 7);
+      ctx.fillStyle = "#fef08a";
+      ctx.fillRect(-12, -10, 4, 3);
+      ctx.fillRect(9, -10, 4, 3);
+
+      // Pita Label FIREWALL #N
+      ctx.fillStyle = "#090d1e";
+      ctx.fillRect(-30, 4, 60, 16);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 8px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(`FIREWALL #${gateNum}`, 0, 15);
+
+      ctx.restore();
+    }
+
+    /* ---------------------------------------------------------------------
+       I. ALUR PERMAINAN, TIMER & KONTROL SUARA MURNI
+       --------------------------------------------------------------------- */
+    window.addEventListener("DOMContentLoaded", () => {
+      initCanvas();
+      checkSharedFramePermissions();
+      requestAnimationFrame(drawStageFrame);
+
+      // Tombol Aktivasi, Sambungkan Ulang & Kalibrasi Mikrofon di Layar Awal
+      document.getElementById("btn-test-mic").addEventListener("click", () => activateMicrophoneAndSpeech(false));
+      document.getElementById("btn-reinit-mic-top")?.addEventListener("click", () => activateMicrophoneAndSpeech(false));
+      document.getElementById("btn-calibrate-mic")?.addEventListener("click", runMicCalibration2Sec);
+      document.getElementById("btn-hud-reset-mic")?.addEventListener("click", () => activateMicrophoneAndSpeech(false));
+
+      // Pilihan 3 Mode Bermain
+      document.querySelectorAll(".mode-card-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.mode = btn.dataset.mode;
+          document.querySelectorAll(".mode-card-btn").forEach((b) => {
+            b.className = "mode-card-btn bg-slate-800/90 border-2 border-slate-700 hover:border-slate-500 text-slate-200 p-3.5 rounded-2xl text-left transition";
+            b.querySelector("p").className = "text-xs text-slate-400 leading-relaxed";
+          });
+          btn.className = "mode-card-btn bg-cyan-600 border-2 border-cyan-200 text-white p-3.5 rounded-2xl text-left shadow-lg transition";
+          btn.querySelector("p").className = "text-xs text-cyan-50 leading-relaxed";
+        });
+      });
+
+      // Tombol Mulai Misi Cyber (Layar Penuh)
+      document.getElementById("btn-start-game").addEventListener("click", () => {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+        startGame();
+      });
+
+      // Tombol Tim Berikutnya Siap (Mode Estafet 4 Kelompok)
+      document.getElementById("btn-relay-ready").addEventListener("click", () => {
+        state.isRelayOpen = false;
+        document.getElementById("relay-overlay").classList.add("hidden");
+        renderCurrentQuestion();
+      });
+
+      // Tombol Main Lagi
+      document.getElementById("btn-restart").addEventListener("click", () => {
+        state.screen = "start";
+        document.getElementById("end-screen").classList.add("hidden");
+        document.getElementById("start-screen").classList.remove("hidden");
+        if (state.micActive) startSpeechRecognitionEngine();
+      });
+
+      // Tombol Mute / Unmute SFX di Pojok Kanan Atas
+      document.getElementById("btn-global-mute").addEventListener("click", () => {
+        sfx.muted = !sfx.muted;
+        document.getElementById("btn-global-mute").innerHTML = sfx.muted
+          ? `🔇 <span class="hidden sm:inline">SFX Mati</span>`
+          : `🔊 <span class="hidden sm:inline">SFX Aktif</span>`;
+      });
+    });
+
+    function startGame() {
+      sfx.init();
+      state.currentIndex = 0;
+      state.score = 0;
+      state.groupScores = [0, 0, 0, 0];
+      state.correctCount = 0;
+      state.streak = 0;
+      state.maxStreak = 0;
+      state.lives = 5;
+      state.screen = "game";
+      state.isFeedbackOpen = false;
+      state.isRelayOpen = false;
+
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("end-screen").classList.add("hidden");
+      document.getElementById("game-screen").classList.remove("hidden");
+
+      resizeCanvas();
+      buildProgressMap();
+      activateMicrophoneAndSpeech();
+      renderCurrentQuestion();
+    }
+
+    function buildProgressMap() {
+      const container = document.getElementById("progress-dots");
+      container.innerHTML = "";
+      for (let i = 0; i < state.totalQuestions; i++) {
+        const dot = document.createElement("div");
+        const biomeIdx = Math.min(3, Math.floor(i / 10));
+        dot.id = `map-dot-${i}`;
+        dot.dataset.biome = biomeIdx;
+        dot.className = "h-2 sm:h-2.5 flex-1 rounded-full bg-slate-700 transition-all duration-300";
+        container.appendChild(dot);
+      }
+    }
+
+    function updateProgressMap() {
+      const total = state.totalQuestions;
+      for (let i = 0; i < total; i++) {
+        const dot = document.getElementById(`map-dot-${i}`);
+        if (!dot) continue;
+        const bIdx = parseInt(dot.dataset.biome, 10);
+        const color = BIOMES[bIdx].dotColor;
+        if (i < state.currentIndex) {
+          dot.className = `h-2 sm:h-2.5 flex-1 rounded-full ${color} opacity-95`;
+        } else if (i === state.currentIndex) {
+          dot.className = "h-2.5 sm:h-3 flex-1 rounded-full bg-white ring-2 ring-cyan-300 scale-y-125";
+        } else {
+          dot.className = "h-2 sm:h-2.5 flex-1 rounded-full bg-slate-700/80";
+        }
+      }
+      const pct = ((state.currentIndex + 0.5) / total) * 100;
+      document.getElementById("map-runner-icon").style.left = `${Math.min(99, Math.max(1, pct))}%`;
+    }
+
+    function updateHUD() {
+      const qNum = state.currentIndex + 1;
+      const biomeIdx = Math.min(3, Math.floor(state.currentIndex / 10));
+      const biome = BIOMES[biomeIdx];
+
+      const zoneBadge = document.getElementById("hud-zone-badge");
+      zoneBadge.textContent = biome.badge;
+      zoneBadge.className = `px-2.5 py-1 rounded-xl text-xs font-extrabold border ${biome.badgeClass}`;
+      document.getElementById("hud-gate-counter").textContent = `Firewall ${qNum} / ${state.totalQuestions}`;
+
+      const modeStatus = document.getElementById("hud-mode-status");
+      if (state.mode === "survival") {
+        modeStatus.textContent = "🛡️".repeat(Math.max(0, state.lives)) + "🖤".repeat(Math.max(0, 5 - state.lives));
+      } else if (state.mode === "relay4") {
+        const groupNum = biomeIdx + 1;
+        modeStatus.textContent = `🚩 Kelompok ${groupNum} (${state.groupScores[biomeIdx]} pts)`;
+      } else {
+        const studentTurn = Math.floor(state.currentIndex / 2) + 1;
+        const qInTurn = (state.currentIndex % 2) + 1;
+        modeStatus.textContent = `🎤 Siswa #${studentTurn} (Soal ${qInTurn}/2)`;
+      }
+
+      const streakBadge = document.getElementById("hud-streak-badge");
+      if (state.streak >= 3) {
+        streakBadge.textContent = `🛸 HOVERBOARD TURBO 2X (${state.streak}⚡)`;
+        streakBadge.className = "px-2.5 py-1 rounded-xl bg-cyan-400 text-slate-950 border border-white text-xs sm:text-sm font-extrabold shadow animate-pulse";
+      } else {
+        streakBadge.textContent = `⚡ Streak: ${state.streak}`;
+        streakBadge.className = "px-2.5 py-1 rounded-xl bg-slate-800 border border-slate-600 text-slate-300 text-xs sm:text-sm font-extrabold";
+      }
+
+      document.getElementById("hud-score").textContent = state.score;
+      updateProgressMap();
+    }
+
+    function renderCurrentQuestion() {
+      clearInterval(state.timerInterval);
+      clearInterval(state.autoNextInterval);
+
+      const qObj = state.questions[state.currentIndex];
+      state.isAnswering = true;
+      state.isFeedbackOpen = false;
+      state.isRelayOpen = false;
+      state.timeLeft = state.timePerQuestion;
+
+      // Reset animasi karakter panggung
+      state.agentState = "run";
+      state.laserActive = false;
+      state.firewallBlasted = false;
+      state.firewallBlastX = 0;
+      state.firewallBlastY = 0;
+      state.firewallBlastRot = 0;
+
+      document.getElementById("stage-container").classList.remove("stage-panic");
+      document.getElementById("hud-panic-badge").classList.add("hidden");
+      document.getElementById("hud-timer-text").textContent = `${state.timeLeft}s`;
+
+      updateHUD();
+
+      document.getElementById("q-number-pill").textContent = `Soal #${qObj.id}`;
+      document.getElementById("q-topic-pill").textContent = qObj.topic;
+      document.getElementById("question-text").innerHTML = qObj.q;
+
+      const diagramBox = document.getElementById("question-diagram-box");
+      if (qObj.diagram && DIAGRAM_SVGS[qObj.diagram]) {
+        diagramBox.innerHTML = DIAGRAM_SVGS[qObj.diagram];
+        diagramBox.classList.remove("hidden");
+      } else {
+        diagramBox.innerHTML = "";
+        diagramBox.classList.add("hidden");
+      }
+
+      const borderColors = [
+        "border-emerald-500/50",
+        "border-sky-500/50",
+        "border-amber-500/50",
+        "border-rose-500/50"
+      ];
+      document.querySelectorAll(".option-card").forEach((card, i) => {
+        card.className = `option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800 border-2 ${borderColors[i]} text-left`;
+        card.querySelector(".opt-text").innerHTML = qObj.opts[i];
+      });
+
+      document.getElementById("hud-transcript-text").innerHTML =
+        `🎙️ Terdengar: <span class="text-emerald-300">Siap! Ucapkan A, B, C, atau D...</span>`;
+
+      if (state.micActive && state.engineMode === "speech") {
+        startSpeechRecognitionEngine();
+      }
+
+      startQuestionTimer();
+    }
+
+    function startQuestionTimer() {
+      state.timerInterval = setInterval(() => {
+        if (!state.isAnswering) return;
+        state.timeLeft -= 1;
+        document.getElementById("hud-timer-text").textContent = `${Math.max(0, state.timeLeft)}s`;
+
+        if (state.timeLeft <= 5 && state.timeLeft > 0) {
+          sfx.playTick(true);
+          document.getElementById("stage-container").classList.add("stage-panic");
+          document.getElementById("hud-panic-badge").classList.remove("hidden");
+        } else if (state.timeLeft > 5) {
+          sfx.playTick(false);
+        }
+
+        if (state.timeLeft <= 0) {
+          clearInterval(state.timerInterval);
+          handleVoiceAnswer(-1, "Waktu Habis");
+        }
+      }, 1000);
+    }
+
+    function handleVoiceAnswer(choiceIdx, spokenRaw) {
+      if (!state.isAnswering) return;
+      state.isAnswering = false;
+      clearInterval(state.timerInterval);
+
+      const qObj = state.questions[state.currentIndex];
+      const isCorrect = choiceIdx === qObj.ans;
+      const groupIdx = Math.min(3, Math.floor(state.currentIndex / 10));
+
+      // Sorot kartu jawaban benar / salah secara visual
+      document.querySelectorAll(".option-card").forEach((card, idx) => {
+        if (idx === qObj.ans) {
+          card.className = "option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-emerald-900/90 border-2 border-emerald-300 text-left ring-2 ring-emerald-400";
+        } else if (idx === choiceIdx && !isCorrect) {
+          card.className = "option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-rose-900/90 border-2 border-rose-400 text-left";
+        } else {
+          card.className = "option-card flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl bg-slate-800/40 border-2 border-slate-700/40 text-left opacity-55";
+        }
+      });
+
+      let earnedPoints = 0;
+
+      if (isCorrect) {
+        state.correctCount += 1;
+        state.streak += 1;
+        if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+
+        const mult = state.streak >= 3 ? 2 : 1;
+        const speedBonus = Math.max(10, state.timeLeft * 5);
+        earnedPoints = (100 + speedBonus) * mult;
+        state.score += earnedPoints;
+        state.groupScores[groupIdx] += earnedPoints;
+
+        state.agentState = "jump";
+        state.laserActive = true;
+        state.laserScale = state.lastShotVolume;
+        state.laserX = Math.max(125, canvasEl.parentElement.clientWidth * 0.32);
+
+        sfx.playLaserBlast();
+        setTimeout(() => {
+          if (state.streak === 3) sfx.playTurbo();
+          else sfx.playSuccess();
+        }, 280);
+      } else {
+        state.streak = 0;
+        if (state.mode === "survival") {
+          state.lives -= 1;
+        }
+
+        state.agentState = "slip";
+        const agentX = Math.max(105, canvasEl.parentElement.clientWidth * 0.30);
+        spawnParticles(agentX, canvasEl.parentElement.clientHeight - 55, "#94a3b8", 16);
+        sfx.playFail();
+      }
+
+      updateHUD();
+
+      setTimeout(() => {
+        showFeedbackModal(isCorrect, choiceIdx, earnedPoints, spokenRaw, qObj);
+      }, 650);
+    }
+
+    function showFeedbackModal(isCorrect, choiceIdx, earnedPoints, spokenRaw, qObj) {
+      state.isFeedbackOpen = true;
+      const overlay = document.getElementById("feedback-overlay");
+      const card = document.getElementById("feedback-card");
+      const emoji = document.getElementById("fb-emoji");
+      const title = document.getElementById("fb-title");
+      const comedy = document.getElementById("fb-comedy");
+
+      if (isCorrect) {
+        card.className = "w-full max-w-lg bg-slate-900 border-2 border-emerald-400 rounded-3xl p-5 sm:p-6 shadow-2xl text-center";
+        emoji.textContent = state.streak >= 3 ? "🛸🤖⚡" : "🎯⚡";
+        title.textContent = state.streak >= 3
+          ? `HOVERBOARD TURBO 2X! +${earnedPoints} Poin`
+          : `FIREWALL TEMBUS! +${earnedPoints} Poin`;
+        title.className = "text-2xl sm:text-3xl font-display font-bold text-emerald-300 mb-1";
+        comedy.textContent = COMEDY_WIN[Math.floor(Math.random() * COMEDY_WIN.length)];
+      } else {
+        card.className = "w-full max-w-lg bg-slate-900 border-2 border-rose-400 rounded-3xl p-5 sm:p-6 shadow-2xl text-center";
+        emoji.textContent = choiceIdx === -1 ? "💥💣😵" : "🍌⚡😵";
+        title.textContent = choiceIdx === -1 ? "BOM EMP MELEDAK! WAKTU HABIS!" : `SINYAL MELESET! ("${spokenRaw}")`;
+        title.className = "text-2xl sm:text-3xl font-display font-bold text-rose-400 mb-1";
+        comedy.textContent = COMEDY_LOSE[Math.floor(Math.random() * COMEDY_LOSE.length)];
+      }
+
+      const correctLetter = LETTER_NAMES[qObj.ans];
+      document.getElementById("fb-correct-answer").innerHTML = `${correctLetter}. ${qObj.opts[qObj.ans]}`;
+      document.getElementById("fb-explanation").innerHTML = qObj.exp;
+
+      overlay.classList.remove("hidden");
+
+      // Banner pembahasan tampil 2.8 detik lalu otomatis lanjut (atau dipercepat dengan suara "lanjut"/"berikutnya")
+      let remainingMs = 2800;
+      const cdText = document.getElementById("fb-countdown-text");
+      cdText.textContent = "2.8 detik";
+
+      clearInterval(state.autoNextInterval);
+      state.autoNextInterval = setInterval(() => {
+        remainingMs -= 100;
+        if (remainingMs <= 0) {
+          clearInterval(state.autoNextInterval);
+          proceedNextQuestion();
+        } else {
+          cdText.textContent = `${(remainingMs / 1000).toFixed(1)} detik`;
+        }
+      }, 100);
+    }
+
+    function proceedNextQuestion() {
+      clearInterval(state.autoNextInterval);
+      state.isFeedbackOpen = false;
+      document.getElementById("feedback-overlay").classList.add("hidden");
+
+      if (state.mode === "survival" && state.lives <= 0) {
+        finishGame(false);
+        return;
+      }
+
+      state.currentIndex += 1;
+      if (state.currentIndex >= state.totalQuestions) {
+        finishGame(true);
+        return;
+      }
+
+      // Pergantian Kelompok setiap 10 soal pada Mode Estafet 4 Kelompok
+      if (state.mode === "relay4" && state.currentIndex % 10 === 0) {
+        state.isRelayOpen = true;
+        const nextGroup = Math.floor(state.currentIndex / 10) + 1;
+        const prevGroup = nextGroup - 1;
+        document.getElementById("relay-title").textContent = `Giliran Kelompok ${nextGroup}!`;
+        document.getElementById("relay-subtitle").textContent =
+          `Kelompok ${prevGroup} meraih ${state.groupScores[prevGroup - 1]} poin! Sekarang giliran Kelompok ${nextGroup} untuk soal ${state.currentIndex + 1}–${state.currentIndex + 10}.`;
+        document.getElementById("relay-overlay").classList.remove("hidden");
+        return;
+      }
+
+      // Pergantian Siswa setiap 2 soal pada Mode Tantangan 2 Soal
+      if (state.mode === "turn2" && state.currentIndex % 2 === 0) {
+        state.isRelayOpen = true;
+        const nextStudent = Math.floor(state.currentIndex / 2) + 1;
+        document.getElementById("relay-title").textContent = `Giliran Siswa #${nextStudent}!`;
+        document.getElementById("relay-subtitle").textContent =
+          `Silakan Siswa #${nextStudent} maju ke depan mikrofon untuk meretas Firewall #${state.currentIndex + 1} & #${state.currentIndex + 2} (atau ucapkan "Siap" / "Lanjut").`;
+        document.getElementById("relay-overlay").classList.remove("hidden");
+        return;
+      }
+
+      renderCurrentQuestion();
+    }
+
+    function finishGame(isVictory) {
+      state.isAnswering = false;
+      state.isFeedbackOpen = false;
+      state.isRelayOpen = false;
+      state.screen = "end";
+      clearInterval(state.timerInterval);
+      clearInterval(state.autoNextInterval);
+      stopSpeechRecognitionEngine();
+      stopHardwareAudioStream();
+
+      document.getElementById("game-screen").classList.add("hidden");
+      document.getElementById("end-screen").classList.remove("hidden");
+
+      if (isVictory) {
+        sfx.playVictoryFanfare();
+        document.getElementById("end-trophy").textContent = "🏆🤖⚡";
+        document.getElementById("end-title").textContent = "Misi Berhasil! Neo-Data Aman!";
+        document.getElementById("end-title").className = "text-3xl sm:text-4xl font-display font-bold text-cyan-300 mb-2";
+        document.getElementById("end-subtitle").textContent =
+          "Luar biasa! Agen Byte berhasil menembus seluruh 40 gerbang Firewall Informatika Kelas 9!";
+      } else {
+        sfx.playFail();
+        document.getElementById("end-trophy").textContent = "💥🤖🍌";
+        document.getElementById("end-title").textContent = "Perisai Energi Habis!";
+        document.getElementById("end-title").className = "text-3xl sm:text-4xl font-display font-bold text-rose-400 mb-2";
+        document.getElementById("end-subtitle").textContent =
+          `Agen Byte tertahan di Firewall #${state.currentIndex + 1}. Ayo ulangi dan tembus ke-40 gerbangnya!`;
+      }
+
+      document.getElementById("end-score").textContent = state.score;
+      document.getElementById("end-correct").textContent = `${state.correctCount}/${state.totalQuestions}`;
+      document.getElementById("end-max-streak").textContent = `${state.maxStreak}⚡`;
+
+      const groupRecapBox = document.getElementById("end-group-recap");
+      if (state.mode === "relay4") {
+        groupRecapBox.classList.remove("hidden");
+        for (let g = 0; g < 4; g++) {
+          document.getElementById(`grp-score-${g}`).textContent = `${state.groupScores[g]} pts`;
+        }
+      } else {
+        groupRecapBox.classList.add("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
